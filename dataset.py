@@ -2,12 +2,12 @@ from scipy.io import loadmat
 import numpy as np
 import matplotlib.pyplot as plt
 import os
-
+from tqdm import tqdm
 
 def extract_single_trajectory(trajectory_id, trajectory_length=8):
     trajectory = []
     for j in range(trajectory_length):
-        filename = os.path.join('..', 'RL_Dataset', f'trajectory_00{trajectory_id}', f'layer_{j+1}_data.mat')
+        filename = os.path.join('..', 'LPBF-Simulation', 'RL_Dataset', f'trajectory_{trajectory_id:03d}', f'layer_{j+1}_data.mat')
         data = loadmat(filename)
         # Extract s, a, r
         ss = data['SS_action'][0][0]
@@ -17,14 +17,24 @@ def extract_single_trajectory(trajectory_id, trajectory_length=8):
         r = -data['meanDeviation'][0][0]
         # Append
         sar = [u, lp, r]
-        print(u.shape, lp.shape, ss.shape, r.shape, lp, ss, r)
+        # print(u.shape, lp.shape, ss.shape, r.shape, lp, ss, r)
         trajectory.append(sar)
     return trajectory
 
 
 def gather_dataset(id_list, trajectory_length=8):
     dataset = []
-    for trajectory_id in id_list:
+    for trajectory_id in tqdm(id_list):
         traj = extract_single_trajectory(trajectory_id, trajectory_length)
         dataset.append(traj)
     return dataset
+
+
+if __name__ == '__main__':
+    id_list = np.arange(1, 2001, 1)
+    dataset = gather_dataset(id_list, trajectory_length=8)
+
+    import pickle
+
+    with open("dataset.pkl", "wb") as f:
+        pickle.dump(dataset, f, protocol=pickle.HIGHEST_PROTOCOL)
