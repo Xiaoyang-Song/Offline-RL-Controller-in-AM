@@ -31,10 +31,10 @@ def gather_dataset(id_list, trajectory_length=8):
 
 
 if __name__ == '__main__':
-    id_list = np.arange(1, 2001, 1)
+    id_list = np.arange(1, 4001, 1)
     dataset = gather_dataset(id_list, trajectory_length=8)
 
     import pickle
 
-    with open("dataset.pkl", "wb") as f:
+    with open("dataset_4000.pkl", "wb") as f:
         pickle.dump(dataset, f, protocol=pickle.HIGHEST_PROTOCOL)

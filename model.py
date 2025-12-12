@@ -32,7 +32,7 @@ def init_weights(m):
         nn.init.zeros_(m.bias)
 
 class QNet(nn.Module):
-    def __init__(self, state_dim, num_actions, h=512):
+    def __init__(self, state_dim, num_actions, h=128):
         super().__init__()
         self.net = nn.Sequential(
             nn.Linear(state_dim, h),
@@ -82,7 +82,7 @@ import matplotlib.pyplot as plt
 # ==========================================
 # Modified train_fqi to record loss
 # ==========================================
-def train_fqi(trajectories, state_dim, gamma=0.99, K=10000, lr=1e-2, step_size=1000, gamma_lr=0.1):
+def train_fqi(trajectories, state_dim, gamma=0.99, K=10000, lr=1e-2, step_size=2000, gamma_lr=0.1):
     S, A_idx, R, S2 = flatten_dataset(trajectories)
     S = (S - S.mean()) / S.std()
     S2 = (S2 - S2.mean()) / S2.std()
@@ -107,6 +107,7 @@ def train_fqi(trajectories, state_dim, gamma=0.99, K=10000, lr=1e-2, step_size=1
         q_pred_all = qnet(S)                         
         q_pred = q_pred_all.gather(1, A_idx.unsqueeze(-1))
 
+        # print(q_pred.mean(), target.mean())
         loss = mse(q_pred, target)
         loss.backward()
         optimizer.step()
@@ -114,7 +115,8 @@ def train_fqi(trajectories, state_dim, gamma=0.99, K=10000, lr=1e-2, step_size=1
 
         loss_history.append(loss.item())
 
-        if k % 20 == 0:
+        if k % 50 == 0:
+            # print(q_pred.mean(), target.mean())
             print(f"Iter {k}: Q Loss = {loss.item():.4f}, LR = {scheduler.get_last_lr()[0]:.6f}")
 
     return qnet, loss_history
@@ -130,22 +132,7 @@ def select_action(qnet, state):
         idx = q.argmax().item()
         return ACTION_LIST[idx].item()
 
-
-# ==========================================
-# Training
-# ==========================================
-# id_list = np.arange(1, 11, 1)
-# print(id_list)
-# dataset = gather_dataset(id_list, trajectory_length=8)
-
-with open("dataset.pkl", "rb") as f:
-    dataset = pickle.load(f)
-
-state_dim = 1053
-
-qnet, loss_history = train_fqi(dataset, state_dim)
-
-def plot_loss(loss_history):
+def plot_loss(loss_history, fname='q_learning_loss.png'):
     plt.figure(figsize=(8,5))
     plt.plot(loss_history, label='Q Loss')
     plt.xlabel('Iteration')
@@ -154,7 +141,23 @@ def plot_loss(loss_history):
     plt.grid(True)
     plt.legend()
     # plt.show()
-    plt.savefig('q_learning_loss.png')
+    plt.savefig(f'checkpoints/training_log/{fname}')
 
+# ==========================================
+# Training
+# ==========================================
+# id_list = np.arange(1, 11, 1)
+# print(id_list)
+# dataset = gather_dataset(id_list, trajectory_length=8)
 
-plot_loss(loss_history)
+if __name__ == '__main__':
+    
+    with open("dataset_4000.pkl", "rb") as f:
+        print("Load processed dataset...")
+        dataset = pickle.load(f)
+
+    state_dim = 1053
+    qnet, loss_history = train_fqi(dataset, state_dim)
+    torch.save(qnet, "checkpoints/qnet_offline_4000.pt")
+
+    plot_loss(loss_history)
