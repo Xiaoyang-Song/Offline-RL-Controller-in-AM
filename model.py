@@ -152,7 +152,7 @@ def plot_loss(loss_history, fname='q_learning_loss.png'):
 
 if __name__ == '__main__':
     
-    with open("dataset_4000.pkl", "rb") as f:
+    with open("data/dataset_4000.pkl", "rb") as f:
         print("Load processed dataset...")
         dataset = pickle.load(f)
 
