@@ -8,9 +8,10 @@ import pickle
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 # ==========================================
-# Discrete action set
+# Discrete action set 
 # ==========================================
 ACTION_LIST = torch.tensor([100,150,200,250,300,350,400,450,500,550,600], dtype=torch.float32)
+# ACTION_LIST = torch.arange(100, 601, 20, dtype=torch.float32)
 NUM_ACTIONS = len(ACTION_LIST)
 
 
@@ -82,14 +83,14 @@ import matplotlib.pyplot as plt
 # ==========================================
 # Modified train_fqi to record loss
 # ==========================================
-def train_fqi(trajectories, state_dim, gamma=0.99, K=10000, lr=1e-2, step_size=2000, gamma_lr=0.1):
+def train_fqi(trajectories, state_dim, h=128, gamma=0.99, K=10000, lr=1e-2, step_size=5000, gamma_lr=0.1):
     S, A_idx, R, S2 = flatten_dataset(trajectories)
     S = (S - S.mean()) / S.std()
     S2 = (S2 - S2.mean()) / S2.std()
     S = S.squeeze()
     S2 = S2.squeeze()
     
-    qnet = QNet(state_dim, NUM_ACTIONS).to(device)
+    qnet = QNet(state_dim, NUM_ACTIONS, h).to(device)
     optimizer = optim.Adam(qnet.parameters(), lr=lr)
     scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=step_size, gamma=gamma_lr)
     mse = nn.MSELoss()
@@ -151,13 +152,22 @@ def plot_loss(loss_history, fname='q_learning_loss.png'):
 # dataset = gather_dataset(id_list, trajectory_length=8)
 
 if __name__ == '__main__':
+    n = 5000
+    step_size = 20
+    trajectory_length = 8
     
-    with open("data/dataset_4000.pkl", "rb") as f:
-        print("Load processed dataset...")
+    with open(f"data/dataset_{n}_{step_size}.pkl", "rb") as f:
+        print("Loading processed dataset...")
         dataset = pickle.load(f)
 
     state_dim = 1053
-    qnet, loss_history = train_fqi(dataset, state_dim)
-    torch.save(qnet, "checkpoints/qnet_offline_4000.pt")
+    h=128
+    gamma=0.99
+    K=10000
+    lr=1e-2
+    scheduler_step_size=5000
+    gamma_lr=0.1
+    qnet, loss_history = train_fqi(dataset, state_dim, h, gamma, K, lr, scheduler_step_size, gamma_lr)
+    torch.save(qnet, f"checkpoints/qnet_offline_{n}_{step_size}.pt")
 
     plot_loss(loss_history)
