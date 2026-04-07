@@ -150,10 +150,10 @@ for i in range(nSteps):
         capture_output=True
     )
 
-    print("MATLAB stdout:")
-    print(result.stdout)
-    print("MATLAB stderr:")
-    print(result.stderr)
+    # print("MATLAB stdout:")
+    # print(result.stdout)
+    # print("MATLAB stderr:")
+    # print(result.stderr)
 
     if result.returncode != 0:
         raise RuntimeError(f"MATLAB failed with return code {result.returncode}")

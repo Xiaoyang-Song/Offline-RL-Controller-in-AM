@@ -1,17 +1,37 @@
 Testing under Proportional control mode.
-Action chosen at step 0: LP = 300.0
-Reward: -0.5760635956666704
-Action chosen at step 1: LP = 250.0
-Reward: -0.9802732598900709
-Action chosen at step 2: LP = 200.0
-Reward: -1.6978848426917827
-Action chosen at step 3: LP = 100.0
-Reward: -2.831476523053
-Action chosen at step 4: LP = 100.0
-Reward: -2.831476523053
-Action chosen at step 5: LP = 100.0
-Reward: -2.837074480993847
-Action chosen at step 6: LP = 100.0
-Reward: -2.6178651061231175
-Action chosen at step 7: LP = 100.0
-Reward: -2.6178651061231175
+Action chosen at step 1: LP = 220
+Running Layer 1 simulation in MATLAB...
+Reward: -0.3989488357531986
+Action chosen at step 2: LP = 240.0
+Running Layer 2 simulation in MATLAB...
+Reward: -0.13334584560647594
+Action chosen at step 3: LP = 250.0
+Running Layer 3 simulation in MATLAB...
+Reward: -0.0852106072510428
+Action chosen at step 4: LP = 250.0
+Running Layer 4 simulation in MATLAB...
+Reward: -0.0852106072510428
+Action chosen at step 5: LP = 250.0
+Running Layer 5 simulation in MATLAB...
+Reward: -0.0852106072510428
+Action chosen at step 6: LP = 250.0
+Running Layer 6 simulation in MATLAB...
+Reward: 0
+Action chosen at step 7: LP = 250.0
+Running Layer 7 simulation in MATLAB...
+Reward: 0
+Action chosen at step 8: LP = 250.0
+Running Layer 8 simulation in MATLAB...
+Reward: 0
+Action chosen at step 9: LP = 250.0
+Running Layer 9 simulation in MATLAB...
+Reward: -0.011911686865161315
+Action chosen at step 10: LP = 250.0
+Running Layer 10 simulation in MATLAB...
+Reward: -0.0661559135622597
+Action chosen at step 11: LP = 250.0
+Running Layer 11 simulation in MATLAB...
+Reward: -0.0661559135622597
+Action chosen at step 12: LP = 250.0
+Running Layer 12 simulation in MATLAB...
+Reward: -0.0661559135622597
