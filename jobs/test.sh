@@ -1,5 +1,2 @@
 
-
-python test.py > checkpoints/results/result_5000_20.txt
-
-python test.py --mode=RL
+python test.py --mode=RL > checkpoints/results/result_5000_10.txt

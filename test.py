@@ -5,10 +5,28 @@ import numpy as np
 from model import *
 import argparse
 
+
+def to_matlab_numeric(obj):
+    if isinstance(obj, dict):
+        return {k: to_matlab_numeric(v) for k, v in obj.items()}
+    if isinstance(obj, np.ndarray):
+        if obj.dtype == np.bool_:
+            return obj
+        return obj.astype(np.float64)
+    if isinstance(obj, (np.integer, int, np.floating, float)):
+        return np.float64(obj)
+    return obj
+
 parser = argparse.ArgumentParser(description="parser")
 parser.add_argument("--mode", type=str, help="Mode: Constant / RL / P")
 parser.add_argument("--lp_const", type=float, default=400.0, help="Constant LP value if mode is Constant")
 parser.add_argument("--K", type=float, default=50, help="Proportional gain for P controller")
+parser.add_argument(
+    "--checkpoint",
+    type=str,
+    default="checkpoints/qnet_offline_5000_10.pt",
+    help="Checkpoint to load when mode is RL",
+)
 args = parser.parse_args()
 # -----------------------------
 # 1. Prepare MATLAB input paramsStruct
@@ -37,7 +55,7 @@ params_dict = {
     'nTimeStepsHeat': 50.0,
     'nTimeStepsCool': 50.0,
     'doPlot': False,
-    'tempRange': np.array([2500.0, 3000.0])
+    'tempRange': np.array([2000.0, 2800.0], dtype=np.float64)
 }
 
 # Load RL Agent model
@@ -47,14 +65,16 @@ if MODE == 'Constant':
     LP_CONST = args.lp_const
     print(f'Testing constant LP: {LP_CONST}')
 elif MODE == 'RL':
-    n = 4000
-    step_size = 50
-    agent = torch.load(f"checkpoints/qnet_offline_{n}_{step_size}.pt")
-    print("Pretrained agent loaded.")
+    agent = load_policy(args.checkpoint)
+    print("Pretrained agent loaded successfully...")
 elif MODE == 'P':
     print("Testing under Proportional control mode.")
+elif MODE == 'Random':
+    print("Testing under Random action mode.")
+else:
+    raise ValueError("Invalid mode. Choose from Constant, RL, P, or Random.")
 
-nSteps = 8
+nSteps = 12
 # Define layer evolution
 initialFraction = 0.4
 finalFraction = 0.5
@@ -69,26 +89,26 @@ for i in range(nSteps):
     if MODE == 'Constant':
         params_dict['params']['LP'] = LP_CONST
     elif MODE == 'RL':  
-        if i == 0:
-            params_dict['params']['LP'] = 300.0  # Initial action
-        else:
-            params_dict['params']['LP'] = select_action(agent, states[i])
+        params_dict['params']['LP'] = select_action(agent, states[i])
+    elif MODE == 'Random':
+        params_dict['params']['LP'] = float(np.random.choice(np.arange(150, 310, 10)))
     elif MODE == 'P':
         if i == 0:
-            params_dict['params']['LP'] = 300.0
+            params_dict['params']['LP'] = 220
         else:
             # Proportional control update
             K = args.K  # proportional gain (tune this)
-            delta = K * r_prev  # negative because we want to reduce the loss toward zero
+            delta = - K * r_prev  # negative because we want to reduce the loss toward zero
             a_new = a_prev + delta
 
-            # Clip and round to nearest 50 within 100-600
-            a_new = float(max(100, min(600, round(a_new / 50) * 50)))
+            # Clip and round to nearest 10 within 150-300
+            a_new = float(max(150, min(300, round(a_new / 10) * 10)))
             params_dict['params']['LP'] = a_new
 
-    print(f"Action chosen at step {i}: LP = {params_dict['params']['LP']}")
+    print(f"Action chosen at step {i+1}: LP = {params_dict['params']['LP']}")
     # Save as MATLAB .mat file
-    scipy.io.savemat('../LPBF-Simulation/test/params.mat', {'paramsStruct': params_dict})
+    matlab_params = to_matlab_numeric(params_dict)
+    scipy.io.savemat('../LPBF-Simulation/test/params.mat', {'paramsStruct': matlab_params})
 
     # -----------------------------
     # 2. Create MATLAB wrapper script
@@ -117,13 +137,26 @@ for i in range(nSteps):
     # -----------------------------
     script_path = os.path.abspath("../LPBF-Simulation/test/runSim.m")
 
-    subprocess.run([
-        "matlab",
-        "-nodisplay",
-        "-nosplash",
-        "-nodesktop",
-        "-r", f"run('{script_path}'); exit;"
-    ], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    print(f"Running Layer {i+1} simulation in MATLAB...")
+    result = subprocess.run(
+        [
+            "matlab",
+            "-nodisplay",
+            "-nosplash",
+            "-nodesktop",
+            "-r", f"try, run('{script_path}'); catch ME, disp(getReport(ME)); exit(1); end; exit(0);"
+        ],
+        text=True,
+        capture_output=True
+    )
+
+    print("MATLAB stdout:")
+    print(result.stdout)
+    print("MATLAB stderr:")
+    print(result.stderr)
+
+    if result.returncode != 0:
+        raise RuntimeError(f"MATLAB failed with return code {result.returncode}")
     # -----------------------------
     # 4. Load MATLAB output
     # -----------------------------

@@ -7,6 +7,6 @@
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=32
 #SBATCH --mem=100G
-#SBATCH --output=/scratch/sunwbgt_root/sunwbgt98/xysong/Offline-RL-Controller-in-AM/jobs/out.log
+#SBATCH --output=/nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/jobs/dataset.log
 
 python dataset.py

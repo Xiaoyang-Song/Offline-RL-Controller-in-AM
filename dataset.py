@@ -32,14 +32,13 @@ def gather_dataset(id_list, trajectory_length=8):
 
 if __name__ == '__main__':
     n = 5000
-    step_size = 20
-    trajectory_length = 8
-
+    step_size = 10
+    trajectory_length = 12
 
     id_list = np.arange(1, n+1, 1)
     dataset = gather_dataset(id_list, trajectory_length=trajectory_length)
 
     import pickle
 
-    with open(f"data/dataset_{n}_{step_size}.pkl", "wb") as f:
+    with open(f"Data/Dataset:layer_{trajectory_length}_stepsize_{step_size}_samples_{n}.pkl", "wb") as f:
         pickle.dump(dataset, f, protocol=pickle.HIGHEST_PROTOCOL)
