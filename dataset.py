@@ -34,16 +34,23 @@ def gather_dataset(id_list, trajectory_length=8):
 
 
 def transform_with_adj_cost(dataset, beta=0.1):
-    for traj in dataset:
-        for step in traj:
+    modified_dataset = []
+    for traj in tqdm(dataset):
+        modified_traj = []
+        for i, step in enumerate(traj):
             u, lp, r = step
-            print(f"Trajectory step: u={u.shape}, u_mean, {u.mean():.4}, lp={lp}, r={r}")
-            if step == 0:
+            # print(f"Trajectory step: u={u.shape}, u_mean, {u.mean():.4}, lp={lp}, r={r}")
+            if i == 0:
                 adj_cost = 0
             else:
-                adj_cost = beta * np.linalg.norm(u - traj[step-1][0])  # Example: L2 distance to previous action
+                lp_prev = float(traj[i-1][1])
+                adj_cost = beta * np.linalg.norm(lp - lp_prev)  # Example: L2 distance to previous action
+            # print(adj_cost)
+            r_adj = r - adj_cost
+            modified_traj.append((u, lp, r_adj))
+        modified_dataset.append(modified_traj)
 
-        break
+    return modified_dataset
 
 if __name__ == '__main__':
 
@@ -51,14 +58,15 @@ if __name__ == '__main__':
     args.add_argument('--n', type=int, default=5000, help='Number of trajectories to extract')
     args.add_argument('--step_size', type=int, default=10, help='Step size for trajectory extraction')
     args.add_argument('--trajectory_length', type=int, default=12, help='Length of each trajectory')
+    args.add_argument('--beta', type=float, default=0.1, help='Cost adjustment factor')
     args.add_argument('--mode', type=str, default='read', help='read or load')
     args = args.parse_args()
 
+    n = args.n
+    step_size = args.step_size
+    trajectory_length = args.trajectory_length
 
     if args.mode == 'read':
-        n = args.ns
-        step_size = args.step_size
-        trajectory_length = args.trajectory_length
 
         id_list = np.arange(1, n+1, 1)
         dataset = gather_dataset(id_list, trajectory_length=trajectory_length)
@@ -68,11 +76,13 @@ if __name__ == '__main__':
 
     elif args.mode == 'load':
 
-        with open(f"Data/Dataset:layer_{args.trajectory_length}_stepsize_{args.step_size}_samples_{args.n}.pkl", "rb") as f:
+        with open(f"Data/Dataset:layer_{trajectory_length}_stepsize_{step_size}_samples_{n}.pkl", "rb") as f:
             dataset = pickle.load(f)
 
         print(f"Loaded dataset with {len(dataset)} trajectories, each of length {len(dataset[0])}")
 
         # Transform with adjusted cost
-        transform_with_adj_cost(dataset)
+        modified_dataset = transform_with_adj_cost(dataset, args.beta)
+        with open(f"Data/Dataset:layer_{trajectory_length}_stepsize_{step_size}_samples_{n}_beta_{args.beta}.pkl", "wb") as f:
+            pickle.dump(modified_dataset, f, protocol=pickle.HIGHEST_PROTOCOL)
 

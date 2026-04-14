@@ -400,7 +400,11 @@ if __name__ == '__main__':
     step_size = 10
     trajectory_length = 12
 
-    file_path = os.path.join("Data", f"Dataset:layer_{trajectory_length}_stepsize_{step_size}_samples_{n}.pkl")
+    beta = 0.0
+    if beta > 0:
+        file_path = os.path.join("Data", f"Dataset:layer_{trajectory_length}_stepsize_{step_size}_samples_{n}_beta_{beta}.pkl")
+    else:
+        file_path = os.path.join("Data", f"Dataset:layer_{trajectory_length}_stepsize_{step_size}_samples_{n}.pkl")
     
     with open(file_path, "rb") as f:
         print("Loading processed dataset...")
@@ -410,7 +414,7 @@ if __name__ == '__main__':
     state_dim = 1053
     h=256
     gamma=0.99
-    K=10000
+    K=20000
     lr=1e-3
     scheduler_step_size=5000
     gamma_lr=0.1
