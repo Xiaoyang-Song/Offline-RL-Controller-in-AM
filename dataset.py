@@ -60,6 +60,8 @@ if __name__ == '__main__':
     args.add_argument('--trajectory_length', type=int, default=12, help='Length of each trajectory')
     args.add_argument('--beta', type=float, default=0.1, help='Cost adjustment factor')
     args.add_argument('--mode', type=str, default='read', help='read or load')
+    args.add_argument('--lb', type=int, default=150, help='Lower bound laser power')
+    args.add_argument('--ub', type=int, default=300, help='Upper bound laser power')
     args = args.parse_args()
 
     n = args.n
@@ -71,18 +73,18 @@ if __name__ == '__main__':
         id_list = np.arange(1, n+1, 1)
         dataset = gather_dataset(id_list, trajectory_length=trajectory_length)
 
-        with open(f"Data/Dataset:layer_{trajectory_length}_stepsize_{step_size}_samples_{n}.pkl", "wb") as f:
+        with open(f"Data/Dataset:layer_{trajectory_length}_stepsize_{step_size}_samples_{n}_{args.lb}_{args.ub}.pkl", "wb") as f:
             pickle.dump(dataset, f, protocol=pickle.HIGHEST_PROTOCOL)
 
     elif args.mode == 'load':
 
-        with open(f"Data/Dataset:layer_{trajectory_length}_stepsize_{step_size}_samples_{n}.pkl", "rb") as f:
+        with open(f"Data/Dataset:layer_{trajectory_length}_stepsize_{step_size}_samples_{n}_{args.lb}_{args.ub}.pkl", "rb") as f:
             dataset = pickle.load(f)
 
         print(f"Loaded dataset with {len(dataset)} trajectories, each of length {len(dataset[0])}")
 
         # Transform with adjusted cost
         modified_dataset = transform_with_adj_cost(dataset, args.beta)
-        with open(f"Data/Dataset:layer_{trajectory_length}_stepsize_{step_size}_samples_{n}_beta_{args.beta}.pkl", "wb") as f:
+        with open(f"Data/Dataset:layer_{trajectory_length}_stepsize_{step_size}_samples_{n}_{args.lb}_{args.ub}_beta_{args.beta}.pkl", "wb") as f:
             pickle.dump(modified_dataset, f, protocol=pickle.HIGHEST_PROTOCOL)
 

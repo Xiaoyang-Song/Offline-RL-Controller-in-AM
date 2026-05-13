@@ -412,11 +412,11 @@ if __name__ == '__main__':
         print("Dataset loaded successfully!")
 
     state_dim = 1053
-    h=256
+    h=300
     gamma=0.99
-    K=20000
+    K=40000
     lr=1e-3
-    scheduler_step_size=5000
+    scheduler_step_size=10000
     gamma_lr=0.1
     checkpoint, loss_history = train_fqi(
         dataset,

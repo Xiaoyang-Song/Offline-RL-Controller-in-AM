@@ -9,4 +9,4 @@
 #SBATCH --mem=100G
 #SBATCH --output=/nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/jobs/dataset.log
 
-python dataset.py
+python dataset.py --mode=read --lb=150 --ub=400
