@@ -16,7 +16,7 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 # Discrete action set 
 # ==========================================
 # ACTION_LIST = torch.tensor([100,150,200,250,300,350,400,450,500,550,600], dtype=torch.float32)
-ACTION_LIST = torch.arange(150, 310, 10, dtype=torch.float32)
+ACTION_LIST = torch.arange(150, 410, 10, dtype=torch.float32)
 # ACTION_LIST = torch.arange(100, 601, 20, dtype=torch.float32)
 NUM_ACTIONS = len(ACTION_LIST)
 
@@ -54,6 +54,8 @@ class QNet(nn.Module):
         super().__init__()
         self.net = nn.Sequential(
             nn.Linear(state_dim, h),
+            nn.ReLU(),
+            nn.Linear(h, h),
             nn.ReLU(),
             nn.Linear(h, h),
             nn.ReLU(),
@@ -172,7 +174,7 @@ def train_fqi(
     lr=1e-3,
     step_size=5000,
     gamma_lr=0.1,
-    batch_size=2048,
+    batch_size=512,
     target_update_interval=200,
     initial_temperature=300.0,
 ):
@@ -399,12 +401,14 @@ if __name__ == '__main__':
     n = 5000
     step_size = 10
     trajectory_length = 12
+    lb = 150
+    ub = 400
 
     beta = 0.0
     if beta > 0:
         file_path = os.path.join("Data", f"Dataset:layer_{trajectory_length}_stepsize_{step_size}_samples_{n}_beta_{beta}.pkl")
     else:
-        file_path = os.path.join("Data", f"Dataset:layer_{trajectory_length}_stepsize_{step_size}_samples_{n}.pkl")
+        file_path = os.path.join("Data", f"Dataset:layer_{trajectory_length}_stepsize_{step_size}_samples_{n}_{lb}_{ub}.pkl")
     
     with open(file_path, "rb") as f:
         print("Loading processed dataset...")
@@ -412,7 +416,7 @@ if __name__ == '__main__':
         print("Dataset loaded successfully!")
 
     state_dim = 1053
-    h=300
+    h=256
     gamma=0.99
     K=40000
     lr=1e-3
