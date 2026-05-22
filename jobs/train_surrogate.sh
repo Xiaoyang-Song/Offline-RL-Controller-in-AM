@@ -11,14 +11,14 @@
 # =============================================================================
 
 #SBATCH --job-name=surrogate_train
-#SBATCH --account=jhjin1
-#SBATCH --partition=gpu
-#SBATCH --gres=gpu:v100:1
-#SBATCH --time=08:00:00
-#SBATCH --nodes=1
-#SBATCH --cpus-per-task=8
-#SBATCH --mem=32G
+#SBATCH --account=sunwbgt0
+#SBATCH --mail-user=xysong@umich.edu
 #SBATCH --mail-type=BEGIN,END,FAIL
+#SBATCH --nodes=1
+#SBATCH --partition=gpu
+#SBATCH --gpus=1
+#SBATCH --mem-per-gpu=16GB
+#SBATCH --time=24:00:00
 #SBATCH --output=/nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/jobs/surrogate_train_%j.log
 
 # ── environment ──────────────────────────────────────────────────────────────
@@ -30,9 +30,14 @@ echo "============================================================"
 
 cd /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM
 
-# Activate your conda / virtualenv if needed, e.g.:
-# source ~/.bashrc
-# conda activate <env_name>
+# Activate conda environment (required — compute nodes don't inherit shell state)
+source ~/.bashrc
+conda activate RL
+
+echo "Python : $(which python)"
+echo "Torch  : $(python -c 'import torch; print(torch.__version__)')"
+echo "CUDA   : $(python -c 'import torch; print(torch.cuda.is_available())')"
+echo "============================================================"
 
 # ── default hyper-parameters (edit here or pass via sbatch --) ───────────────
 DATA_PATH="Data/Dataset:layer_12_stepsize_10_samples_5000_150_400.pkl"
@@ -45,12 +50,13 @@ EPOCHS=200
 BATCH_SIZE=512
 LR=1e-3
 WEIGHT_DECAY=1e-5
-PATIENCE=20         # early-stopping patience
+PATIENCE=30         # early-stopping patience (epochs without val improvement)
 
 # Multi-step rollout loss: set ROLLOUT_STEPS>1 to enable
 # (e.g. 6 means model is penalised for 6-step accumulated error too)
 ROLLOUT_STEPS=0     # 0 = single-step MSE only
 ROLLOUT_WEIGHT=0.5  # weight of rollout loss vs 1-step loss
+NUM_WORKERS=6       # DataLoader workers (cpus-per-task=8, leave 2 for main process)
 
 VAL_FRACTION=0.10
 TEST_FRACTION=0.10
@@ -67,13 +73,16 @@ python -m surrogate_model.train \
     --lr             $LR \
     --weight_decay   $WEIGHT_DECAY \
     --patience       $PATIENCE \
+    --num_workers    $NUM_WORKERS \
     --rollout_steps  $ROLLOUT_STEPS \
     --rollout_weight $ROLLOUT_WEIGHT \
     --val_fraction   $VAL_FRACTION \
     --test_fraction  $TEST_FRACTION \
     --seed           $SEED \
-    "$@"             # forward any extra args from sbatch command line
+    "$@"             # forward any extra args from: sbatch train_surrogate.sh --arg val
 
+EXIT_CODE=$?
 echo "============================================================"
-echo "Training finished: $(date)"
+echo "Training finished: $(date)  (exit code: $EXIT_CODE)"
 echo "============================================================"
+exit $EXIT_CODE

@@ -237,46 +237,87 @@ def _plot_field_1d(ax, values, title, color="steelblue"):
     ax.grid(True, alpha=0.3)
 
 
+def plot_action_sequence(
+    actions:   np.ndarray,   # (T,) raw laser power [W]
+    traj_idx:  int,
+    out_path:  str,
+) -> None:
+    """Bar chart of laser power per layer for one trajectory."""
+    T      = len(actions)
+    layers = np.arange(1, T + 1)
+    fig, ax = plt.subplots(figsize=(9, 3))
+    ax.bar(layers, actions, color="steelblue", alpha=0.8)
+    ax.set_xlabel("Layer")
+    ax.set_ylabel("Laser Power [W]")
+    ax.set_title(f"Trajectory {traj_idx} — Action Sequence")
+    ax.set_xticks(layers)
+    ax.set_ylim(0, max(actions.max() * 1.15, 500))
+    for l, v in zip(layers, actions):
+        ax.text(l, v + 5, f"{v:.0f}", ha="center", va="bottom", fontsize=7)
+    ax.grid(True, alpha=0.3, axis="y")
+    fig.tight_layout()
+    fig.savefig(out_path, dpi=150)
+    plt.close(fig)
+    print(f"[evaluate] Saved → {out_path}")
+
+
 def plot_example_trajectory(
-    pred_traj:    np.ndarray,   # (T, D)  raw Kelvin
-    gt_traj:      np.ndarray,   # (T, D)  raw Kelvin
-    traj_idx:     int,
-    out_dir:      str,
-    triang,                     # mtri.Triangulation or None
-    layers_to_show: list = None,
+    pred_traj:  np.ndarray,   # (T, D)  raw Kelvin
+    gt_traj:    np.ndarray,   # (T, D)  raw Kelvin
+    actions:    np.ndarray,   # (T,)    laser power [W]
+    traj_idx:   int,
+    out_dir:    str,
+    triang,                   # mtri.Triangulation or None
     vmin: float = 300,
     vmax: float = 5000,
 ) -> None:
     """
-    For each selected layer, plot a 3-panel figure:
+    Save every layer as a separate 3-panel PNG into out_dir/traj_{traj_idx}/:
       left   — ground-truth temperature field  (2D or 1D)
       middle — predicted temperature field     (2D or 1D)
       right  — absolute error field            (2D or 1D)
 
+    Title includes the laser power used for that layer.
+    Also saves an action-sequence bar chart and a actions.txt summary.
     Matches MATLAB: jet colormap, caxis [300, 5000].
     """
-    T = pred_traj.shape[0]
-    if layers_to_show is None:
-        layers_to_show = sorted({0, T // 2, T - 1})
+    T        = pred_traj.shape[0]
+    traj_dir = os.path.join(out_dir, f"traj_{traj_idx:03d}")
+    os.makedirs(traj_dir, exist_ok=True)
 
-    for layer in layers_to_show:
-        if layer >= T:
-            continue
-        pred  = pred_traj[layer]     # (D,)
-        gt    = gt_traj[layer]       # (D,)
-        err   = np.abs(pred - gt)
-        mae   = err.mean()
+    # ── save action list as text ──────────────────────────────────────────────
+    txt_path = os.path.join(traj_dir, "actions.txt")
+    with open(txt_path, "w") as f:
+        f.write(f"Trajectory {traj_idx} — Laser Power per Layer\n")
+        f.write(f"{'Layer':>6}  {'LP [W]':>10}\n")
+        f.write("-" * 20 + "\n")
+        for t in range(T):
+            f.write(f"{t+1:>6}  {actions[t]:>10.1f}\n")
+    print(f"[evaluate] Saved → {txt_path}")
+
+    # ── action bar chart ──────────────────────────────────────────────────────
+    plot_action_sequence(
+        actions, traj_idx,
+        os.path.join(traj_dir, "action_sequence.png"),
+    )
+
+    # ── one PNG per layer ─────────────────────────────────────────────────────
+    for layer in range(T):
+        pred = pred_traj[layer]      # (D,)
+        gt   = gt_traj[layer]        # (D,)
+        err  = np.abs(pred - gt)
+        mae  = err.mean()
+        lp   = actions[layer]
 
         fig, axes = plt.subplots(1, 3, figsize=(16, 4))
         fig.suptitle(
-            f"Traj {traj_idx} — Layer {layer+1} | MAE = {mae:.2f} K",
-            fontsize=10
+            f"Traj {traj_idx} — Layer {layer+1}  |  LP = {lp:.0f} W  |  MAE = {mae:.2f} K",
+            fontsize=10,
         )
 
         if triang is not None:
-            _plot_field_2d(axes[0], gt,   triang, "Ground truth [K]",  vmin, vmax)
-            _plot_field_2d(axes[1], pred, triang, "Predicted [K]",     vmin, vmax)
-            # Error: use full range so small errors are still visible
+            _plot_field_2d(axes[0], gt,   triang, "Ground Truth [K]", vmin, vmax)
+            _plot_field_2d(axes[1], pred, triang, "Predicted [K]",    vmin, vmax)
             tpc = axes[2].tripcolor(triang, err, cmap="hot",
                                     vmin=0, vmax=max(err.max(), 1.0),
                                     shading="gouraud")
@@ -284,18 +325,18 @@ def plot_example_trajectory(
             plt.colorbar(tpc, ax=axes[2], label="|Error| [K]")
             axes[2].set_aspect("auto")
             axes[2].set_xlabel("X"); axes[2].set_ylabel("Y")
-            axes[2].set_title(f"|Error| max={err.max():.1f} K", fontsize=9)
+            axes[2].set_title(f"|Error|  max = {err.max():.1f} K", fontsize=9)
         else:
-            _plot_field_1d(axes[0], gt,   "Ground truth [K]",  color="steelblue")
-            _plot_field_1d(axes[1], pred, "Predicted [K]",     color="darkorange")
+            _plot_field_1d(axes[0], gt,   "Ground Truth [K]", color="steelblue")
+            _plot_field_1d(axes[1], pred, "Predicted [K]",    color="darkorange")
             axes[2].plot(err, linewidth=0.6, color="crimson")
             axes[2].set_xlabel("Node index")
             axes[2].set_ylabel("|Error| [K]")
-            axes[2].set_title(f"|Error| max={err.max():.1f} K", fontsize=9)
+            axes[2].set_title(f"|Error|  max = {err.max():.1f} K", fontsize=9)
             axes[2].grid(True, alpha=0.3)
 
         fig.tight_layout()
-        fname = os.path.join(out_dir, f"example_traj{traj_idx}_layer{layer+1}.png")
+        fname = os.path.join(traj_dir, f"layer_{layer+1:02d}_LP{lp:.0f}W.png")
         fig.savefig(fname, dpi=150, bbox_inches="tight")
         plt.close(fig)
         print(f"[evaluate] Saved → {fname}")
@@ -429,8 +470,11 @@ def main() -> None:
 
     # ── auto-regressive rollout ────────────────────────────────────────────────
     print("\n[evaluate] Auto-regressive rollout evaluation ...")
-    ro_rmse, all_preds, all_gts = evaluate_rollout(
-        model, test_loader, state_mean_cpu, state_std_cpu, device, traj_len=traj_len
+    ro_rmse, all_preds, all_gts, all_actions = evaluate_rollout(
+        model, test_loader,
+        state_mean_cpu, state_std_cpu,
+        action_mean, action_std,
+        device, traj_len=traj_len,
     )
     print(f"\n{'Layer':>6}  {'Rollout RMSE [K]':>18}")
     for i in range(traj_len):
@@ -443,11 +487,13 @@ def main() -> None:
     plot_mae_per_layer(ss_mae,
                        os.path.join(out_dir, "per_layer_mae.png"))
 
-    # ── example field plots ───────────────────────────────────────────────────
+    # ── per-trajectory field plots (all 12 layers each) ───────────────────────
     n_ex = min(args.n_examples, len(all_preds))
+    print(f"\n[evaluate] Saving all-layer field plots for {n_ex} trajectories ...")
     for i in range(n_ex):
         plot_example_trajectory(
             all_preds[i], all_gts[i],
+            actions=all_actions[i],
             traj_idx=i,
             out_dir=out_dir,
             triang=triang,

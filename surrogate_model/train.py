@@ -76,6 +76,8 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--weight_decay",type=float, default=1e-5)
     p.add_argument("--patience",    type=int,   default=20,
                    help="Early-stopping patience (epochs without val improvement).")
+    p.add_argument("--num_workers", type=int,   default=4,
+                   help="DataLoader worker processes. Set to match --cpus-per-task minus 2.")
 
     # ── multi-step rollout loss ───────────────────────────────────────────────
     p.add_argument("--rollout_steps",  type=int,   default=0,
@@ -302,14 +304,14 @@ def main() -> None:
         train_ds,
         batch_size=args.batch_size,
         shuffle=True,
-        num_workers=4,
+        num_workers=args.num_workers,
         pin_memory=(device == "cuda"),
     )
     val_loader = DataLoader(
         val_ds,
         batch_size=args.batch_size,
         shuffle=False,
-        num_workers=4,
+        num_workers=args.num_workers,
         pin_memory=(device == "cuda"),
     )
 
