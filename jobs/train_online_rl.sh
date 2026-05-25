@@ -64,12 +64,12 @@ DEPTH=4             # number of residual blocks
 DROPOUT=0.0         # dropout inside blocks
 
 # ── RL hyperparameters ────────────────────────────────────────────────────────
-N_EPISODES=3000
+N_EPISODES=20000
 GAMMA=0.99
 LR=3e-4
 BATCH_SIZE=256
 BUFFER_CAPACITY=100000
-WARMUP_EPISODES=50            # pure random exploration before learning
+WARMUP_EPISODES=500            # pure random exploration before learning
 TARGET_UPDATE_FREQ=10         # episodes between hard target-net copies
 UPDATES_PER_STEP=1            # gradient updates per env step
 
