@@ -1,9 +1,13 @@
 import scipy.io
 import subprocess
 import os
+import sys
 import numpy as np
 from model import *
 import argparse
+
+# ── make sure the repo root is on the path so sub-packages are importable ─────
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 
 def to_matlab_numeric(obj):
@@ -18,14 +22,23 @@ def to_matlab_numeric(obj):
     return obj
 
 parser = argparse.ArgumentParser(description="parser")
-parser.add_argument("--mode", type=str, help="Mode: Constant / RL / P")
-parser.add_argument("--lp_const", type=float, default=400.0, help="Constant LP value if mode is Constant")
-parser.add_argument("--K", type=float, default=50, help="Proportional gain for P controller")
+parser.add_argument("--mode", type=str,
+                    help="Mode: Constant / RL / OnlineRL / P / Random")
+parser.add_argument("--lp_const", type=float, default=400.0,
+                    help="Constant LP value if mode is Constant")
+parser.add_argument("--K", type=float, default=50,
+                    help="Proportional gain for P controller")
 parser.add_argument(
     "--checkpoint",
     type=str,
     default="checkpoints/qnet_offline_5000_10.pt",
-    help="Checkpoint to load when mode is RL",
+    help="Checkpoint to load when mode is RL or OnlineRL",
+)
+parser.add_argument(
+    "--surrogate",
+    type=str,
+    default="surrogate_model/runs/20260521_210923/surrogate_best.pt",
+    help="Surrogate checkpoint path — provides normalisation stats for OnlineRL mode.",
 )
 args = parser.parse_args()
 # -----------------------------
@@ -67,12 +80,38 @@ if MODE == 'Constant':
 elif MODE == 'RL':
     agent = load_policy(args.checkpoint)
     print("Pretrained agent loaded successfully...")
+elif MODE == 'OnlineRL':
+    # ── Load the online Double-DQN agent ────────────────────────────────────
+    from online_RL.agent import DQNAgent
+    from online_RL.env   import ACTION_LIST as ONLINE_ACTION_LIST
+    from surrogate_model.train import load_surrogate
+
+    # The online RL Q-net was trained on states normalised with the surrogate's
+    # stats.  Load them from the surrogate checkpoint (same stats used during
+    # online RL training; no MATLAB simulator needed here).
+    _, _sm, _ss, _, _ = load_surrogate(args.surrogate, device='cpu')
+    _sm = _sm.to(device)
+    _ss = _ss.to(device)
+
+    online_agent = DQNAgent.load(args.checkpoint, device=device)
+    online_agent.q_net.eval()
+
+    def _select_action_online(state_raw_tensor: torch.Tensor) -> float:
+        """
+        state_raw_tensor : (D,) raw Kelvin temperature field (torch tensor)
+        Returns laser power [W] chosen greedily by the online DQN policy.
+        """
+        state_norm = ((state_raw_tensor.to(device) - _sm) / _ss).cpu().numpy()
+        action_idx = online_agent.select_action_greedy(state_norm)
+        return float(ONLINE_ACTION_LIST[action_idx].item())
+
+    print(f"Online DQN agent loaded: {online_agent.q_net}")
 elif MODE == 'P':
     print("Testing under Proportional control mode.")
 elif MODE == 'Random':
     print("Testing under Random action mode.")
 else:
-    raise ValueError("Invalid mode. Choose from Constant, RL, P, or Random.")
+    raise ValueError("Invalid mode. Choose from Constant, RL, OnlineRL, P, or Random.")
 
 nSteps = 12
 # Define layer evolution
@@ -88,8 +127,10 @@ for i in range(nSteps):
     # Select action using RL agent
     if MODE == 'Constant':
         params_dict['params']['LP'] = LP_CONST
-    elif MODE == 'RL':  
+    elif MODE == 'RL':
         params_dict['params']['LP'] = select_action(agent, states[i])
+    elif MODE == 'OnlineRL':
+        params_dict['params']['LP'] = _select_action_online(states[i])
     elif MODE == 'Random':
         params_dict['params']['LP'] = float(np.random.choice(np.arange(150, 310, 10)))
     elif MODE == 'P':

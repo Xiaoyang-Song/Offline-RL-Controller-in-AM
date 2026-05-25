@@ -18,7 +18,7 @@
 #SBATCH --partition=gpu
 #SBATCH --gpus=1
 #SBATCH --mem-per-gpu=16GB
-#SBATCH --time=24:00:00
+#SBATCH --time=2:00:00
 #SBATCH --output=/nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/jobs/surrogate_train_%j.log
 
 # ── environment ──────────────────────────────────────────────────────────────
@@ -43,10 +43,10 @@ echo "============================================================"
 DATA_PATH="Data/Dataset:layer_12_stepsize_10_samples_5000_150_400.pkl"
 
 HIDDEN=512          # hidden layer width
-DEPTH=4             # number of residual blocks
+DEPTH=5             # number of residual blocks
 DROPOUT=0.0         # dropout (0 = off)
 
-EPOCHS=200
+EPOCHS=400
 BATCH_SIZE=512
 LR=1e-3
 WEIGHT_DECAY=1e-5
