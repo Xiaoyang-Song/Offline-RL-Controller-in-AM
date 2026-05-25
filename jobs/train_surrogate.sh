@@ -54,7 +54,11 @@ PATIENCE=30         # early-stopping patience (epochs without val improvement)
 
 # Multi-step rollout loss: set ROLLOUT_STEPS>1 to enable
 # (e.g. 6 means model is penalised for 6-step accumulated error too)
-ROLLOUT_STEPS=0     # 0 = single-step MSE only
+# NOTE: ROLLOUT_STEPS=0 causes error accumulation in online RL rollouts —
+# layer-1 prediction is perfect (exact 300 K start) but layer-2 degrades
+# because the model was never trained to handle its own predictions as input.
+# Recommended fix: retrain with ROLLOUT_STEPS=6 ROLLOUT_WEIGHT=0.5
+ROLLOUT_STEPS=0     # 0 = single-step MSE only  (set to 6 to fix layer-2 degradation)
 ROLLOUT_WEIGHT=0.5  # weight of rollout loss vs 1-step loss
 NUM_WORKERS=6       # DataLoader workers (cpus-per-task=8, leave 2 for main process)
 

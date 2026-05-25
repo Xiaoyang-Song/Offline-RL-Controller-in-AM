@@ -228,7 +228,7 @@ def main() -> None:
         args.surrogate, device=device
     )
     surrogate.eval()
-    state_dim = int(state_mean.shape[0])
+    state_dim = int(state_mean.shape[0])   # raw temperature field dim (1053)
     print(f"[train] Surrogate   : state_dim={state_dim}, "
           f"action_mean={action_mean:.1f} W, action_std={action_std:.1f} W")
 
@@ -249,10 +249,14 @@ def main() -> None:
         sq_frac_start  = args.sq_frac_start,
         sq_frac_end    = args.sq_frac_end,
     )
+    # obs_dim = surrogate state_dim + 1 layer token  (e.g. 1053 + 1 = 1054)
+    obs_dim = env.obs_dim
     print(f"[train] Action space : {NUM_ACTIONS} actions  "
           f"({ACTION_LIST[0]:.0f}–{ACTION_LIST[-1]:.0f} W, step 10 W)")
     print(f"[train] Temp window  : [{args.T_l:.0f}, {args.T_h:.0f}] K")
     print(f"[train] Layers/ep    : {args.n_layers}")
+    print(f"[train] obs_dim      : {obs_dim}  "
+          f"({state_dim} temp nodes + 1 layer token)")
 
     # ── create agent ──────────────────────────────────────────────────────────
     if args.resume:
@@ -260,7 +264,7 @@ def main() -> None:
         agent = DQNAgent.load(args.resume, device=device)
     else:
         agent = DQNAgent(
-            state_dim            = state_dim,
+            state_dim            = obs_dim,   # Q-net input = temp field + layer index
             n_actions            = NUM_ACTIONS,
             hidden               = args.hidden,
             depth                = args.depth,
@@ -276,7 +280,7 @@ def main() -> None:
     print(f"[train] {agent.q_net}")
 
     # ── replay buffer ─────────────────────────────────────────────────────────
-    buffer = ReplayBuffer(capacity=args.buffer_capacity, state_dim=state_dim)
+    buffer = ReplayBuffer(capacity=args.buffer_capacity, state_dim=obs_dim)
     print(f"[train] {buffer}")
 
     # ── training ──────────────────────────────────────────────────────────────
@@ -302,8 +306,14 @@ def main() -> None:
         in_warmup  = episode <= args.warmup_episodes
 
         for _step in range(args.n_layers):
-            # Action selection: random during warmup, ε-greedy afterwards
-            action = agent.select_action(state, explore=(not in_warmup))
+            # Always pass explore=True.
+            # • During warmup   : ε = 1.0 (no updates → ε never decays)
+            #                     → random.random() < 1.0 always → purely random action
+            # • After warmup    : ε decays with each update → ε-greedy as intended
+            # (Using explore=False during warmup was a bug: it would use the
+            # randomly-initialised Q-net greedily, which is not uniformly random
+            # and reduces buffer diversity.)
+            action = agent.select_action(state, explore=True)
             next_state, reward, done, _info = env.step(action)
 
             buffer.push(state, action, reward, next_state, done)

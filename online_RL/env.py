@@ -9,7 +9,11 @@ Episode structure
   At every step the agent chooses a discrete laser power; the surrogate
   predicts the resulting temperature field; a reward is computed.
 
-  state   : normalised temperature field, shape (D=1053,), float32
+  state   : [normalised temperature field (D=1053,) ‖ normalised layer index (1,)]
+            shape (D+1 = 1054,), float32
+            The layer index is normalised to [0, 1]: layer_idx / (n_layers − 1).
+            Including the layer index is critical: the Q-net must behave very
+            differently on a cold layer-1 substrate vs. a hot layer-7 substrate.
   action  : int index into ACTION_LIST  (26 choices, 150→400 W)
   reward  : −meanDeviation  ∈ (−∞, 0]  (0 = perfect thermal control)
   done    : True after n_layers steps
@@ -101,7 +105,8 @@ class LPBFEnv:
         # squareSideFraction per layer (layer 0 → sq_frac_start, last → sq_frac_end)
         self.sq_fracs = np.linspace(sq_frac_start, sq_frac_end, n_layers)
 
-        self.state_dim  = int(state_mean.shape[0])
+        self.state_dim  = int(state_mean.shape[0])   # raw temperature field dim (1053)
+        self.obs_dim    = self.state_dim + 1          # +1 for normalised layer index
         self.n_actions  = NUM_ACTIONS
         self.action_list = ACTION_LIST  # raw laser powers [W]
 
@@ -146,11 +151,12 @@ class LPBFEnv:
 
         Returns
         -------
-        state_norm : (D,) float32 numpy array  — normalised temperature field
+        obs : (obs_dim = D+1,) float32 numpy array
+              Normalised temperature field concatenated with normalised layer index.
         """
         self._state_raw = np.full(self.state_dim, self.initial_temp, dtype=np.float32)
         self._layer = 0
-        return self._normalise(self._state_raw)
+        return self._make_obs(self._state_raw, self._layer)
 
     def step(self, action_idx: int):
         """
@@ -162,10 +168,10 @@ class LPBFEnv:
 
         Returns
         -------
-        next_state_norm : (D,) float32 np.ndarray  — normalised next state
-        reward          : float                    — −meanDeviation
-        done            : bool                     — True after n_layers steps
-        info            : dict  {'layer', 'action_W', 'mean_temp_K', 'max_temp_K'}
+        next_obs : (obs_dim = D+1,) float32 np.ndarray — normalised field + layer token
+        reward   : float                               — −meanDeviation
+        done     : bool                                — True after n_layers steps
+        info     : dict  {'layer', 'action_W', 'mean_temp_K', 'max_temp_K'}
         """
         if self._state_raw is None:
             raise RuntimeError("Call reset() before step().")
@@ -204,16 +210,36 @@ class LPBFEnv:
             "max_temp_K":  float(s2_raw.max()),
         }
 
-        return self._normalise(s2_raw), reward, done, info
+        return self._make_obs(s2_raw, self._layer), reward, done, info
 
     # =========================================================================
     # Private helpers
     # =========================================================================
 
     def _normalise(self, state_raw: np.ndarray) -> np.ndarray:
-        """z-score normalise a raw temperature field → float32 numpy."""
+        """z-score normalise a raw temperature field → (D,) float32 numpy."""
         s = torch.tensor(state_raw, dtype=torch.float32, device=self.device)
         return ((s - self.state_mean) / self.state_std).cpu().numpy()
+
+    def _make_obs(self, state_raw: np.ndarray, layer_idx: int) -> np.ndarray:
+        """
+        Build the observation vector: [normalised temperature field ‖ layer token].
+
+        The layer token = layer_idx / (n_layers − 1)  ∈ [0, 1], giving the
+        Q-network explicit context about where in the build it currently is.
+        Without this, the Q-net must learn the same weights for cold layer-1
+        and hot layer-7 substrates — an impossible compromise.
+
+        Returns
+        -------
+        obs : (D+1,) float32 numpy array
+        """
+        state_norm = self._normalise(state_raw)                          # (D,)
+        layer_token = np.array(
+            [min(layer_idx, self.n_layers - 1) / max(self.n_layers - 1, 1)],
+            dtype=np.float32,   # (1,) clamped to [0, 1]
+        )
+        return np.concatenate([state_norm, layer_token])                 # (D+1,)
 
     def _build_mask(self, layer_idx: int) -> Optional[np.ndarray]:
         """

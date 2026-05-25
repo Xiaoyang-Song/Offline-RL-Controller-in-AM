@@ -64,18 +64,18 @@ DEPTH=4             # number of residual blocks
 DROPOUT=0.0         # dropout inside blocks
 
 # ── RL hyperparameters ────────────────────────────────────────────────────────
-N_EPISODES=20000
+N_EPISODES=40000
 GAMMA=0.99
 LR=3e-4
 BATCH_SIZE=256
 BUFFER_CAPACITY=100000
-WARMUP_EPISODES=500            # pure random exploration before learning
+WARMUP_EPISODES=1000            # pure random exploration before learning
 TARGET_UPDATE_FREQ=10         # episodes between hard target-net copies
 UPDATES_PER_STEP=1            # gradient updates per env step
 
 EPSILON_START=1.0
 EPSILON_END=0.05
-EPSILON_DECAY_STEPS=50000     # ~17 episodes × 12 steps = ~204 steps/episode
+EPSILON_DECAY_STEPS=200000     # ~17 episodes × 12 steps = ~204 steps/episode
                               # 50000 / 204 ≈ 245 episodes of decay
 
 SEED=42

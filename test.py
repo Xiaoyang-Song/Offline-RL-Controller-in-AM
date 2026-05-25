@@ -96,13 +96,23 @@ elif MODE == 'OnlineRL':
     online_agent = DQNAgent.load(args.checkpoint, device=device)
     online_agent.q_net.eval()
 
-    def _select_action_online(state_raw_tensor: torch.Tensor) -> float:
+    _N_LAYERS_ONLINE = 12   # must match n_layers used during training
+
+    def _select_action_online(state_raw_tensor: torch.Tensor, layer_idx: int) -> float:
         """
         state_raw_tensor : (D,) raw Kelvin temperature field (torch tensor)
+        layer_idx        : 0-based layer number (0 = first layer)
         Returns laser power [W] chosen greedily by the online DQN policy.
+
+        The observation fed to the Q-net is [normalised_temp_field ‖ layer_token]
+        (same format produced by LPBFEnv._make_obs during training).
         """
-        state_norm = ((state_raw_tensor.to(device) - _sm) / _ss).cpu().numpy()
-        action_idx = online_agent.select_action_greedy(state_norm)
+        state_norm  = ((state_raw_tensor.to(device) - _sm) / _ss).cpu().numpy()
+        layer_token = np.array(
+            [layer_idx / max(_N_LAYERS_ONLINE - 1, 1)], dtype=np.float32
+        )
+        obs = np.concatenate([state_norm, layer_token])   # (D+1,)
+        action_idx = online_agent.select_action_greedy(obs)
         return float(ONLINE_ACTION_LIST[action_idx].item())
 
     print(f"Online DQN agent loaded: {online_agent.q_net}")
@@ -130,7 +140,7 @@ for i in range(nSteps):
     elif MODE == 'RL':
         params_dict['params']['LP'] = select_action(agent, states[i])
     elif MODE == 'OnlineRL':
-        params_dict['params']['LP'] = _select_action_online(states[i])
+        params_dict['params']['LP'] = _select_action_online(states[i], i)
     elif MODE == 'Random':
         params_dict['params']['LP'] = float(np.random.choice(np.arange(150, 310, 10)))
     elif MODE == 'P':
