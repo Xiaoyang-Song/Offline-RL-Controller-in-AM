@@ -1,17 +1,89 @@
-Pretrained agent loaded.
-Action chosen at step 0: LP = 200.0
-Reward: -1.89894801734751
-Action chosen at step 1: LP = 250.0
-Reward: -0.9894475782427069
-Action chosen at step 2: LP = 250.0
-Reward: -0.9894475782427069
-Action chosen at step 3: LP = 250.0
-Reward: -0.4413258489065246
-Action chosen at step 4: LP = 250.0
-Reward: -0.2927805817444886
-Action chosen at step 5: LP = 250.0
-Reward: -0.336539278624917
-Action chosen at step 6: LP = 250.0
-Reward: -0.19349693939568582
-Action chosen at step 7: LP = 250.0
-Reward: -0.1261665700676329
+Offline results
+Action chosen at step 1: LP = 300.0
+Running Layer 1 simulation in MATLAB...
+Reward: -0.01597758206429086
+Action chosen at step 2: LP = 220.0
+Running Layer 2 simulation in MATLAB...
+Reward: -0.013529684737280287
+Action chosen at step 3: LP = 190.0
+Running Layer 3 simulation in MATLAB...
+Reward: -0.023280854323329322
+Action chosen at step 4: LP = 160.0
+Running Layer 4 simulation in MATLAB...
+Reward: 0
+Action chosen at step 5: LP = 160.0
+Running Layer 5 simulation in MATLAB...
+Reward: 0
+Action chosen at step 6: LP = 150.0
+Running Layer 6 simulation in MATLAB...
+Reward: -0.012902423132902918
+Action chosen at step 7: LP = 150.0
+Running Layer 7 simulation in MATLAB...
+Reward: -0.040060533069587824
+Action chosen at step 8: LP = 150.0
+Running Layer 8 simulation in MATLAB...
+Reward: -0.06526803833780206
+Action chosen at step 9: LP = 150.0
+Running Layer 9 simulation in MATLAB...
+Reward: -0.09074862434106892
+Action chosen at step 10: LP = 150.0
+Running Layer 10 simulation in MATLAB...
+Reward: -0.26638416593922315
+Action chosen at step 11: LP = 150.0
+Running Layer 11 simulation in MATLAB...
+Reward: -0.3830860276999918
+Action chosen at step 12: LP = 150.0
+Running Layer 12 simulation in MATLAB...
+Reward: -0.4589478406884215
+
+online results on real environment
+Action chosen at step 1: LP = 340.0
+Running Layer 1 simulation in MATLAB...
+Reward: -0.002435365131043806
+Action chosen at step 2: LP = 160.0
+Running Layer 2 simulation in MATLAB...
+Reward: 0
+Action chosen at step 3: LP = 150.0
+Running Layer 3 simulation in MATLAB...
+Reward: 0
+Action chosen at step 4: LP = 150.0
+Running Layer 4 simulation in MATLAB...
+Reward: 0
+Action chosen at step 5: LP = 150.0
+Running Layer 5 simulation in MATLAB...
+Reward: 0
+Action chosen at step 6: LP = 150.0
+Running Layer 6 simulation in MATLAB...
+Reward: 0
+Action chosen at step 7: LP = 150.0
+Running Layer 7 simulation in MATLAB...
+Reward: -0.013405848211697187
+Action chosen at step 8: LP = 150.0
+Running Layer 8 simulation in MATLAB...
+Reward: -0.03887415364071383
+Action chosen at step 9: LP = 150.0
+Running Layer 9 simulation in MATLAB...
+Reward: -0.07237554028374275
+Action chosen at step 10: LP = 150.0
+Running Layer 10 simulation in MATLAB...
+Reward: -0.24717964181000987
+Action chosen at step 11: LP = 150.0
+Running Layer 11 simulation in MATLAB...
+Reward: -0.3659740180130175
+Action chosen at step 12: LP = 150.0
+Running Layer 12 simulation in MATLAB...
+Reward: -0.4472966956722377
+
+online RL on sim environment
+     1       340    -0.00243         566.1       2855.2       OUT
+     2       160    -0.00000         596.9       2533.7       OUT
+     3       150    -0.00000         605.0       2485.7       OUT
+     4       150    -0.00000         610.6       2500.0       OUT
+     5       150    -0.00000         613.6       2514.3       OUT
+     6       150    -0.00000         659.1       2768.6       OUT
+     7       150    -0.01310         694.5       2905.9       OUT
+     8       150    -0.03971         720.4       2984.8       OUT
+     9       150    -0.06185         741.6       3048.8       OUT
+    10       150    -0.11784         766.4       3145.4       OUT
+    11       150    -0.13630         779.5       3166.7       OUT
+    12       150    -0.22202         803.6       3273.6       OUT
