@@ -169,8 +169,13 @@ for i in range(nSteps):
     matlab_script = f"""
                     cd('{matlab_folder}');
                     paramsStruct = load('test/params.mat').paramsStruct;
+                    if {i} > 0
+                        prevData = load('test/results.mat', 'resultCool');
+                        paramsStruct.ic = prevData.resultCool;
+                    end
                     [uFinal, tAll, uAll, resultAll, model, meanDeviation] = simulateHeatingCooling(paramsStruct);
-                    save('test/results.mat','uFinal','tAll','uAll','meanDeviation');
+                    resultCool = resultAll(2);
+                    save('test/results.mat','uFinal','tAll','uAll','meanDeviation','resultCool');
                     i={i};
                     fig = figure('Visible','off');
                     pdeplot(model,'XYData',uFinal,'Mesh','on','ColorMap','jet');
@@ -201,10 +206,10 @@ for i in range(nSteps):
         capture_output=True
     )
 
-    # print("MATLAB stdout:")
-    # print(result.stdout)
-    # print("MATLAB stderr:")
-    # print(result.stderr)
+    # if result.stdout.strip():
+    #     print("MATLAB stdout:", result.stdout[-2000:])  # last 2000 chars to avoid spam
+    # if result.stderr.strip():
+    #     print("MATLAB stderr:", result.stderr[-2000:])
 
     if result.returncode != 0:
         raise RuntimeError(f"MATLAB failed with return code {result.returncode}")
@@ -220,6 +225,8 @@ for i in range(nSteps):
     states.append(torch.tensor(uFinal.flatten(), dtype=torch.float32).to(device))
 
     print("Reward:", -meanDeviation[0][0])
+    # IC for next layer is handled inside the MATLAB script via resultCool
+
     r_prev = -meanDeviation[0][0] # Used for P controller
     a_prev = params_dict['params']['LP']  # Used for P controller
     # print("uFinal shape:", uFinal.shape)
