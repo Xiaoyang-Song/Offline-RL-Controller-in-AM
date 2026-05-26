@@ -44,10 +44,10 @@ DATA_PATH="Data/Dataset:layer_12_stepsize_10_samples_5000_150_400.pkl"
 
 HIDDEN=512          # hidden layer width
 DEPTH=5             # number of residual blocks
-DROPOUT=0.0         # dropout (0 = off)
+DROPOUT=0.1         # dropout (0 = off)
 
-EPOCHS=400
-BATCH_SIZE=512
+EPOCHS=500
+BATCH_SIZE=128
 LR=1e-3
 WEIGHT_DECAY=1e-5
 PATIENCE=30         # early-stopping patience (epochs without val improvement)
@@ -58,8 +58,8 @@ PATIENCE=30         # early-stopping patience (epochs without val improvement)
 # layer-1 prediction is perfect (exact 300 K start) but layer-2 degrades
 # because the model was never trained to handle its own predictions as input.
 # Recommended fix: retrain with ROLLOUT_STEPS=6 ROLLOUT_WEIGHT=0.5
-ROLLOUT_STEPS=0     # 0 = single-step MSE only  (set to 6 to fix layer-2 degradation)
-ROLLOUT_WEIGHT=0.5  # weight of rollout loss vs 1-step loss
+ROLLOUT_STEPS=12     # 0 = single-step MSE only  (set to 6 to fix layer-2 degradation)
+ROLLOUT_WEIGHT=0.2  # weight of rollout loss vs 1-step loss
 NUM_WORKERS=6       # DataLoader workers (cpus-per-task=8, leave 2 for main process)
 
 VAL_FRACTION=0.10
