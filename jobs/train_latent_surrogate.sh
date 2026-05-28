@@ -49,12 +49,12 @@ TRANS_HIDDEN=128    # transition MLP hidden width
 TRANS_DEPTH=3       # transition MLP residual blocks
 DEC_HIDDEN=256      # decoder hidden width
 DEC_DEPTH=3         # decoder residual blocks
-DROPOUT=0.0
+DROPOUT=0.1
 
 # Loss weights
 RECON_ST_WEIGHT=1.0   # autoencoder reconstruction of s_t
 RECON_ST1_WEIGHT=1.0  # predicted s_{t+1} reconstruction
-NLL_WEIGHT=0.2        # Gaussian NLL for latent transition (tune if needed)
+NLL_WEIGHT=0.1        # Gaussian NLL for latent transition (stop-grad prevents collapse)
 
 # Multi-step rollout: set ROLLOUT_STEPS>1 to enable
 # Recommended: 12 (full trajectory) — prevents rollout error accumulation

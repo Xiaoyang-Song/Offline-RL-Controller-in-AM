@@ -106,8 +106,9 @@ def parse_args() -> argparse.Namespace:
                    help="Weight for autoencoder reconstruction loss L_recon_st.")
     p.add_argument("--recon_st1_weight", type=float, default=1.0,
                    help="Weight for next-state prediction loss L_recon_st1.")
-    p.add_argument("--nll_weight",       type=float, default=0.1,
-                   help="Weight for Gaussian NLL transition loss.")
+    p.add_argument("--nll_weight",       type=float, default=1.0,
+                   help="Weight for Gaussian NLL transition loss. "
+                        "Safe to set ≥1 because stop-gradient prevents variance collapse.")
 
     # ── multi-step rollout ────────────────────────────────────────────────────
     p.add_argument("--rollout_steps",  type=int,   default=0,
@@ -195,9 +196,13 @@ def compute_single_step_losses(
     L_recon_st  = weighted_mse(s_t_recon, s,  w)
     L_recon_st1 = weighted_mse(s_t1_pred, s2, w)
 
-    # NLL: compare predicted delta vs actual delta in latent space
-    delta_z_true = z_t1_enc - z_t          # (B, latent_dim)
-    L_nll        = gaussian_nll(mu_delta, delta_z_true, log_sigma_delta)
+    # NLL: sigma head learns to predict the residual |delta_z_true - mu|.
+    # Stop gradient on mu so sigma and mu are trained by separate signals:
+    #   mu        ← recon_st1 MSE (+ rollout)
+    #   log_sigma ← NLL only, predicting actual residual magnitude
+    # Without this, NLL drives sigma → 0 as mu improves (variance collapse).
+    delta_z_true = z_t1_enc - z_t                          # (B, latent_dim)
+    L_nll        = gaussian_nll(mu_delta.detach(), delta_z_true, log_sigma_delta)
 
     return L_recon_st, L_recon_st1, L_nll
 

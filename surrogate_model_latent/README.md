@@ -92,14 +92,21 @@ $$\Delta z^* = f_\phi(s_{t+1}) - z_t$$
 
 The Gaussian NLL of $\Delta z^*$ under the predicted distribution $\mathcal{N}(\mu_{\Delta z},\, \sigma_{\Delta z}^2)$ is:
 
-$$\mathcal{L}_{\text{nll}} = \frac{1}{d_z} \sum_{j=1}^{d_z} \frac{1}{2} \left[ 2 \log \sigma_{\Delta z}^{(j)} + \frac{\left(\Delta z^{*(j)} - \mu_{\Delta z}^{(j)}\right)^2}{\sigma_{\Delta z}^{(j)\,2}} \right]$$
+$$\mathcal{L}_{\text{nll}} = \frac{1}{d_z} \sum_{j=1}^{d_z} \frac{1}{2} \left[ 2 \log \sigma_{\Delta z}^{(j)} + \frac{\left(\Delta z^{*(j)} - \text{sg}[\mu_{\Delta z}^{(j)}]\right)^2}{\sigma_{\Delta z}^{(j)\,2}} \right]$$
+
+where $\text{sg}[\cdot]$ denotes **stop-gradient** (`.detach()` in PyTorch).
 
 The constant $\frac{1}{2}\log(2\pi)$ is omitted as it does not affect gradients.
-This loss simultaneously:
-- Penalises **overconfidence**: if $\sigma$ is too small and the prediction is
-  wrong, the quadratic term explodes.
-- Penalises **underconfidence**: if $\sigma$ is too large, the $2\log\sigma$
-  term grows.
+
+**Why stop-gradient on $\mu$?**
+Without it, the NLL drives $\sigma \to 0$ as $\mu$ improves (variance collapse):
+the equilibrium $\sigma^{(j)} = |\Delta z^{*(j)} - \mu^{(j)}|$ means a more
+accurate $\mu$ directly shrinks $\sigma$, eventually saturating the lower clamp
+at `log_sigma_min=-5` ($\sigma \approx 0.0067$) for all layers.
+
+With stop-gradient, $\mu$ and $\sigma$ are trained by **separate signals**:
+- $\mu_{\Delta z}$ ← reconstruction losses $\mathcal{L}_{\text{recon-st1}}$ and $\mathcal{L}_{\text{rollout}}$
+- $\log\sigma_{\Delta z}$ ← NLL only, learning the actual residual magnitude $|\Delta z^* - \text{sg}[\mu]|$ per layer
 
 ### 4. Multi-Step Rollout Loss (optional)
 
