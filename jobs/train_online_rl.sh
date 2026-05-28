@@ -22,7 +22,7 @@
 #SBATCH --partition=gpu
 #SBATCH --gpus=1
 #SBATCH --mem-per-gpu=16GB
-#SBATCH --time=4:00:00
+#SBATCH --time=2:00:00
 #SBATCH --output=/nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/jobs/online_rl_train_%j.log
 
 # ── environment ──────────────────────────────────────────────────────────────
@@ -46,7 +46,7 @@ echo "============================================================"
 
 # ── Surrogate checkpoint ─────────────────────────────────────────────────────
 # SURROGATE="surrogate_model/runs/20260521_210923/surrogate_best.pt"
-SURROGATE="surrogate_model/runs/20260525_221524/surrogate_best.pt"
+SURROGATE="surrogate_model/runs/20260528_181943/surrogate_best.pt"
 
 # ── Environment parameters (must match MATLAB paramsStruct in test.py) ───────
 T_L=2000.0          # lower nominal temperature bound [K]  (tempRange(1))
