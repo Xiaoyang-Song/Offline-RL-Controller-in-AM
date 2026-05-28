@@ -107,8 +107,10 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--recon_st1_weight", type=float, default=1.0,
                    help="Weight for next-state prediction loss L_recon_st1.")
     p.add_argument("--nll_weight",       type=float, default=1.0,
-                   help="Weight for Gaussian NLL transition loss. "
-                        "Safe to set ≥1 because stop-gradient prevents variance collapse.")
+                   help="Weight for β-NLL transition loss.")
+    p.add_argument("--nll_beta",         type=float, default=0.5,
+                   help="β for β-NLL (Seitzer et al. 2022). "
+                        "0=full stop-grad on σ weight, 0.5=balanced (default), 1=uniform μ gradient.")
 
     # ── multi-step rollout ────────────────────────────────────────────────────
     p.add_argument("--rollout_steps",  type=int,   default=0,
@@ -149,16 +151,33 @@ def parse_args() -> argparse.Namespace:
 # Loss functions
 # =============================================================================
 
-def gaussian_nll(
+def beta_gaussian_nll(
     mu:        torch.Tensor,   # (B, latent_dim)
     target:    torch.Tensor,   # (B, latent_dim)
     log_sigma: torch.Tensor,   # (B, latent_dim)
+    beta:      float = 0.5,
 ) -> torch.Tensor:
     """
-    Mean Gaussian NLL (constant 0.5·log(2π) omitted):
-        0.5 · mean(2·log σ + (target − μ)² · exp(−2·log σ))
+    β-NLL loss (Seitzer et al., ICLR 2022) — prevents variance collapse.
+
+    L_β = 0.5 · mean( sg[σ^{2β}] · (target − μ)²/σ² + log σ² )
+
+    The stop-gradient on σ^{2β} breaks the feedback loop that causes
+    σ → 0 when μ improves under standard NLL:
+
+      β = 0 : sg[1]   — μ gradient is precision-weighted (1/σ²), same as NLL
+                        but σ^{2·0}=1 is already constant, so no stop-grad effect.
+                        Equivalent to: detach the whole weight → only log σ² trains σ.
+              (Note: in practice β=0 ≡ full stop-gradient on mu.)
+      β = 0.5: sg[σ]  — μ gradient scaled by 1/σ  (softer than 1/σ²)
+      β = 1 : sg[σ²]  — μ gradient is uniform (not precision-weighted); σ still
+                        trained, but decoupled from μ improvement speed.
+
+    Default β=0.5 gives a balanced trade-off (recommended by Seitzer et al.).
     """
-    return 0.5 * (2 * log_sigma + (target - mu).pow(2) * torch.exp(-2 * log_sigma)).mean()
+    log_var = 2.0 * log_sigma                              # log σ²
+    weight  = torch.exp(beta * log_var).detach()           # sg[σ^{2β}]
+    return 0.5 * (weight * (target - mu).pow(2) * torch.exp(-log_var) + log_var).mean()
 
 
 def weighted_mse(
@@ -179,12 +198,13 @@ def compute_single_step_losses(
     s2:                torch.Tensor,              # (B, D) normalised
     layer_indices:     torch.Tensor,              # (B,)  int64
     roi_table:         Optional[torch.Tensor],    # (n_layers, D) or None
+    nll_beta:          float = 0.5,
 ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """
     Returns (L_recon_st, L_recon_st1, L_nll).
 
     Physics-aware: per-node ROI weights are applied to the MSE losses.
-    NLL is computed in latent space (no spatial weights needed).
+    NLL is β-NLL (Seitzer et al. 2022) in latent space.
     """
     s_t_recon, s_t1_pred, mu_delta, log_sigma_delta, z_t, z_t1_enc = model(s, a, s2)
 
@@ -196,13 +216,8 @@ def compute_single_step_losses(
     L_recon_st  = weighted_mse(s_t_recon, s,  w)
     L_recon_st1 = weighted_mse(s_t1_pred, s2, w)
 
-    # NLL: sigma head learns to predict the residual |delta_z_true - mu|.
-    # Stop gradient on mu so sigma and mu are trained by separate signals:
-    #   mu        ← recon_st1 MSE (+ rollout)
-    #   log_sigma ← NLL only, predicting actual residual magnitude
-    # Without this, NLL drives sigma → 0 as mu improves (variance collapse).
     delta_z_true = z_t1_enc - z_t                          # (B, latent_dim)
-    L_nll        = gaussian_nll(mu_delta.detach(), delta_z_true, log_sigma_delta)
+    L_nll        = beta_gaussian_nll(mu_delta, delta_z_true, log_sigma_delta, beta=nll_beta)
 
     return L_recon_st, L_recon_st1, L_nll
 
@@ -251,6 +266,7 @@ def run_epoch(
     recon_st_w:   float,
     recon_st1_w:  float,
     nll_w:        float,
+    nll_beta:     float,
     rollout_k:    int,
     rollout_w:    float,
     is_traj:      bool,
@@ -287,7 +303,7 @@ def run_epoch(
                 )
 
                 L_rs, L_rs1, L_nll = compute_single_step_losses(
-                    model, s_flat, a_flat, s2_flat, layer_flat, roi_table
+                    model, s_flat, a_flat, s2_flat, layer_flat, roi_table, nll_beta
                 )
 
                 L_rollout = (
@@ -319,7 +335,7 @@ def run_epoch(
                 layer_idx = layer_idx.to(device)
 
                 L_rs, L_rs1, L_nll = compute_single_step_losses(
-                    model, s, a, s2, layer_idx, roi_table
+                    model, s, a, s2, layer_idx, roi_table, nll_beta
                 )
 
                 loss = recon_st_w * L_rs + recon_st1_w * L_rs1 + nll_w * L_nll
@@ -600,6 +616,7 @@ def main() -> None:
         recon_st_w=args.recon_st_weight,
         recon_st1_w=args.recon_st1_weight,
         nll_w=args.nll_weight,
+        nll_beta=args.nll_beta,
         rollout_k=args.rollout_steps,
         rollout_w=args.rollout_weight,
         is_traj=use_rollout,

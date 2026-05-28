@@ -98,15 +98,19 @@ where $\text{sg}[\cdot]$ denotes **stop-gradient** (`.detach()` in PyTorch).
 
 The constant $\frac{1}{2}\log(2\pi)$ is omitted as it does not affect gradients.
 
-**Why stop-gradient on $\mu$?**
-Without it, the NLL drives $\sigma \to 0$ as $\mu$ improves (variance collapse):
-the equilibrium $\sigma^{(j)} = |\Delta z^{*(j)} - \mu^{(j)}|$ means a more
-accurate $\mu$ directly shrinks $\sigma$, eventually saturating the lower clamp
-at `log_sigma_min=-5` ($\sigma \approx 0.0067$) for all layers.
+**Why β-NLL instead of standard NLL?** (Seitzer et al., ICLR 2022)
 
-With stop-gradient, $\mu$ and $\sigma$ are trained by **separate signals**:
-- $\mu_{\Delta z}$ ← reconstruction losses $\mathcal{L}_{\text{recon-st1}}$ and $\mathcal{L}_{\text{rollout}}$
-- $\log\sigma_{\Delta z}$ ← NLL only, learning the actual residual magnitude $|\Delta z^* - \text{sg}[\mu]|$ per layer
+Standard NLL ($\beta=1$, no stop-gradient) causes **variance collapse**: as $\mu$ improves, the residuals shrink, and the NLL gradient pushes $\sigma \to 0$ to match — eventually saturating the lower clamp at `log_sigma_min=-5` ($\sigma \approx 0.0067$, constant across all layers).
+
+The β-NLL fixes this by stop-grading the $\sigma^{2\beta}$ weight on the quadratic term:
+
+| $\beta$ | $\mu$ gradient | $\sigma$ gradient | Effect |
+|---------|---------------|-------------------|--------|
+| 0 | $-({\Delta z^* - \mu})/\sigma^2$ | only from $\log\sigma^2$ | full stop-grad; $\sigma$ trains independently of $\mu$ quality |
+| **0.5** | $-({\Delta z^* - \mu})/\sigma$ | balanced | **recommended** — breaks collapse while keeping $\mu$ uncertainty-aware |
+| 1 | $-(\Delta z^* - \mu)$ | standard | uniform $\mu$ gradient; $\sigma$ can still collapse |
+
+With $\beta=0.5$, $\mu$ is trained jointly by both reconstruction losses and a softer NLL signal, while $\sigma$ learns to predict the actual per-layer residual magnitude without racing $\mu$ to zero.
 
 ### 4. Multi-Step Rollout Loss (optional)
 

@@ -54,12 +54,13 @@ DROPOUT=0.1
 # Loss weights
 RECON_ST_WEIGHT=1.0   # autoencoder reconstruction of s_t
 RECON_ST1_WEIGHT=1.0  # predicted s_{t+1} reconstruction
-NLL_WEIGHT=0.1        # Gaussian NLL for latent transition (stop-grad prevents collapse)
+NLL_WEIGHT=0.2        # β-NLL weight
+NLL_BETA=0.5          # β for β-NLL: 0=full stop-grad, 0.5=balanced, 1=uniform μ gradient
 
 # Multi-step rollout: set ROLLOUT_STEPS>1 to enable
 # Recommended: 12 (full trajectory) — prevents rollout error accumulation
 ROLLOUT_STEPS=12
-ROLLOUT_WEIGHT=0.1
+ROLLOUT_WEIGHT=0.2
 
 # Physics ROI — square scan region growing from initialFraction to finalFraction
 # (mirrors MATLAB: fractions = linspace(0.4, 0.5, 12), centred at domain centre)
@@ -70,7 +71,7 @@ ROI_EDGE_SIGMA_FRAC=0.05   # soft-edge width as fraction of min(width, height)
 
 # Training
 EPOCHS=500
-BATCH_SIZE=128
+BATCH_SIZE=256
 LR=1e-3
 WEIGHT_DECAY=1e-5
 PATIENCE=30
@@ -94,6 +95,7 @@ python -m surrogate_model_latent.train \
     --recon_st_weight  $RECON_ST_WEIGHT \
     --recon_st1_weight $RECON_ST1_WEIGHT \
     --nll_weight       $NLL_WEIGHT \
+    --nll_beta         $NLL_BETA \
     --rollout_steps    $ROLLOUT_STEPS \
     --rollout_weight   $ROLLOUT_WEIGHT \
     --roi_boost              $ROI_BOOST \
