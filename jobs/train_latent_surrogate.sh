@@ -42,7 +42,7 @@ echo "============================================================"
 DATA_PATH="Data/Dataset:layer_12_stepsize_10_samples_5000_150_400.pkl"
 
 # Model architecture
-LATENT_DIM=64       # latent space dimension
+LATENT_DIM=32       # latent space dimension
 ENC_HIDDEN=256      # encoder hidden width
 ENC_DEPTH=3         # encoder residual blocks
 TRANS_HIDDEN=128    # transition MLP hidden width
@@ -54,7 +54,7 @@ DROPOUT=0.0
 # Loss weights
 RECON_ST_WEIGHT=1.0   # autoencoder reconstruction of s_t
 RECON_ST1_WEIGHT=1.0  # predicted s_{t+1} reconstruction
-NLL_WEIGHT=0.1        # Gaussian NLL for latent transition (tune if needed)
+NLL_WEIGHT=0.2        # Gaussian NLL for latent transition (tune if needed)
 
 # Multi-step rollout: set ROLLOUT_STEPS>1 to enable
 # Recommended: 12 (full trajectory) — prevents rollout error accumulation

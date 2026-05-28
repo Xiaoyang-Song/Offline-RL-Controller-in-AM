@@ -9,7 +9,7 @@ import pickle
 def extract_single_trajectory(trajectory_id, trajectory_length=8):
     trajectory = []
     for j in range(trajectory_length):
-        filename = os.path.join('..', 'LPBF-Simulation', 'RL_Dataset', f'trajectory_{trajectory_id:03d}', f'layer_{j+1}_data.mat')
+        filename = os.path.join('..', 'LPBF-Simulation', 'RL_Dataset_lc', f'trajectory_{trajectory_id:03d}', f'layer_{j+1}_data.mat')
         data = loadmat(filename)
         # Extract s, a, r
         ss = data['SS_action'][0][0]
@@ -62,6 +62,7 @@ if __name__ == '__main__':
     args.add_argument('--mode', type=str, default='read', help='read or load')
     args.add_argument('--lb', type=int, default=150, help='Lower bound laser power')
     args.add_argument('--ub', type=int, default=300, help='Upper bound laser power')
+    args.add_argument('--tag', type=str, default=None, help='read or load')
     args = args.parse_args()
 
     n = args.n
@@ -73,18 +74,18 @@ if __name__ == '__main__':
         id_list = np.arange(1, n+1, 1)
         dataset = gather_dataset(id_list, trajectory_length=trajectory_length)
 
-        with open(f"Data/Dataset:layer_{trajectory_length}_stepsize_{step_size}_samples_{n}_{args.lb}_{args.ub}.pkl", "wb") as f:
+        with open(f"Data/Dataset:layer_{trajectory_length}_stepsize_{step_size}_samples_{n}_{args.lb}_{args.ub}{f'_{args.tag}' if args.tag else ''}.pkl", "wb") as f:
             pickle.dump(dataset, f, protocol=pickle.HIGHEST_PROTOCOL)
 
     elif args.mode == 'load':
 
-        with open(f"Data/Dataset:layer_{trajectory_length}_stepsize_{step_size}_samples_{n}_{args.lb}_{args.ub}.pkl", "rb") as f:
+        with open(f"Data/Dataset:layer_{trajectory_length}_stepsize_{step_size}_samples_{n}_{args.lb}_{args.ub}{f'_{args.tag}' if args.tag else ''}.pkl", "rb") as f:
             dataset = pickle.load(f)
 
         print(f"Loaded dataset with {len(dataset)} trajectories, each of length {len(dataset[0])}")
 
         # Transform with adjusted cost
         modified_dataset = transform_with_adj_cost(dataset, args.beta)
-        with open(f"Data/Dataset:layer_{trajectory_length}_stepsize_{step_size}_samples_{n}_{args.lb}_{args.ub}_beta_{args.beta}.pkl", "wb") as f:
+        with open(f"Data/Dataset:layer_{trajectory_length}_stepsize_{step_size}_samples_{n}_{args.lb}_{args.ub}_beta_{args.beta}{f'_{args.tag}' if args.tag else ''}.pkl", "wb") as f:
             pickle.dump(modified_dataset, f, protocol=pickle.HIGHEST_PROTOCOL)
 
