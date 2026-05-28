@@ -64,7 +64,8 @@ params_dict = {
         'H': 0.1
     },
     'heatTime': 0.05,
-    'coolTime': 0.10,
+    # 'coolTime': 0.10,
+    'coolTime': 0.15,
     'nTimeStepsHeat': 50.0,
     'nTimeStepsCool': 50.0,
     'doPlot': False,

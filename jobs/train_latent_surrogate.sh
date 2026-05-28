@@ -18,7 +18,7 @@
 #SBATCH --partition=gpu
 #SBATCH --gpus=1
 #SBATCH --mem-per-gpu=16GB
-#SBATCH --time=4:00:00
+#SBATCH --time=2:00:00
 #SBATCH --output=/nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/jobs/latent_surrogate_%j.log
 
 # ── environment ──────────────────────────────────────────────────────────────
@@ -39,7 +39,8 @@ echo "CUDA   : $(python -c 'import torch; print(torch.cuda.is_available())')"
 echo "============================================================"
 
 # ── default hyper-parameters ─────────────────────────────────────────────────
-DATA_PATH="Data/Dataset:layer_12_stepsize_10_samples_5000_150_400.pkl"
+# DATA_PATH="Data/Dataset:layer_12_stepsize_10_samples_5000_150_400.pkl"
+DATA_PATH="Data/Dataset:layer_12_stepsize_10_samples_3000_150_400_lc.pkl"
 
 # Model architecture
 LATENT_DIM=32       # latent space dimension

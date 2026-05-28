@@ -40,7 +40,8 @@ echo "CUDA   : $(python -c 'import torch; print(torch.cuda.is_available())')"
 echo "============================================================"
 
 # ── default hyper-parameters (edit here or pass via sbatch --) ───────────────
-DATA_PATH="Data/Dataset:layer_12_stepsize_10_samples_5000_150_400.pkl"
+# DATA_PATH="Data/Dataset:layer_12_stepsize_10_samples_5000_150_400.pkl"
+DATA_PATH="Data/Dataset:layer_12_stepsize_10_samples_3000_150_400_lc.pkl"
 
 HIDDEN=512          # hidden layer width
 DEPTH=5             # number of residual blocks
