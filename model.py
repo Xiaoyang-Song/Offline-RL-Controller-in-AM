@@ -398,18 +398,21 @@ def plot_loss(loss_history, fname='q_learning_loss.png'):
 # dataset = gather_dataset(id_list, trajectory_length=8)
 
 if __name__ == '__main__':
-    n = 5000
+    # n = 5000
+    n=3000
     step_size = 10
     trajectory_length = 12
     lb = 150
     ub = 400
+    # tag=""
+    tag="_lc"   # longer cooling time
 
     beta = 0.0
     if beta > 0:
-        file_path = os.path.join("Data", f"Dataset:layer_{trajectory_length}_stepsize_{step_size}_samples_{n}_beta_{beta}.pkl")
+        file_path = os.path.join("Data", f"Dataset:layer_{trajectory_length}_stepsize_{step_size}_samples_{n}_beta_{beta}{tag}.pkl")
     else:
-        file_path = os.path.join("Data", f"Dataset:layer_{trajectory_length}_stepsize_{step_size}_samples_{n}_{lb}_{ub}.pkl")
-    
+        file_path = os.path.join("Data", f"Dataset:layer_{trajectory_length}_stepsize_{step_size}_samples_{n}_{lb}_{ub}{tag}.pkl")
+
     with open(file_path, "rb") as f:
         print("Loading processed dataset...")
         dataset = pickle.load(f)
@@ -433,8 +436,8 @@ if __name__ == '__main__':
         gamma_lr=gamma_lr,
         initial_temperature=300.0,
     )
-    torch.save(checkpoint, f"checkpoints/qnet_offline_{n}_{step_size}.pt")
-    plot_loss(loss_history, fname=f'offline_q_loss_{n}_{step_size}.png')
+    torch.save(checkpoint, f"checkpoints/qnet_offline_{n}_{step_size}{tag}.pt")
+    plot_loss(loss_history, fname=f'offline_q_loss_{n}_{step_size}{tag}.png')
 
     # checkpoint, losses = train_pessimistic_q(
     #     dataset,
