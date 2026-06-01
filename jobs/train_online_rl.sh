@@ -45,7 +45,7 @@ echo "GPU      : $(python -c 'import torch; print(torch.cuda.get_device_name(0) 
 echo "============================================================"
 
 # ── Surrogate checkpoint (latent ensemble) ───────────────────────────────────
-SURROGATE="surrogate_model_latent/runs/20260528_182259/latent_best.pt"
+SURROGATE="surrogate_model_latent/runs/20260601_161335/latent_best.pt"
 
 # ── Environment parameters (must match MATLAB paramsStruct in test.py) ───────
 T_L=2000.0          # lower nominal temperature bound [K]  (tempRange(1))
@@ -61,7 +61,8 @@ SQ_FRAC_END=0.5     # squareSideFraction at last layer (test.py finalFraction)
 # ── Training mode ────────────────────────────────────────────────────────────
 # standard : reward = -meanDeviation  (no uncertainty term)
 # penalty  : reward = -meanDeviation - λ·σ_epist  (penalises OOD actions)
-UNCERTAINTY_MODE="standard"
+# UNCERTAINTY_MODE="standard"
+UNCERTAINTY_MODE="penalty"
 UNCERTAINTY_PENALTY_WEIGHT=0.5   # λ — only used when mode=penalty
 
 # ── Q-network architecture ────────────────────────────────────────────────────

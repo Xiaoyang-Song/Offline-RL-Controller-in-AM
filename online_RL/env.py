@@ -104,6 +104,15 @@ class LPBFEnv:
         self.height                     = height
         self.uncertainty_penalty_weight = uncertainty_penalty_weight
 
+        # Running EMA of epistemic_std — normalises the penalty so that λ is
+        # interpretable as "reward units lost per standard unit of excess uncertainty"
+        # rather than depending on the absolute scale of the latent-space std.
+        # Initialised to None; set on the first step and updated every step.
+        # Not reset between episodes: we want the lifetime average across the
+        # entire training run, not per-episode.
+        self._epist_ema: Optional[float] = None
+        self._ema_alpha: float = 0.995   # slow decay → stable baseline
+
         # squareSideFraction per layer (layer 0 → sq_frac_start, last → sq_frac_end)
         self.sq_fracs = np.linspace(sq_frac_start, sq_frac_end, n_layers)
 
@@ -208,8 +217,21 @@ class LPBFEnv:
 
         # ── compute reward ────────────────────────────────────────────────
         reward_base = self._compute_reward(s2_raw, self._layer)
-        # Mode 2: subtract uncertainty penalty (discourages OOD actions)
-        reward = reward_base - self.uncertainty_penalty_weight * epist_std
+
+        # Uncertainty penalty — EMA-normalised so λ is scale-invariant.
+        # Update running EMA of epistemic_std (persists across episodes).
+        if self._epist_ema is None:
+            self._epist_ema = epist_std
+        else:
+            self._epist_ema = (self._ema_alpha * self._epist_ema
+                               + (1.0 - self._ema_alpha) * epist_std)
+
+        # normalised_std ≈ 1.0 for typical in-distribution steps,
+        #                 >> 1.0 for OOD steps.
+        # λ is now directly interpretable: penalty = λ at typical uncertainty,
+        # 2λ at twice-typical uncertainty, etc.
+        normalised_std = epist_std / max(self._epist_ema, 1e-8)
+        reward = reward_base - self.uncertainty_penalty_weight * normalised_std
 
         # ── advance internal state ────────────────────────────────────────
         self._state_raw = s2_raw
@@ -217,12 +239,14 @@ class LPBFEnv:
         done = self._layer >= self.n_layers
 
         info = {
-            "layer":        self._layer,
-            "action_W":     action_W,
-            "mean_temp_K":  float(s2_raw.mean()),
-            "max_temp_K":   float(s2_raw.max()),
-            "epistemic_std": epist_std,       # mean ensemble std in latent space
-            "reward_base":  reward_base,      # reward before uncertainty penalty
+            "layer":           self._layer,
+            "action_W":        action_W,
+            "mean_temp_K":     float(s2_raw.mean()),
+            "max_temp_K":      float(s2_raw.max()),
+            "epistemic_std":   epist_std,        # raw ensemble std (latent space)
+            "normalised_std":  normalised_std,   # epist_std / ema  (scale-free)
+            "epist_ema":       self._epist_ema,  # current EMA baseline
+            "reward_base":     reward_base,      # reward before uncertainty penalty
         }
 
         return self._make_obs(s2_raw, self._layer), reward, done, info

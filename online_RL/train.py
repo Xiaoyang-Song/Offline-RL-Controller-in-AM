@@ -195,8 +195,8 @@ def plot_epistemic_std(ep_stds: list, out_path: str, window: int = 50) -> None:
         ax.plot(eps[window - 1:], smooth, color="tab:purple",
                 linewidth=2.0, label=f"Rolling avg ({window})")
     ax.set_xlabel("Episode")
-    ax.set_ylabel("Mean ensemble std (latent space)")
-    ax.set_title("Epistemic Uncertainty per Episode\n"
+    ax.set_ylabel("Mean normalised epistemic std  (1.0 = typical, >1 = OOD)")
+    ax.set_title("Normalised Epistemic Uncertainty per Episode\n"
                  "(penalty mode: decreasing = policy avoids OOD regions)")
     ax.legend(); ax.grid(True, alpha=0.3)
     fig.tight_layout(); fig.savefig(out_path, dpi=150); plt.close(fig)
@@ -319,7 +319,7 @@ def main() -> None:
             action = agent.select_action(state, explore=True)
             next_state, reward, done, info = env.step(action)
 
-            ep_stds.append(info["epistemic_std"])
+            ep_stds.append(info["normalised_std"])
             buffer.push(state, action, reward, next_state, done)
             ep_return += reward
             state      = next_state
@@ -358,7 +358,7 @@ def main() -> None:
                 f"avg({n_recent}) {avg_ret:+.4f} | "
                 f"ε {agent.epsilon:.3f} | "
                 f"loss {avg_loss:.5f} | "
-                f"σ_epist {avg_std:.4f} | "
+                f"σ_norm {avg_std:.3f} | "
                 f"buf {len(buffer):,} | "
                 f"{elapsed:.0f}s{tag}"
             )
