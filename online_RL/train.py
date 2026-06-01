@@ -77,7 +77,19 @@ def parse_args() -> argparse.Namespace:
     p.add_argument(
         "--surrogate", type=str,
         default="surrogate_model_latent/runs/latent_best.pt",
-        help="Path to the trained latent ensemble surrogate checkpoint.",
+        help="Path to the trained latent ensemble surrogate checkpoint. "
+             "Ignored when --adapted_checkpoint is provided.",
+    )
+    p.add_argument(
+        "--adapted_checkpoint", type=str, default="",
+        help="(Optional) Path to an adapted.pt from surrogate_domain_adaptation/adapt.py. "
+             "When set, the domain-adapted surrogate is used as the dynamics model "
+             "and --surrogate is ignored. Requires --base_checkpoint.",
+    )
+    p.add_argument(
+        "--base_checkpoint", type=str, default="",
+        help="Path to base_best.pt from train_base.py. "
+             "Required when --adapted_checkpoint is set.",
     )
 
     # ── training mode ─────────────────────────────────────────────────────────
@@ -232,11 +244,28 @@ def main() -> None:
           + (f"  (λ={penalty_w})" if args.uncertainty_mode == "penalty" else ""))
     print("=" * 65)
 
-    # ── load latent ensemble surrogate ────────────────────────────────────────
-    print(f"\n[train] Loading surrogate: {args.surrogate}")
-    surrogate, state_mean, state_std, action_mean, action_std, _ = \
-        load_latent_surrogate(args.surrogate, device=device)
-    surrogate.eval()
+    # ── load surrogate (base latent  OR  domain-adapted) ─────────────────────
+    if args.adapted_checkpoint:
+        if not args.base_checkpoint:
+            raise ValueError("--base_checkpoint is required when --adapted_checkpoint is set.")
+        from surrogate_domain_adaptation.train_base import load_base_checkpoint
+        from surrogate_domain_adaptation.model import load_adapted
+        print(f"\n[train] Loading base model : {args.base_checkpoint}")
+        print(f"[train] Loading adapters   : {args.adapted_checkpoint}")
+        base_model, _, _, _, _, _ = load_base_checkpoint(args.base_checkpoint, device=device)
+        surrogate = load_adapted(base_model, args.adapted_checkpoint, device=device)
+        surrogate.freeze_base()
+        surrogate.eval()
+        _ckpt       = torch.load(args.adapted_checkpoint, map_location=device, weights_only=False)
+        state_mean  = _ckpt["state_mean"].to(device)
+        state_std   = _ckpt["state_std"].to(device)
+        action_mean = float(_ckpt["action_mean"])
+        action_std  = float(_ckpt["action_std"])
+    else:
+        print(f"\n[train] Loading surrogate: {args.surrogate}")
+        surrogate, state_mean, state_std, action_mean, action_std, _ = \
+            load_latent_surrogate(args.surrogate, device=device)
+        surrogate.eval()
     state_dim = int(state_mean.shape[0])
     print(f"[train] Surrogate   : {surrogate}")
 

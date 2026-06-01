@@ -1,3 +1,4 @@
+import json
 import scipy.io
 import subprocess
 import os
@@ -40,6 +41,18 @@ parser.add_argument(
     default="surrogate_model_latent/runs/20260601_162903/latent_best.pt",
     help="Latent surrogate checkpoint path — provides normalisation stats for OnlineRL mode.",
 )
+parser.add_argument(
+    "--cool_time",
+    type=float,
+    default=0.10,
+    help="Inter-layer cooling time [s] for the MATLAB simulation (default 0.10).",
+)
+parser.add_argument(
+    "--results_out",
+    type=str,
+    default="",
+    help="(Optional) Path to save per-layer rewards/actions as a JSON file.",
+)
 args = parser.parse_args()
 # -----------------------------
 # 1. Prepare MATLAB input paramsStruct
@@ -64,8 +77,7 @@ params_dict = {
         'H': 0.1
     },
     'heatTime': 0.05,
-    # 'coolTime': 0.10,
-    'coolTime': 0.10,
+    'coolTime': args.cool_time,
     'nTimeStepsHeat': 50.0,
     'nTimeStepsCool': 50.0,
     'doPlot': False,
@@ -132,6 +144,9 @@ initialFraction = 0.4
 finalFraction = 0.5
 fractions = np.linspace(initialFraction, finalFraction, nSteps)
 
+
+_per_layer_rewards: list = []
+_per_layer_actions: list = []
 
 states = [torch.ones(1053, dtype=torch.float32).to(device) * params_dict['ic']]
 for i in range(nSteps):
@@ -227,10 +242,29 @@ for i in range(nSteps):
     meanDeviation = res['meanDeviation']
     states.append(torch.tensor(uFinal.flatten(), dtype=torch.float32).to(device))
 
-    print("Reward:", -meanDeviation[0][0])
+    _reward = float(-meanDeviation[0][0])
+    print("Reward:", _reward)
+    _per_layer_rewards.append(_reward)
+    _per_layer_actions.append(float(params_dict['params']['LP']))
     # IC for next layer is handled inside the MATLAB script via resultCool
 
-    r_prev = -meanDeviation[0][0] # Used for P controller
-    a_prev = params_dict['params']['LP']  # Used for P controller
-    # print("uFinal shape:", uFinal.shape)
-    # print("tAll shape:", tAll.shape)
+    r_prev = _reward                           # Used for P controller
+    a_prev = params_dict['params']['LP']       # Used for P controller
+
+# ── optional JSON output ──────────────────────────────────────────────────────
+if args.results_out:
+    os.makedirs(os.path.dirname(os.path.abspath(args.results_out)), exist_ok=True)
+    _results = {
+        "mode":               MODE,
+        "cool_time":          args.cool_time,
+        "checkpoint":         args.checkpoint,
+        "surrogate":          args.surrogate,
+        "per_layer_rewards":  _per_layer_rewards,
+        "per_layer_actions":  _per_layer_actions,
+        "total_return":       float(sum(_per_layer_rewards)),
+    }
+    with open(args.results_out, "w") as _f:
+        json.dump(_results, _f, indent=2)
+    print(f"\nResults saved → {args.results_out}")
+
+print(f"\nTotal return: {sum(_per_layer_rewards):.4f}")

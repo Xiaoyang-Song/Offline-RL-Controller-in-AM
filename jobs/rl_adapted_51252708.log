@@ -1,0 +1,16 @@
+============================================================
+Job ID   : 51252708
+Node     : gl1014
+Started  : Mon Jun  1 19:50:59 EDT 2026
+============================================================
+Python : /home/xysong/.conda/envs/RL/bin/python
+Torch  : 2.5.1+cu121
+CUDA   : True
+============================================================
+adapt_dir         : surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150
+base_checkpoint   : surrogate_domain_adaptation/runs/base/20260601_174626/base_best.pt
+K                 : 5  (dir suffix: K005)
+adapted_checkpoint: surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K005/adapted.pt
+out_dir           : surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K005/online_rl
+============================================================
+[job] K=5: training on domain-adapted surrogate
