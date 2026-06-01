@@ -16,7 +16,7 @@ Usage
 -----
     python -m online_RL.evaluate \\
         --checkpoint online_RL/runs/<timestamp>/dqn_best.pt \\
-        --surrogate  surrogate_model/runs/20260521_210923/surrogate_best.pt
+        --surrogate  surrogate_model_latent/runs/<timestamp>/latent_best.pt
 
     # Run 10 episodes and save a plot
     python -m online_RL.evaluate \\
@@ -42,8 +42,8 @@ import torch
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from surrogate_model.train import load_surrogate
-from online_RL.env         import LPBFEnv, ACTION_LIST, NUM_ACTIONS
+from surrogate_model_latent.train import load_latent_surrogate
+from online_RL.env                import LPBFEnv, ACTION_LIST, NUM_ACTIONS
 from online_RL.agent       import DQNAgent
 
 
@@ -58,8 +58,8 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--checkpoint", type=str, required=True,
                    help="Path to a trained DQN checkpoint (dqn_best.pt).")
     p.add_argument("--surrogate",  type=str,
-                   default="surrogate_model/runs/20260521_210923/surrogate_best.pt",
-                   help="Path to the surrogate model checkpoint.")
+                   default="surrogate_model_latent/runs/20260601_161335/latent_best.pt",
+                   help="Path to the latent surrogate checkpoint.")
 
     # ── environment (must match training) ────────────────────────────────────
     p.add_argument("--T_l",          type=float, default=2000.0)
@@ -232,8 +232,8 @@ def main() -> None:
     print(f"  Temp range : [{args.T_l:.0f}, {args.T_h:.0f}] K")
     print("=" * 62)
 
-    # ── load surrogate ────────────────────────────────────────────────────────
-    surrogate, state_mean, state_std, action_mean, action_std = load_surrogate(
+    # ── load latent surrogate ─────────────────────────────────────────────────
+    surrogate, state_mean, state_std, action_mean, action_std, _ = load_latent_surrogate(
         args.surrogate, device=device
     )
     surrogate.eval()

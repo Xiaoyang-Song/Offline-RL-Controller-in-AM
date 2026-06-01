@@ -1,0 +1,107 @@
+============================================================
+Job ID   : 51250950
+Node     : gl1023
+Started  : Mon Jun  1 18:54:00 EDT 2026
+============================================================
+Python : /home/xysong/.conda/envs/RL/bin/python
+Torch  : 2.5.1+cu121
+CUDA   : True
+============================================================
+Base checkpoint : surrogate_domain_adaptation/runs/base/20260601_174626/base_best.pt
+K values        : 5 10 20 50 100
+Target CT       : ct_150
+============================================================
+/home/xysong/.conda/envs/RL/lib/python3.10/site-packages/torch/utils/data/dataloader.py:617: UserWarning: This DataLoader will create 4 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+[adapt] Output dir  : /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150
+[adapt] Target CT   : ct_150  (0.15 s)
+
+[adapt] Loading base checkpoint: surrogate_domain_adaptation/runs/base/20260601_174626/base_best.pt
+[adapt] EnsembleLatentDynamicsModel(state=1053, latent=64, action=1, K=5, n_layers=12, embed=8 | enc=684,608  trans×5=593,440  dec=685,597 | total=1,963,645)
+[dataset] RL_Dataset_ct_150: 300 trajectories
+[adapt] Target: 300 trajs | test=90 | adapt-pool=210
+[MultiDomainTrajectoryDataset] 90 trajectories, T=12, state_dim=1053
+/home/xysong/.conda/envs/RL/lib/python3.10/site-packages/torch/utils/data/dataloader.py:617: UserWarning: This DataLoader will create 4 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+
+[adapt] Base model (K=0) on target domain:
+        mean MAE  = 86.673 K    mean RMSE = 186.464 K
+
+[adapt] ── K = 5 ────────────────────────────
+[MultiDomainFlatDataset] 48 transitions, state_dim=1053
+[MultiDomainFlatDataset] 12 transitions, state_dim=1053
+[MultiDomainTrajectoryDataset] 90 trajectories, T=12, state_dim=1053
+[adapt] K=  5 | MAE=21.699 K | RMSE=44.100 K | 32s
+[model] Adapted checkpoint (K=5) → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K005/adapted.pt
+
+[adapt] ── K = 10 ────────────────────────────
+[MultiDomainFlatDataset] 96 transitions, state_dim=1053
+[MultiDomainFlatDataset] 24 transitions, state_dim=1053
+[MultiDomainTrajectoryDataset] 90 trajectories, T=12, state_dim=1053
+[adapt] K= 10 | MAE=18.354 K | RMSE=38.066 K | 59s
+[model] Adapted checkpoint (K=10) → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K010/adapted.pt
+
+[adapt] ── K = 20 ────────────────────────────
+[MultiDomainFlatDataset] 192 transitions, state_dim=1053
+[MultiDomainFlatDataset] 48 transitions, state_dim=1053
+[MultiDomainTrajectoryDataset] 90 trajectories, T=12, state_dim=1053
+[adapt] K= 20 | MAE=15.748 K | RMSE=32.267 K | 72s
+[model] Adapted checkpoint (K=20) → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/adapted.pt
+
+[adapt] ── K = 50 ────────────────────────────
+[MultiDomainFlatDataset] 480 transitions, state_dim=1053
+[MultiDomainFlatDataset] 120 transitions, state_dim=1053
+[MultiDomainTrajectoryDataset] 90 trajectories, T=12, state_dim=1053
+[adapt] K= 50 | MAE=13.779 K | RMSE=27.846 K | 105s
+[model] Adapted checkpoint (K=50) → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K050/adapted.pt
+
+[adapt] ── K = 100 ────────────────────────────
+[MultiDomainFlatDataset] 960 transitions, state_dim=1053
+[MultiDomainFlatDataset] 240 transitions, state_dim=1053
+[MultiDomainTrajectoryDataset] 90 trajectories, T=12, state_dim=1053
+[adapt] K=100 | MAE=12.558 K | RMSE=25.268 K | 158s
+[model] Adapted checkpoint (K=100) → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K100/adapted.pt
+
+[adapt] Summary → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/metrics_summary.json
+
+[adapt] Results:
+       K    Mean MAE [K]   Mean RMSE [K]
+  ----------------------------------------
+       5          21.699          44.100
+      10          18.354          38.066
+      20          15.748          32.267
+      50          13.779          27.846
+       0          86.673         186.464
+     100          12.558          25.268
+
+============================================================
+Running evaluate.py on: surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150
+============================================================
+/home/xysong/.conda/envs/RL/lib/python3.10/site-packages/torch/utils/data/dataloader.py:617: UserWarning: This DataLoader will create 4 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+[evaluate] Loading base: surrogate_domain_adaptation/runs/base/20260601_174626/base_best.pt
+[dataset] RL_Dataset_ct_150: 300 trajectories
+[evaluate] Test set: 90 ct_150 trajectories
+[MultiDomainTrajectoryDataset] 90 trajectories, T=12, state_dim=1053
+[evaluate] K=  5 | MAE=21.699 K | RMSE=44.100 K
+[evaluate] K= 10 | MAE=18.354 K | RMSE=38.066 K
+[evaluate] K= 20 | MAE=15.748 K | RMSE=32.267 K
+[evaluate] K= 50 | MAE=13.779 K | RMSE=27.846 K
+[evaluate] K=100 | MAE=12.558 K | RMSE=25.268 K
+[evaluate] → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/few_shot_learning_curve.png
+[evaluate] → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/per_layer_mae.png
+[evaluate] → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/per_layer_rmse.png
+[evaluate] Metrics table → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/metrics_table.txt
+
+     K    Mean MAE [K]   Mean RMSE [K]
+     0          86.673         186.464
+     5          21.699          44.100
+    10          18.354          38.066
+    20          15.748          32.267
+    50          13.779          27.846
+   100          12.558          25.268
+
+[evaluate] All outputs in: surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150
+============================================================
+Finished: Mon Jun  1 19:17:04 EDT 2026  (adapt=0  eval=0)
+============================================================

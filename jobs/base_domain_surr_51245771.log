@@ -1,0 +1,63 @@
+============================================================
+Job ID   : 51245771
+Node     : gl1002
+Started  : Mon Jun  1 17:46:17 EDT 2026
+============================================================
+Python : /home/xysong/.conda/envs/RL/bin/python
+Torch  : 2.5.1+cu121
+CUDA   : True
+============================================================
+/home/xysong/.conda/envs/RL/lib/python3.10/site-packages/torch/utils/data/dataloader.py:617: UserWarning: This DataLoader will create 6 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+/home/xysong/.conda/envs/RL/lib/python3.10/site-packages/torch/utils/data/dataloader.py:617: UserWarning: This DataLoader will create 6 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+[train] Output dir : surrogate_domain_adaptation/runs/base/20260601_174626
+[train] Device     : cuda
+[train] Source CTs : ct_50_60_70_80_90_100
+[dataset] RL_Dataset_ct_050: 300 trajectories
+[dataset] RL_Dataset_ct_060: 300 trajectories
+[dataset] RL_Dataset_ct_070: 300 trajectories
+[dataset] RL_Dataset_ct_080: 300 trajectories
+[dataset] RL_Dataset_ct_090: 300 trajectories
+[dataset] RL_Dataset_ct_100: 300 trajectories
+[dataset] Source pool: 1800 trajectories  (ct=5.0, ct=6.0, ct=7.0, ct=8.0, ct=9.0, ct=10.0)
+[dataset] Split → train 1440 | val 180 | test 180
+[dataset] State mean ∈ [110.1, 6046.3]  std ∈ [43.6220, 2544.6]
+[dataset] Action mean = 275.18 W  std = 74.89 W
+[dataset] ROI weight table: (12, 1053), range [0.801, 4.219]  (square side 0.40→0.50 × min_dim)
+[train] ROI weights from /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model/mesh.mat
+[MultiDomainTrajectoryDataset] 1,440 trajectories, T=12, state_dim=1053
+[MultiDomainTrajectoryDataset] 180 trajectories, T=12, state_dim=1053
+[train] EnsembleLatentDynamicsModel(state=1053, latent=64, action=1, K=5, n_layers=12, embed=8 | enc=684,608  trans×5=593,440  dec=685,597 | total=1,963,645)
+Ep    1/400 | train 2.23370 [rs=1.1795 rs1=0.9509 ro=1.0335] | val 1.28817 | lr 1.00e-03 | 4s ✓
+Ep   10/400 | train 0.13642 [rs=0.0539 rs1=0.0666 ro=0.1588] | val 0.13100 | lr 9.98e-04 | 21s ✓
+Ep   20/400 | train 0.04258 [rs=0.0130 rs1=0.0209 ro=0.0865] | val 0.03978 | lr 9.94e-04 | 40s ✓
+Ep   30/400 | train 0.03332 [rs=0.0095 rs1=0.0160 ro=0.0784] | val 0.03270 | lr 9.86e-04 | 59s (1/40)
+Ep   40/400 | train 0.03079 [rs=0.0087 rs1=0.0143 ro=0.0787] | val 0.02899 | lr 9.76e-04 | 77s ✓
+Ep   50/400 | train 0.02908 [rs=0.0085 rs1=0.0129 ro=0.0776] | val 0.02748 | lr 9.62e-04 | 95s (3/40)
+Ep   60/400 | train 0.02407 [rs=0.0066 rs1=0.0099 ro=0.0751] | val 0.02410 | lr 9.46e-04 | 114s ✓
+Ep   70/400 | train 0.02222 [rs=0.0059 rs1=0.0088 ro=0.0744] | val 0.02223 | lr 9.27e-04 | 133s ✓
+Ep   80/400 | train 0.02079 [rs=0.0052 rs1=0.0080 ro=0.0752] | val 0.02042 | lr 9.05e-04 | 151s (2/40)
+Ep   90/400 | train 0.01633 [rs=0.0037 rs1=0.0055 ro=0.0717] | val 0.01810 | lr 8.81e-04 | 169s (1/40)
+Ep  100/400 | train 0.01616 [rs=0.0036 rs1=0.0054 ro=0.0719] | val 0.01790 | lr 8.55e-04 | 188s (4/40)
+Ep  110/400 | train 0.01458 [rs=0.0028 rs1=0.0046 ro=0.0712] | val 0.01490 | lr 8.26e-04 | 206s (2/40)
+Ep  120/400 | train 0.01260 [rs=0.0023 rs1=0.0034 ro=0.0691] | val 0.01352 | lr 7.96e-04 | 225s (1/40)
+Ep  130/400 | train 0.01305 [rs=0.0024 rs1=0.0038 ro=0.0688] | val 0.01416 | lr 7.64e-04 | 243s (11/40)
+Ep  140/400 | train 0.01267 [rs=0.0023 rs1=0.0037 ro=0.0667] | val 0.01249 | lr 7.30e-04 | 261s ✓
+Ep  150/400 | train 0.01235 [rs=0.0022 rs1=0.0037 ro=0.0651] | val 0.01241 | lr 6.94e-04 | 280s (8/40)
+Ep  160/400 | train 0.01155 [rs=0.0018 rs1=0.0033 ro=0.0637] | val 0.01254 | lr 6.58e-04 | 298s (6/40)
+Ep  170/400 | train 0.01120 [rs=0.0019 rs1=0.0033 ro=0.0595] | val 0.01218 | lr 6.21e-04 | 316s (16/40)
+Ep  180/400 | train 0.01039 [rs=0.0016 rs1=0.0030 ro=0.0580] | val 0.01251 | lr 5.82e-04 | 334s (5/40)
+Ep  190/400 | train 0.01005 [rs=0.0015 rs1=0.0030 ro=0.0561] | val 0.01202 | lr 5.44e-04 | 352s (15/40)
+Ep  200/400 | train 0.00935 [rs=0.0016 rs1=0.0030 ro=0.0480] | val 0.01203 | lr 5.05e-04 | 371s (9/40)
+Ep  210/400 | train 0.00904 [rs=0.0016 rs1=0.0030 ro=0.0444] | val 0.01318 | lr 4.66e-04 | 389s (19/40)
+Ep  220/400 | train 0.00735 [rs=0.0012 rs1=0.0026 ro=0.0350] | val 0.01405 | lr 4.28e-04 | 407s (29/40)
+Ep  230/400 | train 0.00680 [rs=0.0012 rs1=0.0025 ro=0.0314] | val 0.01370 | lr 3.89e-04 | 425s (39/40)
+[train] Early stop at epoch 231.
+[train] → surrogate_domain_adaptation/runs/base/20260601_174626/loss_curves.png
+
+[train] Best val loss  : 0.011886
+[train] Best checkpoint: surrogate_domain_adaptation/runs/base/20260601_174626/base_best.pt
+============================================================
+Training finished: Mon Jun  1 18:39:29 EDT 2026  (exit code: 0)
+============================================================

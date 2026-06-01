@@ -7,8 +7,7 @@
 # job, either by editing this file or passing it via the command line.
 #
 # Submit (after base training completes):
-#   sbatch jobs/adapt_domain_surrogate.sh \
-#       --base_checkpoint surrogate_domain_adaptation/runs/base/<ts>/base_best.pt
+#   sbatch jobs/adapt_domain_surrogate.sh --base_checkpoint surrogate_domain_adaptation/runs/base/<ts>/base_best.pt
 #
 # Or with SLURM dependency on the base job (JID = base job ID):
 #   sbatch --dependency=afterok:<JID> jobs/adapt_domain_surrogate.sh \

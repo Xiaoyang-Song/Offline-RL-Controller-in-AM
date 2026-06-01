@@ -8,3 +8,1256 @@ Torch    : 2.5.1+cu121
 CUDA     : True
 GPU      : Tesla V100-PCIE-16GB
 ============================================================
+=================================================================
+[train] Online DQN — LPBF Laser-Power Controller
+[train] Output dir  : online_RL/runs/20260601_165727
+[train] Device      : cuda
+[train] Mode        : standard
+=================================================================
+
+[train] Loading surrogate: surrogate_model_latent/runs/20260601_161335/latent_best.pt
+[train] Surrogate   : EnsembleLatentDynamicsModel(state=1053, latent=32, action=1, K=5, n_layers=12, embed=8 | enc=676,384  trans×5=552,320  dec=677,405 | total=1,906,109)
+[LPBFEnv] Mesh loaded: 1053 nodes  X∈[0.00, 12.00]  Y∈[0.00, 3.00]
+[train] Action space : 26 actions  (150–400 W)
+[train] Temp window  : [2000, 2800] K
+[train] obs_dim      : 1054  (1053 nodes + 1 layer token)
+[train] QNet(state_dim=1054, num_actions=26, hidden=256, depth=4, n_layers=12, layer_embed_dim=8, params=809,594)
+[train] ReplayBuffer(capacity=100,000, size=0, state_dim=1054)
+
+[train] Starting 40000 episodes  (warmup=1000, Double-DQN=True, target_update_freq=10)
+-----------------------------------------------------------------
+Ep     1/40000 | ret -23.2456 | avg(1) -23.2456 | ε 1.000 | loss nan | σ_epist 0.0308 | buf 12 | 0s [warmup]
+Ep    50/40000 | ret -28.6195 | avg(50) -24.7820 | ε 1.000 | loss nan | σ_epist 0.0292 | buf 600 | 3s [warmup]
+Ep   100/40000 | ret -24.8044 | avg(50) -25.2006 | ε 1.000 | loss nan | σ_epist 0.0286 | buf 1,200 | 6s [warmup]
+Ep   150/40000 | ret -21.8820 | avg(50) -24.3051 | ε 1.000 | loss nan | σ_epist 0.0288 | buf 1,800 | 8s [warmup]
+Ep   200/40000 | ret -22.6657 | avg(50) -25.5921 | ε 1.000 | loss nan | σ_epist 0.0286 | buf 2,400 | 11s [warmup]
+Ep   250/40000 | ret -29.8157 | avg(50) -24.1388 | ε 1.000 | loss nan | σ_epist 0.0287 | buf 3,000 | 14s [warmup]
+Ep   300/40000 | ret -25.3553 | avg(50) -24.1712 | ε 1.000 | loss nan | σ_epist 0.0284 | buf 3,600 | 17s [warmup]
+Ep   350/40000 | ret -22.3002 | avg(50) -25.7249 | ε 1.000 | loss nan | σ_epist 0.0294 | buf 4,200 | 19s [warmup]
+Ep   400/40000 | ret -35.8088 | avg(50) -25.5165 | ε 1.000 | loss nan | σ_epist 0.0294 | buf 4,800 | 22s [warmup]
+Ep   450/40000 | ret -17.1158 | avg(50) -23.2490 | ε 1.000 | loss nan | σ_epist 0.0288 | buf 5,400 | 25s [warmup]
+Ep   500/40000 | ret -25.2324 | avg(50) -22.5053 | ε 1.000 | loss nan | σ_epist 0.0290 | buf 6,000 | 28s [warmup]
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep00500.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep   550/40000 | ret -27.9180 | avg(50) -24.3992 | ε 1.000 | loss nan | σ_epist 0.0288 | buf 6,600 | 31s [warmup]
+Ep   600/40000 | ret -31.0242 | avg(50) -24.5388 | ε 1.000 | loss nan | σ_epist 0.0289 | buf 7,200 | 34s [warmup]
+Ep   650/40000 | ret -25.2068 | avg(50) -24.3230 | ε 1.000 | loss nan | σ_epist 0.0289 | buf 7,800 | 37s [warmup]
+Ep   700/40000 | ret -28.0812 | avg(50) -25.0535 | ε 1.000 | loss nan | σ_epist 0.0292 | buf 8,400 | 40s [warmup]
+Ep   750/40000 | ret -20.6573 | avg(50) -24.1982 | ε 1.000 | loss nan | σ_epist 0.0291 | buf 9,000 | 42s [warmup]
+Ep   800/40000 | ret -16.1092 | avg(50) -23.8821 | ε 1.000 | loss nan | σ_epist 0.0295 | buf 9,600 | 45s [warmup]
+Ep   850/40000 | ret -25.1119 | avg(50) -25.0609 | ε 1.000 | loss nan | σ_epist 0.0281 | buf 10,200 | 48s [warmup]
+Ep   900/40000 | ret -25.3282 | avg(50) -24.8393 | ε 1.000 | loss nan | σ_epist 0.0293 | buf 10,800 | 51s [warmup]
+Ep   950/40000 | ret -22.4306 | avg(50) -24.7422 | ε 1.000 | loss nan | σ_epist 0.0289 | buf 11,400 | 54s [warmup]
+Ep  1000/40000 | ret -26.6557 | avg(50) -24.0993 | ε 1.000 | loss nan | σ_epist 0.0294 | buf 12,000 | 56s [warmup]
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep01000.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_best.pt
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_best.pt
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_best.pt
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_best.pt
+Ep  1050/40000 | ret -30.9201 | avg(50) -23.8023 | ε 0.997 | loss 0.00966 | σ_epist 0.0291 | buf 12,600 | 65s
+Ep  1100/40000 | ret -19.8689 | avg(50) -25.2926 | ε 0.994 | loss 0.00103 | σ_epist 0.0289 | buf 13,200 | 72s
+Ep  1150/40000 | ret -31.8101 | avg(50) -25.7961 | ε 0.991 | loss 0.00050 | σ_epist 0.0293 | buf 13,800 | 79s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_best.pt
+Ep  1200/40000 | ret -26.2796 | avg(50) -24.8398 | ε 0.989 | loss 0.00067 | σ_epist 0.0290 | buf 14,400 | 86s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_best.pt
+Ep  1250/40000 | ret -22.8452 | avg(50) -24.8646 | ε 0.986 | loss 0.00053 | σ_epist 0.0291 | buf 15,000 | 93s
+Ep  1300/40000 | ret -18.6778 | avg(50) -23.0545 | ε 0.983 | loss 0.00055 | σ_epist 0.0293 | buf 15,600 | 100s
+Ep  1350/40000 | ret -28.0242 | avg(50) -23.4237 | ε 0.980 | loss 0.00065 | σ_epist 0.0287 | buf 16,200 | 107s
+Ep  1400/40000 | ret -29.9142 | avg(50) -23.9133 | ε 0.977 | loss 0.00127 | σ_epist 0.0288 | buf 16,800 | 114s
+Ep  1450/40000 | ret -22.9813 | avg(50) -24.9115 | ε 0.974 | loss 0.00047 | σ_epist 0.0288 | buf 17,400 | 121s
+Ep  1500/40000 | ret -20.1060 | avg(50) -24.3945 | ε 0.972 | loss 0.00043 | σ_epist 0.0293 | buf 18,000 | 128s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep01500.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep  1550/40000 | ret -22.0063 | avg(50) -24.8774 | ε 0.969 | loss 0.00041 | σ_epist 0.0291 | buf 18,600 | 136s
+Ep  1600/40000 | ret -19.8131 | avg(50) -21.8062 | ε 0.966 | loss 0.00056 | σ_epist 0.0294 | buf 19,200 | 143s
+Ep  1650/40000 | ret -28.4694 | avg(50) -23.7863 | ε 0.963 | loss 0.00028 | σ_epist 0.0294 | buf 19,800 | 150s
+Ep  1700/40000 | ret -20.3368 | avg(50) -22.5219 | ε 0.960 | loss 0.00033 | σ_epist 0.0288 | buf 20,400 | 157s
+Ep  1750/40000 | ret -11.6364 | avg(50) -23.4702 | ε 0.957 | loss 0.00046 | σ_epist 0.0295 | buf 21,000 | 164s
+Ep  1800/40000 | ret -30.6790 | avg(50) -23.5549 | ε 0.954 | loss 0.00056 | σ_epist 0.0294 | buf 21,600 | 171s
+Ep  1850/40000 | ret -18.1698 | avg(50) -21.9485 | ε 0.952 | loss 0.00059 | σ_epist 0.0295 | buf 22,200 | 178s
+Ep  1900/40000 | ret -15.3261 | avg(50) -22.9021 | ε 0.949 | loss 0.00067 | σ_epist 0.0296 | buf 22,800 | 185s
+Ep  1950/40000 | ret -15.4913 | avg(50) -23.5911 | ε 0.946 | loss 0.00019 | σ_epist 0.0291 | buf 23,400 | 192s
+Ep  2000/40000 | ret -30.2305 | avg(50) -23.1220 | ε 0.943 | loss 0.00035 | σ_epist 0.0292 | buf 24,000 | 200s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep02000.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep  2050/40000 | ret -14.6536 | avg(50) -22.6852 | ε 0.940 | loss 0.00025 | σ_epist 0.0295 | buf 24,600 | 208s
+Ep  2100/40000 | ret -12.9119 | avg(50) -22.4858 | ε 0.937 | loss 0.00043 | σ_epist 0.0297 | buf 25,200 | 215s
+Ep  2150/40000 | ret -11.8792 | avg(50) -22.7665 | ε 0.934 | loss 0.00040 | σ_epist 0.0298 | buf 25,800 | 222s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_best.pt
+Ep  2200/40000 | ret -28.0396 | avg(50) -23.5839 | ε 0.932 | loss 0.00039 | σ_epist 0.0296 | buf 26,400 | 229s
+Ep  2250/40000 | ret -13.3592 | avg(50) -22.0343 | ε 0.929 | loss 0.00034 | σ_epist 0.0296 | buf 27,000 | 236s
+Ep  2300/40000 | ret -13.3488 | avg(50) -22.0104 | ε 0.926 | loss 0.00020 | σ_epist 0.0299 | buf 27,600 | 243s
+Ep  2350/40000 | ret -22.6630 | avg(50) -21.8262 | ε 0.923 | loss 0.00039 | σ_epist 0.0300 | buf 28,200 | 250s
+Ep  2400/40000 | ret -18.7934 | avg(50) -22.5382 | ε 0.920 | loss 0.00016 | σ_epist 0.0299 | buf 28,800 | 257s
+Ep  2450/40000 | ret -23.0515 | avg(50) -22.2644 | ε 0.917 | loss 0.00039 | σ_epist 0.0296 | buf 29,400 | 264s
+Ep  2500/40000 | ret -17.7126 | avg(50) -22.8447 | ε 0.915 | loss 0.00012 | σ_epist 0.0298 | buf 30,000 | 271s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep02500.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep  2550/40000 | ret -27.4787 | avg(50) -21.9774 | ε 0.912 | loss 0.00015 | σ_epist 0.0301 | buf 30,600 | 279s
+Ep  2600/40000 | ret -17.1813 | avg(50) -21.8981 | ε 0.909 | loss 0.00024 | σ_epist 0.0295 | buf 31,200 | 286s
+Ep  2650/40000 | ret -10.3154 | avg(50) -21.8935 | ε 0.906 | loss 0.00023 | σ_epist 0.0299 | buf 31,800 | 294s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_best.pt
+Ep  2700/40000 | ret -24.3676 | avg(50) -21.5561 | ε 0.903 | loss 0.00051 | σ_epist 0.0299 | buf 32,400 | 301s
+Ep  2750/40000 | ret -19.7407 | avg(50) -22.2243 | ε 0.900 | loss 0.00020 | σ_epist 0.0299 | buf 33,000 | 308s
+Ep  2800/40000 | ret -14.4441 | avg(50) -21.5309 | ε 0.897 | loss 0.00015 | σ_epist 0.0292 | buf 33,600 | 315s
+Ep  2850/40000 | ret -17.4143 | avg(50) -21.8921 | ε 0.895 | loss 0.00021 | σ_epist 0.0293 | buf 34,200 | 322s
+Ep  2900/40000 | ret -12.1701 | avg(50) -21.5790 | ε 0.892 | loss 0.00018 | σ_epist 0.0294 | buf 34,800 | 329s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_best.pt
+Ep  2950/40000 | ret -19.5829 | avg(50) -19.8910 | ε 0.889 | loss 0.00017 | σ_epist 0.0297 | buf 35,400 | 336s
+Ep  3000/40000 | ret -21.7017 | avg(50) -21.7052 | ε 0.886 | loss 0.00009 | σ_epist 0.0303 | buf 36,000 | 344s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep03000.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep  3050/40000 | ret -15.1367 | avg(50) -21.1686 | ε 0.883 | loss 0.00014 | σ_epist 0.0298 | buf 36,600 | 352s
+Ep  3100/40000 | ret -28.6839 | avg(50) -22.4097 | ε 0.880 | loss 0.00026 | σ_epist 0.0302 | buf 37,200 | 359s
+Ep  3150/40000 | ret -17.6946 | avg(50) -21.1472 | ε 0.877 | loss 0.00016 | σ_epist 0.0302 | buf 37,800 | 366s
+Ep  3200/40000 | ret -15.5701 | avg(50) -20.9577 | ε 0.875 | loss 0.00007 | σ_epist 0.0301 | buf 38,400 | 373s
+Ep  3250/40000 | ret -26.8674 | avg(50) -22.3904 | ε 0.872 | loss 0.00012 | σ_epist 0.0301 | buf 39,000 | 380s
+Ep  3300/40000 | ret -18.6574 | avg(50) -21.1696 | ε 0.869 | loss 0.00027 | σ_epist 0.0300 | buf 39,600 | 387s
+Ep  3350/40000 | ret -18.6749 | avg(50) -21.2784 | ε 0.866 | loss 0.00010 | σ_epist 0.0295 | buf 40,200 | 394s
+Ep  3400/40000 | ret -15.8370 | avg(50) -21.2057 | ε 0.863 | loss 0.00024 | σ_epist 0.0303 | buf 40,800 | 402s
+Ep  3450/40000 | ret -23.1895 | avg(50) -20.9982 | ε 0.860 | loss 0.00013 | σ_epist 0.0300 | buf 41,400 | 409s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_best.pt
+Ep  3500/40000 | ret -20.6520 | avg(50) -20.4269 | ε 0.858 | loss 0.00052 | σ_epist 0.0309 | buf 42,000 | 416s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep03500.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep  3550/40000 | ret -18.7986 | avg(50) -20.4328 | ε 0.855 | loss 0.00020 | σ_epist 0.0299 | buf 42,600 | 424s
+Ep  3600/40000 | ret -24.6246 | avg(50) -20.4579 | ε 0.852 | loss 0.00014 | σ_epist 0.0299 | buf 43,200 | 431s
+Ep  3650/40000 | ret -21.7579 | avg(50) -21.4078 | ε 0.849 | loss 0.00019 | σ_epist 0.0309 | buf 43,800 | 439s
+Ep  3700/40000 | ret -24.1571 | avg(50) -20.7912 | ε 0.846 | loss 0.00007 | σ_epist 0.0311 | buf 44,400 | 446s
+Ep  3750/40000 | ret -20.4096 | avg(50) -20.0311 | ε 0.843 | loss 0.00032 | σ_epist 0.0302 | buf 45,000 | 453s
+Ep  3800/40000 | ret -20.2424 | avg(50) -20.0334 | ε 0.840 | loss 0.00009 | σ_epist 0.0298 | buf 45,600 | 460s
+Ep  3850/40000 | ret -16.0158 | avg(50) -20.4708 | ε 0.838 | loss 0.00042 | σ_epist 0.0304 | buf 46,200 | 467s
+Ep  3900/40000 | ret -24.2143 | avg(50) -20.5163 | ε 0.835 | loss 0.00012 | σ_epist 0.0303 | buf 46,800 | 474s
+Ep  3950/40000 | ret -20.9290 | avg(50) -20.3873 | ε 0.832 | loss 0.00019 | σ_epist 0.0301 | buf 47,400 | 481s
+Ep  4000/40000 | ret -11.8833 | avg(50) -19.2832 | ε 0.829 | loss 0.00008 | σ_epist 0.0308 | buf 48,000 | 489s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep04000.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep  4050/40000 | ret -22.1124 | avg(50) -21.0496 | ε 0.826 | loss 0.00009 | σ_epist 0.0303 | buf 48,600 | 497s
+Ep  4100/40000 | ret -15.6629 | avg(50) -19.4230 | ε 0.823 | loss 0.00010 | σ_epist 0.0307 | buf 49,200 | 504s
+Ep  4150/40000 | ret -11.8787 | avg(50) -19.8412 | ε 0.820 | loss 0.00012 | σ_epist 0.0306 | buf 49,800 | 511s
+Ep  4200/40000 | ret -11.6064 | avg(50) -19.9614 | ε 0.818 | loss 0.00011 | σ_epist 0.0315 | buf 50,400 | 518s
+Ep  4250/40000 | ret -16.9988 | avg(50) -19.2253 | ε 0.815 | loss 0.00006 | σ_epist 0.0311 | buf 51,000 | 526s
+Ep  4300/40000 | ret -17.9643 | avg(50) -19.1993 | ε 0.812 | loss 0.00007 | σ_epist 0.0308 | buf 51,600 | 533s
+Ep  4350/40000 | ret -13.3520 | avg(50) -18.9376 | ε 0.809 | loss 0.00018 | σ_epist 0.0316 | buf 52,200 | 540s
+Ep  4400/40000 | ret -21.4450 | avg(50) -19.5778 | ε 0.806 | loss 0.00007 | σ_epist 0.0308 | buf 52,800 | 547s
+Ep  4450/40000 | ret -19.3311 | avg(50) -20.7107 | ε 0.803 | loss 0.00016 | σ_epist 0.0311 | buf 53,400 | 554s
+Ep  4500/40000 | ret -14.9818 | avg(50) -18.9150 | ε 0.801 | loss 0.00012 | σ_epist 0.0310 | buf 54,000 | 562s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep04500.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep  4550/40000 | ret -23.6241 | avg(50) -18.8405 | ε 0.798 | loss 0.00007 | σ_epist 0.0318 | buf 54,600 | 570s
+Ep  4600/40000 | ret -18.9413 | avg(50) -19.1629 | ε 0.795 | loss 0.00012 | σ_epist 0.0312 | buf 55,200 | 577s
+Ep  4650/40000 | ret -16.2324 | avg(50) -20.2804 | ε 0.792 | loss 0.00039 | σ_epist 0.0309 | buf 55,800 | 584s
+Ep  4700/40000 | ret -22.7995 | avg(50) -19.8379 | ε 0.789 | loss 0.00011 | σ_epist 0.0306 | buf 56,400 | 591s
+Ep  4750/40000 | ret -26.4203 | avg(50) -20.5329 | ε 0.786 | loss 0.00018 | σ_epist 0.0301 | buf 57,000 | 599s
+Ep  4800/40000 | ret -13.0413 | avg(50) -19.9865 | ε 0.783 | loss 0.00010 | σ_epist 0.0311 | buf 57,600 | 606s
+Ep  4850/40000 | ret -18.4593 | avg(50) -18.5256 | ε 0.781 | loss 0.00012 | σ_epist 0.0307 | buf 58,200 | 613s
+Ep  4900/40000 | ret -23.3145 | avg(50) -17.9828 | ε 0.778 | loss 0.00010 | σ_epist 0.0314 | buf 58,800 | 620s
+Ep  4950/40000 | ret -21.2634 | avg(50) -19.9063 | ε 0.775 | loss 0.00013 | σ_epist 0.0312 | buf 59,400 | 627s
+Ep  5000/40000 | ret -16.8413 | avg(50) -18.6872 | ε 0.772 | loss 0.00038 | σ_epist 0.0309 | buf 60,000 | 635s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep05000.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep  5050/40000 | ret -5.8687 | avg(50) -17.9129 | ε 0.769 | loss 0.00017 | σ_epist 0.0316 | buf 60,600 | 643s
+Ep  5100/40000 | ret -11.7864 | avg(50) -17.3340 | ε 0.766 | loss 0.00007 | σ_epist 0.0317 | buf 61,200 | 650s
+Ep  5150/40000 | ret -26.6109 | avg(50) -18.0372 | ε 0.763 | loss 0.00018 | σ_epist 0.0308 | buf 61,800 | 657s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_best.pt
+Ep  5200/40000 | ret -20.3958 | avg(50) -18.1125 | ε 0.761 | loss 0.00004 | σ_epist 0.0317 | buf 62,400 | 665s
+Ep  5250/40000 | ret -13.9896 | avg(50) -18.0652 | ε 0.758 | loss 0.00007 | σ_epist 0.0311 | buf 63,000 | 672s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_best.pt
+Ep  5300/40000 | ret -14.6816 | avg(50) -18.2383 | ε 0.755 | loss 0.00007 | σ_epist 0.0317 | buf 63,600 | 679s
+Ep  5350/40000 | ret -11.2583 | avg(50) -16.7504 | ε 0.752 | loss 0.00006 | σ_epist 0.0318 | buf 64,200 | 686s
+Ep  5400/40000 | ret -21.5953 | avg(50) -17.6775 | ε 0.749 | loss 0.00016 | σ_epist 0.0313 | buf 64,800 | 694s
+Ep  5450/40000 | ret -14.3820 | avg(50) -16.6592 | ε 0.746 | loss 0.00011 | σ_epist 0.0323 | buf 65,400 | 701s
+Ep  5500/40000 | ret -20.9985 | avg(50) -17.8669 | ε 0.744 | loss 0.00010 | σ_epist 0.0308 | buf 66,000 | 708s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep05500.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep  5550/40000 | ret -19.1327 | avg(50) -19.0763 | ε 0.741 | loss 0.00007 | σ_epist 0.0313 | buf 66,600 | 717s
+Ep  5600/40000 | ret -11.1015 | avg(50) -18.3827 | ε 0.738 | loss 0.00012 | σ_epist 0.0307 | buf 67,200 | 724s
+Ep  5650/40000 | ret -15.7586 | avg(50) -18.5543 | ε 0.735 | loss 0.00007 | σ_epist 0.0311 | buf 67,800 | 731s
+Ep  5700/40000 | ret -13.6314 | avg(50) -18.2525 | ε 0.732 | loss 0.00027 | σ_epist 0.0316 | buf 68,400 | 738s
+Ep  5750/40000 | ret -11.1032 | avg(50) -17.9997 | ε 0.729 | loss 0.00017 | σ_epist 0.0318 | buf 69,000 | 746s
+Ep  5800/40000 | ret -28.9878 | avg(50) -18.2309 | ε 0.726 | loss 0.00006 | σ_epist 0.0318 | buf 69,600 | 753s
+Ep  5850/40000 | ret -17.0670 | avg(50) -18.2970 | ε 0.724 | loss 0.00011 | σ_epist 0.0316 | buf 70,200 | 760s
+Ep  5900/40000 | ret -20.0002 | avg(50) -17.9568 | ε 0.721 | loss 0.00007 | σ_epist 0.0317 | buf 70,800 | 767s
+Ep  5950/40000 | ret -19.2024 | avg(50) -16.3107 | ε 0.718 | loss 0.00008 | σ_epist 0.0322 | buf 71,400 | 775s
+Ep  6000/40000 | ret -20.8641 | avg(50) -17.4493 | ε 0.715 | loss 0.00008 | σ_epist 0.0319 | buf 72,000 | 782s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep06000.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep  6050/40000 | ret -13.6343 | avg(50) -16.9744 | ε 0.712 | loss 0.00007 | σ_epist 0.0314 | buf 72,600 | 790s
+Ep  6100/40000 | ret -8.5355 | avg(50) -15.8836 | ε 0.709 | loss 0.00018 | σ_epist 0.0322 | buf 73,200 | 798s
+Ep  6150/40000 | ret -15.5832 | avg(50) -16.7643 | ε 0.706 | loss 0.00009 | σ_epist 0.0322 | buf 73,800 | 805s
+Ep  6200/40000 | ret -3.8401 | avg(50) -17.3983 | ε 0.704 | loss 0.00006 | σ_epist 0.0322 | buf 74,400 | 812s
+Ep  6250/40000 | ret -21.0130 | avg(50) -16.7153 | ε 0.701 | loss 0.00009 | σ_epist 0.0323 | buf 75,000 | 820s
+Ep  6300/40000 | ret -23.6070 | avg(50) -16.4534 | ε 0.698 | loss 0.00006 | σ_epist 0.0333 | buf 75,600 | 827s
+Ep  6350/40000 | ret -18.1407 | avg(50) -17.1434 | ε 0.695 | loss 0.00005 | σ_epist 0.0319 | buf 76,200 | 834s
+Ep  6400/40000 | ret -16.8577 | avg(50) -17.3465 | ε 0.692 | loss 0.00007 | σ_epist 0.0317 | buf 76,800 | 841s
+Ep  6450/40000 | ret -15.7223 | avg(50) -16.3872 | ε 0.689 | loss 0.00020 | σ_epist 0.0326 | buf 77,400 | 849s
+Ep  6500/40000 | ret -8.4859 | avg(50) -17.1309 | ε 0.687 | loss 0.00005 | σ_epist 0.0320 | buf 78,000 | 856s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep06500.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep  6550/40000 | ret -21.0649 | avg(50) -16.8723 | ε 0.684 | loss 0.00011 | σ_epist 0.0324 | buf 78,600 | 864s
+Ep  6600/40000 | ret -13.3122 | avg(50) -15.3636 | ε 0.681 | loss 0.00016 | σ_epist 0.0330 | buf 79,200 | 872s
+Ep  6650/40000 | ret -19.3704 | avg(50) -16.3749 | ε 0.678 | loss 0.00004 | σ_epist 0.0321 | buf 79,800 | 879s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_best.pt
+Ep  6700/40000 | ret -10.7936 | avg(50) -15.0924 | ε 0.675 | loss 0.00007 | σ_epist 0.0326 | buf 80,400 | 887s
+Ep  6750/40000 | ret -25.6930 | avg(50) -16.9996 | ε 0.672 | loss 0.00008 | σ_epist 0.0324 | buf 81,000 | 894s
+Ep  6800/40000 | ret -11.8923 | avg(50) -16.6691 | ε 0.669 | loss 0.00011 | σ_epist 0.0332 | buf 81,600 | 901s
+Ep  6850/40000 | ret -16.3897 | avg(50) -14.8736 | ε 0.667 | loss 0.00006 | σ_epist 0.0325 | buf 82,200 | 909s
+Ep  6900/40000 | ret -20.3299 | avg(50) -16.5199 | ε 0.664 | loss 0.00006 | σ_epist 0.0325 | buf 82,800 | 916s
+Ep  6950/40000 | ret -6.4988 | avg(50) -15.4942 | ε 0.661 | loss 0.00005 | σ_epist 0.0332 | buf 83,400 | 923s
+Ep  7000/40000 | ret -12.5341 | avg(50) -14.9657 | ε 0.658 | loss 0.00008 | σ_epist 0.0333 | buf 84,000 | 931s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep07000.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep  7050/40000 | ret -5.9060 | avg(50) -16.3999 | ε 0.655 | loss 0.00005 | σ_epist 0.0317 | buf 84,600 | 939s
+Ep  7100/40000 | ret -19.1699 | avg(50) -16.3803 | ε 0.652 | loss 0.00005 | σ_epist 0.0320 | buf 85,200 | 946s
+Ep  7150/40000 | ret -19.3227 | avg(50) -16.0827 | ε 0.649 | loss 0.00005 | σ_epist 0.0328 | buf 85,800 | 954s
+Ep  7200/40000 | ret -15.7232 | avg(50) -16.2960 | ε 0.647 | loss 0.00011 | σ_epist 0.0320 | buf 86,400 | 961s
+Ep  7250/40000 | ret -13.3082 | avg(50) -15.6257 | ε 0.644 | loss 0.00003 | σ_epist 0.0330 | buf 87,000 | 968s
+Ep  7300/40000 | ret -7.9189 | avg(50) -14.3746 | ε 0.641 | loss 0.00011 | σ_epist 0.0333 | buf 87,600 | 976s
+Ep  7350/40000 | ret -11.9453 | avg(50) -15.4442 | ε 0.638 | loss 0.00006 | σ_epist 0.0324 | buf 88,200 | 983s
+Ep  7400/40000 | ret -10.0611 | avg(50) -14.8877 | ε 0.635 | loss 0.00006 | σ_epist 0.0328 | buf 88,800 | 990s
+Ep  7450/40000 | ret -13.2250 | avg(50) -15.7930 | ε 0.632 | loss 0.00003 | σ_epist 0.0335 | buf 89,400 | 998s
+Ep  7500/40000 | ret -13.9223 | avg(50) -15.1322 | ε 0.630 | loss 0.00006 | σ_epist 0.0324 | buf 90,000 | 1005s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep07500.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep  7550/40000 | ret -35.5734 | avg(50) -17.1326 | ε 0.627 | loss 0.00003 | σ_epist 0.0325 | buf 90,600 | 1014s
+Ep  7600/40000 | ret -20.6160 | avg(50) -14.5176 | ε 0.624 | loss 0.00003 | σ_epist 0.0331 | buf 91,200 | 1021s
+Ep  7650/40000 | ret -2.6721 | avg(50) -15.5715 | ε 0.621 | loss 0.00005 | σ_epist 0.0335 | buf 91,800 | 1028s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_best.pt
+Ep  7700/40000 | ret -14.7396 | avg(50) -15.0415 | ε 0.618 | loss 0.00008 | σ_epist 0.0332 | buf 92,400 | 1036s
+Ep  7750/40000 | ret -15.0795 | avg(50) -15.8263 | ε 0.615 | loss 0.00009 | σ_epist 0.0324 | buf 93,000 | 1043s
+Ep  7800/40000 | ret -10.8739 | avg(50) -16.6189 | ε 0.612 | loss 0.00013 | σ_epist 0.0326 | buf 93,600 | 1051s
+Ep  7850/40000 | ret -17.4367 | avg(50) -14.0659 | ε 0.610 | loss 0.00007 | σ_epist 0.0330 | buf 94,200 | 1058s
+Ep  7900/40000 | ret -22.9638 | avg(50) -14.7744 | ε 0.607 | loss 0.00009 | σ_epist 0.0342 | buf 94,800 | 1065s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_best.pt
+Ep  7950/40000 | ret -13.7983 | avg(50) -15.0693 | ε 0.604 | loss 0.00003 | σ_epist 0.0335 | buf 95,400 | 1073s
+Ep  8000/40000 | ret -13.0420 | avg(50) -14.6574 | ε 0.601 | loss 0.00004 | σ_epist 0.0327 | buf 96,000 | 1080s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep08000.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep  8050/40000 | ret -16.4738 | avg(50) -14.0810 | ε 0.598 | loss 0.00006 | σ_epist 0.0335 | buf 96,600 | 1089s
+Ep  8100/40000 | ret -19.5899 | avg(50) -14.5245 | ε 0.595 | loss 0.00006 | σ_epist 0.0329 | buf 97,200 | 1096s
+Ep  8150/40000 | ret -6.8116 | avg(50) -13.6980 | ε 0.592 | loss 0.00004 | σ_epist 0.0339 | buf 97,800 | 1104s
+Ep  8200/40000 | ret -9.5593 | avg(50) -14.9277 | ε 0.590 | loss 0.00004 | σ_epist 0.0338 | buf 98,400 | 1111s
+Ep  8250/40000 | ret -17.3066 | avg(50) -13.7254 | ε 0.587 | loss 0.00007 | σ_epist 0.0339 | buf 99,000 | 1118s
+Ep  8300/40000 | ret -11.9392 | avg(50) -12.6933 | ε 0.584 | loss 0.00034 | σ_epist 0.0338 | buf 99,600 | 1126s
+Ep  8350/40000 | ret -2.7740 | avg(50) -13.2657 | ε 0.581 | loss 0.00002 | σ_epist 0.0346 | buf 100,000 | 1133s
+Ep  8400/40000 | ret -14.6757 | avg(50) -14.9528 | ε 0.578 | loss 0.00005 | σ_epist 0.0337 | buf 100,000 | 1141s
+Ep  8450/40000 | ret -9.4520 | avg(50) -13.3235 | ε 0.575 | loss 0.00007 | σ_epist 0.0341 | buf 100,000 | 1148s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_best.pt
+Ep  8500/40000 | ret -10.0220 | avg(50) -14.1473 | ε 0.573 | loss 0.00007 | σ_epist 0.0337 | buf 100,000 | 1156s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep08500.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep  8550/40000 | ret -15.6375 | avg(50) -13.8276 | ε 0.570 | loss 0.00007 | σ_epist 0.0335 | buf 100,000 | 1164s
+Ep  8600/40000 | ret -33.4599 | avg(50) -14.8913 | ε 0.567 | loss 0.00004 | σ_epist 0.0330 | buf 100,000 | 1171s
+Ep  8650/40000 | ret -15.4280 | avg(50) -13.2605 | ε 0.564 | loss 0.00009 | σ_epist 0.0340 | buf 100,000 | 1179s
+Ep  8700/40000 | ret -6.6531 | avg(50) -13.0568 | ε 0.561 | loss 0.00004 | σ_epist 0.0340 | buf 100,000 | 1186s
+Ep  8750/40000 | ret -9.3075 | avg(50) -13.1130 | ε 0.558 | loss 0.00006 | σ_epist 0.0343 | buf 100,000 | 1194s
+Ep  8800/40000 | ret -7.9344 | avg(50) -12.7644 | ε 0.555 | loss 0.00003 | σ_epist 0.0339 | buf 100,000 | 1201s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_best.pt
+Ep  8850/40000 | ret -14.0542 | avg(50) -13.6808 | ε 0.553 | loss 0.00008 | σ_epist 0.0340 | buf 100,000 | 1209s
+Ep  8900/40000 | ret -15.5870 | avg(50) -13.1442 | ε 0.550 | loss 0.00006 | σ_epist 0.0341 | buf 100,000 | 1216s
+Ep  8950/40000 | ret -10.4367 | avg(50) -13.9620 | ε 0.547 | loss 0.00009 | σ_epist 0.0335 | buf 100,000 | 1223s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_best.pt
+Ep  9000/40000 | ret -10.7683 | avg(50) -12.8712 | ε 0.544 | loss 0.00195 | σ_epist 0.0332 | buf 100,000 | 1231s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep09000.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep  9050/40000 | ret -15.5788 | avg(50) -13.0247 | ε 0.541 | loss 0.00007 | σ_epist 0.0347 | buf 100,000 | 1240s
+Ep  9100/40000 | ret -9.6564 | avg(50) -13.0242 | ε 0.538 | loss 0.00005 | σ_epist 0.0347 | buf 100,000 | 1247s
+Ep  9150/40000 | ret -20.5927 | avg(50) -12.9940 | ε 0.535 | loss 0.00004 | σ_epist 0.0339 | buf 100,000 | 1255s
+Ep  9200/40000 | ret -17.6715 | avg(50) -11.6379 | ε 0.533 | loss 0.00003 | σ_epist 0.0347 | buf 100,000 | 1262s
+Ep  9250/40000 | ret -5.4413 | avg(50) -12.3044 | ε 0.530 | loss 0.00004 | σ_epist 0.0343 | buf 100,000 | 1270s
+Ep  9300/40000 | ret -5.7680 | avg(50) -13.5704 | ε 0.527 | loss 0.00006 | σ_epist 0.0345 | buf 100,000 | 1277s
+Ep  9350/40000 | ret -12.0679 | avg(50) -12.2238 | ε 0.524 | loss 0.00006 | σ_epist 0.0349 | buf 100,000 | 1285s
+Ep  9400/40000 | ret -18.8194 | avg(50) -12.5132 | ε 0.521 | loss 0.00005 | σ_epist 0.0352 | buf 100,000 | 1292s
+Ep  9450/40000 | ret -7.0424 | avg(50) -13.0997 | ε 0.518 | loss 0.00008 | σ_epist 0.0348 | buf 100,000 | 1299s
+Ep  9500/40000 | ret -11.9180 | avg(50) -12.0783 | ε 0.516 | loss 0.00009 | σ_epist 0.0346 | buf 100,000 | 1307s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep09500.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep  9550/40000 | ret -10.4404 | avg(50) -12.0890 | ε 0.513 | loss 0.00008 | σ_epist 0.0347 | buf 100,000 | 1316s
+Ep  9600/40000 | ret -11.9240 | avg(50) -11.7836 | ε 0.510 | loss 0.00006 | σ_epist 0.0339 | buf 100,000 | 1323s
+Ep  9650/40000 | ret -9.0136 | avg(50) -11.2448 | ε 0.507 | loss 0.00005 | σ_epist 0.0344 | buf 100,000 | 1331s
+Ep  9700/40000 | ret -9.5138 | avg(50) -12.3531 | ε 0.504 | loss 0.00014 | σ_epist 0.0347 | buf 100,000 | 1338s
+Ep  9750/40000 | ret -2.0900 | avg(50) -12.3124 | ε 0.501 | loss 0.00004 | σ_epist 0.0354 | buf 100,000 | 1346s
+Ep  9800/40000 | ret -6.1616 | avg(50) -12.5399 | ε 0.498 | loss 0.00004 | σ_epist 0.0349 | buf 100,000 | 1353s
+Ep  9850/40000 | ret -8.3045 | avg(50) -12.1602 | ε 0.496 | loss 0.00007 | σ_epist 0.0355 | buf 100,000 | 1360s
+Ep  9900/40000 | ret -14.7824 | avg(50) -12.0551 | ε 0.493 | loss 0.00005 | σ_epist 0.0353 | buf 100,000 | 1368s
+Ep  9950/40000 | ret -14.2717 | avg(50) -11.5788 | ε 0.490 | loss 0.00010 | σ_epist 0.0341 | buf 100,000 | 1375s
+Ep 10000/40000 | ret -20.6398 | avg(50) -11.3944 | ε 0.487 | loss 0.00003 | σ_epist 0.0345 | buf 100,000 | 1383s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep10000.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 10050/40000 | ret -16.7255 | avg(50) -11.3835 | ε 0.484 | loss 0.00004 | σ_epist 0.0356 | buf 100,000 | 1392s
+Ep 10100/40000 | ret -18.6804 | avg(50) -11.5936 | ε 0.481 | loss 0.00004 | σ_epist 0.0352 | buf 100,000 | 1399s
+Ep 10150/40000 | ret -10.4536 | avg(50) -11.7750 | ε 0.478 | loss 0.00003 | σ_epist 0.0353 | buf 100,000 | 1407s
+Ep 10200/40000 | ret -7.5778 | avg(50) -10.6628 | ε 0.476 | loss 0.00004 | σ_epist 0.0350 | buf 100,000 | 1414s
+Ep 10250/40000 | ret -15.0862 | avg(50) -11.6882 | ε 0.473 | loss 0.00004 | σ_epist 0.0355 | buf 100,000 | 1422s
+Ep 10300/40000 | ret -7.7369 | avg(50) -10.7479 | ε 0.470 | loss 0.00004 | σ_epist 0.0352 | buf 100,000 | 1429s
+Ep 10350/40000 | ret -11.6238 | avg(50) -10.7769 | ε 0.467 | loss 0.00007 | σ_epist 0.0356 | buf 100,000 | 1437s
+Ep 10400/40000 | ret -11.7432 | avg(50) -11.2376 | ε 0.464 | loss 0.00009 | σ_epist 0.0351 | buf 100,000 | 1444s
+Ep 10450/40000 | ret -9.2169 | avg(50) -11.6216 | ε 0.461 | loss 0.00003 | σ_epist 0.0349 | buf 100,000 | 1452s
+Ep 10500/40000 | ret -2.2085 | avg(50) -12.4532 | ε 0.459 | loss 0.00004 | σ_epist 0.0349 | buf 100,000 | 1459s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep10500.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 10550/40000 | ret -10.9982 | avg(50) -12.5488 | ε 0.456 | loss 0.00003 | σ_epist 0.0341 | buf 100,000 | 1468s
+Ep 10600/40000 | ret -13.3018 | avg(50) -10.4157 | ε 0.453 | loss 0.00005 | σ_epist 0.0364 | buf 100,000 | 1475s
+Ep 10650/40000 | ret -11.2807 | avg(50) -11.6629 | ε 0.450 | loss 0.00006 | σ_epist 0.0352 | buf 100,000 | 1483s
+Ep 10700/40000 | ret -10.9615 | avg(50) -10.1278 | ε 0.447 | loss 0.00003 | σ_epist 0.0363 | buf 100,000 | 1490s
+Ep 10750/40000 | ret -6.8349 | avg(50) -9.9720 | ε 0.444 | loss 0.00003 | σ_epist 0.0356 | buf 100,000 | 1498s
+Ep 10800/40000 | ret -16.5068 | avg(50) -10.4948 | ε 0.441 | loss 0.00014 | σ_epist 0.0362 | buf 100,000 | 1505s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_best.pt
+Ep 10850/40000 | ret -7.9858 | avg(50) -11.3441 | ε 0.439 | loss 0.00003 | σ_epist 0.0350 | buf 100,000 | 1513s
+Ep 10900/40000 | ret -19.2086 | avg(50) -10.2805 | ε 0.436 | loss 0.00007 | σ_epist 0.0356 | buf 100,000 | 1521s
+Ep 10950/40000 | ret -7.0736 | avg(50) -11.2348 | ε 0.433 | loss 0.00007 | σ_epist 0.0361 | buf 100,000 | 1528s
+Ep 11000/40000 | ret -17.2964 | avg(50) -10.2178 | ε 0.430 | loss 0.00002 | σ_epist 0.0360 | buf 100,000 | 1536s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep11000.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 11050/40000 | ret -5.5339 | avg(50) -9.3168 | ε 0.427 | loss 0.00003 | σ_epist 0.0363 | buf 100,000 | 1544s
+Ep 11100/40000 | ret -14.5179 | avg(50) -9.7014 | ε 0.424 | loss 0.00005 | σ_epist 0.0364 | buf 100,000 | 1552s
+Ep 11150/40000 | ret -7.4915 | avg(50) -10.0026 | ε 0.421 | loss 0.00005 | σ_epist 0.0359 | buf 100,000 | 1560s
+Ep 11200/40000 | ret -12.6448 | avg(50) -8.5441 | ε 0.419 | loss 0.00006 | σ_epist 0.0370 | buf 100,000 | 1567s
+Ep 11250/40000 | ret -10.0124 | avg(50) -9.5643 | ε 0.416 | loss 0.00004 | σ_epist 0.0354 | buf 100,000 | 1575s
+Ep 11300/40000 | ret -9.4478 | avg(50) -10.0029 | ε 0.413 | loss 0.00005 | σ_epist 0.0372 | buf 100,000 | 1582s
+Ep 11350/40000 | ret -6.1074 | avg(50) -9.5822 | ε 0.410 | loss 0.00005 | σ_epist 0.0370 | buf 100,000 | 1590s
+Ep 11400/40000 | ret -5.8898 | avg(50) -9.7804 | ε 0.407 | loss 0.00002 | σ_epist 0.0366 | buf 100,000 | 1597s
+Ep 11450/40000 | ret -3.7336 | avg(50) -8.9166 | ε 0.404 | loss 0.00004 | σ_epist 0.0365 | buf 100,000 | 1605s
+Ep 11500/40000 | ret -12.1575 | avg(50) -9.9348 | ε 0.402 | loss 0.00004 | σ_epist 0.0359 | buf 100,000 | 1612s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep11500.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 11550/40000 | ret -7.1940 | avg(50) -9.8579 | ε 0.399 | loss 0.00002 | σ_epist 0.0352 | buf 100,000 | 1621s
+Ep 11600/40000 | ret -14.8046 | avg(50) -10.3541 | ε 0.396 | loss 0.00005 | σ_epist 0.0358 | buf 100,000 | 1629s
+Ep 11650/40000 | ret -10.3185 | avg(50) -9.6029 | ε 0.393 | loss 0.00003 | σ_epist 0.0361 | buf 100,000 | 1636s
+Ep 11700/40000 | ret -7.1303 | avg(50) -8.1667 | ε 0.390 | loss 0.00002 | σ_epist 0.0370 | buf 100,000 | 1644s
+Ep 11750/40000 | ret -12.8367 | avg(50) -10.3139 | ε 0.387 | loss 0.00002 | σ_epist 0.0354 | buf 100,000 | 1651s
+Ep 11800/40000 | ret -6.5358 | avg(50) -9.5165 | ε 0.384 | loss 0.00012 | σ_epist 0.0365 | buf 100,000 | 1659s
+Ep 11850/40000 | ret -15.6171 | avg(50) -9.5724 | ε 0.382 | loss 0.00006 | σ_epist 0.0370 | buf 100,000 | 1666s
+Ep 11900/40000 | ret -8.8781 | avg(50) -9.3177 | ε 0.379 | loss 0.00013 | σ_epist 0.0368 | buf 100,000 | 1674s
+Ep 11950/40000 | ret -7.7728 | avg(50) -9.4593 | ε 0.376 | loss 0.00007 | σ_epist 0.0363 | buf 100,000 | 1682s
+Ep 12000/40000 | ret -12.4937 | avg(50) -9.9917 | ε 0.373 | loss 0.00004 | σ_epist 0.0366 | buf 100,000 | 1689s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep12000.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 12050/40000 | ret -2.6244 | avg(50) -9.3451 | ε 0.370 | loss 0.00004 | σ_epist 0.0366 | buf 100,000 | 1698s
+Ep 12100/40000 | ret -7.2995 | avg(50) -9.9646 | ε 0.367 | loss 0.00003 | σ_epist 0.0369 | buf 100,000 | 1706s
+Ep 12150/40000 | ret -8.9893 | avg(50) -9.2795 | ε 0.364 | loss 0.00003 | σ_epist 0.0371 | buf 100,000 | 1713s
+Ep 12200/40000 | ret -12.0979 | avg(50) -8.2819 | ε 0.362 | loss 0.00005 | σ_epist 0.0370 | buf 100,000 | 1721s
+Ep 12250/40000 | ret -9.4191 | avg(50) -8.1749 | ε 0.359 | loss 0.00003 | σ_epist 0.0386 | buf 100,000 | 1728s
+Ep 12300/40000 | ret -10.8470 | avg(50) -9.6671 | ε 0.356 | loss 0.00015 | σ_epist 0.0367 | buf 100,000 | 1736s
+Ep 12350/40000 | ret -12.8902 | avg(50) -9.0630 | ε 0.353 | loss 0.00004 | σ_epist 0.0373 | buf 100,000 | 1743s
+Ep 12400/40000 | ret -13.4847 | avg(50) -9.8791 | ε 0.350 | loss 0.00003 | σ_epist 0.0370 | buf 100,000 | 1751s
+Ep 12450/40000 | ret -4.0295 | avg(50) -7.5117 | ε 0.347 | loss 0.00009 | σ_epist 0.0388 | buf 100,000 | 1759s
+Ep 12500/40000 | ret -9.2161 | avg(50) -8.6480 | ε 0.345 | loss 0.00009 | σ_epist 0.0371 | buf 100,000 | 1766s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep12500.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 12550/40000 | ret -11.7291 | avg(50) -8.5545 | ε 0.342 | loss 0.00003 | σ_epist 0.0380 | buf 100,000 | 1775s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_best.pt
+Ep 12600/40000 | ret -5.8810 | avg(50) -8.2398 | ε 0.339 | loss 0.00005 | σ_epist 0.0386 | buf 100,000 | 1783s
+Ep 12650/40000 | ret -8.7376 | avg(50) -8.4888 | ε 0.336 | loss 0.00007 | σ_epist 0.0375 | buf 100,000 | 1790s
+Ep 12700/40000 | ret -4.9089 | avg(50) -8.9639 | ε 0.333 | loss 0.00003 | σ_epist 0.0364 | buf 100,000 | 1798s
+Ep 12750/40000 | ret -4.4142 | avg(50) -7.0423 | ε 0.330 | loss 0.00002 | σ_epist 0.0379 | buf 100,000 | 1805s
+Ep 12800/40000 | ret -5.8563 | avg(50) -7.7722 | ε 0.327 | loss 0.00004 | σ_epist 0.0384 | buf 100,000 | 1813s
+Ep 12850/40000 | ret -12.7833 | avg(50) -9.7103 | ε 0.325 | loss 0.00003 | σ_epist 0.0366 | buf 100,000 | 1821s
+Ep 12900/40000 | ret -4.0441 | avg(50) -7.6855 | ε 0.322 | loss 0.00003 | σ_epist 0.0376 | buf 100,000 | 1828s
+Ep 12950/40000 | ret -5.5881 | avg(50) -7.4817 | ε 0.319 | loss 0.00014 | σ_epist 0.0376 | buf 100,000 | 1836s
+Ep 13000/40000 | ret -13.9377 | avg(50) -7.6285 | ε 0.316 | loss 0.00002 | σ_epist 0.0379 | buf 100,000 | 1843s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep13000.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 13050/40000 | ret -2.6411 | avg(50) -6.5986 | ε 0.313 | loss 0.00005 | σ_epist 0.0386 | buf 100,000 | 1853s
+Ep 13100/40000 | ret -17.9172 | avg(50) -8.1873 | ε 0.310 | loss 0.00003 | σ_epist 0.0376 | buf 100,000 | 1860s
+Ep 13150/40000 | ret -13.6731 | avg(50) -7.9825 | ε 0.307 | loss 0.00005 | σ_epist 0.0371 | buf 100,000 | 1868s
+Ep 13200/40000 | ret -7.1514 | avg(50) -7.8828 | ε 0.305 | loss 0.00002 | σ_epist 0.0374 | buf 100,000 | 1876s
+Ep 13250/40000 | ret -5.2960 | avg(50) -7.9407 | ε 0.302 | loss 0.00001 | σ_epist 0.0379 | buf 100,000 | 1883s
+Ep 13300/40000 | ret -4.4254 | avg(50) -7.0896 | ε 0.299 | loss 0.00003 | σ_epist 0.0378 | buf 100,000 | 1891s
+Ep 13350/40000 | ret -16.1375 | avg(50) -7.1311 | ε 0.296 | loss 0.00003 | σ_epist 0.0380 | buf 100,000 | 1898s
+Ep 13400/40000 | ret -7.7664 | avg(50) -7.3852 | ε 0.293 | loss 0.00002 | σ_epist 0.0376 | buf 100,000 | 1906s
+Ep 13450/40000 | ret -11.0151 | avg(50) -6.8672 | ε 0.290 | loss 0.00003 | σ_epist 0.0390 | buf 100,000 | 1914s
+Ep 13500/40000 | ret -5.8477 | avg(50) -8.6487 | ε 0.288 | loss 0.00002 | σ_epist 0.0379 | buf 100,000 | 1921s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep13500.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 13550/40000 | ret -11.4600 | avg(50) -8.1147 | ε 0.285 | loss 0.00002 | σ_epist 0.0372 | buf 100,000 | 1930s
+Ep 13600/40000 | ret -11.1087 | avg(50) -7.5701 | ε 0.282 | loss 0.00002 | σ_epist 0.0384 | buf 100,000 | 1938s
+Ep 13650/40000 | ret -4.1591 | avg(50) -6.5017 | ε 0.279 | loss 0.00003 | σ_epist 0.0391 | buf 100,000 | 1946s
+Ep 13700/40000 | ret -3.0514 | avg(50) -8.0585 | ε 0.276 | loss 0.00003 | σ_epist 0.0379 | buf 100,000 | 1953s
+Ep 13750/40000 | ret -6.0698 | avg(50) -7.6271 | ε 0.273 | loss 0.00005 | σ_epist 0.0378 | buf 100,000 | 1961s
+Ep 13800/40000 | ret -1.7244 | avg(50) -6.7745 | ε 0.270 | loss 0.00004 | σ_epist 0.0388 | buf 100,000 | 1968s
+Ep 13850/40000 | ret -1.0797 | avg(50) -6.2863 | ε 0.268 | loss 0.00003 | σ_epist 0.0390 | buf 100,000 | 1976s
+Ep 13900/40000 | ret -13.4273 | avg(50) -6.6505 | ε 0.265 | loss 0.00003 | σ_epist 0.0397 | buf 100,000 | 1984s
+Ep 13950/40000 | ret -9.8707 | avg(50) -6.7296 | ε 0.262 | loss 0.00004 | σ_epist 0.0384 | buf 100,000 | 1991s
+Ep 14000/40000 | ret -4.1003 | avg(50) -6.4259 | ε 0.259 | loss 0.00004 | σ_epist 0.0399 | buf 100,000 | 1999s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep14000.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 14050/40000 | ret -3.2804 | avg(50) -5.8119 | ε 0.256 | loss 0.00002 | σ_epist 0.0398 | buf 100,000 | 2008s
+Ep 14100/40000 | ret -2.5179 | avg(50) -7.5058 | ε 0.253 | loss 0.00009 | σ_epist 0.0386 | buf 100,000 | 2016s
+Ep 14150/40000 | ret -9.1746 | avg(50) -5.6800 | ε 0.250 | loss 0.00005 | σ_epist 0.0395 | buf 100,000 | 2023s
+Ep 14200/40000 | ret -8.1457 | avg(50) -6.6002 | ε 0.248 | loss 0.00003 | σ_epist 0.0390 | buf 100,000 | 2031s
+Ep 14250/40000 | ret -3.8984 | avg(50) -6.8168 | ε 0.245 | loss 0.00002 | σ_epist 0.0390 | buf 100,000 | 2039s
+Ep 14300/40000 | ret -8.4531 | avg(50) -6.9812 | ε 0.242 | loss 0.00002 | σ_epist 0.0405 | buf 100,000 | 2046s
+Ep 14350/40000 | ret -4.8015 | avg(50) -5.3005 | ε 0.239 | loss 0.00003 | σ_epist 0.0397 | buf 100,000 | 2054s
+Ep 14400/40000 | ret -10.2178 | avg(50) -6.4496 | ε 0.236 | loss 0.00006 | σ_epist 0.0393 | buf 100,000 | 2062s
+Ep 14450/40000 | ret -15.0753 | avg(50) -6.5793 | ε 0.233 | loss 0.00004 | σ_epist 0.0383 | buf 100,000 | 2069s
+Ep 14500/40000 | ret -12.4859 | avg(50) -6.8496 | ε 0.231 | loss 0.00007 | σ_epist 0.0391 | buf 100,000 | 2077s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep14500.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 14550/40000 | ret -6.7136 | avg(50) -5.6264 | ε 0.228 | loss 0.00002 | σ_epist 0.0404 | buf 100,000 | 2086s
+Ep 14600/40000 | ret -2.9087 | avg(50) -6.2716 | ε 0.225 | loss 0.00006 | σ_epist 0.0392 | buf 100,000 | 2094s
+Ep 14650/40000 | ret -6.6988 | avg(50) -5.3460 | ε 0.222 | loss 0.00004 | σ_epist 0.0388 | buf 100,000 | 2102s
+Ep 14700/40000 | ret -4.0789 | avg(50) -5.4615 | ε 0.219 | loss 0.00002 | σ_epist 0.0399 | buf 100,000 | 2109s
+Ep 14750/40000 | ret -5.9451 | avg(50) -5.1656 | ε 0.216 | loss 0.00003 | σ_epist 0.0397 | buf 100,000 | 2117s
+Ep 14800/40000 | ret -7.9415 | avg(50) -5.4668 | ε 0.213 | loss 0.00002 | σ_epist 0.0400 | buf 100,000 | 2125s
+Ep 14850/40000 | ret -4.6605 | avg(50) -5.4970 | ε 0.211 | loss 0.00005 | σ_epist 0.0405 | buf 100,000 | 2132s
+Ep 14900/40000 | ret -8.4795 | avg(50) -6.0404 | ε 0.208 | loss 0.00003 | σ_epist 0.0400 | buf 100,000 | 2140s
+Ep 14950/40000 | ret -4.5752 | avg(50) -4.6400 | ε 0.205 | loss 0.00002 | σ_epist 0.0408 | buf 100,000 | 2148s
+Ep 15000/40000 | ret -11.5454 | avg(50) -5.3347 | ε 0.202 | loss 0.00011 | σ_epist 0.0404 | buf 100,000 | 2155s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep15000.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 15050/40000 | ret -7.9728 | avg(50) -6.2934 | ε 0.199 | loss 0.00003 | σ_epist 0.0395 | buf 100,000 | 2164s
+Ep 15100/40000 | ret -4.3123 | avg(50) -5.6863 | ε 0.196 | loss 0.00008 | σ_epist 0.0398 | buf 100,000 | 2172s
+Ep 15150/40000 | ret -3.8194 | avg(50) -5.8950 | ε 0.193 | loss 0.00002 | σ_epist 0.0403 | buf 100,000 | 2180s
+Ep 15200/40000 | ret -1.0797 | avg(50) -5.0307 | ε 0.191 | loss 0.00003 | σ_epist 0.0412 | buf 100,000 | 2187s
+Ep 15250/40000 | ret -5.7423 | avg(50) -5.4602 | ε 0.188 | loss 0.00003 | σ_epist 0.0400 | buf 100,000 | 2195s
+Ep 15300/40000 | ret -7.5755 | avg(50) -6.1211 | ε 0.185 | loss 0.00002 | σ_epist 0.0404 | buf 100,000 | 2203s
+Ep 15350/40000 | ret -6.4306 | avg(50) -5.2806 | ε 0.182 | loss 0.00001 | σ_epist 0.0401 | buf 100,000 | 2210s
+Ep 15400/40000 | ret -3.9144 | avg(50) -4.3783 | ε 0.179 | loss 0.00003 | σ_epist 0.0411 | buf 100,000 | 2218s
+Ep 15450/40000 | ret -5.7733 | avg(50) -4.4546 | ε 0.176 | loss 0.00003 | σ_epist 0.0410 | buf 100,000 | 2226s
+Ep 15500/40000 | ret -7.1179 | avg(50) -4.5824 | ε 0.174 | loss 0.00002 | σ_epist 0.0412 | buf 100,000 | 2234s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep15500.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 15550/40000 | ret -7.5560 | avg(50) -4.3931 | ε 0.171 | loss 0.00003 | σ_epist 0.0406 | buf 100,000 | 2243s
+Ep 15600/40000 | ret -4.4203 | avg(50) -4.6797 | ε 0.168 | loss 0.00002 | σ_epist 0.0406 | buf 100,000 | 2251s
+Ep 15650/40000 | ret -1.9079 | avg(50) -4.3820 | ε 0.165 | loss 0.00002 | σ_epist 0.0404 | buf 100,000 | 2258s
+Ep 15700/40000 | ret -4.0910 | avg(50) -4.2754 | ε 0.162 | loss 0.00002 | σ_epist 0.0404 | buf 100,000 | 2266s
+Ep 15750/40000 | ret -1.2981 | avg(50) -3.6274 | ε 0.159 | loss 0.00004 | σ_epist 0.0423 | buf 100,000 | 2274s
+Ep 15800/40000 | ret -10.3688 | avg(50) -4.8992 | ε 0.156 | loss 0.00002 | σ_epist 0.0414 | buf 100,000 | 2281s
+Ep 15850/40000 | ret -5.0971 | avg(50) -3.6119 | ε 0.154 | loss 0.00003 | σ_epist 0.0419 | buf 100,000 | 2289s
+Ep 15900/40000 | ret -1.8797 | avg(50) -4.1764 | ε 0.151 | loss 0.00005 | σ_epist 0.0407 | buf 100,000 | 2297s
+Ep 15950/40000 | ret -5.2195 | avg(50) -3.7336 | ε 0.148 | loss 0.00002 | σ_epist 0.0419 | buf 100,000 | 2305s
+Ep 16000/40000 | ret -4.7807 | avg(50) -3.3728 | ε 0.145 | loss 0.00002 | σ_epist 0.0419 | buf 100,000 | 2313s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep16000.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 16050/40000 | ret -1.0921 | avg(50) -3.5943 | ε 0.142 | loss 0.00003 | σ_epist 0.0408 | buf 100,000 | 2322s
+Ep 16100/40000 | ret -5.6551 | avg(50) -4.1192 | ε 0.139 | loss 0.00004 | σ_epist 0.0423 | buf 100,000 | 2330s
+Ep 16150/40000 | ret -8.2870 | avg(50) -3.9997 | ε 0.136 | loss 0.00001 | σ_epist 0.0408 | buf 100,000 | 2337s
+Ep 16200/40000 | ret -1.1735 | avg(50) -5.0142 | ε 0.134 | loss 0.00004 | σ_epist 0.0406 | buf 100,000 | 2345s
+Ep 16250/40000 | ret -2.9093 | avg(50) -3.3418 | ε 0.131 | loss 0.00001 | σ_epist 0.0427 | buf 100,000 | 2353s
+Ep 16300/40000 | ret -1.0797 | avg(50) -3.8790 | ε 0.128 | loss 0.00002 | σ_epist 0.0411 | buf 100,000 | 2361s
+Ep 16350/40000 | ret -3.5931 | avg(50) -3.1905 | ε 0.125 | loss 0.00007 | σ_epist 0.0424 | buf 100,000 | 2368s
+Ep 16400/40000 | ret -7.8908 | avg(50) -4.0206 | ε 0.122 | loss 0.00002 | σ_epist 0.0416 | buf 100,000 | 2376s
+Ep 16450/40000 | ret -3.5082 | avg(50) -3.1827 | ε 0.119 | loss 0.00003 | σ_epist 0.0425 | buf 100,000 | 2384s
+Ep 16500/40000 | ret -1.0853 | avg(50) -3.5160 | ε 0.117 | loss 0.00001 | σ_epist 0.0415 | buf 100,000 | 2392s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep16500.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 16550/40000 | ret -3.4855 | avg(50) -3.5169 | ε 0.114 | loss 0.00001 | σ_epist 0.0413 | buf 100,000 | 2401s
+Ep 16600/40000 | ret -3.1204 | avg(50) -3.1167 | ε 0.111 | loss 0.00005 | σ_epist 0.0417 | buf 100,000 | 2409s
+Ep 16650/40000 | ret -1.2869 | avg(50) -3.3211 | ε 0.108 | loss 0.00002 | σ_epist 0.0426 | buf 100,000 | 2416s
+Ep 16700/40000 | ret -1.1774 | avg(50) -2.6244 | ε 0.105 | loss 0.00006 | σ_epist 0.0425 | buf 100,000 | 2424s
+Ep 16750/40000 | ret -4.4913 | avg(50) -3.4764 | ε 0.102 | loss 0.00002 | σ_epist 0.0420 | buf 100,000 | 2432s
+Ep 16800/40000 | ret -3.4661 | avg(50) -2.8005 | ε 0.099 | loss 0.00002 | σ_epist 0.0428 | buf 100,000 | 2440s
+Ep 16850/40000 | ret -1.6048 | avg(50) -3.4363 | ε 0.097 | loss 0.00002 | σ_epist 0.0422 | buf 100,000 | 2448s
+Ep 16900/40000 | ret -5.1972 | avg(50) -3.5268 | ε 0.094 | loss 0.00003 | σ_epist 0.0425 | buf 100,000 | 2455s
+Ep 16950/40000 | ret -1.0836 | avg(50) -3.0465 | ε 0.091 | loss 0.00002 | σ_epist 0.0431 | buf 100,000 | 2463s
+Ep 17000/40000 | ret -2.8183 | avg(50) -3.1849 | ε 0.088 | loss 0.00003 | σ_epist 0.0424 | buf 100,000 | 2471s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep17000.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 17050/40000 | ret -1.1056 | avg(50) -2.6777 | ε 0.085 | loss 0.00004 | σ_epist 0.0430 | buf 100,000 | 2480s
+Ep 17100/40000 | ret -6.9171 | avg(50) -2.5634 | ε 0.082 | loss 0.00001 | σ_epist 0.0431 | buf 100,000 | 2488s
+Ep 17150/40000 | ret -4.5938 | avg(50) -2.9782 | ε 0.079 | loss 0.00001 | σ_epist 0.0424 | buf 100,000 | 2496s
+Ep 17200/40000 | ret -1.0785 | avg(50) -2.5701 | ε 0.077 | loss 0.00002 | σ_epist 0.0434 | buf 100,000 | 2504s
+Ep 17250/40000 | ret -1.0797 | avg(50) -2.5548 | ε 0.074 | loss 0.00002 | σ_epist 0.0432 | buf 100,000 | 2511s
+Ep 17300/40000 | ret -1.0836 | avg(50) -2.5410 | ε 0.071 | loss 0.00003 | σ_epist 0.0431 | buf 100,000 | 2519s
+Ep 17350/40000 | ret -1.0785 | avg(50) -2.5247 | ε 0.068 | loss 0.00002 | σ_epist 0.0430 | buf 100,000 | 2527s
+Ep 17400/40000 | ret -6.1449 | avg(50) -1.8938 | ε 0.065 | loss 0.00001 | σ_epist 0.0438 | buf 100,000 | 2535s
+Ep 17450/40000 | ret -5.1897 | avg(50) -1.9640 | ε 0.062 | loss 0.00002 | σ_epist 0.0434 | buf 100,000 | 2543s
+Ep 17500/40000 | ret -1.0899 | avg(50) -2.2994 | ε 0.060 | loss 0.00002 | σ_epist 0.0436 | buf 100,000 | 2550s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep17500.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 17550/40000 | ret -4.6585 | avg(50) -2.3873 | ε 0.057 | loss 0.00001 | σ_epist 0.0433 | buf 100,000 | 2560s
+Ep 17600/40000 | ret -1.0797 | avg(50) -2.1681 | ε 0.054 | loss 0.00002 | σ_epist 0.0433 | buf 100,000 | 2568s
+Ep 17650/40000 | ret -1.4560 | avg(50) -2.0675 | ε 0.051 | loss 0.00006 | σ_epist 0.0434 | buf 100,000 | 2575s
+Ep 17700/40000 | ret -1.0785 | avg(50) -2.1015 | ε 0.050 | loss 0.00004 | σ_epist 0.0435 | buf 100,000 | 2583s
+Ep 17750/40000 | ret -4.2949 | avg(50) -2.0472 | ε 0.050 | loss 0.00002 | σ_epist 0.0441 | buf 100,000 | 2591s
+Ep 17800/40000 | ret -2.4397 | avg(50) -2.0415 | ε 0.050 | loss 0.00003 | σ_epist 0.0440 | buf 100,000 | 2599s
+Ep 17850/40000 | ret -1.0836 | avg(50) -1.8701 | ε 0.050 | loss 0.00003 | σ_epist 0.0437 | buf 100,000 | 2607s
+Ep 17900/40000 | ret -1.0771 | avg(50) -1.8367 | ε 0.050 | loss 0.00003 | σ_epist 0.0440 | buf 100,000 | 2615s
+Ep 17950/40000 | ret -1.7579 | avg(50) -2.1914 | ε 0.050 | loss 0.00002 | σ_epist 0.0435 | buf 100,000 | 2622s
+Ep 18000/40000 | ret -1.0797 | avg(50) -2.0637 | ε 0.050 | loss 0.00003 | σ_epist 0.0437 | buf 100,000 | 2630s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep18000.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 18050/40000 | ret -1.0797 | avg(50) -2.2101 | ε 0.050 | loss 0.00002 | σ_epist 0.0437 | buf 100,000 | 2640s
+Ep 18100/40000 | ret -9.0048 | avg(50) -2.3934 | ε 0.050 | loss 0.00002 | σ_epist 0.0438 | buf 100,000 | 2647s
+Ep 18150/40000 | ret -1.0797 | avg(50) -2.1399 | ε 0.050 | loss 0.00003 | σ_epist 0.0437 | buf 100,000 | 2655s
+Ep 18200/40000 | ret -3.0225 | avg(50) -2.1217 | ε 0.050 | loss 0.00002 | σ_epist 0.0429 | buf 100,000 | 2663s
+Ep 18250/40000 | ret -1.0836 | avg(50) -1.5206 | ε 0.050 | loss 0.00001 | σ_epist 0.0438 | buf 100,000 | 2671s
+Ep 18300/40000 | ret -1.0899 | avg(50) -2.1387 | ε 0.050 | loss 0.00001 | σ_epist 0.0437 | buf 100,000 | 2679s
+Ep 18350/40000 | ret -1.0785 | avg(50) -1.7860 | ε 0.050 | loss 0.00003 | σ_epist 0.0442 | buf 100,000 | 2686s
+Ep 18400/40000 | ret -10.8961 | avg(50) -2.2545 | ε 0.050 | loss 0.00001 | σ_epist 0.0435 | buf 100,000 | 2694s
+Ep 18450/40000 | ret -1.0853 | avg(50) -1.8535 | ε 0.050 | loss 0.00002 | σ_epist 0.0441 | buf 100,000 | 2702s
+Ep 18500/40000 | ret -1.0912 | avg(50) -2.3057 | ε 0.050 | loss 0.00004 | σ_epist 0.0431 | buf 100,000 | 2710s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep18500.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 18550/40000 | ret -1.0797 | avg(50) -1.9449 | ε 0.050 | loss 0.00002 | σ_epist 0.0440 | buf 100,000 | 2719s
+Ep 18600/40000 | ret -5.2085 | avg(50) -2.3214 | ε 0.050 | loss 0.00001 | σ_epist 0.0433 | buf 100,000 | 2727s
+Ep 18650/40000 | ret -1.0853 | avg(50) -2.0474 | ε 0.050 | loss 0.00001 | σ_epist 0.0438 | buf 100,000 | 2735s
+Ep 18700/40000 | ret -1.0785 | avg(50) -2.1754 | ε 0.050 | loss 0.00004 | σ_epist 0.0437 | buf 100,000 | 2743s
+Ep 18750/40000 | ret -1.0785 | avg(50) -2.2353 | ε 0.050 | loss 0.00001 | σ_epist 0.0435 | buf 100,000 | 2751s
+Ep 18800/40000 | ret -1.0853 | avg(50) -2.2756 | ε 0.050 | loss 0.00001 | σ_epist 0.0434 | buf 100,000 | 2758s
+Ep 18850/40000 | ret -3.9129 | avg(50) -2.5626 | ε 0.050 | loss 0.00005 | σ_epist 0.0433 | buf 100,000 | 2766s
+Ep 18900/40000 | ret -1.0785 | avg(50) -1.9011 | ε 0.050 | loss 0.00001 | σ_epist 0.0439 | buf 100,000 | 2774s
+Ep 18950/40000 | ret -2.8705 | avg(50) -1.7992 | ε 0.050 | loss 0.00003 | σ_epist 0.0440 | buf 100,000 | 2782s
+Ep 19000/40000 | ret -1.0797 | avg(50) -1.5853 | ε 0.050 | loss 0.00002 | σ_epist 0.0442 | buf 100,000 | 2790s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep19000.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 19050/40000 | ret -8.2887 | avg(50) -2.8363 | ε 0.050 | loss 0.00002 | σ_epist 0.0436 | buf 100,000 | 2799s
+Ep 19100/40000 | ret -1.0823 | avg(50) -2.0716 | ε 0.050 | loss 0.00002 | σ_epist 0.0441 | buf 100,000 | 2807s
+Ep 19150/40000 | ret -1.0771 | avg(50) -1.9964 | ε 0.050 | loss 0.00001 | σ_epist 0.0440 | buf 100,000 | 2815s
+Ep 19200/40000 | ret -1.0912 | avg(50) -1.8359 | ε 0.050 | loss 0.00001 | σ_epist 0.0437 | buf 100,000 | 2822s
+Ep 19250/40000 | ret -1.0797 | avg(50) -1.7497 | ε 0.050 | loss 0.00001 | σ_epist 0.0441 | buf 100,000 | 2830s
+Ep 19300/40000 | ret -1.0855 | avg(50) -2.4393 | ε 0.050 | loss 0.00003 | σ_epist 0.0435 | buf 100,000 | 2838s
+Ep 19350/40000 | ret -1.0797 | avg(50) -2.2167 | ε 0.050 | loss 0.00001 | σ_epist 0.0440 | buf 100,000 | 2846s
+Ep 19400/40000 | ret -1.0785 | avg(50) -2.1133 | ε 0.050 | loss 0.00002 | σ_epist 0.0432 | buf 100,000 | 2854s
+Ep 19450/40000 | ret -1.0785 | avg(50) -2.1377 | ε 0.050 | loss 0.00002 | σ_epist 0.0433 | buf 100,000 | 2862s
+Ep 19500/40000 | ret -1.7111 | avg(50) -2.0207 | ε 0.050 | loss 0.00005 | σ_epist 0.0437 | buf 100,000 | 2869s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep19500.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 19550/40000 | ret -3.1474 | avg(50) -2.7779 | ε 0.050 | loss 0.00001 | σ_epist 0.0433 | buf 100,000 | 2879s
+Ep 19600/40000 | ret -2.6874 | avg(50) -2.2078 | ε 0.050 | loss 0.00001 | σ_epist 0.0441 | buf 100,000 | 2887s
+Ep 19650/40000 | ret -1.0797 | avg(50) -2.1705 | ε 0.050 | loss 0.00002 | σ_epist 0.0437 | buf 100,000 | 2895s
+Ep 19700/40000 | ret -1.0771 | avg(50) -2.0982 | ε 0.050 | loss 0.00005 | σ_epist 0.0441 | buf 100,000 | 2902s
+Ep 19750/40000 | ret -1.1132 | avg(50) -1.6703 | ε 0.050 | loss 0.00004 | σ_epist 0.0440 | buf 100,000 | 2910s
+Ep 19800/40000 | ret -1.0785 | avg(50) -2.1879 | ε 0.050 | loss 0.00002 | σ_epist 0.0439 | buf 100,000 | 2918s
+Ep 19850/40000 | ret -3.0873 | avg(50) -1.9626 | ε 0.050 | loss 0.00001 | σ_epist 0.0429 | buf 100,000 | 2926s
+Ep 19900/40000 | ret -1.0785 | avg(50) -1.8439 | ε 0.050 | loss 0.00002 | σ_epist 0.0443 | buf 100,000 | 2934s
+Ep 19950/40000 | ret -1.0972 | avg(50) -2.2697 | ε 0.050 | loss 0.00002 | σ_epist 0.0441 | buf 100,000 | 2942s
+Ep 20000/40000 | ret -1.1822 | avg(50) -2.0432 | ε 0.050 | loss 0.00001 | σ_epist 0.0438 | buf 100,000 | 2950s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep20000.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 20050/40000 | ret -1.0921 | avg(50) -1.9173 | ε 0.050 | loss 0.00005 | σ_epist 0.0439 | buf 100,000 | 2959s
+Ep 20100/40000 | ret -3.0554 | avg(50) -2.0421 | ε 0.050 | loss 0.00001 | σ_epist 0.0439 | buf 100,000 | 2967s
+Ep 20150/40000 | ret -1.0797 | avg(50) -2.0623 | ε 0.050 | loss 0.00002 | σ_epist 0.0438 | buf 100,000 | 2974s
+Ep 20200/40000 | ret -1.0785 | avg(50) -2.3802 | ε 0.050 | loss 0.00001 | σ_epist 0.0435 | buf 100,000 | 2982s
+Ep 20250/40000 | ret -1.0853 | avg(50) -2.1097 | ε 0.050 | loss 0.00006 | σ_epist 0.0436 | buf 100,000 | 2990s
+Ep 20300/40000 | ret -1.0836 | avg(50) -2.0450 | ε 0.050 | loss 0.00002 | σ_epist 0.0434 | buf 100,000 | 2998s
+Ep 20350/40000 | ret -1.0785 | avg(50) -2.1282 | ε 0.050 | loss 0.00001 | σ_epist 0.0435 | buf 100,000 | 3006s
+Ep 20400/40000 | ret -1.0797 | avg(50) -2.0202 | ε 0.050 | loss 0.00003 | σ_epist 0.0440 | buf 100,000 | 3014s
+Ep 20450/40000 | ret -1.0797 | avg(50) -2.2073 | ε 0.050 | loss 0.00002 | σ_epist 0.0440 | buf 100,000 | 3021s
+Ep 20500/40000 | ret -1.9155 | avg(50) -1.8632 | ε 0.050 | loss 0.00002 | σ_epist 0.0436 | buf 100,000 | 3029s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep20500.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 20550/40000 | ret -1.0836 | avg(50) -2.0342 | ε 0.050 | loss 0.00001 | σ_epist 0.0436 | buf 100,000 | 3038s
+Ep 20600/40000 | ret -1.2965 | avg(50) -2.4494 | ε 0.050 | loss 0.00003 | σ_epist 0.0430 | buf 100,000 | 3046s
+Ep 20650/40000 | ret -1.0921 | avg(50) -1.9234 | ε 0.050 | loss 0.00009 | σ_epist 0.0431 | buf 100,000 | 3054s
+Ep 20700/40000 | ret -4.2411 | avg(50) -1.9897 | ε 0.050 | loss 0.00001 | σ_epist 0.0434 | buf 100,000 | 3062s
+Ep 20750/40000 | ret -1.0855 | avg(50) -1.9037 | ε 0.050 | loss 0.00003 | σ_epist 0.0440 | buf 100,000 | 3070s
+Ep 20800/40000 | ret -1.0771 | avg(50) -2.2979 | ε 0.050 | loss 0.00003 | σ_epist 0.0432 | buf 100,000 | 3078s
+Ep 20850/40000 | ret -2.3996 | avg(50) -2.2956 | ε 0.050 | loss 0.00002 | σ_epist 0.0430 | buf 100,000 | 3086s
+Ep 20900/40000 | ret -2.5159 | avg(50) -2.1388 | ε 0.050 | loss 0.00003 | σ_epist 0.0436 | buf 100,000 | 3093s
+Ep 20950/40000 | ret -1.0785 | avg(50) -2.1145 | ε 0.050 | loss 0.00001 | σ_epist 0.0439 | buf 100,000 | 3101s
+Ep 21000/40000 | ret -1.0785 | avg(50) -2.2198 | ε 0.050 | loss 0.00001 | σ_epist 0.0436 | buf 100,000 | 3109s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep21000.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 21050/40000 | ret -1.0785 | avg(50) -1.7989 | ε 0.050 | loss 0.00002 | σ_epist 0.0441 | buf 100,000 | 3118s
+Ep 21100/40000 | ret -1.0797 | avg(50) -2.2942 | ε 0.050 | loss 0.00002 | σ_epist 0.0433 | buf 100,000 | 3126s
+Ep 21150/40000 | ret -3.5053 | avg(50) -2.4526 | ε 0.050 | loss 0.00001 | σ_epist 0.0435 | buf 100,000 | 3134s
+Ep 21200/40000 | ret -1.3818 | avg(50) -1.9014 | ε 0.050 | loss 0.00001 | σ_epist 0.0441 | buf 100,000 | 3142s
+Ep 21250/40000 | ret -3.7409 | avg(50) -1.9173 | ε 0.050 | loss 0.00004 | σ_epist 0.0441 | buf 100,000 | 3150s
+Ep 21300/40000 | ret -1.1251 | avg(50) -1.8147 | ε 0.050 | loss 0.00003 | σ_epist 0.0440 | buf 100,000 | 3157s
+Ep 21350/40000 | ret -3.0582 | avg(50) -1.8519 | ε 0.050 | loss 0.00003 | σ_epist 0.0439 | buf 100,000 | 3165s
+Ep 21400/40000 | ret -1.0797 | avg(50) -2.0910 | ε 0.050 | loss 0.00002 | σ_epist 0.0440 | buf 100,000 | 3173s
+Ep 21450/40000 | ret -1.0785 | avg(50) -1.7945 | ε 0.050 | loss 0.00001 | σ_epist 0.0445 | buf 100,000 | 3181s
+Ep 21500/40000 | ret -1.0899 | avg(50) -2.1828 | ε 0.050 | loss 0.00005 | σ_epist 0.0437 | buf 100,000 | 3189s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep21500.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 21550/40000 | ret -1.7953 | avg(50) -2.0264 | ε 0.050 | loss 0.00001 | σ_epist 0.0435 | buf 100,000 | 3198s
+Ep 21600/40000 | ret -1.0836 | avg(50) -1.8529 | ε 0.050 | loss 0.00003 | σ_epist 0.0437 | buf 100,000 | 3206s
+Ep 21650/40000 | ret -1.0912 | avg(50) -2.3209 | ε 0.050 | loss 0.00003 | σ_epist 0.0438 | buf 100,000 | 3214s
+Ep 21700/40000 | ret -5.3375 | avg(50) -2.2259 | ε 0.050 | loss 0.00003 | σ_epist 0.0432 | buf 100,000 | 3221s
+Ep 21750/40000 | ret -5.0055 | avg(50) -2.0039 | ε 0.050 | loss 0.00001 | σ_epist 0.0435 | buf 100,000 | 3229s
+Ep 21800/40000 | ret -5.1593 | avg(50) -2.1156 | ε 0.050 | loss 0.00001 | σ_epist 0.0439 | buf 100,000 | 3237s
+Ep 21850/40000 | ret -1.2108 | avg(50) -1.9379 | ε 0.050 | loss 0.00002 | σ_epist 0.0438 | buf 100,000 | 3245s
+Ep 21900/40000 | ret -1.0823 | avg(50) -2.0222 | ε 0.050 | loss 0.00002 | σ_epist 0.0440 | buf 100,000 | 3253s
+Ep 21950/40000 | ret -2.8464 | avg(50) -1.9356 | ε 0.050 | loss 0.00002 | σ_epist 0.0434 | buf 100,000 | 3261s
+Ep 22000/40000 | ret -1.0797 | avg(50) -2.3341 | ε 0.050 | loss 0.00001 | σ_epist 0.0437 | buf 100,000 | 3268s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep22000.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 22050/40000 | ret -2.8874 | avg(50) -2.2246 | ε 0.050 | loss 0.00001 | σ_epist 0.0434 | buf 100,000 | 3278s
+Ep 22100/40000 | ret -2.0754 | avg(50) -2.4013 | ε 0.050 | loss 0.00001 | σ_epist 0.0432 | buf 100,000 | 3286s
+Ep 22150/40000 | ret -1.0771 | avg(50) -1.9674 | ε 0.050 | loss 0.00004 | σ_epist 0.0438 | buf 100,000 | 3293s
+Ep 22200/40000 | ret -2.9599 | avg(50) -1.8643 | ε 0.050 | loss 0.00004 | σ_epist 0.0440 | buf 100,000 | 3301s
+Ep 22250/40000 | ret -1.3609 | avg(50) -2.4912 | ε 0.050 | loss 0.00002 | σ_epist 0.0432 | buf 100,000 | 3309s
+Ep 22300/40000 | ret -1.0855 | avg(50) -1.8961 | ε 0.050 | loss 0.00003 | σ_epist 0.0443 | buf 100,000 | 3317s
+Ep 22350/40000 | ret -1.0785 | avg(50) -2.5906 | ε 0.050 | loss 0.00002 | σ_epist 0.0436 | buf 100,000 | 3325s
+Ep 22400/40000 | ret -1.0797 | avg(50) -2.1314 | ε 0.050 | loss 0.00002 | σ_epist 0.0440 | buf 100,000 | 3332s
+Ep 22450/40000 | ret -1.0836 | avg(50) -1.9919 | ε 0.050 | loss 0.00001 | σ_epist 0.0443 | buf 100,000 | 3340s
+Ep 22500/40000 | ret -6.0540 | avg(50) -1.7871 | ε 0.050 | loss 0.00002 | σ_epist 0.0442 | buf 100,000 | 3348s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep22500.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 22550/40000 | ret -1.7256 | avg(50) -1.9983 | ε 0.050 | loss 0.00001 | σ_epist 0.0440 | buf 100,000 | 3357s
+Ep 22600/40000 | ret -1.0939 | avg(50) -2.3011 | ε 0.050 | loss 0.00002 | σ_epist 0.0436 | buf 100,000 | 3365s
+Ep 22650/40000 | ret -1.0797 | avg(50) -1.9359 | ε 0.050 | loss 0.00002 | σ_epist 0.0440 | buf 100,000 | 3373s
+Ep 22700/40000 | ret -1.0797 | avg(50) -2.3255 | ε 0.050 | loss 0.00002 | σ_epist 0.0436 | buf 100,000 | 3381s
+Ep 22750/40000 | ret -2.8097 | avg(50) -2.2104 | ε 0.050 | loss 0.00002 | σ_epist 0.0432 | buf 100,000 | 3389s
+Ep 22800/40000 | ret -1.1739 | avg(50) -2.2290 | ε 0.050 | loss 0.00001 | σ_epist 0.0433 | buf 100,000 | 3397s
+Ep 22850/40000 | ret -1.0921 | avg(50) -2.0752 | ε 0.050 | loss 0.00002 | σ_epist 0.0438 | buf 100,000 | 3404s
+Ep 22900/40000 | ret -1.0785 | avg(50) -2.1983 | ε 0.050 | loss 0.00001 | σ_epist 0.0438 | buf 100,000 | 3412s
+Ep 22950/40000 | ret -1.0928 | avg(50) -2.2012 | ε 0.050 | loss 0.00002 | σ_epist 0.0435 | buf 100,000 | 3420s
+Ep 23000/40000 | ret -1.0877 | avg(50) -2.1854 | ε 0.050 | loss 0.00001 | σ_epist 0.0438 | buf 100,000 | 3428s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep23000.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 23050/40000 | ret -5.9125 | avg(50) -2.2954 | ε 0.050 | loss 0.00002 | σ_epist 0.0441 | buf 100,000 | 3437s
+Ep 23100/40000 | ret -1.0771 | avg(50) -1.9016 | ε 0.050 | loss 0.00001 | σ_epist 0.0434 | buf 100,000 | 3445s
+Ep 23150/40000 | ret -6.9360 | avg(50) -1.9283 | ε 0.050 | loss 0.00001 | σ_epist 0.0437 | buf 100,000 | 3453s
+Ep 23200/40000 | ret -1.0797 | avg(50) -1.8222 | ε 0.050 | loss 0.00001 | σ_epist 0.0442 | buf 100,000 | 3461s
+Ep 23250/40000 | ret -1.0899 | avg(50) -2.1309 | ε 0.050 | loss 0.00001 | σ_epist 0.0442 | buf 100,000 | 3469s
+Ep 23300/40000 | ret -1.0797 | avg(50) -1.6804 | ε 0.050 | loss 0.00001 | σ_epist 0.0440 | buf 100,000 | 3477s
+Ep 23350/40000 | ret -1.9220 | avg(50) -1.8140 | ε 0.050 | loss 0.00002 | σ_epist 0.0437 | buf 100,000 | 3484s
+Ep 23400/40000 | ret -3.2112 | avg(50) -2.2372 | ε 0.050 | loss 0.00001 | σ_epist 0.0440 | buf 100,000 | 3492s
+Ep 23450/40000 | ret -1.1495 | avg(50) -2.1678 | ε 0.050 | loss 0.00008 | σ_epist 0.0432 | buf 100,000 | 3500s
+Ep 23500/40000 | ret -1.0771 | avg(50) -2.1386 | ε 0.050 | loss 0.00001 | σ_epist 0.0431 | buf 100,000 | 3508s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep23500.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 23550/40000 | ret -2.6274 | avg(50) -2.2495 | ε 0.050 | loss 0.00001 | σ_epist 0.0431 | buf 100,000 | 3517s
+Ep 23600/40000 | ret -2.6510 | avg(50) -2.3533 | ε 0.050 | loss 0.00001 | σ_epist 0.0435 | buf 100,000 | 3525s
+Ep 23650/40000 | ret -1.0823 | avg(50) -1.7984 | ε 0.050 | loss 0.00001 | σ_epist 0.0438 | buf 100,000 | 3533s
+Ep 23700/40000 | ret -1.0785 | avg(50) -2.2081 | ε 0.050 | loss 0.00000 | σ_epist 0.0441 | buf 100,000 | 3541s
+Ep 23750/40000 | ret -3.4463 | avg(50) -1.9394 | ε 0.050 | loss 0.00001 | σ_epist 0.0440 | buf 100,000 | 3549s
+Ep 23800/40000 | ret -1.0785 | avg(50) -2.1445 | ε 0.050 | loss 0.00002 | σ_epist 0.0440 | buf 100,000 | 3557s
+Ep 23850/40000 | ret -1.4785 | avg(50) -1.8171 | ε 0.050 | loss 0.00003 | σ_epist 0.0441 | buf 100,000 | 3564s
+Ep 23900/40000 | ret -1.0785 | avg(50) -2.0576 | ε 0.050 | loss 0.00000 | σ_epist 0.0446 | buf 100,000 | 3572s
+Ep 23950/40000 | ret -1.4506 | avg(50) -2.0904 | ε 0.050 | loss 0.00000 | σ_epist 0.0439 | buf 100,000 | 3580s
+Ep 24000/40000 | ret -5.4940 | avg(50) -2.6016 | ε 0.050 | loss 0.00002 | σ_epist 0.0435 | buf 100,000 | 3588s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep24000.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 24050/40000 | ret -1.0785 | avg(50) -1.9617 | ε 0.050 | loss 0.00001 | σ_epist 0.0436 | buf 100,000 | 3597s
+Ep 24100/40000 | ret -1.0797 | avg(50) -1.9200 | ε 0.050 | loss 0.00002 | σ_epist 0.0443 | buf 100,000 | 3605s
+Ep 24150/40000 | ret -1.0785 | avg(50) -2.1459 | ε 0.050 | loss 0.00001 | σ_epist 0.0444 | buf 100,000 | 3613s
+Ep 24200/40000 | ret -1.0785 | avg(50) -2.4063 | ε 0.050 | loss 0.00003 | σ_epist 0.0432 | buf 100,000 | 3621s
+Ep 24250/40000 | ret -1.0785 | avg(50) -1.9286 | ε 0.050 | loss 0.00001 | σ_epist 0.0429 | buf 100,000 | 3629s
+Ep 24300/40000 | ret -1.0785 | avg(50) -2.2689 | ε 0.050 | loss 0.00001 | σ_epist 0.0442 | buf 100,000 | 3636s
+Ep 24350/40000 | ret -1.4937 | avg(50) -1.9571 | ε 0.050 | loss 0.00005 | σ_epist 0.0441 | buf 100,000 | 3644s
+Ep 24400/40000 | ret -1.7860 | avg(50) -2.3612 | ε 0.050 | loss 0.00002 | σ_epist 0.0433 | buf 100,000 | 3652s
+Ep 24450/40000 | ret -1.0771 | avg(50) -1.8946 | ε 0.050 | loss 0.00001 | σ_epist 0.0439 | buf 100,000 | 3660s
+Ep 24500/40000 | ret -3.1040 | avg(50) -2.0075 | ε 0.050 | loss 0.00001 | σ_epist 0.0434 | buf 100,000 | 3668s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep24500.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 24550/40000 | ret -1.0855 | avg(50) -2.2603 | ε 0.050 | loss 0.00002 | σ_epist 0.0440 | buf 100,000 | 3677s
+Ep 24600/40000 | ret -1.0785 | avg(50) -2.3466 | ε 0.050 | loss 0.00003 | σ_epist 0.0431 | buf 100,000 | 3685s
+Ep 24650/40000 | ret -5.7400 | avg(50) -2.0662 | ε 0.050 | loss 0.00001 | σ_epist 0.0437 | buf 100,000 | 3693s
+Ep 24700/40000 | ret -1.2498 | avg(50) -2.5146 | ε 0.050 | loss 0.00004 | σ_epist 0.0431 | buf 100,000 | 3701s
+Ep 24750/40000 | ret -3.9435 | avg(50) -2.1333 | ε 0.050 | loss 0.00000 | σ_epist 0.0438 | buf 100,000 | 3708s
+Ep 24800/40000 | ret -1.0785 | avg(50) -2.0577 | ε 0.050 | loss 0.00003 | σ_epist 0.0444 | buf 100,000 | 3716s
+Ep 24850/40000 | ret -4.4790 | avg(50) -1.8770 | ε 0.050 | loss 0.00001 | σ_epist 0.0436 | buf 100,000 | 3724s
+Ep 24900/40000 | ret -1.0771 | avg(50) -2.1682 | ε 0.050 | loss 0.00001 | σ_epist 0.0438 | buf 100,000 | 3732s
+Ep 24950/40000 | ret -7.0842 | avg(50) -2.4215 | ε 0.050 | loss 0.00001 | σ_epist 0.0438 | buf 100,000 | 3740s
+Ep 25000/40000 | ret -1.0797 | avg(50) -2.0913 | ε 0.050 | loss 0.00001 | σ_epist 0.0435 | buf 100,000 | 3748s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep25000.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 25050/40000 | ret -1.0797 | avg(50) -2.0776 | ε 0.050 | loss 0.00001 | σ_epist 0.0434 | buf 100,000 | 3757s
+Ep 25100/40000 | ret -3.4144 | avg(50) -1.9692 | ε 0.050 | loss 0.00001 | σ_epist 0.0437 | buf 100,000 | 3765s
+Ep 25150/40000 | ret -1.0959 | avg(50) -2.5471 | ε 0.050 | loss 0.00003 | σ_epist 0.0433 | buf 100,000 | 3773s
+Ep 25200/40000 | ret -1.0771 | avg(50) -2.3434 | ε 0.050 | loss 0.00002 | σ_epist 0.0438 | buf 100,000 | 3781s
+Ep 25250/40000 | ret -1.0785 | avg(50) -2.1809 | ε 0.050 | loss 0.00001 | σ_epist 0.0439 | buf 100,000 | 3788s
+Ep 25300/40000 | ret -1.0823 | avg(50) -2.4064 | ε 0.050 | loss 0.00001 | σ_epist 0.0432 | buf 100,000 | 3796s
+Ep 25350/40000 | ret -1.0907 | avg(50) -2.0568 | ε 0.050 | loss 0.00002 | σ_epist 0.0439 | buf 100,000 | 3804s
+Ep 25400/40000 | ret -1.0899 | avg(50) -1.8560 | ε 0.050 | loss 0.00002 | σ_epist 0.0433 | buf 100,000 | 3812s
+Ep 25450/40000 | ret -2.5814 | avg(50) -2.2736 | ε 0.050 | loss 0.00001 | σ_epist 0.0434 | buf 100,000 | 3820s
+Ep 25500/40000 | ret -1.0797 | avg(50) -2.4186 | ε 0.050 | loss 0.00001 | σ_epist 0.0434 | buf 100,000 | 3828s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep25500.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 25550/40000 | ret -1.0785 | avg(50) -1.9912 | ε 0.050 | loss 0.00001 | σ_epist 0.0434 | buf 100,000 | 3837s
+Ep 25600/40000 | ret -1.0797 | avg(50) -2.5006 | ε 0.050 | loss 0.00001 | σ_epist 0.0441 | buf 100,000 | 3845s
+Ep 25650/40000 | ret -1.0877 | avg(50) -2.2536 | ε 0.050 | loss 0.00001 | σ_epist 0.0433 | buf 100,000 | 3853s
+Ep 25700/40000 | ret -2.0751 | avg(50) -2.0780 | ε 0.050 | loss 0.00000 | σ_epist 0.0439 | buf 100,000 | 3861s
+Ep 25750/40000 | ret -1.5823 | avg(50) -1.7618 | ε 0.050 | loss 0.00001 | σ_epist 0.0443 | buf 100,000 | 3868s
+Ep 25800/40000 | ret -5.8932 | avg(50) -2.4849 | ε 0.050 | loss 0.00001 | σ_epist 0.0425 | buf 100,000 | 3876s
+Ep 25850/40000 | ret -1.0823 | avg(50) -2.1673 | ε 0.050 | loss 0.00001 | σ_epist 0.0433 | buf 100,000 | 3884s
+Ep 25900/40000 | ret -1.0836 | avg(50) -1.7965 | ε 0.050 | loss 0.00000 | σ_epist 0.0437 | buf 100,000 | 3892s
+Ep 25950/40000 | ret -1.0836 | avg(50) -2.2241 | ε 0.050 | loss 0.00000 | σ_epist 0.0437 | buf 100,000 | 3900s
+Ep 26000/40000 | ret -2.3211 | avg(50) -1.7401 | ε 0.050 | loss 0.00001 | σ_epist 0.0442 | buf 100,000 | 3908s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep26000.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 26050/40000 | ret -1.9505 | avg(50) -1.9760 | ε 0.050 | loss 0.00002 | σ_epist 0.0442 | buf 100,000 | 3917s
+Ep 26100/40000 | ret -1.0771 | avg(50) -1.6295 | ε 0.050 | loss 0.00000 | σ_epist 0.0439 | buf 100,000 | 3925s
+Ep 26150/40000 | ret -4.5938 | avg(50) -2.1654 | ε 0.050 | loss 0.00001 | σ_epist 0.0441 | buf 100,000 | 3933s
+Ep 26200/40000 | ret -1.2177 | avg(50) -1.8206 | ε 0.050 | loss 0.00002 | σ_epist 0.0444 | buf 100,000 | 3941s
+Ep 26250/40000 | ret -1.0771 | avg(50) -1.7008 | ε 0.050 | loss 0.00002 | σ_epist 0.0442 | buf 100,000 | 3948s
+Ep 26300/40000 | ret -1.0771 | avg(50) -1.7977 | ε 0.050 | loss 0.00001 | σ_epist 0.0439 | buf 100,000 | 3956s
+Ep 26350/40000 | ret -1.0942 | avg(50) -1.9754 | ε 0.050 | loss 0.00003 | σ_epist 0.0434 | buf 100,000 | 3964s
+Ep 26400/40000 | ret -1.0785 | avg(50) -1.5022 | ε 0.050 | loss 0.00001 | σ_epist 0.0439 | buf 100,000 | 3972s
+Ep 26450/40000 | ret -3.5072 | avg(50) -1.8339 | ε 0.050 | loss 0.00001 | σ_epist 0.0439 | buf 100,000 | 3980s
+Ep 26500/40000 | ret -1.4092 | avg(50) -1.7695 | ε 0.050 | loss 0.00001 | σ_epist 0.0436 | buf 100,000 | 3988s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep26500.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 26550/40000 | ret -1.0939 | avg(50) -1.6957 | ε 0.050 | loss 0.00001 | σ_epist 0.0439 | buf 100,000 | 3997s
+Ep 26600/40000 | ret -1.6245 | avg(50) -1.9693 | ε 0.050 | loss 0.00001 | σ_epist 0.0440 | buf 100,000 | 4005s
+Ep 26650/40000 | ret -1.5624 | avg(50) -2.0630 | ε 0.050 | loss 0.00001 | σ_epist 0.0435 | buf 100,000 | 4013s
+Ep 26700/40000 | ret -1.0771 | avg(50) -1.8993 | ε 0.050 | loss 0.00002 | σ_epist 0.0437 | buf 100,000 | 4020s
+Ep 26750/40000 | ret -1.0836 | avg(50) -1.9100 | ε 0.050 | loss 0.00001 | σ_epist 0.0437 | buf 100,000 | 4028s
+Ep 26800/40000 | ret -1.5964 | avg(50) -2.2756 | ε 0.050 | loss 0.00004 | σ_epist 0.0437 | buf 100,000 | 4036s
+Ep 26850/40000 | ret -4.0413 | avg(50) -2.0223 | ε 0.050 | loss 0.00000 | σ_epist 0.0441 | buf 100,000 | 4044s
+Ep 26900/40000 | ret -2.1702 | avg(50) -2.0565 | ε 0.050 | loss 0.00003 | σ_epist 0.0435 | buf 100,000 | 4052s
+Ep 26950/40000 | ret -3.3014 | avg(50) -2.0001 | ε 0.050 | loss 0.00000 | σ_epist 0.0435 | buf 100,000 | 4060s
+Ep 27000/40000 | ret -1.0785 | avg(50) -1.9517 | ε 0.050 | loss 0.00001 | σ_epist 0.0441 | buf 100,000 | 4068s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep27000.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 27050/40000 | ret -3.1204 | avg(50) -1.8622 | ε 0.050 | loss 0.00001 | σ_epist 0.0439 | buf 100,000 | 4077s
+Ep 27100/40000 | ret -3.0534 | avg(50) -1.8638 | ε 0.050 | loss 0.00001 | σ_epist 0.0436 | buf 100,000 | 4085s
+Ep 27150/40000 | ret -1.0771 | avg(50) -2.4776 | ε 0.050 | loss 0.00001 | σ_epist 0.0444 | buf 100,000 | 4093s
+Ep 27200/40000 | ret -1.4495 | avg(50) -2.5218 | ε 0.050 | loss 0.00001 | σ_epist 0.0436 | buf 100,000 | 4101s
+Ep 27250/40000 | ret -1.0771 | avg(50) -1.8774 | ε 0.050 | loss 0.00001 | σ_epist 0.0433 | buf 100,000 | 4109s
+Ep 27300/40000 | ret -1.0785 | avg(50) -1.4598 | ε 0.050 | loss 0.00000 | σ_epist 0.0446 | buf 100,000 | 4116s
+Ep 27350/40000 | ret -4.9552 | avg(50) -2.0288 | ε 0.050 | loss 0.00001 | σ_epist 0.0441 | buf 100,000 | 4124s
+Ep 27400/40000 | ret -4.5414 | avg(50) -2.0279 | ε 0.050 | loss 0.00001 | σ_epist 0.0443 | buf 100,000 | 4132s
+Ep 27450/40000 | ret -1.0785 | avg(50) -2.1321 | ε 0.050 | loss 0.00001 | σ_epist 0.0434 | buf 100,000 | 4140s
+Ep 27500/40000 | ret -1.0785 | avg(50) -2.2954 | ε 0.050 | loss 0.00000 | σ_epist 0.0435 | buf 100,000 | 4148s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep27500.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 27550/40000 | ret -1.0785 | avg(50) -1.7318 | ε 0.050 | loss 0.00001 | σ_epist 0.0445 | buf 100,000 | 4157s
+Ep 27600/40000 | ret -1.0785 | avg(50) -1.7838 | ε 0.050 | loss 0.00000 | σ_epist 0.0442 | buf 100,000 | 4165s
+Ep 27650/40000 | ret -1.0785 | avg(50) -1.9407 | ε 0.050 | loss 0.00001 | σ_epist 0.0434 | buf 100,000 | 4173s
+Ep 27700/40000 | ret -1.0785 | avg(50) -2.2218 | ε 0.050 | loss 0.00002 | σ_epist 0.0435 | buf 100,000 | 4181s
+Ep 27750/40000 | ret -1.0821 | avg(50) -1.9324 | ε 0.050 | loss 0.00000 | σ_epist 0.0443 | buf 100,000 | 4189s
+Ep 27800/40000 | ret -5.9035 | avg(50) -2.0262 | ε 0.050 | loss 0.00000 | σ_epist 0.0441 | buf 100,000 | 4197s
+Ep 27850/40000 | ret -1.0771 | avg(50) -2.0290 | ε 0.050 | loss 0.00001 | σ_epist 0.0443 | buf 100,000 | 4204s
+Ep 27900/40000 | ret -3.3080 | avg(50) -2.0798 | ε 0.050 | loss 0.00001 | σ_epist 0.0442 | buf 100,000 | 4212s
+Ep 27950/40000 | ret -4.9994 | avg(50) -2.3508 | ε 0.050 | loss 0.00001 | σ_epist 0.0436 | buf 100,000 | 4220s
+Ep 28000/40000 | ret -1.0821 | avg(50) -1.8170 | ε 0.050 | loss 0.00002 | σ_epist 0.0439 | buf 100,000 | 4228s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep28000.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 28050/40000 | ret -1.7828 | avg(50) -1.7385 | ε 0.050 | loss 0.00001 | σ_epist 0.0441 | buf 100,000 | 4237s
+Ep 28100/40000 | ret -1.4184 | avg(50) -2.0334 | ε 0.050 | loss 0.00001 | σ_epist 0.0437 | buf 100,000 | 4245s
+Ep 28150/40000 | ret -4.8707 | avg(50) -2.4496 | ε 0.050 | loss 0.00005 | σ_epist 0.0433 | buf 100,000 | 4253s
+Ep 28200/40000 | ret -1.0785 | avg(50) -1.8704 | ε 0.050 | loss 0.00000 | σ_epist 0.0441 | buf 100,000 | 4261s
+Ep 28250/40000 | ret -1.0797 | avg(50) -1.7067 | ε 0.050 | loss 0.00001 | σ_epist 0.0444 | buf 100,000 | 4269s
+Ep 28300/40000 | ret -2.4321 | avg(50) -2.2179 | ε 0.050 | loss 0.00001 | σ_epist 0.0440 | buf 100,000 | 4277s
+Ep 28350/40000 | ret -1.5455 | avg(50) -2.2179 | ε 0.050 | loss 0.00002 | σ_epist 0.0442 | buf 100,000 | 4284s
+Ep 28400/40000 | ret -1.6913 | avg(50) -2.1531 | ε 0.050 | loss 0.00001 | σ_epist 0.0438 | buf 100,000 | 4292s
+Ep 28450/40000 | ret -1.0797 | avg(50) -1.9183 | ε 0.050 | loss 0.00002 | σ_epist 0.0441 | buf 100,000 | 4300s
+Ep 28500/40000 | ret -1.0899 | avg(50) -2.0560 | ε 0.050 | loss 0.00001 | σ_epist 0.0439 | buf 100,000 | 4308s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep28500.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 28550/40000 | ret -3.8746 | avg(50) -1.9739 | ε 0.050 | loss 0.00001 | σ_epist 0.0435 | buf 100,000 | 4317s
+Ep 28600/40000 | ret -1.0785 | avg(50) -2.2546 | ε 0.050 | loss 0.00001 | σ_epist 0.0435 | buf 100,000 | 4325s
+Ep 28650/40000 | ret -1.0785 | avg(50) -2.7890 | ε 0.050 | loss 0.00001 | σ_epist 0.0435 | buf 100,000 | 4333s
+Ep 28700/40000 | ret -1.0912 | avg(50) -2.3626 | ε 0.050 | loss 0.00001 | σ_epist 0.0434 | buf 100,000 | 4341s
+Ep 28750/40000 | ret -1.0797 | avg(50) -2.2057 | ε 0.050 | loss 0.00000 | σ_epist 0.0433 | buf 100,000 | 4349s
+Ep 28800/40000 | ret -1.7819 | avg(50) -2.2322 | ε 0.050 | loss 0.00000 | σ_epist 0.0432 | buf 100,000 | 4357s
+Ep 28850/40000 | ret -4.3733 | avg(50) -2.6202 | ε 0.050 | loss 0.00024 | σ_epist 0.0438 | buf 100,000 | 4364s
+Ep 28900/40000 | ret -2.3040 | avg(50) -2.0866 | ε 0.050 | loss 0.00000 | σ_epist 0.0433 | buf 100,000 | 4372s
+Ep 28950/40000 | ret -1.0771 | avg(50) -1.6452 | ε 0.050 | loss 0.00000 | σ_epist 0.0440 | buf 100,000 | 4380s
+Ep 29000/40000 | ret -1.3099 | avg(50) -2.2128 | ε 0.050 | loss 0.00001 | σ_epist 0.0440 | buf 100,000 | 4388s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep29000.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 29050/40000 | ret -1.0797 | avg(50) -1.8558 | ε 0.050 | loss 0.00000 | σ_epist 0.0438 | buf 100,000 | 4397s
+Ep 29100/40000 | ret -1.0785 | avg(50) -1.7238 | ε 0.050 | loss 0.00001 | σ_epist 0.0439 | buf 100,000 | 4405s
+Ep 29150/40000 | ret -1.7000 | avg(50) -1.9666 | ε 0.050 | loss 0.00001 | σ_epist 0.0435 | buf 100,000 | 4413s
+Ep 29200/40000 | ret -1.0877 | avg(50) -1.9069 | ε 0.050 | loss 0.00001 | σ_epist 0.0442 | buf 100,000 | 4421s
+Ep 29250/40000 | ret -1.0821 | avg(50) -2.2460 | ε 0.050 | loss 0.00001 | σ_epist 0.0437 | buf 100,000 | 4429s
+Ep 29300/40000 | ret -1.0785 | avg(50) -2.1489 | ε 0.050 | loss 0.00001 | σ_epist 0.0439 | buf 100,000 | 4437s
+Ep 29350/40000 | ret -1.0797 | avg(50) -1.8549 | ε 0.050 | loss 0.00002 | σ_epist 0.0435 | buf 100,000 | 4444s
+Ep 29400/40000 | ret -2.2007 | avg(50) -1.9967 | ε 0.050 | loss 0.00001 | σ_epist 0.0438 | buf 100,000 | 4452s
+Ep 29450/40000 | ret -1.0785 | avg(50) -1.8528 | ε 0.050 | loss 0.00000 | σ_epist 0.0439 | buf 100,000 | 4460s
+Ep 29500/40000 | ret -1.0785 | avg(50) -2.5257 | ε 0.050 | loss 0.00000 | σ_epist 0.0437 | buf 100,000 | 4468s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep29500.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 29550/40000 | ret -1.0785 | avg(50) -2.0778 | ε 0.050 | loss 0.00001 | σ_epist 0.0439 | buf 100,000 | 4477s
+Ep 29600/40000 | ret -1.0785 | avg(50) -2.2628 | ε 0.050 | loss 0.00000 | σ_epist 0.0442 | buf 100,000 | 4485s
+Ep 29650/40000 | ret -1.0785 | avg(50) -1.8819 | ε 0.050 | loss 0.00001 | σ_epist 0.0444 | buf 100,000 | 4493s
+Ep 29700/40000 | ret -1.6833 | avg(50) -2.2334 | ε 0.050 | loss 0.00000 | σ_epist 0.0445 | buf 100,000 | 4501s
+Ep 29750/40000 | ret -6.2377 | avg(50) -2.0540 | ε 0.050 | loss 0.00001 | σ_epist 0.0442 | buf 100,000 | 4509s
+Ep 29800/40000 | ret -1.0785 | avg(50) -1.9833 | ε 0.050 | loss 0.00001 | σ_epist 0.0442 | buf 100,000 | 4517s
+Ep 29850/40000 | ret -2.0925 | avg(50) -2.5366 | ε 0.050 | loss 0.00002 | σ_epist 0.0441 | buf 100,000 | 4525s
+Ep 29900/40000 | ret -1.0823 | avg(50) -2.2796 | ε 0.050 | loss 0.00001 | σ_epist 0.0439 | buf 100,000 | 4533s
+Ep 29950/40000 | ret -1.0797 | avg(50) -2.0412 | ε 0.050 | loss 0.00001 | σ_epist 0.0438 | buf 100,000 | 4540s
+Ep 30000/40000 | ret -1.8048 | avg(50) -2.0876 | ε 0.050 | loss 0.00002 | σ_epist 0.0441 | buf 100,000 | 4548s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep30000.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 30050/40000 | ret -5.9637 | avg(50) -2.3277 | ε 0.050 | loss 0.00001 | σ_epist 0.0434 | buf 100,000 | 4558s
+Ep 30100/40000 | ret -1.0771 | avg(50) -2.2238 | ε 0.050 | loss 0.00001 | σ_epist 0.0430 | buf 100,000 | 4565s
+Ep 30150/40000 | ret -1.7517 | avg(50) -1.9231 | ε 0.050 | loss 0.00001 | σ_epist 0.0441 | buf 100,000 | 4573s
+Ep 30200/40000 | ret -1.0785 | avg(50) -1.8407 | ε 0.050 | loss 0.00001 | σ_epist 0.0439 | buf 100,000 | 4581s
+Ep 30250/40000 | ret -3.6022 | avg(50) -2.4363 | ε 0.050 | loss 0.00002 | σ_epist 0.0434 | buf 100,000 | 4589s
+Ep 30300/40000 | ret -1.0785 | avg(50) -1.8550 | ε 0.050 | loss 0.00001 | σ_epist 0.0438 | buf 100,000 | 4597s
+Ep 30350/40000 | ret -1.0928 | avg(50) -2.4527 | ε 0.050 | loss 0.00003 | σ_epist 0.0430 | buf 100,000 | 4605s
+Ep 30400/40000 | ret -1.0836 | avg(50) -2.1112 | ε 0.050 | loss 0.00001 | σ_epist 0.0435 | buf 100,000 | 4613s
+Ep 30450/40000 | ret -4.2327 | avg(50) -1.9011 | ε 0.050 | loss 0.00002 | σ_epist 0.0441 | buf 100,000 | 4620s
+Ep 30500/40000 | ret -3.2667 | avg(50) -1.9315 | ε 0.050 | loss 0.00001 | σ_epist 0.0435 | buf 100,000 | 4628s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep30500.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 30550/40000 | ret -1.0785 | avg(50) -1.7931 | ε 0.050 | loss 0.00001 | σ_epist 0.0437 | buf 100,000 | 4638s
+Ep 30600/40000 | ret -1.0785 | avg(50) -2.3562 | ε 0.050 | loss 0.00001 | σ_epist 0.0434 | buf 100,000 | 4646s
+Ep 30650/40000 | ret -7.5654 | avg(50) -2.1125 | ε 0.050 | loss 0.00001 | σ_epist 0.0442 | buf 100,000 | 4654s
+Ep 30700/40000 | ret -1.1189 | avg(50) -2.0035 | ε 0.050 | loss 0.00000 | σ_epist 0.0441 | buf 100,000 | 4662s
+Ep 30750/40000 | ret -1.0785 | avg(50) -1.8398 | ε 0.050 | loss 0.00001 | σ_epist 0.0443 | buf 100,000 | 4670s
+Ep 30800/40000 | ret -1.1408 | avg(50) -2.4181 | ε 0.050 | loss 0.00001 | σ_epist 0.0431 | buf 100,000 | 4677s
+Ep 30850/40000 | ret -2.1634 | avg(50) -1.9726 | ε 0.050 | loss 0.00001 | σ_epist 0.0437 | buf 100,000 | 4685s
+Ep 30900/40000 | ret -1.0785 | avg(50) -2.0988 | ε 0.050 | loss 0.00001 | σ_epist 0.0438 | buf 100,000 | 4693s
+Ep 30950/40000 | ret -1.0785 | avg(50) -1.8527 | ε 0.050 | loss 0.00002 | σ_epist 0.0438 | buf 100,000 | 4701s
+Ep 31000/40000 | ret -1.2132 | avg(50) -2.0752 | ε 0.050 | loss 0.00001 | σ_epist 0.0441 | buf 100,000 | 4709s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep31000.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 31050/40000 | ret -3.1461 | avg(50) -1.9663 | ε 0.050 | loss 0.00000 | σ_epist 0.0438 | buf 100,000 | 4718s
+Ep 31100/40000 | ret -1.0823 | avg(50) -1.9006 | ε 0.050 | loss 0.00001 | σ_epist 0.0439 | buf 100,000 | 4726s
+Ep 31150/40000 | ret -2.9725 | avg(50) -2.0025 | ε 0.050 | loss 0.00001 | σ_epist 0.0437 | buf 100,000 | 4734s
+Ep 31200/40000 | ret -10.1173 | avg(50) -2.3489 | ε 0.050 | loss 0.00001 | σ_epist 0.0441 | buf 100,000 | 4742s
+Ep 31250/40000 | ret -4.1355 | avg(50) -2.2880 | ε 0.050 | loss 0.00001 | σ_epist 0.0441 | buf 100,000 | 4750s
+Ep 31300/40000 | ret -1.8794 | avg(50) -1.6460 | ε 0.050 | loss 0.00001 | σ_epist 0.0440 | buf 100,000 | 4758s
+Ep 31350/40000 | ret -6.0786 | avg(50) -2.1173 | ε 0.050 | loss 0.00001 | σ_epist 0.0438 | buf 100,000 | 4766s
+Ep 31400/40000 | ret -7.1602 | avg(50) -2.5638 | ε 0.050 | loss 0.00000 | σ_epist 0.0441 | buf 100,000 | 4773s
+Ep 31450/40000 | ret -1.0836 | avg(50) -2.2482 | ε 0.050 | loss 0.00001 | σ_epist 0.0437 | buf 100,000 | 4781s
+Ep 31500/40000 | ret -1.0797 | avg(50) -2.0002 | ε 0.050 | loss 0.00002 | σ_epist 0.0442 | buf 100,000 | 4789s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep31500.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 31550/40000 | ret -1.0855 | avg(50) -1.9448 | ε 0.050 | loss 0.00001 | σ_epist 0.0436 | buf 100,000 | 4798s
+Ep 31600/40000 | ret -1.0771 | avg(50) -2.5267 | ε 0.050 | loss 0.00001 | σ_epist 0.0439 | buf 100,000 | 4806s
+Ep 31650/40000 | ret -1.0785 | avg(50) -1.7481 | ε 0.050 | loss 0.00002 | σ_epist 0.0436 | buf 100,000 | 4814s
+Ep 31700/40000 | ret -3.0001 | avg(50) -1.7724 | ε 0.050 | loss 0.00001 | σ_epist 0.0440 | buf 100,000 | 4822s
+Ep 31750/40000 | ret -2.6112 | avg(50) -1.8973 | ε 0.050 | loss 0.00001 | σ_epist 0.0442 | buf 100,000 | 4830s
+Ep 31800/40000 | ret -5.2829 | avg(50) -2.3951 | ε 0.050 | loss 0.00001 | σ_epist 0.0436 | buf 100,000 | 4838s
+Ep 31850/40000 | ret -5.0449 | avg(50) -2.0540 | ε 0.050 | loss 0.00001 | σ_epist 0.0433 | buf 100,000 | 4846s
+Ep 31900/40000 | ret -1.0797 | avg(50) -2.4109 | ε 0.050 | loss 0.00001 | σ_epist 0.0436 | buf 100,000 | 4853s
+Ep 31950/40000 | ret -4.9480 | avg(50) -2.2903 | ε 0.050 | loss 0.00000 | σ_epist 0.0437 | buf 100,000 | 4861s
+Ep 32000/40000 | ret -1.0785 | avg(50) -1.7916 | ε 0.050 | loss 0.00000 | σ_epist 0.0441 | buf 100,000 | 4869s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep32000.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 32050/40000 | ret -1.0771 | avg(50) -2.1825 | ε 0.050 | loss 0.00000 | σ_epist 0.0437 | buf 100,000 | 4879s
+Ep 32100/40000 | ret -1.6923 | avg(50) -2.2519 | ε 0.050 | loss 0.00002 | σ_epist 0.0436 | buf 100,000 | 4887s
+Ep 32150/40000 | ret -1.8665 | avg(50) -2.1584 | ε 0.050 | loss 0.00000 | σ_epist 0.0434 | buf 100,000 | 4894s
+Ep 32200/40000 | ret -4.4298 | avg(50) -2.3518 | ε 0.050 | loss 0.00002 | σ_epist 0.0439 | buf 100,000 | 4902s
+Ep 32250/40000 | ret -1.0797 | avg(50) -2.0929 | ε 0.050 | loss 0.00001 | σ_epist 0.0437 | buf 100,000 | 4910s
+Ep 32300/40000 | ret -1.0797 | avg(50) -1.7592 | ε 0.050 | loss 0.00000 | σ_epist 0.0443 | buf 100,000 | 4918s
+Ep 32350/40000 | ret -1.0785 | avg(50) -2.2068 | ε 0.050 | loss 0.00001 | σ_epist 0.0436 | buf 100,000 | 4926s
+Ep 32400/40000 | ret -1.0785 | avg(50) -1.9877 | ε 0.050 | loss 0.00001 | σ_epist 0.0437 | buf 100,000 | 4934s
+Ep 32450/40000 | ret -1.0836 | avg(50) -2.0896 | ε 0.050 | loss 0.00001 | σ_epist 0.0435 | buf 100,000 | 4942s
+Ep 32500/40000 | ret -1.0785 | avg(50) -2.0143 | ε 0.050 | loss 0.00000 | σ_epist 0.0435 | buf 100,000 | 4949s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep32500.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 32550/40000 | ret -1.0823 | avg(50) -2.3840 | ε 0.050 | loss 0.00001 | σ_epist 0.0435 | buf 100,000 | 4959s
+Ep 32600/40000 | ret -5.3682 | avg(50) -2.0805 | ε 0.050 | loss 0.00001 | σ_epist 0.0440 | buf 100,000 | 4967s
+Ep 32650/40000 | ret -3.5931 | avg(50) -2.2667 | ε 0.050 | loss 0.00002 | σ_epist 0.0445 | buf 100,000 | 4975s
+Ep 32700/40000 | ret -1.0797 | avg(50) -1.8626 | ε 0.050 | loss 0.00001 | σ_epist 0.0440 | buf 100,000 | 4982s
+Ep 32750/40000 | ret -1.0797 | avg(50) -2.3572 | ε 0.050 | loss 0.00001 | σ_epist 0.0441 | buf 100,000 | 4990s
+Ep 32800/40000 | ret -3.0001 | avg(50) -2.4189 | ε 0.050 | loss 0.00001 | σ_epist 0.0435 | buf 100,000 | 4998s
+Ep 32850/40000 | ret -2.0295 | avg(50) -2.1177 | ε 0.050 | loss 0.00002 | σ_epist 0.0436 | buf 100,000 | 5006s
+Ep 32900/40000 | ret -1.0939 | avg(50) -1.8777 | ε 0.050 | loss 0.00015 | σ_epist 0.0443 | buf 100,000 | 5014s
+Ep 32950/40000 | ret -1.0785 | avg(50) -1.8787 | ε 0.050 | loss 0.00001 | σ_epist 0.0444 | buf 100,000 | 5022s
+Ep 33000/40000 | ret -2.4055 | avg(50) -2.0150 | ε 0.050 | loss 0.00001 | σ_epist 0.0435 | buf 100,000 | 5030s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep33000.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 33050/40000 | ret -1.0771 | avg(50) -1.7360 | ε 0.050 | loss 0.00000 | σ_epist 0.0444 | buf 100,000 | 5039s
+Ep 33100/40000 | ret -1.0785 | avg(50) -2.1133 | ε 0.050 | loss 0.00000 | σ_epist 0.0440 | buf 100,000 | 5047s
+Ep 33150/40000 | ret -1.0771 | avg(50) -2.5102 | ε 0.050 | loss 0.00000 | σ_epist 0.0431 | buf 100,000 | 5055s
+Ep 33200/40000 | ret -3.2440 | avg(50) -1.9167 | ε 0.050 | loss 0.00001 | σ_epist 0.0439 | buf 100,000 | 5063s
+Ep 33250/40000 | ret -1.0785 | avg(50) -2.1131 | ε 0.050 | loss 0.00000 | σ_epist 0.0438 | buf 100,000 | 5071s
+Ep 33300/40000 | ret -2.9624 | avg(50) -2.1173 | ε 0.050 | loss 0.00000 | σ_epist 0.0439 | buf 100,000 | 5078s
+Ep 33350/40000 | ret -1.3895 | avg(50) -1.9945 | ε 0.050 | loss 0.00001 | σ_epist 0.0435 | buf 100,000 | 5086s
+Ep 33400/40000 | ret -1.0771 | avg(50) -2.5773 | ε 0.050 | loss 0.00000 | σ_epist 0.0432 | buf 100,000 | 5094s
+Ep 33450/40000 | ret -6.0227 | avg(50) -2.6328 | ε 0.050 | loss 0.00001 | σ_epist 0.0440 | buf 100,000 | 5102s
+Ep 33500/40000 | ret -1.0797 | avg(50) -1.8329 | ε 0.050 | loss 0.00001 | σ_epist 0.0439 | buf 100,000 | 5110s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep33500.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 33550/40000 | ret -3.0909 | avg(50) -2.7463 | ε 0.050 | loss 0.00001 | σ_epist 0.0437 | buf 100,000 | 5120s
+Ep 33600/40000 | ret -2.1058 | avg(50) -1.7401 | ε 0.050 | loss 0.00001 | σ_epist 0.0440 | buf 100,000 | 5127s
+Ep 33650/40000 | ret -1.0877 | avg(50) -2.3358 | ε 0.050 | loss 0.00001 | σ_epist 0.0434 | buf 100,000 | 5135s
+Ep 33700/40000 | ret -1.0823 | avg(50) -2.0371 | ε 0.050 | loss 0.00001 | σ_epist 0.0438 | buf 100,000 | 5143s
+Ep 33750/40000 | ret -2.0865 | avg(50) -1.9058 | ε 0.050 | loss 0.00001 | σ_epist 0.0441 | buf 100,000 | 5151s
+Ep 33800/40000 | ret -3.8734 | avg(50) -2.1202 | ε 0.050 | loss 0.00001 | σ_epist 0.0434 | buf 100,000 | 5159s
+Ep 33850/40000 | ret -1.0785 | avg(50) -1.8728 | ε 0.050 | loss 0.00001 | σ_epist 0.0442 | buf 100,000 | 5167s
+Ep 33900/40000 | ret -1.0785 | avg(50) -1.9854 | ε 0.050 | loss 0.00001 | σ_epist 0.0436 | buf 100,000 | 5175s
+Ep 33950/40000 | ret -1.0771 | avg(50) -2.0301 | ε 0.050 | loss 0.00001 | σ_epist 0.0441 | buf 100,000 | 5183s
+Ep 34000/40000 | ret -1.0785 | avg(50) -1.9105 | ε 0.050 | loss 0.00000 | σ_epist 0.0437 | buf 100,000 | 5190s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep34000.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 34050/40000 | ret -1.1739 | avg(50) -1.9645 | ε 0.050 | loss 0.00001 | σ_epist 0.0442 | buf 100,000 | 5200s
+Ep 34100/40000 | ret -3.1204 | avg(50) -2.3721 | ε 0.050 | loss 0.00000 | σ_epist 0.0437 | buf 100,000 | 5208s
+Ep 34150/40000 | ret -2.7709 | avg(50) -2.1141 | ε 0.050 | loss 0.00001 | σ_epist 0.0438 | buf 100,000 | 5216s
+Ep 34200/40000 | ret -1.0855 | avg(50) -2.2497 | ε 0.050 | loss 0.00001 | σ_epist 0.0437 | buf 100,000 | 5224s
+Ep 34250/40000 | ret -1.0771 | avg(50) -1.7672 | ε 0.050 | loss 0.00000 | σ_epist 0.0446 | buf 100,000 | 5231s
+Ep 34300/40000 | ret -1.0785 | avg(50) -2.1046 | ε 0.050 | loss 0.00001 | σ_epist 0.0441 | buf 100,000 | 5239s
+Ep 34350/40000 | ret -3.6207 | avg(50) -2.4777 | ε 0.050 | loss 0.00001 | σ_epist 0.0435 | buf 100,000 | 5247s
+Ep 34400/40000 | ret -3.4276 | avg(50) -2.4262 | ε 0.050 | loss 0.00001 | σ_epist 0.0437 | buf 100,000 | 5255s
+Ep 34450/40000 | ret -1.0771 | avg(50) -1.9850 | ε 0.050 | loss 0.00000 | σ_epist 0.0434 | buf 100,000 | 5263s
+Ep 34500/40000 | ret -1.0823 | avg(50) -2.3176 | ε 0.050 | loss 0.00001 | σ_epist 0.0432 | buf 100,000 | 5271s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep34500.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 34550/40000 | ret -1.0785 | avg(50) -2.1059 | ε 0.050 | loss 0.00002 | σ_epist 0.0441 | buf 100,000 | 5280s
+Ep 34600/40000 | ret -1.0836 | avg(50) -1.9228 | ε 0.050 | loss 0.00001 | σ_epist 0.0438 | buf 100,000 | 5288s
+Ep 34650/40000 | ret -1.1364 | avg(50) -2.4181 | ε 0.050 | loss 0.00003 | σ_epist 0.0431 | buf 100,000 | 5296s
+Ep 34700/40000 | ret -1.0948 | avg(50) -2.0346 | ε 0.050 | loss 0.00001 | σ_epist 0.0442 | buf 100,000 | 5304s
+Ep 34750/40000 | ret -4.1104 | avg(50) -1.8251 | ε 0.050 | loss 0.00000 | σ_epist 0.0445 | buf 100,000 | 5312s
+Ep 34800/40000 | ret -1.2608 | avg(50) -1.7111 | ε 0.050 | loss 0.00001 | σ_epist 0.0441 | buf 100,000 | 5320s
+Ep 34850/40000 | ret -1.9114 | avg(50) -1.8925 | ε 0.050 | loss 0.00005 | σ_epist 0.0443 | buf 100,000 | 5328s
+Ep 34900/40000 | ret -3.1958 | avg(50) -2.0101 | ε 0.050 | loss 0.00000 | σ_epist 0.0437 | buf 100,000 | 5335s
+Ep 34950/40000 | ret -1.0907 | avg(50) -2.0649 | ε 0.050 | loss 0.00001 | σ_epist 0.0438 | buf 100,000 | 5343s
+Ep 35000/40000 | ret -1.0771 | avg(50) -2.1609 | ε 0.050 | loss 0.00001 | σ_epist 0.0434 | buf 100,000 | 5351s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep35000.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 35050/40000 | ret -2.1939 | avg(50) -1.9304 | ε 0.050 | loss 0.00000 | σ_epist 0.0443 | buf 100,000 | 5361s
+Ep 35100/40000 | ret -1.0785 | avg(50) -2.3001 | ε 0.050 | loss 0.00001 | σ_epist 0.0434 | buf 100,000 | 5369s
+Ep 35150/40000 | ret -1.0797 | avg(50) -1.9551 | ε 0.050 | loss 0.00002 | σ_epist 0.0438 | buf 100,000 | 5377s
+Ep 35200/40000 | ret -1.0785 | avg(50) -1.9158 | ε 0.050 | loss 0.00000 | σ_epist 0.0442 | buf 100,000 | 5384s
+Ep 35250/40000 | ret -1.0877 | avg(50) -2.3453 | ε 0.050 | loss 0.00001 | σ_epist 0.0438 | buf 100,000 | 5392s
+Ep 35300/40000 | ret -1.0785 | avg(50) -2.0794 | ε 0.050 | loss 0.00001 | σ_epist 0.0448 | buf 100,000 | 5400s
+Ep 35350/40000 | ret -1.1061 | avg(50) -2.0124 | ε 0.050 | loss 0.00001 | σ_epist 0.0436 | buf 100,000 | 5408s
+Ep 35400/40000 | ret -2.0228 | avg(50) -2.0590 | ε 0.050 | loss 0.00003 | σ_epist 0.0434 | buf 100,000 | 5416s
+Ep 35450/40000 | ret -1.0785 | avg(50) -1.8499 | ε 0.050 | loss 0.00000 | σ_epist 0.0437 | buf 100,000 | 5424s
+Ep 35500/40000 | ret -1.0877 | avg(50) -2.0296 | ε 0.050 | loss 0.00001 | σ_epist 0.0438 | buf 100,000 | 5432s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep35500.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 35550/40000 | ret -7.1547 | avg(50) -1.8482 | ε 0.050 | loss 0.00000 | σ_epist 0.0437 | buf 100,000 | 5441s
+Ep 35600/40000 | ret -1.7908 | avg(50) -2.1365 | ε 0.050 | loss 0.00013 | σ_epist 0.0441 | buf 100,000 | 5449s
+Ep 35650/40000 | ret -1.0785 | avg(50) -2.3600 | ε 0.050 | loss 0.00000 | σ_epist 0.0437 | buf 100,000 | 5457s
+Ep 35700/40000 | ret -1.0771 | avg(50) -1.8487 | ε 0.050 | loss 0.00001 | σ_epist 0.0447 | buf 100,000 | 5465s
+Ep 35750/40000 | ret -1.0896 | avg(50) -2.0498 | ε 0.050 | loss 0.00000 | σ_epist 0.0434 | buf 100,000 | 5473s
+Ep 35800/40000 | ret -1.6913 | avg(50) -1.8707 | ε 0.050 | loss 0.00000 | σ_epist 0.0440 | buf 100,000 | 5480s
+Ep 35850/40000 | ret -1.0785 | avg(50) -2.2524 | ε 0.050 | loss 0.00000 | σ_epist 0.0435 | buf 100,000 | 5488s
+Ep 35900/40000 | ret -1.1711 | avg(50) -1.5399 | ε 0.050 | loss 0.00001 | σ_epist 0.0441 | buf 100,000 | 5496s
+Ep 35950/40000 | ret -1.0785 | avg(50) -2.1482 | ε 0.050 | loss 0.00000 | σ_epist 0.0438 | buf 100,000 | 5504s
+Ep 36000/40000 | ret -1.5771 | avg(50) -2.2371 | ε 0.050 | loss 0.00001 | σ_epist 0.0438 | buf 100,000 | 5512s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep36000.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 36050/40000 | ret -1.0823 | avg(50) -2.2344 | ε 0.050 | loss 0.00002 | σ_epist 0.0429 | buf 100,000 | 5521s
+Ep 36100/40000 | ret -1.0785 | avg(50) -2.1027 | ε 0.050 | loss 0.00000 | σ_epist 0.0435 | buf 100,000 | 5529s
+Ep 36150/40000 | ret -1.0771 | avg(50) -1.8094 | ε 0.050 | loss 0.00000 | σ_epist 0.0441 | buf 100,000 | 5537s
+Ep 36200/40000 | ret -2.0051 | avg(50) -2.3107 | ε 0.050 | loss 0.00000 | σ_epist 0.0440 | buf 100,000 | 5545s
+Ep 36250/40000 | ret -7.3040 | avg(50) -2.3948 | ε 0.050 | loss 0.00000 | σ_epist 0.0439 | buf 100,000 | 5553s
+Ep 36300/40000 | ret -1.0771 | avg(50) -2.5814 | ε 0.050 | loss 0.00000 | σ_epist 0.0428 | buf 100,000 | 5561s
+Ep 36350/40000 | ret -3.1204 | avg(50) -1.8998 | ε 0.050 | loss 0.00000 | σ_epist 0.0442 | buf 100,000 | 5569s
+Ep 36400/40000 | ret -1.0771 | avg(50) -2.0681 | ε 0.050 | loss 0.00000 | σ_epist 0.0440 | buf 100,000 | 5576s
+Ep 36450/40000 | ret -1.0771 | avg(50) -1.7141 | ε 0.050 | loss 0.00000 | σ_epist 0.0440 | buf 100,000 | 5584s
+Ep 36500/40000 | ret -1.0771 | avg(50) -2.1286 | ε 0.050 | loss 0.00000 | σ_epist 0.0439 | buf 100,000 | 5592s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep36500.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 36550/40000 | ret -1.0823 | avg(50) -2.0952 | ε 0.050 | loss 0.00001 | σ_epist 0.0440 | buf 100,000 | 5602s
+Ep 36600/40000 | ret -3.0469 | avg(50) -1.9884 | ε 0.050 | loss 0.00001 | σ_epist 0.0439 | buf 100,000 | 5610s
+Ep 36650/40000 | ret -4.0441 | avg(50) -2.0056 | ε 0.050 | loss 0.00001 | σ_epist 0.0440 | buf 100,000 | 5618s
+Ep 36700/40000 | ret -1.0771 | avg(50) -1.6640 | ε 0.050 | loss 0.00001 | σ_epist 0.0442 | buf 100,000 | 5625s
+Ep 36750/40000 | ret -4.0968 | avg(50) -1.9976 | ε 0.050 | loss 0.00001 | σ_epist 0.0440 | buf 100,000 | 5633s
+Ep 36800/40000 | ret -2.5687 | avg(50) -1.7636 | ε 0.050 | loss 0.00001 | σ_epist 0.0439 | buf 100,000 | 5641s
+Ep 36850/40000 | ret -1.1055 | avg(50) -2.1181 | ε 0.050 | loss 0.00001 | σ_epist 0.0433 | buf 100,000 | 5649s
+Ep 36900/40000 | ret -1.0887 | avg(50) -2.0890 | ε 0.050 | loss 0.00001 | σ_epist 0.0440 | buf 100,000 | 5657s
+Ep 36950/40000 | ret -1.0836 | avg(50) -1.8662 | ε 0.050 | loss 0.00001 | σ_epist 0.0437 | buf 100,000 | 5665s
+Ep 37000/40000 | ret -1.0785 | avg(50) -2.0845 | ε 0.050 | loss 0.00000 | σ_epist 0.0438 | buf 100,000 | 5673s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep37000.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 37050/40000 | ret -1.0771 | avg(50) -2.0775 | ε 0.050 | loss 0.00001 | σ_epist 0.0445 | buf 100,000 | 5682s
+Ep 37100/40000 | ret -1.0797 | avg(50) -1.8946 | ε 0.050 | loss 0.00002 | σ_epist 0.0443 | buf 100,000 | 5690s
+Ep 37150/40000 | ret -1.8048 | avg(50) -1.8335 | ε 0.050 | loss 0.00002 | σ_epist 0.0434 | buf 100,000 | 5698s
+Ep 37200/40000 | ret -1.0771 | avg(50) -2.1872 | ε 0.050 | loss 0.00000 | σ_epist 0.0439 | buf 100,000 | 5706s
+Ep 37250/40000 | ret -1.0785 | avg(50) -2.0939 | ε 0.050 | loss 0.00000 | σ_epist 0.0438 | buf 100,000 | 5714s
+Ep 37300/40000 | ret -1.0771 | avg(50) -2.4138 | ε 0.050 | loss 0.00001 | σ_epist 0.0438 | buf 100,000 | 5722s
+Ep 37350/40000 | ret -1.1749 | avg(50) -2.0079 | ε 0.050 | loss 0.00000 | σ_epist 0.0438 | buf 100,000 | 5730s
+Ep 37400/40000 | ret -1.8177 | avg(50) -2.0234 | ε 0.050 | loss 0.00001 | σ_epist 0.0441 | buf 100,000 | 5738s
+Ep 37450/40000 | ret -1.0771 | avg(50) -1.9738 | ε 0.050 | loss 0.00001 | σ_epist 0.0441 | buf 100,000 | 5745s
+Ep 37500/40000 | ret -1.0785 | avg(50) -1.5311 | ε 0.050 | loss 0.00000 | σ_epist 0.0440 | buf 100,000 | 5753s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep37500.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 37550/40000 | ret -1.0797 | avg(50) -1.8181 | ε 0.050 | loss 0.00001 | σ_epist 0.0442 | buf 100,000 | 5763s
+Ep 37600/40000 | ret -1.0785 | avg(50) -2.0426 | ε 0.050 | loss 0.00001 | σ_epist 0.0440 | buf 100,000 | 5771s
+Ep 37650/40000 | ret -6.4256 | avg(50) -1.6892 | ε 0.050 | loss 0.00001 | σ_epist 0.0442 | buf 100,000 | 5779s
+Ep 37700/40000 | ret -2.6381 | avg(50) -1.6945 | ε 0.050 | loss 0.00001 | σ_epist 0.0444 | buf 100,000 | 5787s
+Ep 37750/40000 | ret -1.0821 | avg(50) -1.8062 | ε 0.050 | loss 0.00000 | σ_epist 0.0441 | buf 100,000 | 5794s
+Ep 37800/40000 | ret -2.1138 | avg(50) -2.0537 | ε 0.050 | loss 0.00001 | σ_epist 0.0438 | buf 100,000 | 5802s
+Ep 37850/40000 | ret -1.0887 | avg(50) -1.9225 | ε 0.050 | loss 0.00002 | σ_epist 0.0443 | buf 100,000 | 5810s
+Ep 37900/40000 | ret -1.0797 | avg(50) -2.0251 | ε 0.050 | loss 0.00001 | σ_epist 0.0438 | buf 100,000 | 5818s
+Ep 37950/40000 | ret -1.0785 | avg(50) -2.1777 | ε 0.050 | loss 0.00001 | σ_epist 0.0437 | buf 100,000 | 5826s
+Ep 38000/40000 | ret -1.0785 | avg(50) -1.6783 | ε 0.050 | loss 0.00000 | σ_epist 0.0442 | buf 100,000 | 5834s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep38000.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 38050/40000 | ret -2.3996 | avg(50) -2.0370 | ε 0.050 | loss 0.00001 | σ_epist 0.0442 | buf 100,000 | 5844s
+Ep 38100/40000 | ret -1.0785 | avg(50) -1.9284 | ε 0.050 | loss 0.00001 | σ_epist 0.0440 | buf 100,000 | 5851s
+Ep 38150/40000 | ret -1.0785 | avg(50) -2.2706 | ε 0.050 | loss 0.00001 | σ_epist 0.0435 | buf 100,000 | 5859s
+Ep 38200/40000 | ret -1.6906 | avg(50) -2.2725 | ε 0.050 | loss 0.00001 | σ_epist 0.0436 | buf 100,000 | 5867s
+Ep 38250/40000 | ret -1.9642 | avg(50) -1.8884 | ε 0.050 | loss 0.00001 | σ_epist 0.0439 | buf 100,000 | 5875s
+Ep 38300/40000 | ret -1.0855 | avg(50) -2.3396 | ε 0.050 | loss 0.00002 | σ_epist 0.0437 | buf 100,000 | 5883s
+Ep 38350/40000 | ret -3.4551 | avg(50) -2.0470 | ε 0.050 | loss 0.00000 | σ_epist 0.0436 | buf 100,000 | 5891s
+Ep 38400/40000 | ret -1.0785 | avg(50) -1.9208 | ε 0.050 | loss 0.00000 | σ_epist 0.0445 | buf 100,000 | 5899s
+Ep 38450/40000 | ret -2.6894 | avg(50) -2.1068 | ε 0.050 | loss 0.00001 | σ_epist 0.0440 | buf 100,000 | 5907s
+Ep 38500/40000 | ret -1.0797 | avg(50) -2.0767 | ε 0.050 | loss 0.00001 | σ_epist 0.0434 | buf 100,000 | 5914s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep38500.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 38550/40000 | ret -1.0785 | avg(50) -1.8295 | ε 0.050 | loss 0.00001 | σ_epist 0.0438 | buf 100,000 | 5924s
+Ep 38600/40000 | ret -3.6728 | avg(50) -2.2029 | ε 0.050 | loss 0.00003 | σ_epist 0.0435 | buf 100,000 | 5932s
+Ep 38650/40000 | ret -1.0785 | avg(50) -2.2395 | ε 0.050 | loss 0.00001 | σ_epist 0.0437 | buf 100,000 | 5940s
+Ep 38700/40000 | ret -2.9981 | avg(50) -1.9565 | ε 0.050 | loss 0.00001 | σ_epist 0.0440 | buf 100,000 | 5948s
+Ep 38750/40000 | ret -3.6022 | avg(50) -1.8748 | ε 0.050 | loss 0.00001 | σ_epist 0.0440 | buf 100,000 | 5956s
+Ep 38800/40000 | ret -1.0785 | avg(50) -2.0953 | ε 0.050 | loss 0.00000 | σ_epist 0.0442 | buf 100,000 | 5963s
+Ep 38850/40000 | ret -1.0785 | avg(50) -2.2523 | ε 0.050 | loss 0.00001 | σ_epist 0.0442 | buf 100,000 | 5971s
+Ep 38900/40000 | ret -2.7248 | avg(50) -1.7226 | ε 0.050 | loss 0.00001 | σ_epist 0.0444 | buf 100,000 | 5979s
+Ep 38950/40000 | ret -1.0785 | avg(50) -1.7638 | ε 0.050 | loss 0.00000 | σ_epist 0.0441 | buf 100,000 | 5987s
+Ep 39000/40000 | ret -1.0785 | avg(50) -1.8178 | ε 0.050 | loss 0.00001 | σ_epist 0.0443 | buf 100,000 | 5995s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep39000.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 39050/40000 | ret -4.0979 | avg(50) -2.3108 | ε 0.050 | loss 0.00000 | σ_epist 0.0444 | buf 100,000 | 6004s
+Ep 39100/40000 | ret -1.0785 | avg(50) -2.1234 | ε 0.050 | loss 0.00000 | σ_epist 0.0435 | buf 100,000 | 6012s
+Ep 39150/40000 | ret -1.7517 | avg(50) -2.0959 | ε 0.050 | loss 0.00001 | σ_epist 0.0441 | buf 100,000 | 6020s
+Ep 39200/40000 | ret -1.0785 | avg(50) -2.0236 | ε 0.050 | loss 0.00001 | σ_epist 0.0441 | buf 100,000 | 6028s
+Ep 39250/40000 | ret -1.0797 | avg(50) -1.8098 | ε 0.050 | loss 0.00001 | σ_epist 0.0439 | buf 100,000 | 6036s
+Ep 39300/40000 | ret -1.8000 | avg(50) -2.1991 | ε 0.050 | loss 0.00000 | σ_epist 0.0439 | buf 100,000 | 6044s
+Ep 39350/40000 | ret -1.0877 | avg(50) -1.9852 | ε 0.050 | loss 0.00001 | σ_epist 0.0445 | buf 100,000 | 6052s
+Ep 39400/40000 | ret -5.4166 | avg(50) -2.1284 | ε 0.050 | loss 0.00000 | σ_epist 0.0437 | buf 100,000 | 6060s
+Ep 39450/40000 | ret -4.5783 | avg(50) -2.4425 | ε 0.050 | loss 0.00001 | σ_epist 0.0436 | buf 100,000 | 6067s
+Ep 39500/40000 | ret -1.0785 | avg(50) -1.9065 | ε 0.050 | loss 0.00002 | σ_epist 0.0440 | buf 100,000 | 6075s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep39500.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+Ep 39550/40000 | ret -1.0771 | avg(50) -1.5056 | ε 0.050 | loss 0.00000 | σ_epist 0.0447 | buf 100,000 | 6085s
+Ep 39600/40000 | ret -1.5455 | avg(50) -2.1147 | ε 0.050 | loss 0.00002 | σ_epist 0.0440 | buf 100,000 | 6093s
+Ep 39650/40000 | ret -1.0771 | avg(50) -1.8845 | ε 0.050 | loss 0.00001 | σ_epist 0.0440 | buf 100,000 | 6101s
+Ep 39700/40000 | ret -1.0785 | avg(50) -1.6115 | ε 0.050 | loss 0.00001 | σ_epist 0.0438 | buf 100,000 | 6108s
+Ep 39750/40000 | ret -1.0785 | avg(50) -2.1548 | ε 0.050 | loss 0.00000 | σ_epist 0.0439 | buf 100,000 | 6116s
+Ep 39800/40000 | ret -1.0771 | avg(50) -2.0573 | ε 0.050 | loss 0.00000 | σ_epist 0.0438 | buf 100,000 | 6124s
+Ep 39850/40000 | ret -7.9592 | avg(50) -2.0691 | ε 0.050 | loss 0.00001 | σ_epist 0.0442 | buf 100,000 | 6132s
+Ep 39900/40000 | ret -1.0797 | avg(50) -2.2135 | ε 0.050 | loss 0.00001 | σ_epist 0.0437 | buf 100,000 | 6140s
+Ep 39950/40000 | ret -8.5823 | avg(50) -2.3179 | ε 0.050 | loss 0.00000 | σ_epist 0.0436 | buf 100,000 | 6148s
+Ep 40000/40000 | ret -1.0785 | avg(50) -2.0922 | ε 0.050 | loss 0.00001 | σ_epist 0.0436 | buf 100,000 | 6156s
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_ep40000.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+[agent] Checkpoint saved → online_RL/runs/20260601_165727/dqn_final.pt
+[train] Returns plot → online_RL/runs/20260601_165727/returns.png
+[train] Q-loss plot  → online_RL/runs/20260601_165727/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260601_165727/epsilon.png
+[train] Epistemic-std plot → online_RL/runs/20260601_165727/epistemic_std.png
+
+=================================================================
+[train] Training complete in 102.7 min
+[train] Mode               : standard
+[train] Best episode return: -1.0771
+[train] Best checkpoint    : online_RL/runs/20260601_165727/dqn_best.pt
+[train] Final checkpoint   : online_RL/runs/20260601_165727/dqn_final.pt
+=================================================================
+============================================================
+Training finished: Mon Jun  1 18:40:09 EDT 2026  (exit code: 0)
+============================================================

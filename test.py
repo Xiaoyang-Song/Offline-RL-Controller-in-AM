@@ -37,8 +37,8 @@ parser.add_argument(
 parser.add_argument(
     "--surrogate",
     type=str,
-    default="surrogate_model/runs/20260521_210923/surrogate_best.pt",
-    help="Surrogate checkpoint path — provides normalisation stats for OnlineRL mode.",
+    default="surrogate_model_latent/runs/20260601_162903/latent_best.pt",
+    help="Latent surrogate checkpoint path — provides normalisation stats for OnlineRL mode.",
 )
 args = parser.parse_args()
 # -----------------------------
@@ -65,7 +65,7 @@ params_dict = {
     },
     'heatTime': 0.05,
     # 'coolTime': 0.10,
-    'coolTime': 0.15,
+    'coolTime': 0.10,
     'nTimeStepsHeat': 50.0,
     'nTimeStepsCool': 50.0,
     'doPlot': False,
@@ -85,12 +85,13 @@ elif MODE == 'OnlineRL':
     # ── Load the online Double-DQN agent ────────────────────────────────────
     from online_RL.agent import DQNAgent
     from online_RL.env   import ACTION_LIST as ONLINE_ACTION_LIST
-    from surrogate_model.train import load_surrogate
+    from surrogate_model_latent.train import load_latent_surrogate
 
-    # The online RL Q-net was trained on states normalised with the surrogate's
-    # stats.  Load them from the surrogate checkpoint (same stats used during
-    # online RL training; no MATLAB simulator needed here).
-    _, _sm, _ss, _, _ = load_surrogate(args.surrogate, device='cpu')
+    # The online RL Q-net was trained on states normalised with the latent
+    # surrogate's stats.  Load them from the latent surrogate checkpoint
+    # (same stats used during online RL training via LPBFEnv).
+    # The surrogate model itself is not used here — MATLAB runs the real sim.
+    _, _sm, _ss, _, _, _ = load_latent_surrogate(args.surrogate, device='cpu')
     _sm = _sm.to(device)
     _ss = _ss.to(device)
 
@@ -105,8 +106,9 @@ elif MODE == 'OnlineRL':
         layer_idx        : 0-based layer number (0 = first layer)
         Returns laser power [W] chosen greedily by the online DQN policy.
 
-        The observation fed to the Q-net is [normalised_temp_field ‖ layer_token]
-        (same format produced by LPBFEnv._make_obs during training).
+        The observation matches LPBFEnv._make_obs used during training:
+          [z-score-normalised temp field (D,) ‖ layer_token (1,)]
+        where layer_token = layer_idx / (n_layers - 1) ∈ [0, 1].
         """
         state_norm  = ((state_raw_tensor.to(device) - _sm) / _ss).cpu().numpy()
         layer_token = np.array(
