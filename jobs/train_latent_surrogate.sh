@@ -45,6 +45,8 @@ DATA_PATH="Data/Dataset:layer_12_stepsize_10_samples_3000_150_400_lc.pkl"
 # Model architecture
 LATENT_DIM=32       # latent space dimension
 N_ENSEMBLE=5        # number of ensemble transition members
+N_LAYERS=12         # number of build layers (sets embedding table size)
+LAYER_EMBED_DIM=8   # learned layer-index embedding dimension per transition member
 ENC_HIDDEN=256      # encoder hidden width
 ENC_DEPTH=3         # encoder residual blocks
 TRANS_HIDDEN=128    # transition MLP hidden width (per member)
@@ -86,6 +88,8 @@ python -m surrogate_model_latent.train \
     --data_path        "$DATA_PATH" \
     --latent_dim       $LATENT_DIM \
     --n_ensemble       $N_ENSEMBLE \
+    --n_layers         $N_LAYERS \
+    --layer_embed_dim  $LAYER_EMBED_DIM \
     --enc_hidden       $ENC_HIDDEN \
     --enc_depth        $ENC_DEPTH \
     --trans_hidden     $TRANS_HIDDEN \

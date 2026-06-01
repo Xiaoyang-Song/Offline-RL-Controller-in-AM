@@ -115,8 +115,9 @@ def evaluate_single_step(
             a_in = traj_a[:, t,     :]
             s_gt = traj_s[:, t + 1, :]
 
+            layer_idx      = torch.full((s_in.shape[0],), t, dtype=torch.long, device=device)
             z_t            = model.encode(s_in)
-            mu_mean, _     = model.predict_ensemble(z_t, a_in)
+            mu_mean, _     = model.predict_ensemble(z_t, a_in, layer_idx)
             s_pred         = model.decode(z_t + mu_mean)
             diff_k         = (s_pred - s_gt) * ss    # Kelvin
 
@@ -152,7 +153,8 @@ def evaluate_rollout(
     all_sigmas      : list of (T,)   np.ndarray  — mean σ per layer [latent space]
     """
     model.eval()
-    sq_errors = [[] for _ in range(traj_len)]
+    sq_errors  = [[] for _ in range(traj_len)]
+    abs_errors = [[] for _ in range(traj_len)]
     all_preds, all_gts, all_actions, all_sigmas = [], [], [], []
 
     sm = state_mean.to(device)
@@ -173,14 +175,15 @@ def evaluate_rollout(
         for t in range(T):
             s_pred_k = pred_states[:, t, :] * ss + sm
             s_gt_k   = traj_s[:, t + 1, :] * ss + sm
-            se = ((s_pred_k - s_gt_k) ** 2).mean(dim=-1)
-            sq_errors[t].extend(se.cpu().numpy().tolist())
+            diff_k   = s_pred_k - s_gt_k
+            sq_errors[t].extend(diff_k.pow(2).mean(dim=-1).cpu().numpy().tolist())
+            abs_errors[t].extend(diff_k.abs().mean(dim=-1).cpu().numpy().tolist())
 
         # Denormalise to raw Kelvin / Watts
-        pred_np    = (pred_states * ss + sm).cpu().numpy()                  # (B, T, D)
-        gt_np      = (traj_s[:, 1:T+1, :] * ss + sm).cpu().numpy()         # (B, T, D)
+        pred_np    = (pred_states * ss + sm).cpu().numpy()                      # (B, T, D)
+        gt_np      = (traj_s[:, 1:T+1, :] * ss + sm).cpu().numpy()             # (B, T, D)
         actions_np = traj_a[:, :T, 0].cpu().numpy() * action_std + action_mean  # (B, T)
-        sigma_np   = epistemic_stds.cpu().numpy()                           # (B, T)
+        sigma_np   = epistemic_stds.cpu().numpy()                               # (B, T)
 
         for b in range(B):
             all_preds.append(pred_np[b])
@@ -188,10 +191,11 @@ def evaluate_rollout(
             all_actions.append(actions_np[b])
             all_sigmas.append(sigma_np[b])
 
-    per_layer_rmse  = np.array([np.sqrt(np.mean(sq_errors[t])) for t in range(traj_len)])
-    per_layer_sigma = np.array([np.mean([s[t] for s in all_sigmas])   for t in range(traj_len)])
+    per_layer_rmse  = np.array([np.sqrt(np.mean(sq_errors[t]))           for t in range(traj_len)])
+    per_layer_mae   = np.array([np.mean(abs_errors[t])                   for t in range(traj_len)])
+    per_layer_sigma = np.array([np.mean([s[t] for s in all_sigmas])      for t in range(traj_len)])
 
-    return per_layer_rmse, per_layer_sigma, all_preds, all_gts, all_actions, all_sigmas
+    return per_layer_rmse, per_layer_mae, per_layer_sigma, all_preds, all_gts, all_actions, all_sigmas
 
 
 @torch.no_grad()
@@ -241,6 +245,148 @@ def evaluate_recon(
         total_se += err_raw.pow(2).mean(dim=-1).sum().item()
         count    += B * T1
     return float(np.sqrt(total_se / max(count, 1)))
+
+
+# =============================================================================
+# Per-layer mean ground-truth temperature  (percentage reference)
+# =============================================================================
+
+@torch.no_grad()
+def compute_per_layer_mean_gt(
+    traj_loader: DataLoader,
+    state_mean:  torch.Tensor,
+    state_std:   torch.Tensor,
+    device:      str,
+    traj_len:    int = 12,
+) -> np.ndarray:
+    """
+    Mean ground-truth temperature (raw Kelvin) at each layer, averaged over
+    all nodes and all trajectories.  Used as a per-layer reference for
+    computing relative percentage errors on the metric plots.
+
+    Returns (traj_len,) float64 array.
+    """
+    ss  = state_std.to(device)
+    sm  = state_mean.to(device)
+    sums   = np.zeros(traj_len)
+    counts = np.zeros(traj_len)
+
+    for traj_s, _ in traj_loader:
+        traj_s = traj_s.to(device)
+        B, T1, D = traj_s.shape
+        T = min(T1 - 1, traj_len)
+        for t in range(T):
+            s_gt_k = traj_s[:, t + 1, :] * ss + sm   # (B, D) raw Kelvin
+            sums[t]   += s_gt_k.mean().item() * B
+            counts[t] += B
+
+    return sums / np.maximum(counts, 1)
+
+
+# =============================================================================
+# Per-layer diagnostic decomposition
+# =============================================================================
+
+@torch.no_grad()
+def compute_per_layer_diagnostics(
+    model,
+    traj_loader: DataLoader,
+    state_mean:  torch.Tensor,
+    state_std:   torch.Tensor,
+    device:      str,
+    traj_len:    int = 12,
+) -> dict:
+    """
+    Decompose prediction error into three independent sources per layer.
+
+    Returns a dict with arrays of length traj_len:
+
+      delta_mag     : RMS state change  ||s_{t+1} - s_t|| [K]
+                      — how much the physics changes each layer regardless of model
+      ae_rmse       : encoder-decoder round-trip RMSE on s_t [K]
+                      — how well the shared AE represents states at this layer
+      trans_lat_err : RMS latent transition error
+                      ||encode(s_{t+1}) - (z_t + mu_mean)|| in normalised latent space
+                      — pure transition model error after isolating the AE
+    """
+    model.eval()
+    ss = state_std.to(device)
+
+    delta_sq  = [[] for _ in range(traj_len)]
+    ae_sq     = [[] for _ in range(traj_len)]
+    lat_sq    = [[] for _ in range(traj_len)]
+
+    for traj_s, traj_a in traj_loader:
+        traj_s = traj_s.to(device)
+        traj_a = traj_a.to(device)
+        B, T1, D = traj_s.shape
+        T = min(T1 - 1, traj_len)
+
+        for t in range(T):
+            s_t  = traj_s[:, t,     :]
+            a_t  = traj_a[:, t,     :]
+            s_t1 = traj_s[:, t + 1, :]
+
+            # State change magnitude (raw Kelvin)
+            delta_k = ((s_t1 - s_t) * ss).pow(2).mean(dim=-1)   # (B,)
+            delta_sq[t].extend(delta_k.cpu().numpy().tolist())
+
+            # Autoencoder error on s_t (normalised → Kelvin)
+            z_t     = model.encode(s_t)
+            s_hat   = model.decode(z_t)
+            ae_k    = ((s_hat - s_t) * ss).pow(2).mean(dim=-1)  # (B,)
+            ae_sq[t].extend(ae_k.cpu().numpy().tolist())
+
+            # Latent transition error: how well does z_t + mu_mean match encode(s_{t+1})?
+            layer_idx  = torch.full((s_t.shape[0],), t, dtype=torch.long, device=device)
+            mu_mean, _ = model.predict_ensemble(z_t, a_t, layer_idx)
+            z_t1_pred  = z_t + mu_mean
+            z_t1_enc   = model.encode(s_t1)
+            lat_k      = (z_t1_pred - z_t1_enc).pow(2).mean(dim=-1)   # (B,) normalised
+            lat_sq[t].extend(lat_k.cpu().numpy().tolist())
+
+    return {
+        "delta_mag":     np.array([np.sqrt(np.mean(delta_sq[t])) for t in range(traj_len)]),
+        "ae_rmse":       np.array([np.sqrt(np.mean(ae_sq[t]))    for t in range(traj_len)]),
+        "trans_lat_err": np.array([np.sqrt(np.mean(lat_sq[t]))   for t in range(traj_len)]),
+    }
+
+
+def plot_per_layer_diagnostics(
+    diag_by_split: dict,   # {split: {metric: array}}
+    out_path:      str,
+) -> None:
+    """
+    3-panel diagnostic: state change magnitude, AE RMSE, latent transition error.
+    Separates the three root causes of high per-layer prediction error.
+    """
+    traj_len = len(next(iter(diag_by_split.values()))["ae_rmse"])
+    layers   = np.arange(1, traj_len + 1)
+
+    panels = [
+        ("delta_mag",     "||s_{t+1} - s_t|| [K]",        "State Change Magnitude"),
+        ("ae_rmse",       "AE RMSE [K]",                   "Autoencoder Error on s_t"),
+        ("trans_lat_err", "||z_{pred} - z_{enc}|| (norm.)", "Latent Transition Error"),
+    ]
+
+    fig, axes = plt.subplots(1, 3, figsize=(16, 4))
+    for ax, (key, ylabel, title) in zip(axes, panels):
+        for split, diag in diag_by_split.items():
+            color, marker, ls = _SPLIT_STYLES.get(split, ("grey", "o", "-"))
+            ax.plot(layers, diag[key], marker=marker, color=color,
+                    linestyle=ls, linewidth=1.5, label=split)
+        ax.set_xlabel("Layer index")
+        ax.set_ylabel(ylabel)
+        ax.set_title(title, fontsize=9)
+        ax.legend(fontsize=8)
+        ax.grid(True, alpha=0.3)
+        ax.set_xticks(layers)
+
+    fig.suptitle("Per-Layer Error Source Diagnostics", fontsize=11)
+    fig.tight_layout()
+    fig.savefig(out_path, dpi=150)
+    plt.close(fig)
+    print(f"[evaluate] Saved → {out_path}")
 
 
 # =============================================================================
@@ -357,36 +503,48 @@ def plot_example_trajectory(
 
     # ── one PNG per layer ─────────────────────────────────────────────────────
     for layer in range(T):
-        pred = pred_traj[layer]
-        gt   = gt_traj[layer]
-        err  = np.abs(pred - gt)
-        mae  = err.mean()
-        lp   = actions[layer]
+        pred    = pred_traj[layer]
+        gt      = gt_traj[layer]
+        err_abs = np.abs(pred - gt)
+        mae     = err_abs.mean()
+        # Percentage relative error: |pred - gt| / |gt| × 100
+        # gt is always ≥ 300 K so division is safe, but clamp to avoid tiny denominators
+        pct_err = err_abs / np.maximum(np.abs(gt), 1.0) * 100.0
+        mape    = pct_err.mean()
+        lp      = actions[layer]
 
         fig, axes = plt.subplots(1, 3, figsize=(16, 4))
         fig.suptitle(
-            f"Traj {traj_idx} — Layer {layer+1}  |  LP = {lp:.0f} W  |  MAE = {mae:.2f} K",
+            f"Traj {traj_idx} — Layer {layer+1}  |  LP = {lp:.0f} W"
+            f"  |  MAE = {mae:.2f} K  |  MAPE = {mape:.2f}%",
             fontsize=10,
         )
 
         if triang is not None:
             _plot_field_2d(axes[0], gt,   triang, "Ground Truth [K]", vmin, vmax)
             _plot_field_2d(axes[1], pred, triang, "Predicted [K]",    vmin, vmax)
-            tpc = axes[2].tripcolor(triang, err, cmap="hot",
-                                    vmin=0, vmax=max(err.max(), 1.0),
+            vmax_pct = max(pct_err.max(), 1.0)
+            tpc = axes[2].tripcolor(triang, pct_err, cmap="hot",
+                                    vmin=0, vmax=vmax_pct,
                                     shading="gouraud")
             axes[2].triplot(triang, color="k", linewidth=0.15, alpha=0.3)
-            plt.colorbar(tpc, ax=axes[2], label="|Error| [K]")
+            plt.colorbar(tpc, ax=axes[2], label="Relative Error [%]")
             axes[2].set_aspect("auto")
             axes[2].set_xlabel("X"); axes[2].set_ylabel("Y")
-            axes[2].set_title(f"|Error|  max = {err.max():.1f} K", fontsize=9)
+            axes[2].set_title(
+                f"Relative Error [%]  mean={mape:.2f}%  max={pct_err.max():.1f}%",
+                fontsize=9,
+            )
         else:
             _plot_field_1d(axes[0], gt,   "Ground Truth [K]", color="steelblue")
             _plot_field_1d(axes[1], pred, "Predicted [K]",    color="darkorange")
-            axes[2].plot(err, linewidth=0.6, color="crimson")
+            axes[2].plot(pct_err, linewidth=0.6, color="crimson")
             axes[2].set_xlabel("Node index")
-            axes[2].set_ylabel("|Error| [K]")
-            axes[2].set_title(f"|Error|  max = {err.max():.1f} K", fontsize=9)
+            axes[2].set_ylabel("Relative Error [%]")
+            axes[2].set_title(
+                f"Relative Error [%]  mean={mape:.2f}%  max={pct_err.max():.1f}%",
+                fontsize=9,
+            )
             axes[2].grid(True, alpha=0.3)
 
         fig.tight_layout()
@@ -396,63 +554,103 @@ def plot_example_trajectory(
         print(f"[evaluate] Saved → {fname}")
 
 
+_SPLIT_STYLES = {
+    "train": ("tab:blue",   "o", "-"),
+    "val":   ("tab:orange", "s", "--"),
+    "test":  ("tab:green",  "^", ":"),
+}
+
+
 def plot_per_layer_rmse(
-    rollout_rmse:     np.ndarray,
-    single_step_rmse: np.ndarray,
-    out_path:         str,
+    results:   dict,            # {split_name: (rollout_rmse, single_step_rmse)}
+    out_path:  str,
+    pct_refs:  dict = None,     # {split_name: per_layer_mean_gt_K} for % annotations
 ) -> None:
-    layers = np.arange(1, len(rollout_rmse) + 1)
-    fig, ax = plt.subplots(figsize=(9, 5))
-    ax.plot(layers, rollout_rmse,     marker="o", label="Auto-regressive rollout RMSE [K]")
-    ax.plot(layers, single_step_rmse, marker="s", label="Single-step (teacher-forced) RMSE [K]",
-            linestyle="--")
-    best = int(np.argmin(rollout_rmse))
-    ax.axvline(x=best + 1, color="grey", linestyle=":", linewidth=1,
-               label=f"Best rollout layer {best+1}")
-    ax.set_xlabel("Layer index")
-    ax.set_ylabel("RMSE [K]")
-    ax.set_title("Latent Surrogate Prediction Error per Layer")
-    ax.legend()
-    ax.grid(True, alpha=0.3)
-    ax.set_xticks(layers)
-    fig.tight_layout()
-    fig.savefig(out_path, dpi=150)
-    plt.close(fig)
+    """
+    One line per split: solid = rollout, dashed = single-step.
+    If pct_refs supplied, annotates the test rollout line with per-layer % values.
+    """
+    traj_len = len(next(iter(results.values()))[0])
+    layers   = np.arange(1, traj_len + 1)
+    fig, ax  = plt.subplots(figsize=(10, 5))
+    for split, (ro_rmse, ss_rmse) in results.items():
+        color, marker, _ = _SPLIT_STYLES.get(split, ("grey", "o", "-"))
+        ax.plot(layers, ro_rmse, marker=marker, color=color,
+                linewidth=1.5, label=f"{split} rollout")
+        ax.plot(layers, ss_rmse, marker=marker, color=color,
+                linewidth=1.0, linestyle="--", alpha=0.6, label=f"{split} single-step")
+
+    # Annotate test rollout with per-layer relative %
+    if pct_refs is not None and "test" in results and "test" in pct_refs:
+        ro_rmse_test = results["test"][0]
+        ref          = pct_refs["test"]
+        for i, (l, v, r) in enumerate(zip(layers, ro_rmse_test, ref)):
+            ha = "right" if i == len(layers) - 1 else "center"
+            ax.annotate(f"{v / r * 100:.1f}%", (l, v),
+                        xytext=(0, 6), textcoords="offset points",
+                        fontsize=6.5, ha=ha, va="bottom",
+                        color=_SPLIT_STYLES["test"][0])
+
+    ax.set_xlabel("Layer index"); ax.set_ylabel("RMSE [K]")
+    ax.set_title("Prediction RMSE per Layer — Train / Val / Test  (% = relative to mean GT, test rollout)")
+    ax.legend(fontsize=8); ax.grid(True, alpha=0.3); ax.set_xticks(layers)
+    fig.tight_layout(); fig.savefig(out_path, dpi=150); plt.close(fig)
     print(f"[evaluate] Saved → {out_path}")
 
 
-def plot_mae_per_layer(per_layer_mae: np.ndarray, out_path: str) -> None:
-    layers = np.arange(1, len(per_layer_mae) + 1)
-    fig, ax = plt.subplots(figsize=(9, 4))
-    ax.bar(layers, per_layer_mae, alpha=0.75)
-    ax.set_xlabel("Layer index")
-    ax.set_ylabel("MAE [K]")
-    ax.set_title("Single-Step MAE per Layer (teacher-forced)")
-    ax.set_xticks(layers)
-    ax.grid(True, alpha=0.3, axis="y")
-    fig.tight_layout()
-    fig.savefig(out_path, dpi=150)
-    plt.close(fig)
+def plot_mae_per_layer(
+    results:   dict,            # {split_name: (ro_mae, ss_mae)}
+    out_path:  str,
+    pct_refs:  dict = None,     # {split_name: per_layer_mean_gt_K} for % annotations
+) -> None:
+    """
+    One line per split: solid = rollout MAE, dashed = single-step MAE.
+    If pct_refs supplied, annotates the test rollout line with per-layer % values.
+    """
+    traj_len = len(next(iter(results.values()))[0])
+    layers   = np.arange(1, traj_len + 1)
+    fig, ax  = plt.subplots(figsize=(10, 4))
+    for split, (ro_mae, ss_mae) in results.items():
+        color, marker, _ = _SPLIT_STYLES.get(split, ("grey", "o", "-"))
+        ax.plot(layers, ro_mae, marker=marker, color=color,
+                linewidth=1.5, label=f"{split} rollout")
+        ax.plot(layers, ss_mae, marker=marker, color=color,
+                linewidth=1.0, linestyle="--", alpha=0.6, label=f"{split} single-step")
+
+    # Annotate test rollout with per-layer relative %
+    if pct_refs is not None and "test" in results and "test" in pct_refs:
+        ro_mae_test = results["test"][0]
+        ref         = pct_refs["test"]
+        for i, (l, v, r) in enumerate(zip(layers, ro_mae_test, ref)):
+            ha = "right" if i == len(layers) - 1 else "center"
+            ax.annotate(f"{v / r * 100:.1f}%", (l, v),
+                        xytext=(0, 6), textcoords="offset points",
+                        fontsize=6.5, ha=ha, va="bottom",
+                        color=_SPLIT_STYLES["test"][0])
+
+    ax.set_xlabel("Layer index"); ax.set_ylabel("MAE [K]")
+    ax.set_title("MAE per Layer — Rollout vs Single-Step | Train / Val / Test  (% = relative to mean GT, test rollout)")
+    ax.legend(fontsize=8); ax.grid(True, alpha=0.3); ax.set_xticks(layers)
+    fig.tight_layout(); fig.savefig(out_path, dpi=150); plt.close(fig)
     print(f"[evaluate] Saved → {out_path}")
 
 
 def plot_per_layer_uncertainty(
-    per_layer_sigma: np.ndarray,
-    out_path:        str,
+    results:  dict,   # {split_name: per_layer_sigma}
+    out_path: str,
 ) -> None:
-    layers = np.arange(1, len(per_layer_sigma) + 1)
-    fig, ax = plt.subplots(figsize=(9, 5))
-    ax.plot(layers, per_layer_sigma, marker="o", color="tab:orange",
-            label="Mean ensemble std (epistemic uncertainty)")
-    ax.set_xlabel("Layer index")
-    ax.set_ylabel("Mean ensemble std")
-    ax.set_title("Latent Ensemble Surrogate — Per-Layer Epistemic Uncertainty (auto-regressive)")
-    ax.legend()
-    ax.grid(True, alpha=0.3)
-    ax.set_xticks(layers)
-    fig.tight_layout()
-    fig.savefig(out_path, dpi=150)
-    plt.close(fig)
+    """Epistemic uncertainty (ensemble std) per layer for each split."""
+    traj_len = len(next(iter(results.values())))
+    layers   = np.arange(1, traj_len + 1)
+    fig, ax  = plt.subplots(figsize=(10, 5))
+    for split, sigma in results.items():
+        color, marker, ls = _SPLIT_STYLES.get(split, ("grey", "o", "-"))
+        ax.plot(layers, sigma, marker=marker, color=color, linestyle=ls,
+                linewidth=1.5, label=split)
+    ax.set_xlabel("Layer index"); ax.set_ylabel("Mean ensemble std")
+    ax.set_title("Epistemic Uncertainty per Layer — Train / Val / Test")
+    ax.legend(); ax.grid(True, alpha=0.3); ax.set_xticks(layers)
+    fig.tight_layout(); fig.savefig(out_path, dpi=150); plt.close(fig)
     print(f"[evaluate] Saved → {out_path}")
 
 
@@ -512,9 +710,9 @@ def main() -> None:
     state_std_cpu  = state_std.cpu()
     print(f"[evaluate] {model}")
 
-    # ── load & split dataset (same seed → identical test set) ────────────────
+    # ── load & split dataset (same seed → reproducible splits) ───────────────
     all_trajs = load_trajectories(args.data_path)
-    _, _, test_trajs = split_trajectories(
+    train_trajs, val_trajs, test_trajs = split_trajectories(
         all_trajs,
         val_fraction=args.val_fraction,
         test_fraction=args.test_fraction,
@@ -522,68 +720,147 @@ def main() -> None:
     )
     traj_len = len(test_trajs[0])
 
-    ds_kwargs = dict(
+    ds_kwargs  = dict(
         state_mean=state_mean_cpu, state_std=state_std_cpu,
-        action_mean=action_mean, action_std=action_std,
+        action_mean=action_mean,   action_std=action_std,
         initial_temp=args.initial_temp,
     )
-    traj_ds = LatentTrajectoryDataset(test_trajs, **ds_kwargs)
-    traj_loader = DataLoader(traj_ds, batch_size=args.batch_size,
-                             shuffle=False, num_workers=args.num_workers)
+    loader_kw  = dict(batch_size=args.batch_size, shuffle=False,
+                      num_workers=args.num_workers)
 
-    flat_ds = LatentSurrogateDataset(test_trajs, **ds_kwargs)
-    flat_loader = DataLoader(flat_ds, batch_size=args.batch_size,
-                             shuffle=False, num_workers=args.num_workers)
+    def _make_loaders(trajs):
+        tl = DataLoader(LatentTrajectoryDataset(trajs, **ds_kwargs), **loader_kw)
+        fl = DataLoader(LatentSurrogateDataset(trajs,  **ds_kwargs), **loader_kw)
+        return tl, fl
 
-    # ── per-component loss breakdown ──────────────────────────────────────────
-    print("\n[evaluate] Per-component test losses …")
-    comps = evaluate_loss_components(model, flat_loader, device, roi_table)
-    for k, v in comps.items():
-        print(f"  {k:12s}: {v:.6f}")
+    split_loaders = {
+        "train": _make_loaders(train_trajs),
+        "val":   _make_loaders(val_trajs),
+        "test":  _make_loaders(test_trajs),
+    }
 
-    # ── autoencoder reconstruction quality ────────────────────────────────────
-    recon_rmse = evaluate_recon(model, traj_loader, state_mean, state_std, device)
-    print(f"\n[evaluate] Autoencoder round-trip RMSE : {recon_rmse:.4f} K")
+    # ── evaluate each split ───────────────────────────────────────────────────
+    # Collected results for cross-split plots
+    rmse_results  = {}   # {split: (ro_rmse, ss_rmse)}
+    mae_results   = {}   # {split: ss_mae}
+    sigma_results = {}   # {split: ro_sigma}
 
-    # ── single-step evaluation ────────────────────────────────────────────────
-    print("\n[evaluate] Single-step (teacher-forced) evaluation ...")
-    ss_mae, ss_rmse = evaluate_single_step(
-        model, traj_loader, state_mean_cpu, state_std_cpu, device, traj_len=traj_len
-    )
-    print(f"\n{'Layer':>6}  {'MAE [K]':>10}  {'RMSE [K]':>10}")
-    for i in range(traj_len):
-        print(f"{i+1:>6}  {ss_mae[i]:>10.3f}  {ss_rmse[i]:>10.3f}")
-    print(f"{'Mean':>6}  {ss_mae.mean():>10.3f}  {ss_rmse.mean():>10.3f}")
+    # Summary scalars for the final table
+    summary = {}   # {split: {metric: value}}
 
-    # ── auto-regressive rollout ────────────────────────────────────────────────
-    print("\n[evaluate] Auto-regressive rollout evaluation ...")
-    ro_rmse, ro_sigma, all_preds, all_gts, all_actions, all_sigmas = evaluate_rollout(
-        model, traj_loader,
-        state_mean_cpu, state_std_cpu,
-        action_mean, action_std,
-        device, traj_len=traj_len,
-    )
-    print(f"\n{'Layer':>6}  {'Rollout RMSE [K]':>18}  {'Mean σ':>10}")
-    for i in range(traj_len):
-        print(f"{i+1:>6}  {ro_rmse[i]:>18.3f}  {ro_sigma[i]:>10.4f}")
-    print(f"{'Mean':>6}  {ro_rmse.mean():>18.3f}  {ro_sigma.mean():>10.4f}")
+    test_preds, test_gts, test_actions, test_sigmas = None, None, None, None
 
-    # ── metric plots ──────────────────────────────────────────────────────────
-    plot_per_layer_rmse(ro_rmse, ss_rmse,
-                        os.path.join(out_dir, "per_layer_rmse.png"))
-    plot_mae_per_layer(ss_mae,
-                       os.path.join(out_dir, "per_layer_mae.png"))
-    plot_per_layer_uncertainty(ro_sigma,
+    for split_name, (traj_loader, flat_loader) in split_loaders.items():
+        print(f"\n[evaluate] {'═'*20} {split_name.upper()} SET {'═'*20}")
+
+        # Loss components
+        comps = evaluate_loss_components(model, flat_loader, device, roi_table)
+        print(f"  recon_st  : {comps['recon_st']:.6f}")
+        print(f"  recon_st1 : {comps['recon_st1']:.6f}")
+
+        # Autoencoder round-trip RMSE
+        recon_rmse = evaluate_recon(model, traj_loader, state_mean, state_std, device)
+        print(f"  AE RMSE   : {recon_rmse:.4f} K")
+
+        # Single-step (teacher-forced)
+        ss_mae, ss_rmse = evaluate_single_step(
+            model, traj_loader, state_mean_cpu, state_std_cpu, device, traj_len=traj_len
+        )
+        print(f"\n  {'Layer':>6}  {'SS MAE [K]':>12}  {'SS RMSE [K]':>12}")
+        for i in range(traj_len):
+            print(f"  {i+1:>6}  {ss_mae[i]:>12.3f}  {ss_rmse[i]:>12.3f}")
+        print(f"  {'Mean':>6}  {ss_mae.mean():>12.3f}  {ss_rmse.mean():>12.3f}")
+
+        # Auto-regressive rollout
+        ro_rmse, ro_mae, ro_sigma, all_preds, all_gts, all_actions, all_sigmas = evaluate_rollout(
+            model, traj_loader,
+            state_mean_cpu, state_std_cpu,
+            action_mean, action_std,
+            device, traj_len=traj_len,
+        )
+        print(f"\n  {'Layer':>6}  {'RO RMSE [K]':>12}  {'RO MAE [K]':>12}  {'Epist σ':>10}")
+        for i in range(traj_len):
+            print(f"  {i+1:>6}  {ro_rmse[i]:>12.3f}  {ro_mae[i]:>12.3f}  {ro_sigma[i]:>10.4f}")
+        print(f"  {'Mean':>6}  {ro_rmse.mean():>12.3f}  {ro_mae.mean():>12.3f}  {ro_sigma.mean():>10.4f}")
+
+        # Stash for plots
+        rmse_results[split_name]  = (ro_rmse, ss_rmse)
+        mae_results[split_name]   = (ro_mae,  ss_mae)
+        sigma_results[split_name] = ro_sigma
+
+        summary[split_name] = {
+            "recon_rmse [K]":  recon_rmse,
+            "ss_mae [K]":      ss_mae.mean(),
+            "ss_rmse [K]":     ss_rmse.mean(),
+            "ro_mae [K]":      ro_mae.mean(),
+            "ro_rmse [K]":     ro_rmse.mean(),
+            "epist_std":       ro_sigma.mean(),
+        }
+
+        # Keep test trajectories for field plots
+        if split_name == "test":
+            test_preds, test_gts   = all_preds, all_gts
+            test_actions, test_sigmas = all_actions, all_sigmas
+
+    # ── consolidated summary table ────────────────────────────────────────────
+    metrics = ["recon_rmse [K]", "ss_mae [K]", "ss_rmse [K]", "ro_mae [K]", "ro_rmse [K]", "epist_std"]
+    col_w   = 14
+    header  = f"{'Split':<8}" + "".join(f"{m:>{col_w}}" for m in metrics)
+    print(f"\n[evaluate] {'═'*len(header)}")
+    print(f"[evaluate] SUMMARY")
+    print(f"[evaluate] {'═'*len(header)}")
+    print(f"  {header}")
+    print(f"  {'-'*len(header)}")
+    for split_name, vals in summary.items():
+        row = f"  {split_name:<8}" + "".join(f"{vals[m]:>{col_w}.4f}" for m in metrics)
+        print(row)
+    print(f"[evaluate] {'═'*len(header)}\n")
+
+    # ── per-layer mean GT temperature (for % annotations on plots) ───────────
+    pct_refs = {}
+    for split_name, (traj_loader, _) in split_loaders.items():
+        pct_refs[split_name] = compute_per_layer_mean_gt(
+            traj_loader, state_mean_cpu, state_std_cpu, device, traj_len=traj_len
+        )
+
+    # ── per-layer error source diagnostics ───────────────────────────────────
+    print("[evaluate] Computing per-layer diagnostics ...")
+    diag_by_split = {}
+    for split_name, (traj_loader, _) in split_loaders.items():
+        diag_by_split[split_name] = compute_per_layer_diagnostics(
+            model, traj_loader, state_mean_cpu, state_std_cpu, device, traj_len=traj_len
+        )
+
+    plot_per_layer_diagnostics(diag_by_split,
+                               os.path.join(out_dir, "per_layer_diagnostics.png"))
+
+    # Print test-set diagnostic table
+    test_diag = diag_by_split["test"]
+    print(f"\n  {'Layer':>6}  {'ΔS mag [K]':>12}  {'AE RMSE [K]':>13}  {'Lat Trans Err':>14}")
+    print(f"  {'-'*50}")
+    for t in range(traj_len):
+        print(f"  {t+1:>6}  {test_diag['delta_mag'][t]:>12.3f}"
+              f"  {test_diag['ae_rmse'][t]:>13.3f}"
+              f"  {test_diag['trans_lat_err'][t]:>14.4f}")
+
+    # ── metric plots (all splits on same axes) ────────────────────────────────
+    plot_per_layer_rmse(rmse_results,
+                        os.path.join(out_dir, "per_layer_rmse.png"),
+                        pct_refs=pct_refs)
+    plot_mae_per_layer(mae_results,
+                       os.path.join(out_dir, "per_layer_mae.png"),
+                       pct_refs=pct_refs)
+    plot_per_layer_uncertainty(sigma_results,
                                os.path.join(out_dir, "per_layer_uncertainty.png"))
 
-    # ── per-trajectory field plots ────────────────────────────────────────────
-    n_ex = min(args.n_examples, len(all_preds))
-    print(f"\n[evaluate] Saving all-layer field plots for {n_ex} trajectories ...")
+    # ── per-trajectory field plots (test set only) ────────────────────────────
+    n_ex = min(args.n_examples, len(test_preds))
+    print(f"[evaluate] Saving field plots for {n_ex} test trajectories ...")
     for i in range(n_ex):
         plot_example_trajectory(
-            all_preds[i], all_gts[i],
-            actions=all_actions[i],
-            sigmas=all_sigmas[i],
+            test_preds[i], test_gts[i],
+            actions=test_actions[i],
+            sigmas=test_sigmas[i],
             traj_idx=i,
             out_dir=out_dir,
             triang=triang,

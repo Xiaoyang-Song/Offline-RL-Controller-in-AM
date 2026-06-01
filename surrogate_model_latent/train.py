@@ -81,8 +81,12 @@ def parse_args() -> argparse.Namespace:
 
     # ── model ─────────────────────────────────────────────────────────────────
     p.add_argument("--latent_dim",    type=int,   default=64)
-    p.add_argument("--n_ensemble",    type=int,   default=5,
+    p.add_argument("--n_ensemble",      type=int,   default=5,
                    help="Number of ensemble transition members K.")
+    p.add_argument("--n_layers",        type=int,   default=12,
+                   help="Number of build layers (sets layer embedding table size).")
+    p.add_argument("--layer_embed_dim", type=int,   default=8,
+                   help="Dimension of the learned per-layer embedding in each transition MLP.")
     p.add_argument("--enc_hidden",    type=int,   default=256)
     p.add_argument("--enc_depth",     type=int,   default=3)
     p.add_argument("--trans_hidden",  type=int,   default=128)
@@ -155,7 +159,7 @@ def compute_single_step_losses(
                    Uses a single batched decoder call for efficiency:
                    all K predicted z_{t+1} are stacked and decoded together.
     """
-    s_t_recon, _, mu_deltas, z_t = model(s, a)
+    s_t_recon, _, mu_deltas, z_t = model(s, a, layer_indices)
     # mu_deltas : (K, B, latent_dim)
     # z_t       : (B, latent_dim)
 
@@ -192,9 +196,10 @@ def compute_rollout_loss(
     total = torch.zeros(1, device=traj_s.device)
 
     for t in range(k):
-        a_t            = traj_a[:, t, :]
-        mu_mean, _     = model.predict_ensemble(z_t, a_t)
-        z_t            = z_t + mu_mean
+        a_t        = traj_a[:, t, :]
+        layer_idx  = torch.full((B,), t, dtype=torch.long, device=traj_s.device)
+        mu_mean, _ = model.predict_ensemble(z_t, a_t, layer_idx)
+        z_t        = z_t + mu_mean
         s_pred         = model.decode(z_t)
         s_gt           = traj_s[:, t + 1, :]
         w              = roi_table[t].unsqueeze(0) if roi_table is not None else None
@@ -359,17 +364,19 @@ def _save_checkpoint(
             "epoch":            epoch,
             "val_loss":         val_loss,
             "model_config": {
-                "state_dim":    model.state_dim,
-                "action_dim":   model.action_dim,
-                "latent_dim":   model.latent_dim,
-                "n_ensemble":   model.n_ensemble,
-                "enc_hidden":   args.enc_hidden,
-                "enc_depth":    args.enc_depth,
-                "trans_hidden": args.trans_hidden,
-                "trans_depth":  args.trans_depth,
-                "dec_hidden":   args.dec_hidden,
-                "dec_depth":    args.dec_depth,
-                "dropout":      args.dropout,
+                "state_dim":       model.state_dim,
+                "action_dim":      model.action_dim,
+                "latent_dim":      model.latent_dim,
+                "n_ensemble":      model.n_ensemble,
+                "n_layers":        model.n_layers,
+                "layer_embed_dim": model.layer_embed_dim,
+                "enc_hidden":      args.enc_hidden,
+                "enc_depth":       args.enc_depth,
+                "trans_hidden":    args.trans_hidden,
+                "trans_depth":     args.trans_depth,
+                "dec_hidden":      args.dec_hidden,
+                "dec_depth":       args.dec_depth,
+                "dropout":         args.dropout,
             },
             "train_args": vars(args),
         },
@@ -496,6 +503,8 @@ def main() -> None:
         action_dim=1,
         latent_dim=args.latent_dim,
         n_ensemble=args.n_ensemble,
+        n_layers=args.n_layers,
+        layer_embed_dim=args.layer_embed_dim,
         enc_hidden=args.enc_hidden,
         enc_depth=args.enc_depth,
         trans_hidden=args.trans_hidden,
