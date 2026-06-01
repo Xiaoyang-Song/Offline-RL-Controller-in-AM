@@ -1,30 +1,47 @@
 """
 online_RL/train.py
 ------------------
-Online Double-DQN training loop for the LPBF laser-power controller.
+Online Double-DQN training loop for the LPBF laser-power controller,
+backed by the latent-space ensemble surrogate.
 
-The agent interacts with the LPBF surrogate environment episode by episode:
-  state  : 1053-D normalised temperature field
-  action : discrete laser power index  (ACTION_LIST: 150→400 W, step 10)
-  reward : −meanDeviation from nominal temperature window [T_l, T_h]
+Two training modes
+------------------
+  standard  (--uncertainty_mode standard)
+      Reward = −meanDeviation   (identical to previous behaviour)
+      The ensemble surrogate is used purely as a dynamics model; uncertainty
+      is recorded in the log but does not affect learning.
 
-Training protocol
------------------
-  1. Warm-up  : `warmup_episodes` episodes of pure random exploration to
-                pre-fill the replay buffer before any learning.
-  2. Learning : ε-greedy exploration with linear ε decay; after each
-                environment step the agent performs `updates_per_step`
-                gradient updates from the replay buffer.
-  3. Target   : hard target-network copy every `target_update_freq` episodes.
-  4. Checkpts : best-return checkpoint + periodic episode checkpoints.
-  5. Plots    : returns curve and Q-loss curve (updated at save_freq).
+  penalty   (--uncertainty_mode penalty)
+      Reward = −meanDeviation − λ · σ_epist
+      where σ_epist is the mean ensemble std (latent space) at the current
+      (state, action, layer).  The penalty λ is set by
+      --uncertainty_penalty_weight (default 0.5).
+
+      Effect: the Q-net learns to avoid (state, action) pairs where the
+      ensemble disagrees strongly — i.e. OOD regions where the surrogate's
+      predictions are unreliable.  Encourages conservative, in-distribution
+      policies during surrogate-based training.
+
+Layer embedding in the Q-network
+---------------------------------
+  The obs vector is (D+1,): normalised temperature field (D=1053) + float
+  layer token in [0,1].  The Q-net internally converts the float token to
+  an integer index and looks up a learned layer embedding, giving the
+  network the same layer-specific conditioning as the surrogate transition
+  MLP.  --layer_embed_dim controls the embedding size (default 8).
 
 Usage
 -----
+    # Mode 1 — standard (no uncertainty penalty)
     python -m online_RL.train \\
-        --surrogate surrogate_model/runs/20260521_210923/surrogate_best.pt
+        --surrogate surrogate_model_latent/runs/<ts>/latent_best.pt \\
+        --uncertainty_mode standard
 
-All outputs go under --out_dir (default: online_RL/runs/<timestamp>/).
+    # Mode 2 — uncertainty penalty
+    python -m online_RL.train \\
+        --surrogate surrogate_model_latent/runs/<ts>/latent_best.pt \\
+        --uncertainty_mode penalty \\
+        --uncertainty_penalty_weight 0.5
 """
 
 import argparse
@@ -39,13 +56,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch
 
-# ── ensure repo root is on sys.path when invoked as a script ─────────────────
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from surrogate_model.train import load_surrogate
-from online_RL.env         import LPBFEnv, ACTION_LIST, NUM_ACTIONS
+from surrogate_model_latent.train import load_latent_surrogate
+from online_RL.env          import LPBFEnv, ACTION_LIST, NUM_ACTIONS
 from online_RL.replay_buffer import ReplayBuffer
-from online_RL.agent       import DQNAgent
+from online_RL.agent        import DQNAgent
 
 
 # =============================================================================
@@ -60,84 +76,66 @@ def parse_args() -> argparse.Namespace:
     # ── surrogate model ───────────────────────────────────────────────────────
     p.add_argument(
         "--surrogate", type=str,
-        default="surrogate_model/runs/20260521_210923/surrogate_best.pt",
-        help="Path to the trained surrogate checkpoint (surrogate_best.pt).",
+        default="surrogate_model_latent/runs/latent_best.pt",
+        help="Path to the trained latent ensemble surrogate checkpoint.",
+    )
+
+    # ── training mode ─────────────────────────────────────────────────────────
+    p.add_argument(
+        "--uncertainty_mode", type=str, default="standard",
+        choices=["standard", "penalty"],
+        help=(
+            "standard : reward = −meanDeviation  (no uncertainty term)\n"
+            "penalty  : reward = −meanDeviation − λ·σ_epist  "
+            "(penalises OOD actions)"
+        ),
+    )
+    p.add_argument(
+        "--uncertainty_penalty_weight", type=float, default=0.5,
+        help="λ for uncertainty penalty mode (default 0.5). "
+             "Ignored when --uncertainty_mode standard.",
     )
 
     # ── environment ───────────────────────────────────────────────────────────
-    p.add_argument("--T_l",          type=float, default=2000.0,
-                   help="Lower nominal temperature bound [K]  (from test.py tempRange).")
-    p.add_argument("--T_h",          type=float, default=2800.0,
-                   help="Upper nominal temperature bound [K]  (from test.py tempRange).")
-    p.add_argument("--n_layers",     type=int,   default=12,
-                   help="Number of LPBF layers per episode.")
-    p.add_argument("--initial_temp", type=float, default=300.0,
-                   help="Initial uniform temperature field [K].")
-    p.add_argument("--mesh_path",    type=str,   default="surrogate_model/mesh.mat",
-                   help="Path to mesh.mat for exact scan-region node masks. "
-                        "Falls back to all-nodes if file is missing.")
-    p.add_argument("--width",         type=float, default=12.0,
-                   help="Domain width  (must match MATLAB params.width).")
-    p.add_argument("--height",        type=float, default=3.0,
-                   help="Domain height (must match MATLAB params.height).")
-    p.add_argument("--sq_frac_start", type=float, default=0.4,
-                   help="squareSideFraction at layer 1 (matches test.py initialFraction).")
-    p.add_argument("--sq_frac_end",   type=float, default=0.5,
-                   help="squareSideFraction at last layer (matches test.py finalFraction).")
+    p.add_argument("--T_l",          type=float, default=2000.0)
+    p.add_argument("--T_h",          type=float, default=2800.0)
+    p.add_argument("--n_layers",     type=int,   default=12)
+    p.add_argument("--initial_temp", type=float, default=300.0)
+    p.add_argument("--mesh_path",    type=str,   default="surrogate_model/mesh.mat")
+    p.add_argument("--width",        type=float, default=12.0)
+    p.add_argument("--height",       type=float, default=3.0)
+    p.add_argument("--sq_frac_start", type=float, default=0.4)
+    p.add_argument("--sq_frac_end",   type=float, default=0.5)
 
     # ── Q-network architecture ────────────────────────────────────────────────
-    p.add_argument("--hidden",  type=int,   default=256,
-                   help="Q-network hidden width.")
-    p.add_argument("--depth",   type=int,   default=4,
-                   help="Number of residual blocks in Q-network.")
-    p.add_argument("--dropout", type=float, default=0.0,
-                   help="Dropout inside residual blocks (0 = off).")
+    p.add_argument("--hidden",          type=int,   default=256)
+    p.add_argument("--depth",           type=int,   default=4)
+    p.add_argument("--dropout",         type=float, default=0.0)
+    p.add_argument("--layer_embed_dim", type=int,   default=8,
+                   help="Dimension of the learned layer embedding in the Q-net.")
 
     # ── RL hyperparameters ────────────────────────────────────────────────────
-    p.add_argument("--n_episodes",          type=int,   default=3000,
-                   help="Total number of training episodes.")
-    p.add_argument("--gamma",               type=float, default=0.99,
-                   help="Discount factor γ.")
-    p.add_argument("--lr",                  type=float, default=3e-4,
-                   help="Adam learning rate.")
-    p.add_argument("--batch_size",          type=int,   default=256,
-                   help="Mini-batch size for Q-network updates.")
-    p.add_argument("--buffer_capacity",     type=int,   default=100_000,
-                   help="Replay buffer capacity.")
-    p.add_argument("--warmup_episodes",     type=int,   default=50,
-                   help="Episodes of pure random exploration before learning starts.")
-    p.add_argument("--target_update_freq",  type=int,   default=10,
-                   help="Hard target-network update every N episodes.")
-    p.add_argument("--updates_per_step",    type=int,   default=1,
-                   help="Q-network gradient updates per environment step.")
-
-    p.add_argument("--epsilon_start",       type=float, default=1.0,
-                   help="Initial exploration probability ε.")
-    p.add_argument("--epsilon_end",         type=float, default=0.05,
-                   help="Minimum exploration probability ε.")
-    p.add_argument("--epsilon_decay_steps", type=int,   default=50_000,
-                   help="Number of Q-updates over which ε decays linearly.")
-
-    p.add_argument("--double_dqn",    action="store_true",  default=True,
-                   help="Use Double-DQN (default: True).")
-    p.add_argument("--no_double_dqn", dest="double_dqn", action="store_false",
-                   help="Disable Double-DQN (use vanilla DQN instead).")
+    p.add_argument("--n_episodes",          type=int,   default=3000)
+    p.add_argument("--gamma",               type=float, default=0.99)
+    p.add_argument("--lr",                  type=float, default=3e-4)
+    p.add_argument("--batch_size",          type=int,   default=256)
+    p.add_argument("--buffer_capacity",     type=int,   default=100_000)
+    p.add_argument("--warmup_episodes",     type=int,   default=50)
+    p.add_argument("--target_update_freq",  type=int,   default=10)
+    p.add_argument("--updates_per_step",    type=int,   default=1)
+    p.add_argument("--epsilon_start",       type=float, default=1.0)
+    p.add_argument("--epsilon_end",         type=float, default=0.05)
+    p.add_argument("--epsilon_decay_steps", type=int,   default=50_000)
+    p.add_argument("--double_dqn",    action="store_true",  default=True)
+    p.add_argument("--no_double_dqn", dest="double_dqn", action="store_false")
 
     # ── logging / checkpointing ────────────────────────────────────────────────
-    p.add_argument("--log_freq",  type=int, default=50,
-                   help="Print metrics every N episodes.")
-    p.add_argument("--save_freq", type=int, default=500,
-                   help="Save checkpoint + plots every N episodes.")
-    p.add_argument("--out_dir",   type=str, default="",
-                   help="Output directory. Defaults to online_RL/runs/<timestamp>/.")
-    p.add_argument("--device",    type=str, default="",
-                   help="'cuda' or 'cpu'. Auto-detected if empty.")
-    p.add_argument("--seed",      type=int, default=42,
-                   help="Random seed for reproducibility.")
-
-    # ── optional warm-start from an existing online-RL checkpoint ────────────
-    p.add_argument("--resume",    type=str, default="",
-                   help="Path to a previous DQN checkpoint to resume training from.")
+    p.add_argument("--log_freq",  type=int, default=50)
+    p.add_argument("--save_freq", type=int, default=500)
+    p.add_argument("--out_dir",   type=str, default="")
+    p.add_argument("--device",    type=str, default="")
+    p.add_argument("--seed",      type=int, default=42)
+    p.add_argument("--resume",    type=str, default="")
 
     return p.parse_args()
 
@@ -147,7 +145,6 @@ def parse_args() -> argparse.Namespace:
 # =============================================================================
 
 def plot_returns(returns: list, out_path: str, window: int = 50) -> None:
-    """Episode-return curve with rolling average."""
     fig, ax = plt.subplots(figsize=(10, 5))
     eps = np.arange(1, len(returns) + 1)
     ax.plot(eps, returns, alpha=0.35, color="steelblue",
@@ -158,43 +155,52 @@ def plot_returns(returns: list, out_path: str, window: int = 50) -> None:
                 linewidth=2.0, label=f"Rolling avg ({window})")
     ax.axhline(y=0, color="grey", linestyle="--", linewidth=0.8, alpha=0.6,
                label="Ideal (0 = zero deviation)")
-    ax.set_xlabel("Episode")
-    ax.set_ylabel("Return (sum of rewards per episode)")
+    ax.set_xlabel("Episode"); ax.set_ylabel("Return")
     ax.set_title("Online DQN — Episode Returns")
-    ax.legend()
-    ax.grid(True, alpha=0.3)
-    fig.tight_layout()
-    fig.savefig(out_path, dpi=150)
-    plt.close(fig)
+    ax.legend(); ax.grid(True, alpha=0.3)
+    fig.tight_layout(); fig.savefig(out_path, dpi=150); plt.close(fig)
     print(f"[train] Returns plot → {out_path}")
 
 
 def plot_q_loss(losses: list, out_path: str) -> None:
-    """Q-network Huber-loss curve."""
     fig, ax = plt.subplots(figsize=(10, 5))
     ax.plot(losses, linewidth=0.4, alpha=0.6, color="darkorange")
-    ax.set_xlabel("Q-network update step")
-    ax.set_ylabel("Huber loss")
+    ax.set_xlabel("Q-network update step"); ax.set_ylabel("Huber loss")
     ax.set_title("Online DQN — Q-loss Curve")
     ax.grid(True, alpha=0.3)
-    fig.tight_layout()
-    fig.savefig(out_path, dpi=150)
-    plt.close(fig)
+    fig.tight_layout(); fig.savefig(out_path, dpi=150); plt.close(fig)
     print(f"[train] Q-loss plot  → {out_path}")
 
 
 def plot_epsilon(epsilons: list, out_path: str) -> None:
-    """ε vs episode."""
     fig, ax = plt.subplots(figsize=(8, 3))
-    ax.plot(np.arange(1, len(epsilons) + 1), epsilons, color="seagreen", linewidth=1.5)
-    ax.set_xlabel("Episode")
-    ax.set_ylabel("Epsilon (exploration probability)")
+    ax.plot(np.arange(1, len(epsilons) + 1), epsilons,
+            color="seagreen", linewidth=1.5)
+    ax.set_xlabel("Episode"); ax.set_ylabel("Epsilon")
     ax.set_title("ε-greedy Decay Schedule")
     ax.grid(True, alpha=0.3)
-    fig.tight_layout()
-    fig.savefig(out_path, dpi=150)
-    plt.close(fig)
+    fig.tight_layout(); fig.savefig(out_path, dpi=150); plt.close(fig)
     print(f"[train] Epsilon plot → {out_path}")
+
+
+def plot_epistemic_std(ep_stds: list, out_path: str, window: int = 50) -> None:
+    """Mean per-episode ensemble uncertainty — should decrease as the policy
+    learns to stay in well-covered (low-uncertainty) regions of state space."""
+    fig, ax = plt.subplots(figsize=(10, 4))
+    eps = np.arange(1, len(ep_stds) + 1)
+    ax.plot(eps, ep_stds, alpha=0.35, color="tab:purple",
+            linewidth=0.7, label="Mean epistemic std per episode")
+    if len(ep_stds) >= window:
+        smooth = np.convolve(ep_stds, np.ones(window) / window, mode="valid")
+        ax.plot(eps[window - 1:], smooth, color="tab:purple",
+                linewidth=2.0, label=f"Rolling avg ({window})")
+    ax.set_xlabel("Episode")
+    ax.set_ylabel("Mean ensemble std (latent space)")
+    ax.set_title("Epistemic Uncertainty per Episode\n"
+                 "(penalty mode: decreasing = policy avoids OOD regions)")
+    ax.legend(); ax.grid(True, alpha=0.3)
+    fig.tight_layout(); fig.savefig(out_path, dpi=150); plt.close(fig)
+    print(f"[train] Epistemic-std plot → {out_path}")
 
 
 # =============================================================================
@@ -216,47 +222,48 @@ def main() -> None:
         out_dir = args.out_dir
     os.makedirs(out_dir, exist_ok=True)
 
+    penalty_w = args.uncertainty_penalty_weight if args.uncertainty_mode == "penalty" else 0.0
+
     print("=" * 65)
     print(f"[train] Online DQN — LPBF Laser-Power Controller")
-    print(f"[train] Output dir : {out_dir}")
-    print(f"[train] Device     : {device}")
+    print(f"[train] Output dir  : {out_dir}")
+    print(f"[train] Device      : {device}")
+    print(f"[train] Mode        : {args.uncertainty_mode}"
+          + (f"  (λ={penalty_w})" if args.uncertainty_mode == "penalty" else ""))
     print("=" * 65)
 
-    # ── load surrogate model ─────────────────────────────────────────────────
+    # ── load latent ensemble surrogate ────────────────────────────────────────
     print(f"\n[train] Loading surrogate: {args.surrogate}")
-    surrogate, state_mean, state_std, action_mean, action_std = load_surrogate(
-        args.surrogate, device=device
-    )
+    surrogate, state_mean, state_std, action_mean, action_std, _ = \
+        load_latent_surrogate(args.surrogate, device=device)
     surrogate.eval()
-    state_dim = int(state_mean.shape[0])   # raw temperature field dim (1053)
-    print(f"[train] Surrogate   : state_dim={state_dim}, "
-          f"action_mean={action_mean:.1f} W, action_std={action_std:.1f} W")
+    state_dim = int(state_mean.shape[0])
+    print(f"[train] Surrogate   : {surrogate}")
 
     # ── create LPBF environment ───────────────────────────────────────────────
     env = LPBFEnv(
-        surrogate      = surrogate,
-        state_mean     = state_mean,
-        state_std      = state_std,
-        action_mean    = action_mean,
-        action_std     = action_std,
-        temp_range     = (args.T_l, args.T_h),
-        n_layers       = args.n_layers,
-        initial_temp   = args.initial_temp,
-        device         = device,
-        mesh_path      = args.mesh_path,
-        width          = args.width,
-        height         = args.height,
-        sq_frac_start  = args.sq_frac_start,
-        sq_frac_end    = args.sq_frac_end,
+        surrogate                   = surrogate,
+        state_mean                  = state_mean,
+        state_std                   = state_std,
+        action_mean                 = action_mean,
+        action_std                  = action_std,
+        temp_range                  = (args.T_l, args.T_h),
+        n_layers                    = args.n_layers,
+        initial_temp                = args.initial_temp,
+        device                      = device,
+        mesh_path                   = args.mesh_path,
+        width                       = args.width,
+        height                      = args.height,
+        sq_frac_start               = args.sq_frac_start,
+        sq_frac_end                 = args.sq_frac_end,
+        uncertainty_penalty_weight  = penalty_w,
     )
-    # obs_dim = surrogate state_dim + 1 layer token  (e.g. 1053 + 1 = 1054)
-    obs_dim = env.obs_dim
+    obs_dim = env.obs_dim   # D + 1
+
     print(f"[train] Action space : {NUM_ACTIONS} actions  "
-          f"({ACTION_LIST[0]:.0f}–{ACTION_LIST[-1]:.0f} W, step 10 W)")
+          f"({ACTION_LIST[0]:.0f}–{ACTION_LIST[-1]:.0f} W)")
     print(f"[train] Temp window  : [{args.T_l:.0f}, {args.T_h:.0f}] K")
-    print(f"[train] Layers/ep    : {args.n_layers}")
-    print(f"[train] obs_dim      : {obs_dim}  "
-          f"({state_dim} temp nodes + 1 layer token)")
+    print(f"[train] obs_dim      : {obs_dim}  ({state_dim} nodes + 1 layer token)")
 
     # ── create agent ──────────────────────────────────────────────────────────
     if args.resume:
@@ -264,7 +271,7 @@ def main() -> None:
         agent = DQNAgent.load(args.resume, device=device)
     else:
         agent = DQNAgent(
-            state_dim            = obs_dim,   # Q-net input = temp field + layer index
+            state_dim            = obs_dim,
             n_actions            = NUM_ACTIONS,
             hidden               = args.hidden,
             depth                = args.depth,
@@ -276,6 +283,8 @@ def main() -> None:
             epsilon_decay_steps  = args.epsilon_decay_steps,
             double_dqn           = args.double_dqn,
             device               = device,
+            n_layers             = args.n_layers,
+            layer_embed_dim      = args.layer_embed_dim,
         )
     print(f"[train] {agent.q_net}")
 
@@ -284,10 +293,11 @@ def main() -> None:
     print(f"[train] {buffer}")
 
     # ── training ──────────────────────────────────────────────────────────────
-    all_returns:  list = []
-    all_losses:   list = []
-    all_epsilons: list = []
-    best_return       = -float("inf")
+    all_returns:   list = []
+    all_losses:    list = []
+    all_epsilons:  list = []
+    all_ep_stds:   list = []   # mean epistemic std per episode
+    best_return        = -float("inf")
 
     print(f"\n[train] Starting {args.n_episodes} episodes  "
           f"(warmup={args.warmup_episodes}, "
@@ -299,28 +309,21 @@ def main() -> None:
 
     for episode in range(1, args.n_episodes + 1):
 
-        # ── episode rollout ───────────────────────────────────────────────
-        state      = env.reset()
-        ep_return  = 0.0
-        ep_losses  = []
-        in_warmup  = episode <= args.warmup_episodes
+        state     = env.reset()
+        ep_return = 0.0
+        ep_losses = []
+        ep_stds   = []
+        in_warmup = episode <= args.warmup_episodes
 
         for _step in range(args.n_layers):
-            # Always pass explore=True.
-            # • During warmup   : ε = 1.0 (no updates → ε never decays)
-            #                     → random.random() < 1.0 always → purely random action
-            # • After warmup    : ε decays with each update → ε-greedy as intended
-            # (Using explore=False during warmup was a bug: it would use the
-            # randomly-initialised Q-net greedily, which is not uniformly random
-            # and reduces buffer diversity.)
             action = agent.select_action(state, explore=True)
-            next_state, reward, done, _info = env.step(action)
+            next_state, reward, done, info = env.step(action)
 
+            ep_stds.append(info["epistemic_std"])
             buffer.push(state, action, reward, next_state, done)
             ep_return += reward
             state      = next_state
 
-            # ── Q-network updates ─────────────────────────────────────────
             if not in_warmup:
                 for _ in range(args.updates_per_step):
                     loss = agent.update(buffer, args.batch_size)
@@ -337,22 +340,25 @@ def main() -> None:
         # ── book-keeping ──────────────────────────────────────────────────
         all_returns.append(ep_return)
         all_epsilons.append(agent.epsilon)
+        all_ep_stds.append(float(np.mean(ep_stds)) if ep_stds else 0.0)
         if ep_losses:
             all_losses.extend(ep_losses)
 
         # ── console logging ───────────────────────────────────────────────
         if episode % args.log_freq == 0 or episode == 1:
-            n_recent = min(args.log_freq, len(all_returns))
-            avg_ret  = np.mean(all_returns[-n_recent:])
-            avg_loss = np.mean(ep_losses) if ep_losses else float("nan")
-            elapsed  = time.time() - t0
-            tag      = " [warmup]" if in_warmup else ""
+            n_recent  = min(args.log_freq, len(all_returns))
+            avg_ret   = np.mean(all_returns[-n_recent:])
+            avg_loss  = np.mean(ep_losses) if ep_losses else float("nan")
+            avg_std   = np.mean(all_ep_stds[-n_recent:])
+            elapsed   = time.time() - t0
+            tag       = " [warmup]" if in_warmup else ""
             print(
                 f"Ep {episode:5d}/{args.n_episodes} | "
                 f"ret {ep_return:+.4f} | "
                 f"avg({n_recent}) {avg_ret:+.4f} | "
                 f"ε {agent.epsilon:.3f} | "
                 f"loss {avg_loss:.5f} | "
+                f"σ_epist {avg_std:.4f} | "
                 f"buf {len(buffer):,} | "
                 f"{elapsed:.0f}s{tag}"
             )
@@ -363,10 +369,12 @@ def main() -> None:
             agent.save(
                 os.path.join(out_dir, "dqn_best.pt"),
                 extra={
-                    "episode":      episode,
-                    "best_return":  best_return,
-                    "action_list":  ACTION_LIST,
-                    "train_args":   vars(args),
+                    "episode":          episode,
+                    "best_return":      best_return,
+                    "uncertainty_mode": args.uncertainty_mode,
+                    "penalty_weight":   penalty_w,
+                    "action_list":      ACTION_LIST,
+                    "train_args":       vars(args),
                 },
             )
 
@@ -375,10 +383,11 @@ def main() -> None:
             agent.save(
                 os.path.join(out_dir, f"dqn_ep{episode:05d}.pt"),
                 extra={
-                    "episode":     episode,
-                    "all_returns": all_returns,
-                    "action_list": ACTION_LIST,
-                    "train_args":  vars(args),
+                    "episode":          episode,
+                    "all_returns":      all_returns,
+                    "uncertainty_mode": args.uncertainty_mode,
+                    "action_list":      ACTION_LIST,
+                    "train_args":       vars(args),
                 },
             )
             plot_returns(all_returns,
@@ -388,28 +397,33 @@ def main() -> None:
                             os.path.join(out_dir, "q_loss.png"))
             plot_epsilon(all_epsilons,
                          os.path.join(out_dir, "epsilon.png"))
+            plot_epistemic_std(all_ep_stds,
+                               os.path.join(out_dir, "epistemic_std.png"))
 
     # ── final checkpoint + plots ───────────────────────────────────────────────
     agent.save(
         os.path.join(out_dir, "dqn_final.pt"),
         extra={
-            "episode":     args.n_episodes,
-            "all_returns": all_returns,
-            "action_list": ACTION_LIST,
-            "train_args":  vars(args),
+            "episode":          args.n_episodes,
+            "all_returns":      all_returns,
+            "uncertainty_mode": args.uncertainty_mode,
+            "action_list":      ACTION_LIST,
+            "train_args":       vars(args),
         },
     )
-    plot_returns(all_returns,  os.path.join(out_dir, "returns.png"))
+    plot_returns(all_returns,    os.path.join(out_dir, "returns.png"))
     if all_losses:
-        plot_q_loss(all_losses, os.path.join(out_dir, "q_loss.png"))
-    plot_epsilon(all_epsilons,  os.path.join(out_dir, "epsilon.png"))
+        plot_q_loss(all_losses,  os.path.join(out_dir, "q_loss.png"))
+    plot_epsilon(all_epsilons,   os.path.join(out_dir, "epsilon.png"))
+    plot_epistemic_std(all_ep_stds, os.path.join(out_dir, "epistemic_std.png"))
 
     total_time = time.time() - t0
     print("\n" + "=" * 65)
     print(f"[train] Training complete in {total_time/60:.1f} min")
-    print(f"[train] Best episode return : {best_return:.4f}")
-    print(f"[train] Best checkpoint     : {os.path.join(out_dir, 'dqn_best.pt')}")
-    print(f"[train] Final checkpoint    : {os.path.join(out_dir, 'dqn_final.pt')}")
+    print(f"[train] Mode               : {args.uncertainty_mode}")
+    print(f"[train] Best episode return: {best_return:.4f}")
+    print(f"[train] Best checkpoint    : {os.path.join(out_dir, 'dqn_best.pt')}")
+    print(f"[train] Final checkpoint   : {os.path.join(out_dir, 'dqn_final.pt')}")
     print("=" * 65)
 
 

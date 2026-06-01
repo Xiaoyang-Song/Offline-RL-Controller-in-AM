@@ -44,9 +44,8 @@ echo "CUDA     : $(python -c 'import torch; print(torch.cuda.is_available())')"
 echo "GPU      : $(python -c 'import torch; print(torch.cuda.get_device_name(0) if torch.cuda.is_available() else "N/A")')"
 echo "============================================================"
 
-# ── Surrogate checkpoint ─────────────────────────────────────────────────────
-# SURROGATE="surrogate_model/runs/20260521_210923/surrogate_best.pt"
-SURROGATE="surrogate_model/runs/20260528_181943/surrogate_best.pt"
+# ── Surrogate checkpoint (latent ensemble) ───────────────────────────────────
+SURROGATE="surrogate_model_latent/runs/20260528_182259/latent_best.pt"
 
 # ── Environment parameters (must match MATLAB paramsStruct in test.py) ───────
 T_L=2000.0          # lower nominal temperature bound [K]  (tempRange(1))
@@ -59,10 +58,17 @@ HEIGHT=3.0          # domain height (paramsStruct.height)
 SQ_FRAC_START=0.4   # squareSideFraction at layer 1  (test.py initialFraction)
 SQ_FRAC_END=0.5     # squareSideFraction at last layer (test.py finalFraction)
 
+# ── Training mode ────────────────────────────────────────────────────────────
+# standard : reward = -meanDeviation  (no uncertainty term)
+# penalty  : reward = -meanDeviation - λ·σ_epist  (penalises OOD actions)
+UNCERTAINTY_MODE="standard"
+UNCERTAINTY_PENALTY_WEIGHT=0.5   # λ — only used when mode=penalty
+
 # ── Q-network architecture ────────────────────────────────────────────────────
 HIDDEN=256          # hidden layer width
 DEPTH=4             # number of residual blocks
 DROPOUT=0.0         # dropout inside blocks
+LAYER_EMBED_DIM=8   # learned layer-index embedding dimension in Q-net
 
 # ── RL hyperparameters ────────────────────────────────────────────────────────
 N_EPISODES=40000
@@ -87,19 +93,22 @@ SAVE_FREQ=500       # save checkpoint + plots every N episodes
 
 # ── run training ─────────────────────────────────────────────────────────────
 python -m online_RL.train \
-    --surrogate           "$SURROGATE"     \
-    --T_l                 $T_L             \
-    --T_h                 $T_H             \
-    --n_layers            $N_LAYERS        \
-    --initial_temp        $INITIAL_TEMP    \
-    --mesh_path           "$MESH_PATH"     \
-    --width               $WIDTH           \
-    --height              $HEIGHT          \
-    --sq_frac_start       $SQ_FRAC_START   \
-    --sq_frac_end         $SQ_FRAC_END     \
-    --hidden              $HIDDEN          \
-    --depth               $DEPTH           \
-    --dropout             $DROPOUT         \
+    --surrogate                    "$SURROGATE"               \
+    --uncertainty_mode             $UNCERTAINTY_MODE          \
+    --uncertainty_penalty_weight   $UNCERTAINTY_PENALTY_WEIGHT \
+    --T_l                          $T_L                       \
+    --T_h                          $T_H                       \
+    --n_layers                     $N_LAYERS                  \
+    --initial_temp                 $INITIAL_TEMP              \
+    --mesh_path                    "$MESH_PATH"               \
+    --width                        $WIDTH                     \
+    --height                       $HEIGHT                    \
+    --sq_frac_start                $SQ_FRAC_START             \
+    --sq_frac_end                  $SQ_FRAC_END               \
+    --hidden                       $HIDDEN                    \
+    --depth                        $DEPTH                     \
+    --dropout                      $DROPOUT                   \
+    --layer_embed_dim              $LAYER_EMBED_DIM           \
     --n_episodes          $N_EPISODES      \
     --gamma               $GAMMA           \
     --lr                  $LR              \

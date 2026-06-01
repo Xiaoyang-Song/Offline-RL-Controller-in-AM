@@ -59,7 +59,7 @@ class DQNAgent:
 
     def __init__(
         self,
-        state_dim:           int   = 1053,
+        state_dim:           int   = 1054,   # D + 1 (field + layer float token)
         n_actions:           int   = 26,
         hidden:              int   = 256,
         depth:               int   = 4,
@@ -72,6 +72,8 @@ class DQNAgent:
         max_grad_norm:       float = 10.0,
         double_dqn:          bool  = True,
         device:              str   = "cpu",
+        n_layers:            int   = 12,
+        layer_embed_dim:     int   = 8,
     ) -> None:
         self.n_actions           = n_actions
         self.gamma               = gamma
@@ -84,9 +86,13 @@ class DQNAgent:
         self._update_count       = 0
         self._hidden             = hidden
         self._depth              = depth
+        self._n_layers           = n_layers
+        self._layer_embed_dim    = layer_embed_dim
 
         # ── networks ──────────────────────────────────────────────────────
-        self.q_net      = QNet(state_dim, n_actions, hidden, depth, dropout).to(device)
+        self.q_net = QNet(
+            state_dim, n_actions, hidden, depth, dropout, n_layers, layer_embed_dim
+        ).to(device)
         self.target_net = copy.deepcopy(self.q_net).to(device)
         self.target_net.eval()
 
@@ -197,11 +203,13 @@ class DQNAgent:
             "epsilon":               self.epsilon,
             "update_count":          self._update_count,
             "agent_config": {
-                "state_dim":           self.q_net.state_dim,
-                "n_actions":           self.n_actions,
-                "hidden":              self._hidden,
-                "depth":               self._depth,
-                "double_dqn":          self.double_dqn,
+                "state_dim":       self.q_net.state_dim,
+                "n_actions":       self.n_actions,
+                "hidden":          self._hidden,
+                "depth":           self._depth,
+                "double_dqn":      self.double_dqn,
+                "n_layers":        self._n_layers,
+                "layer_embed_dim": self._layer_embed_dim,
             },
         }
         if extra:

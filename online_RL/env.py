@@ -75,32 +75,34 @@ class LPBFEnv:
 
     def __init__(
         self,
-        surrogate,
-        state_mean:     torch.Tensor,
-        state_std:      torch.Tensor,
-        action_mean:    float,
-        action_std:     float,
-        temp_range:     Tuple[float, float] = (2000.0, 2800.0),
-        n_layers:       int   = 12,
-        initial_temp:   float = 300.0,
-        device:         str   = "cpu",
-        mesh_path:      str   = "surrogate_model/mesh.mat",
-        width:          float = 12.0,
-        height:         float = 3.0,
-        sq_frac_start:  float = 0.4,
-        sq_frac_end:    float = 0.5,
+        surrogate,                           # EnsembleLatentDynamicsModel, eval mode
+        state_mean:               torch.Tensor,
+        state_std:                torch.Tensor,
+        action_mean:              float,
+        action_std:               float,
+        temp_range:               Tuple[float, float] = (2000.0, 2800.0),
+        n_layers:                 int   = 12,
+        initial_temp:             float = 300.0,
+        device:                   str   = "cpu",
+        mesh_path:                str   = "surrogate_model/mesh.mat",
+        width:                    float = 12.0,
+        height:                   float = 3.0,
+        sq_frac_start:            float = 0.4,
+        sq_frac_end:              float = 0.5,
+        uncertainty_penalty_weight: float = 0.0,
     ) -> None:
-        self.surrogate    = surrogate
-        self.state_mean   = state_mean.to(device)
-        self.state_std    = state_std.to(device)
-        self.action_mean  = action_mean
-        self.action_std   = action_std
-        self.T_l, self.T_h = temp_range
-        self.n_layers     = n_layers
-        self.initial_temp = initial_temp
-        self.device       = device
-        self.width        = width
-        self.height       = height
+        self.surrogate                  = surrogate
+        self.state_mean                 = state_mean.to(device)
+        self.state_std                  = state_std.to(device)
+        self.action_mean                = action_mean
+        self.action_std                 = action_std
+        self.T_l, self.T_h              = temp_range
+        self.n_layers                   = n_layers
+        self.initial_temp               = initial_temp
+        self.device                     = device
+        self.width                      = width
+        self.height                     = height
+        self.uncertainty_penalty_weight = uncertainty_penalty_weight
 
         # squareSideFraction per layer (layer 0 → sq_frac_start, last → sq_frac_end)
         self.sq_fracs = np.linspace(sq_frac_start, sq_frac_end, n_layers)
@@ -189,14 +191,25 @@ class LPBFEnv:
         s_norm = (s_t - self.state_mean) / self.state_std
         a_norm = (a_t - self.action_mean) / self.action_std
 
+        # ── ensemble latent surrogate forward pass ────────────────────────
         with torch.no_grad():
-            s2_norm = self.surrogate(s_norm, a_norm)               # (1, D)
+            layer_idx_t    = torch.tensor([self._layer], dtype=torch.long,
+                                          device=self.device)          # (1,)
+            z_t            = self.surrogate.encode(s_norm)             # (1, latent_dim)
+            mu_mean, mu_std = self.surrogate.predict_ensemble(
+                z_t, a_norm, layer_idx_t
+            )                                                           # both (1, latent_dim)
+            z_t1           = z_t + mu_mean
+            s2_norm        = self.surrogate.decode(z_t1)               # (1, D)
+            epist_std      = float(mu_std.mean().item())               # scalar
 
         # Denormalise → raw Kelvin for reward
         s2_raw = (s2_norm * self.state_std + self.state_mean).squeeze(0).cpu().numpy()
 
-        # ── compute reward (MATLAB formula) ───────────────────────────────
-        reward = self._compute_reward(s2_raw, self._layer)
+        # ── compute reward ────────────────────────────────────────────────
+        reward_base = self._compute_reward(s2_raw, self._layer)
+        # Mode 2: subtract uncertainty penalty (discourages OOD actions)
+        reward = reward_base - self.uncertainty_penalty_weight * epist_std
 
         # ── advance internal state ────────────────────────────────────────
         self._state_raw = s2_raw
@@ -204,10 +217,12 @@ class LPBFEnv:
         done = self._layer >= self.n_layers
 
         info = {
-            "layer":       self._layer,
-            "action_W":    action_W,
-            "mean_temp_K": float(s2_raw.mean()),
-            "max_temp_K":  float(s2_raw.max()),
+            "layer":        self._layer,
+            "action_W":     action_W,
+            "mean_temp_K":  float(s2_raw.mean()),
+            "max_temp_K":   float(s2_raw.max()),
+            "epistemic_std": epist_std,       # mean ensemble std in latent space
+            "reward_base":  reward_base,      # reward before uncertainty penalty
         }
 
         return self._make_obs(s2_raw, self._layer), reward, done, info
