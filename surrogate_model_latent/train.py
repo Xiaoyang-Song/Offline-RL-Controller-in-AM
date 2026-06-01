@@ -1,7 +1,7 @@
 """
 surrogate_model_latent/train.py
 ---------------------------------
-Training script for the LPBF Latent-Space Dynamics surrogate model.
+Training script for the LPBF Latent-Space Ensemble Dynamics surrogate model.
 
 Usage (single-step losses only):
     python -m surrogate_model_latent.train \\
@@ -15,13 +15,14 @@ Usage (with multi-step rollout loss):
 
 Loss terms
 ----------
-  L_recon_st  : weighted MSE between decoder(encoder(s_t)) and s_t
-  L_recon_st1 : weighted MSE between decoder(z_t + μ_Δz) and s_{t+1}
-  L_nll       : Gaussian NLL of (encoder(s_{t+1}) − z_t) under the transition
-  L_rollout   : k-step auto-regressive reconstruction loss (optional)
+  L_recon_st   : weighted MSE between decoder(encoder(s_t)) and s_t
+  L_recon_st1  : mean over K members of weighted MSE between
+                 decoder(z_t + μ_Δz_k) and s_{t+1}
+  L_rollout    : k-step auto-regressive reconstruction loss (optional,
+                 uses ensemble mean for stepping)
 
   total = recon_st_w·L_recon_st + recon_st1_w·L_recon_st1
-        + nll_w·L_nll  [+ rollout_w·L_rollout]
+        [+ rollout_w·L_rollout]
 
 Physics-aware weights
 ---------------------
@@ -46,7 +47,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 from scipy.io import loadmat
 from torch.utils.data import DataLoader
 
@@ -59,9 +59,8 @@ from surrogate_model_latent.dataset import (
     LatentSurrogateDataset,
     LatentTrajectoryDataset,
     compute_roi_weights_table,
-    uniform_weights_table,
 )
-from surrogate_model_latent.model import LatentDynamicsModel
+from surrogate_model_latent.model import EnsembleLatentDynamicsModel
 
 
 # =============================================================================
@@ -70,7 +69,7 @@ from surrogate_model_latent.model import LatentDynamicsModel
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(
-        description="Train the LPBF Latent-Space Dynamics surrogate model."
+        description="Train the LPBF Latent-Space Ensemble Dynamics surrogate model."
     )
 
     # ── data ─────────────────────────────────────────────────────────────────
@@ -81,55 +80,34 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--seed",          type=int,   default=42)
 
     # ── model ─────────────────────────────────────────────────────────────────
-    p.add_argument("--latent_dim",    type=int,   default=64,
-                   help="Latent space dimension.")
-    p.add_argument("--enc_hidden",    type=int,   default=256,
-                   help="Encoder hidden layer width.")
-    p.add_argument("--enc_depth",     type=int,   default=3,
-                   help="Encoder number of ResidualBlocks.")
-    p.add_argument("--trans_hidden",  type=int,   default=128,
-                   help="Transition MLP hidden width.")
-    p.add_argument("--trans_depth",   type=int,   default=3,
-                   help="Transition MLP number of ResidualBlocks.")
-    p.add_argument("--dec_hidden",    type=int,   default=256,
-                   help="Decoder hidden layer width.")
-    p.add_argument("--dec_depth",     type=int,   default=3,
-                   help="Decoder number of ResidualBlocks.")
+    p.add_argument("--latent_dim",    type=int,   default=64)
+    p.add_argument("--n_ensemble",    type=int,   default=5,
+                   help="Number of ensemble transition members K.")
+    p.add_argument("--enc_hidden",    type=int,   default=256)
+    p.add_argument("--enc_depth",     type=int,   default=3)
+    p.add_argument("--trans_hidden",  type=int,   default=128)
+    p.add_argument("--trans_depth",   type=int,   default=3)
+    p.add_argument("--dec_hidden",    type=int,   default=256)
+    p.add_argument("--dec_depth",     type=int,   default=3)
     p.add_argument("--dropout",       type=float, default=0.0)
-    p.add_argument("--log_sigma_min", type=float, default=-5.0,
-                   help="Lower clamp for log σ in transition MLP.")
-    p.add_argument("--log_sigma_max", type=float, default=2.0,
-                   help="Upper clamp for log σ in transition MLP.")
 
     # ── loss weights ─────────────────────────────────────────────────────────
     p.add_argument("--recon_st_weight",  type=float, default=1.0,
                    help="Weight for autoencoder reconstruction loss L_recon_st.")
     p.add_argument("--recon_st1_weight", type=float, default=1.0,
-                   help="Weight for next-state prediction loss L_recon_st1.")
-    p.add_argument("--nll_weight",       type=float, default=1.0,
-                   help="Weight for β-NLL transition loss.")
-    p.add_argument("--nll_beta",         type=float, default=0.5,
-                   help="β for β-NLL (Seitzer et al. 2022). "
-                        "0=full stop-grad on σ weight, 0.5=balanced (default), 1=uniform μ gradient.")
+                   help="Weight for per-member next-state prediction loss L_recon_st1.")
 
     # ── multi-step rollout ────────────────────────────────────────────────────
     p.add_argument("--rollout_steps",  type=int,   default=0,
                    help="Unroll k steps for rollout loss (0 = off; recommended: 12).")
-    p.add_argument("--rollout_weight", type=float, default=0.1,
-                   help="Weight for rollout reconstruction loss.")
+    p.add_argument("--rollout_weight", type=float, default=0.1)
 
     # ── physics ROI weights ───────────────────────────────────────────────────
-    p.add_argument("--mesh_path", type=str, default="",
-                   help="Path to mesh.mat with PDE nodes/elements. "
-                        "Defaults to surrogate_model/mesh.mat relative to repo root.")
-    p.add_argument("--roi_boost",             type=float, default=5.0,
-                   help="Weight multiplier for nodes inside the square scan region.")
-    p.add_argument("--roi_initial_fraction",  type=float, default=0.4,
-                   help="squareSideFraction at layer 0 (MATLAB initialFraction).")
-    p.add_argument("--roi_final_fraction",    type=float, default=0.5,
-                   help="squareSideFraction at layer n-1 (MATLAB finalFraction).")
-    p.add_argument("--roi_edge_sigma_frac",   type=float, default=0.05,
-                   help="Soft-edge width as fraction of min(width, height).")
+    p.add_argument("--mesh_path", type=str, default="")
+    p.add_argument("--roi_boost",            type=float, default=5.0)
+    p.add_argument("--roi_initial_fraction", type=float, default=0.4)
+    p.add_argument("--roi_final_fraction",   type=float, default=0.5)
+    p.add_argument("--roi_edge_sigma_frac",  type=float, default=0.05)
 
     # ── optimiser ─────────────────────────────────────────────────────────────
     p.add_argument("--epochs",       type=int,   default=500)
@@ -140,8 +118,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--num_workers",  type=int,   default=4)
 
     # ── output ───────────────────────────────────────────────────────────────
-    p.add_argument("--out_dir", type=str, default="",
-                   help="Output dir. Defaults to surrogate_model_latent/runs/<ts>/.")
+    p.add_argument("--out_dir", type=str, default="")
     p.add_argument("--device",  type=str, default="")
 
     return p.parse_args()
@@ -151,39 +128,10 @@ def parse_args() -> argparse.Namespace:
 # Loss functions
 # =============================================================================
 
-def beta_gaussian_nll(
-    mu:        torch.Tensor,   # (B, latent_dim)
-    target:    torch.Tensor,   # (B, latent_dim)
-    log_sigma: torch.Tensor,   # (B, latent_dim)
-    beta:      float = 0.5,
-) -> torch.Tensor:
-    """
-    β-NLL loss (Seitzer et al., ICLR 2022) — prevents variance collapse.
-
-    L_β = 0.5 · mean( sg[σ^{2β}] · (target − μ)²/σ² + log σ² )
-
-    The stop-gradient on σ^{2β} breaks the feedback loop that causes
-    σ → 0 when μ improves under standard NLL:
-
-      β = 0 : sg[1]   — μ gradient is precision-weighted (1/σ²), same as NLL
-                        but σ^{2·0}=1 is already constant, so no stop-grad effect.
-                        Equivalent to: detach the whole weight → only log σ² trains σ.
-              (Note: in practice β=0 ≡ full stop-gradient on mu.)
-      β = 0.5: sg[σ]  — μ gradient scaled by 1/σ  (softer than 1/σ²)
-      β = 1 : sg[σ²]  — μ gradient is uniform (not precision-weighted); σ still
-                        trained, but decoupled from μ improvement speed.
-
-    Default β=0.5 gives a balanced trade-off (recommended by Seitzer et al.).
-    """
-    log_var = 2.0 * log_sigma                              # log σ²
-    weight  = torch.exp(beta * log_var).detach()           # sg[σ^{2β}]
-    return 0.5 * (weight * (target - mu).pow(2) * torch.exp(-log_var) + log_var).mean()
-
-
 def weighted_mse(
-    pred:    torch.Tensor,               # (B, D)
-    target:  torch.Tensor,               # (B, D)
-    weights: Optional[torch.Tensor],     # (B, D) or None
+    pred:    torch.Tensor,            # (..., D)
+    target:  torch.Tensor,            # (..., D)
+    weights: Optional[torch.Tensor],  # (..., D) or None
 ) -> torch.Tensor:
     sq = (pred - target).pow(2)
     if weights is not None:
@@ -192,63 +140,65 @@ def weighted_mse(
 
 
 def compute_single_step_losses(
-    model:             LatentDynamicsModel,
-    s:                 torch.Tensor,              # (B, D) normalised
-    a:                 torch.Tensor,              # (B, 1) normalised
-    s2:                torch.Tensor,              # (B, D) normalised
-    layer_indices:     torch.Tensor,              # (B,)  int64
-    roi_table:         Optional[torch.Tensor],    # (n_layers, D) or None
-    nll_beta:          float = 0.5,
-) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    model:         EnsembleLatentDynamicsModel,
+    s:             torch.Tensor,              # (B, D)
+    a:             torch.Tensor,              # (B, 1)
+    s2:            torch.Tensor,              # (B, D)
+    layer_indices: torch.Tensor,              # (B,)
+    roi_table:     Optional[torch.Tensor],    # (n_layers, D) or None
+) -> Tuple[torch.Tensor, torch.Tensor]:
     """
-    Returns (L_recon_st, L_recon_st1, L_nll).
+    Returns (L_recon_st, L_recon_st1).
 
-    Physics-aware: per-node ROI weights are applied to the MSE losses.
-    NLL is β-NLL (Seitzer et al. 2022) in latent space.
+    L_recon_st   : autoencoder reconstruction of s_t  (shared enc/dec)
+    L_recon_st1  : per-member next-state prediction, averaged over K members.
+                   Uses a single batched decoder call for efficiency:
+                   all K predicted z_{t+1} are stacked and decoded together.
     """
-    s_t_recon, s_t1_pred, mu_delta, log_sigma_delta, z_t, z_t1_enc = model(s, a, s2)
+    s_t_recon, _, mu_deltas, z_t = model(s, a)
+    # mu_deltas : (K, B, latent_dim)
+    # z_t       : (B, latent_dim)
 
-    if roi_table is not None:
-        w = roi_table[layer_indices]   # (B, D)
-    else:
-        w = None
+    w = roi_table[layer_indices] if roi_table is not None else None  # (B, D) or None
 
-    L_recon_st  = weighted_mse(s_t_recon, s,  w)
-    L_recon_st1 = weighted_mse(s_t1_pred, s2, w)
+    L_recon_st = weighted_mse(s_t_recon, s, w)
 
-    delta_z_true = z_t1_enc - z_t                          # (B, latent_dim)
-    L_nll        = beta_gaussian_nll(mu_delta, delta_z_true, log_sigma_delta, beta=nll_beta)
+    # Batched per-member reconstruction: decode all K predictions in one call
+    K, B, Dz = mu_deltas.shape
+    z_t1_preds = z_t.unsqueeze(0) + mu_deltas           # (K, B, latent_dim)
+    s_preds    = model.decode(
+        z_t1_preds.reshape(K * B, Dz)
+    ).reshape(K, B, -1)                                  # (K, B, state_dim)
 
-    return L_recon_st, L_recon_st1, L_nll
+    s2_exp = s2.unsqueeze(0).expand(K, -1, -1)           # (K, B, D)
+    w_exp  = w.unsqueeze(0).expand(K, -1, -1) if w is not None else None
+    L_recon_st1 = weighted_mse(s_preds, s2_exp, w_exp)
+
+    return L_recon_st, L_recon_st1
 
 
 def compute_rollout_loss(
-    model:      LatentDynamicsModel,
-    traj_s:     torch.Tensor,              # (B, T+1, D)
-    traj_a:     torch.Tensor,              # (B, T,   1)
-    k:          int,
-    roi_table:  Optional[torch.Tensor],    # (n_layers, D) or None
+    model:     EnsembleLatentDynamicsModel,
+    traj_s:    torch.Tensor,              # (B, T+1, D)
+    traj_a:    torch.Tensor,              # (B, T,   1)
+    k:         int,
+    roi_table: Optional[torch.Tensor],    # (n_layers, D) or None
 ) -> torch.Tensor:
     """
-    k-step auto-regressive reconstruction loss in latent space.
-    Uses mean (no sampling) for stable training.
+    k-step auto-regressive reconstruction loss using ensemble mean for stepping.
     """
     B, T1, D = traj_s.shape
-    z_t  = model.encode(traj_s[:, 0, :])
+    z_t   = model.encode(traj_s[:, 0, :])
     total = torch.zeros(1, device=traj_s.device)
 
     for t in range(k):
-        a_t      = traj_a[:, t, :]
-        mu_delta, _ = model.predict_delta(z_t, a_t)
-        z_t      = z_t + mu_delta
-        s_pred   = model.decode(z_t)
-        s_gt     = traj_s[:, t + 1, :]
-
-        if roi_table is not None:
-            w = roi_table[t].unsqueeze(0)   # (1, D)  — layer index = step index
-        else:
-            w = None
-        total = total + weighted_mse(s_pred, s_gt, w)
+        a_t            = traj_a[:, t, :]
+        mu_mean, _     = model.predict_ensemble(z_t, a_t)
+        z_t            = z_t + mu_mean
+        s_pred         = model.decode(z_t)
+        s_gt           = traj_s[:, t + 1, :]
+        w              = roi_table[t].unsqueeze(0) if roi_table is not None else None
+        total          = total + weighted_mse(s_pred, s_gt, w)
 
     return total / k
 
@@ -258,22 +208,20 @@ def compute_rollout_loss(
 # =============================================================================
 
 def run_epoch(
-    model:        LatentDynamicsModel,
-    loader:       DataLoader,
-    optimizer:    Optional[torch.optim.Optimizer],
-    device:       str,
-    roi_table:    Optional[torch.Tensor],
-    recon_st_w:   float,
-    recon_st1_w:  float,
-    nll_w:        float,
-    nll_beta:     float,
-    rollout_k:    int,
-    rollout_w:    float,
-    is_traj:      bool,
+    model:       EnsembleLatentDynamicsModel,
+    loader:      DataLoader,
+    optimizer:   Optional[torch.optim.Optimizer],
+    device:      str,
+    roi_table:   Optional[torch.Tensor],
+    recon_st_w:  float,
+    recon_st1_w: float,
+    rollout_k:   int,
+    rollout_w:   float,
+    is_traj:     bool,
 ) -> Tuple[float, Dict[str, float]]:
     """
     One full pass.  Returns (avg_total_loss, avg_components_dict).
-    If optimizer is None → evaluation mode (no grad).
+    optimizer=None → evaluation mode (no grad).
     """
     training = optimizer is not None
     model.train(training)
@@ -292,27 +240,22 @@ def run_epoch(
                 T = T1 - 1
                 k = min(rollout_k, T)
 
-                # Flatten all transitions for single-step losses
                 s_flat  = traj_s[:, :-1, :].reshape(B * T, D)
                 a_flat  = traj_a.reshape(B * T, 1)
                 s2_flat = traj_s[:, 1:,  :].reshape(B * T, D)
-                # Layer indices: each trajectory contributes steps 0,1,...,T-1
                 layer_flat = (
                     torch.arange(T, device=device)
                     .unsqueeze(0).expand(B, -1).reshape(B * T)
                 )
 
-                L_rs, L_rs1, L_nll = compute_single_step_losses(
-                    model, s_flat, a_flat, s2_flat, layer_flat, roi_table, nll_beta
+                L_rs, L_rs1 = compute_single_step_losses(
+                    model, s_flat, a_flat, s2_flat, layer_flat, roi_table
                 )
-
                 L_rollout = (
                     compute_rollout_loss(model, traj_s, traj_a, k, roi_table)
                     if k > 1 else torch.zeros(1, device=device)
                 )
-
-                loss = (recon_st_w * L_rs + recon_st1_w * L_rs1
-                        + nll_w * L_nll + rollout_w * L_rollout)
+                loss = recon_st_w * L_rs + recon_st1_w * L_rs1 + rollout_w * L_rollout
 
                 if training:
                     optimizer.zero_grad()
@@ -323,7 +266,6 @@ def run_epoch(
                 agg["total"]     += loss.item()
                 agg["recon_st"]  += L_rs.item()
                 agg["recon_st1"] += L_rs1.item()
-                agg["nll"]       += L_nll.item()
                 agg["rollout"]   += L_rollout.item()
                 n += 1
 
@@ -334,11 +276,10 @@ def run_epoch(
                 s2        = s2.to(device)
                 layer_idx = layer_idx.to(device)
 
-                L_rs, L_rs1, L_nll = compute_single_step_losses(
-                    model, s, a, s2, layer_idx, roi_table, nll_beta
+                L_rs, L_rs1 = compute_single_step_losses(
+                    model, s, a, s2, layer_idx, roi_table
                 )
-
-                loss = recon_st_w * L_rs + recon_st1_w * L_rs1 + nll_w * L_nll
+                loss = recon_st_w * L_rs + recon_st1_w * L_rs1
 
                 if training:
                     optimizer.zero_grad()
@@ -349,7 +290,6 @@ def run_epoch(
                 agg["total"]     += loss.item()
                 agg["recon_st"]  += L_rs.item()
                 agg["recon_st1"] += L_rs1.item()
-                agg["nll"]       += L_nll.item()
                 agg["rollout"]   += 0.0
                 n += 1
 
@@ -362,48 +302,33 @@ def run_epoch(
 # Plotting helpers
 # =============================================================================
 
-def plot_loss_curves(
-    train_losses: list,
-    val_losses:   list,
-    out_path:     str,
-) -> None:
+def plot_loss_curves(train_losses, val_losses, out_path):
     fig, ax = plt.subplots(figsize=(9, 5))
-    epochs = range(1, len(train_losses) + 1)
-    ax.plot(epochs, train_losses, label="Train total",     linewidth=1.5)
-    ax.plot(epochs, val_losses,   label="Val total",       linewidth=1.5, linestyle="--")
+    epochs  = range(1, len(train_losses) + 1)
+    ax.plot(epochs, train_losses, label="Train total",  linewidth=1.5)
+    ax.plot(epochs, val_losses,   label="Val total",    linewidth=1.5, linestyle="--")
     best_e = int(np.argmin(val_losses)) + 1
     ax.axvline(best_e, color="grey", linestyle=":", linewidth=1,
                label=f"Best val epoch {best_e}")
-    ax.set_xlabel("Epoch")
-    ax.set_ylabel("Weighted loss")
-    ax.set_title("Latent Surrogate — Total Loss Curves")
+    ax.set_xlabel("Epoch"); ax.set_ylabel("Weighted loss")
+    ax.set_title("Latent Ensemble Surrogate — Total Loss Curves")
     ax.legend(); ax.grid(True, alpha=0.3)
-    fig.tight_layout()
-    fig.savefig(out_path, dpi=150)
-    plt.close(fig)
+    fig.tight_layout(); fig.savefig(out_path, dpi=150); plt.close(fig)
     print(f"[train] Loss plot → {out_path}")
 
 
-def plot_loss_components(
-    train_comps: Dict[str, list],
-    val_comps:   Dict[str, list],
-    out_path:    str,
-) -> None:
-    keys   = ["recon_st", "recon_st1", "nll", "rollout"]
-    titles = ["L_recon_st", "L_recon_st1", "L_nll", "L_rollout"]
-    fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+def plot_loss_components(train_comps, val_comps, out_path):
+    keys   = ["recon_st", "recon_st1", "rollout"]
+    titles = ["L_recon_st", "L_recon_st1", "L_rollout"]
+    fig, axes = plt.subplots(1, 3, figsize=(15, 4))
     epochs = range(1, len(train_comps["recon_st"]) + 1)
-    for ax, k, title in zip(axes.flat, keys, titles):
-        tr = train_comps[k]
-        va = val_comps[k]
-        ax.plot(epochs, tr, label="Train", linewidth=1.5)
-        ax.plot(epochs, va, label="Val",   linewidth=1.5, linestyle="--")
+    for ax, k, title in zip(axes, keys, titles):
+        ax.plot(epochs, train_comps[k], label="Train", linewidth=1.5)
+        ax.plot(epochs, val_comps[k],   label="Val",   linewidth=1.5, linestyle="--")
         ax.set_title(title); ax.set_xlabel("Epoch")
         ax.legend(); ax.grid(True, alpha=0.3)
-    fig.suptitle("Latent Surrogate — Loss Components")
-    fig.tight_layout()
-    fig.savefig(out_path, dpi=150)
-    plt.close(fig)
+    fig.suptitle("Latent Ensemble Surrogate — Loss Components")
+    fig.tight_layout(); fig.savefig(out_path, dpi=150); plt.close(fig)
     print(f"[train] Component loss plot → {out_path}")
 
 
@@ -412,7 +337,7 @@ def plot_loss_components(
 # =============================================================================
 
 def _save_checkpoint(
-    model:        LatentDynamicsModel,
+    model:        EnsembleLatentDynamicsModel,
     state_mean:   torch.Tensor,
     state_std:    torch.Tensor,
     action_mean:  float,
@@ -430,22 +355,21 @@ def _save_checkpoint(
             "state_std":        state_std.cpu(),
             "action_mean":      action_mean,
             "action_std":       action_std,
-            "roi_table":        roi_table_np,   # None if mesh unavailable
+            "roi_table":        roi_table_np,
             "epoch":            epoch,
             "val_loss":         val_loss,
             "model_config": {
-                "state_dim":     model.state_dim,
-                "action_dim":    model.action_dim,
-                "latent_dim":    model.latent_dim,
-                "enc_hidden":    args.enc_hidden,
-                "enc_depth":     args.enc_depth,
-                "trans_hidden":  args.trans_hidden,
-                "trans_depth":   args.trans_depth,
-                "dec_hidden":    args.dec_hidden,
-                "dec_depth":     args.dec_depth,
-                "dropout":       args.dropout,
-                "log_sigma_min": args.log_sigma_min,
-                "log_sigma_max": args.log_sigma_max,
+                "state_dim":    model.state_dim,
+                "action_dim":   model.action_dim,
+                "latent_dim":   model.latent_dim,
+                "n_ensemble":   model.n_ensemble,
+                "enc_hidden":   args.enc_hidden,
+                "enc_depth":    args.enc_depth,
+                "trans_hidden": args.trans_hidden,
+                "trans_depth":  args.trans_depth,
+                "dec_hidden":   args.dec_hidden,
+                "dec_depth":    args.dec_depth,
+                "dropout":      args.dropout,
             },
             "train_args": vars(args),
         },
@@ -455,20 +379,20 @@ def _save_checkpoint(
 
 def load_latent_surrogate(checkpoint_path: str, device: str = "cpu"):
     """
-    Load a saved latent surrogate checkpoint.
+    Load a saved ensemble latent surrogate checkpoint.
 
     Returns
     -------
-    model        : LatentDynamicsModel  (eval mode)
-    state_mean   : torch.Tensor (state_dim,)
-    state_std    : torch.Tensor (state_dim,)
-    action_mean  : float
-    action_std   : float
-    roi_table    : torch.Tensor (n_layers, state_dim) or None
+    model       : EnsembleLatentDynamicsModel  (eval mode)
+    state_mean  : torch.Tensor (state_dim,)
+    state_std   : torch.Tensor (state_dim,)
+    action_mean : float
+    action_std  : float
+    roi_table   : torch.Tensor (n_layers, state_dim) or None
     """
     ckpt  = torch.load(checkpoint_path, map_location=device, weights_only=False)
     cfg   = ckpt["model_config"]
-    model = LatentDynamicsModel(**cfg).to(device)
+    model = EnsembleLatentDynamicsModel(**cfg).to(device)
     model.load_state_dict(ckpt["model_state_dict"])
     model.eval()
 
@@ -515,7 +439,6 @@ def main() -> None:
         test_fraction=args.test_fraction,
         seed=args.seed,
     )
-
     state_mean, state_std, action_mean, action_std = build_normalizers(
         train_trajs, initial_temp=args.initial_temp
     )
@@ -524,18 +447,15 @@ def main() -> None:
     state_dim = state_mean.shape[0]
     n_layers  = len(train_trajs[0])
 
-    # Resolve mesh path
-    mesh_path = args.mesh_path
-    if not mesh_path:
-        mesh_path = os.path.join(
-            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-            "surrogate_model", "mesh.mat"
-        )
+    mesh_path = args.mesh_path or os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+        "surrogate_model", "mesh.mat"
+    )
 
     roi_table_np: Optional[np.ndarray] = None
     if os.path.exists(mesh_path):
         data   = loadmat(mesh_path)
-        nodes  = data["nodes"]   # (2, N_nodes)
+        nodes  = data["nodes"]
         roi_table_np = compute_roi_weights_table(
             nodes, n_layers=n_layers,
             initial_fraction=args.roi_initial_fraction,
@@ -545,7 +465,6 @@ def main() -> None:
         )
         print(f"[train] ROI weights loaded from mesh: {mesh_path}")
     else:
-        roi_table_np = None
         print(f"[train] mesh.mat not found at {mesh_path} — using uniform weights.")
 
     roi_table_t: Optional[torch.Tensor] = None
@@ -554,13 +473,11 @@ def main() -> None:
 
     # ── datasets ─────────────────────────────────────────────────────────────
     use_rollout = args.rollout_steps > 1
-
-    ds_kwargs = dict(
+    ds_kwargs   = dict(
         state_mean=state_mean, state_std=state_std,
         action_mean=action_mean, action_std=action_std,
         initial_temp=args.initial_temp,
     )
-
     if use_rollout:
         train_ds = LatentTrajectoryDataset(train_trajs, **ds_kwargs)
         val_ds   = LatentTrajectoryDataset(val_trajs,   **ds_kwargs)
@@ -568,19 +485,17 @@ def main() -> None:
         train_ds = LatentSurrogateDataset(train_trajs, **ds_kwargs)
         val_ds   = LatentSurrogateDataset(val_trajs,   **ds_kwargs)
 
-    loader_kw = dict(
-        batch_size=args.batch_size,
-        num_workers=args.num_workers,
-        pin_memory=(device == "cuda"),
-    )
+    loader_kw    = dict(batch_size=args.batch_size, num_workers=args.num_workers,
+                        pin_memory=(device == "cuda"))
     train_loader = DataLoader(train_ds, shuffle=True,  **loader_kw)
     val_loader   = DataLoader(val_ds,   shuffle=False, **loader_kw)
 
     # ── model ─────────────────────────────────────────────────────────────────
-    model = LatentDynamicsModel(
+    model = EnsembleLatentDynamicsModel(
         state_dim=state_dim,
         action_dim=1,
         latent_dim=args.latent_dim,
+        n_ensemble=args.n_ensemble,
         enc_hidden=args.enc_hidden,
         enc_depth=args.enc_depth,
         trans_hidden=args.trans_hidden,
@@ -588,8 +503,6 @@ def main() -> None:
         dec_hidden=args.dec_hidden,
         dec_depth=args.dec_depth,
         dropout=args.dropout,
-        log_sigma_min=args.log_sigma_min,
-        log_sigma_max=args.log_sigma_max,
     ).to(device)
     print(f"[train] {model}")
 
@@ -615,22 +528,18 @@ def main() -> None:
         roi_table=roi_table_t,
         recon_st_w=args.recon_st_weight,
         recon_st1_w=args.recon_st1_weight,
-        nll_w=args.nll_weight,
-        nll_beta=args.nll_beta,
         rollout_k=args.rollout_steps,
         rollout_w=args.rollout_weight,
         is_traj=use_rollout,
     )
 
-    mode_str = (
-        f"rollout k={args.rollout_steps}" if use_rollout else "single-step only"
-    )
+    mode_str = f"rollout k={args.rollout_steps}" if use_rollout else "single-step only"
     print(f"\n[train] Starting training for up to {args.epochs} epochs "
           f"(patience={args.patience})")
-    print(f"[train] Loss mode: {mode_str}")
-    print(f"[train] Weights → recon_st={args.recon_st_weight}  "
-          f"recon_st1={args.recon_st1_weight}  nll={args.nll_weight}  "
-          f"rollout={args.rollout_weight}")
+    print(f"[train] Loss mode : {mode_str}")
+    print(f"[train] Weights   → recon_st={args.recon_st_weight}  "
+          f"recon_st1={args.recon_st1_weight}  rollout={args.rollout_weight}")
+    print(f"[train] Ensemble  → K={args.n_ensemble} members")
     print("-" * 80)
 
     t0 = time.time()
@@ -663,7 +572,7 @@ def main() -> None:
             f"Epoch {epoch:4d}/{args.epochs} | "
             f"train {tr_loss:.5f} "
             f"[rs={tr_comps['recon_st']:.4f} rs1={tr_comps['recon_st1']:.4f} "
-            f"nll={tr_comps['nll']:.4f} ro={tr_comps['rollout']:.4f}] | "
+            f"ro={tr_comps['rollout']:.4f}] | "
             f"val {va_loss:.5f} | lr {lr_now:.2e} | {elapsed:6.1f}s{marker}"
         )
 

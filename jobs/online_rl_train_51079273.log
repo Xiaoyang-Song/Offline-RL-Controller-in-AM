@@ -8,3 +8,1166 @@ Torch    : 2.5.1+cu121
 CUDA     : True
 GPU      : Tesla V100-PCIE-16GB
 ============================================================
+=================================================================
+[train] Online DQN — LPBF Laser-Power Controller
+[train] Output dir : online_RL/runs/20260528_185349
+[train] Device     : cuda
+=================================================================
+
+[train] Loading surrogate: surrogate_model/runs/20260528_181943/surrogate_best.pt
+[train] Surrogate   : state_dim=1053, action_mean=274.6 W, action_std=75.0 W
+[LPBFEnv] Mesh loaded: 1053 nodes  X∈[0.00, 12.00]  Y∈[0.00, 3.00]
+[train] Action space : 26 actions  (150–400 W, step 10 W)
+[train] Temp window  : [2000, 2800] K
+[train] Layers/ep    : 12
+[train] obs_dim      : 1054  (1053 temp nodes + 1 layer token)
+[train] QNet(state_dim=1054, num_actions=26, hidden=256, depth=4, params=807,706)
+[train] ReplayBuffer(capacity=100,000, size=0, state_dim=1054)
+
+[train] Starting 40000 episodes  (warmup=1000, Double-DQN=True, target_update_freq=10)
+-----------------------------------------------------------------
+Ep     1/40000 | ret -7.1314 | avg(1) -7.1314 | ε 1.000 | loss nan | buf 12 | 0s [warmup]
+Ep    50/40000 | ret -5.4647 | avg(50) -7.1134 | ε 1.000 | loss nan | buf 600 | 1s [warmup]
+Ep   100/40000 | ret -2.7201 | avg(50) -5.9843 | ε 1.000 | loss nan | buf 1,200 | 2s [warmup]
+Ep   150/40000 | ret -8.7890 | avg(50) -6.9946 | ε 1.000 | loss nan | buf 1,800 | 3s [warmup]
+Ep   200/40000 | ret -6.4596 | avg(50) -7.0952 | ε 1.000 | loss nan | buf 2,400 | 4s [warmup]
+Ep   250/40000 | ret -6.4252 | avg(50) -7.0465 | ε 1.000 | loss nan | buf 3,000 | 5s [warmup]
+Ep   300/40000 | ret -10.4843 | avg(50) -7.0946 | ε 1.000 | loss nan | buf 3,600 | 6s [warmup]
+Ep   350/40000 | ret -3.2659 | avg(50) -6.6060 | ε 1.000 | loss nan | buf 4,200 | 7s [warmup]
+Ep   400/40000 | ret -5.6808 | avg(50) -6.6656 | ε 1.000 | loss nan | buf 4,800 | 8s [warmup]
+Ep   450/40000 | ret -10.0606 | avg(50) -7.0804 | ε 1.000 | loss nan | buf 5,400 | 9s [warmup]
+Ep   500/40000 | ret -8.6700 | avg(50) -7.4633 | ε 1.000 | loss nan | buf 6,000 | 10s [warmup]
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep00500.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep   550/40000 | ret -6.8432 | avg(50) -6.4052 | ε 1.000 | loss nan | buf 6,600 | 11s [warmup]
+Ep   600/40000 | ret -6.7408 | avg(50) -7.2002 | ε 1.000 | loss nan | buf 7,200 | 12s [warmup]
+Ep   650/40000 | ret -14.3380 | avg(50) -7.0747 | ε 1.000 | loss nan | buf 7,800 | 13s [warmup]
+Ep   700/40000 | ret -8.7779 | avg(50) -7.1008 | ε 1.000 | loss nan | buf 8,400 | 14s [warmup]
+Ep   750/40000 | ret -7.8846 | avg(50) -7.0404 | ε 1.000 | loss nan | buf 9,000 | 15s [warmup]
+Ep   800/40000 | ret -7.6707 | avg(50) -7.6939 | ε 1.000 | loss nan | buf 9,600 | 16s [warmup]
+Ep   850/40000 | ret -8.4616 | avg(50) -7.3488 | ε 1.000 | loss nan | buf 10,200 | 17s [warmup]
+Ep   900/40000 | ret -9.1383 | avg(50) -7.5260 | ε 1.000 | loss nan | buf 10,800 | 18s [warmup]
+Ep   950/40000 | ret -5.2754 | avg(50) -7.0894 | ε 1.000 | loss nan | buf 11,400 | 19s [warmup]
+Ep  1000/40000 | ret -6.8566 | avg(50) -7.7502 | ε 1.000 | loss nan | buf 12,000 | 20s [warmup]
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep01000.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_best.pt
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_best.pt
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_best.pt
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_best.pt
+Ep  1050/40000 | ret -2.6627 | avg(50) -7.1624 | ε 0.997 | loss 0.01102 | buf 12,600 | 26s
+Ep  1100/40000 | ret -9.3257 | avg(50) -7.7467 | ε 0.994 | loss 0.00800 | buf 13,200 | 32s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_best.pt
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_best.pt
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_best.pt
+Ep  1150/40000 | ret -7.9069 | avg(50) -6.5612 | ε 0.991 | loss 0.00480 | buf 13,800 | 38s
+Ep  1200/40000 | ret -4.4586 | avg(50) -6.8386 | ε 0.989 | loss 0.00722 | buf 14,400 | 43s
+Ep  1250/40000 | ret -8.8464 | avg(50) -6.3589 | ε 0.986 | loss 0.00875 | buf 15,000 | 49s
+Ep  1300/40000 | ret -6.8156 | avg(50) -7.4134 | ε 0.983 | loss 0.00244 | buf 15,600 | 54s
+Ep  1350/40000 | ret -3.6556 | avg(50) -6.5401 | ε 0.980 | loss 0.00228 | buf 16,200 | 60s
+Ep  1400/40000 | ret -9.7310 | avg(50) -6.9082 | ε 0.977 | loss 0.00577 | buf 16,800 | 65s
+Ep  1450/40000 | ret -11.8482 | avg(50) -7.2350 | ε 0.974 | loss 0.00285 | buf 17,400 | 71s
+Ep  1500/40000 | ret -6.5470 | avg(50) -7.1651 | ε 0.972 | loss 0.00322 | buf 18,000 | 76s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep01500.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep  1550/40000 | ret -11.1589 | avg(50) -6.8359 | ε 0.969 | loss 0.00138 | buf 18,600 | 83s
+Ep  1600/40000 | ret -6.1253 | avg(50) -6.3632 | ε 0.966 | loss 0.00232 | buf 19,200 | 88s
+Ep  1650/40000 | ret -4.3169 | avg(50) -7.2611 | ε 0.963 | loss 0.00133 | buf 19,800 | 94s
+Ep  1700/40000 | ret -8.4818 | avg(50) -6.9221 | ε 0.960 | loss 0.00446 | buf 20,400 | 99s
+Ep  1750/40000 | ret -7.2320 | avg(50) -6.5570 | ε 0.957 | loss 0.00074 | buf 21,000 | 105s
+Ep  1800/40000 | ret -9.7233 | avg(50) -6.4926 | ε 0.954 | loss 0.00188 | buf 21,600 | 110s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_best.pt
+Ep  1850/40000 | ret -6.4284 | avg(50) -6.4518 | ε 0.952 | loss 0.00181 | buf 22,200 | 116s
+Ep  1900/40000 | ret -4.7083 | avg(50) -6.6768 | ε 0.949 | loss 0.00217 | buf 22,800 | 121s
+Ep  1950/40000 | ret -6.9422 | avg(50) -6.3137 | ε 0.946 | loss 0.00125 | buf 23,400 | 127s
+Ep  2000/40000 | ret -6.4765 | avg(50) -6.8051 | ε 0.943 | loss 0.00163 | buf 24,000 | 132s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep02000.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep  2050/40000 | ret -3.9074 | avg(50) -6.5424 | ε 0.940 | loss 0.00101 | buf 24,600 | 139s
+Ep  2100/40000 | ret -4.3465 | avg(50) -6.7801 | ε 0.937 | loss 0.00162 | buf 25,200 | 144s
+Ep  2150/40000 | ret -5.3114 | avg(50) -6.5776 | ε 0.934 | loss 0.00093 | buf 25,800 | 150s
+Ep  2200/40000 | ret -7.1443 | avg(50) -6.4486 | ε 0.932 | loss 0.00194 | buf 26,400 | 156s
+Ep  2250/40000 | ret -6.4854 | avg(50) -5.8329 | ε 0.929 | loss 0.00276 | buf 27,000 | 161s
+Ep  2300/40000 | ret -6.9080 | avg(50) -6.7992 | ε 0.926 | loss 0.00216 | buf 27,600 | 167s
+Ep  2350/40000 | ret -5.6316 | avg(50) -6.6363 | ε 0.923 | loss 0.00073 | buf 28,200 | 172s
+Ep  2400/40000 | ret -8.8969 | avg(50) -6.3768 | ε 0.920 | loss 0.00106 | buf 28,800 | 178s
+Ep  2450/40000 | ret -7.8854 | avg(50) -6.4006 | ε 0.917 | loss 0.00074 | buf 29,400 | 183s
+Ep  2500/40000 | ret -7.9309 | avg(50) -5.5730 | ε 0.915 | loss 0.00339 | buf 30,000 | 189s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep02500.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep  2550/40000 | ret -10.6760 | avg(50) -5.4731 | ε 0.912 | loss 0.00055 | buf 30,600 | 195s
+Ep  2600/40000 | ret -3.5809 | avg(50) -6.7067 | ε 0.909 | loss 0.00095 | buf 31,200 | 201s
+Ep  2650/40000 | ret -4.5209 | avg(50) -6.0585 | ε 0.906 | loss 0.00070 | buf 31,800 | 207s
+Ep  2700/40000 | ret -3.6809 | avg(50) -5.9321 | ε 0.903 | loss 0.00066 | buf 32,400 | 212s
+Ep  2750/40000 | ret -3.0969 | avg(50) -5.6028 | ε 0.900 | loss 0.00190 | buf 33,000 | 218s
+Ep  2800/40000 | ret -8.7581 | avg(50) -5.9520 | ε 0.897 | loss 0.00112 | buf 33,600 | 223s
+Ep  2850/40000 | ret -5.3172 | avg(50) -5.9431 | ε 0.895 | loss 0.00106 | buf 34,200 | 229s
+Ep  2900/40000 | ret -6.3676 | avg(50) -5.6135 | ε 0.892 | loss 0.00173 | buf 34,800 | 235s
+Ep  2950/40000 | ret -2.2141 | avg(50) -6.5242 | ε 0.889 | loss 0.00221 | buf 35,400 | 240s
+Ep  3000/40000 | ret -5.5166 | avg(50) -6.3019 | ε 0.886 | loss 0.00066 | buf 36,000 | 246s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep03000.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep  3050/40000 | ret -10.7361 | avg(50) -6.4366 | ε 0.883 | loss 0.00130 | buf 36,600 | 252s
+Ep  3100/40000 | ret -5.5509 | avg(50) -5.7472 | ε 0.880 | loss 0.00061 | buf 37,200 | 258s
+Ep  3150/40000 | ret -6.5573 | avg(50) -6.0233 | ε 0.877 | loss 0.00067 | buf 37,800 | 264s
+Ep  3200/40000 | ret -4.6698 | avg(50) -5.8669 | ε 0.875 | loss 0.00167 | buf 38,400 | 269s
+Ep  3250/40000 | ret -8.3572 | avg(50) -6.3324 | ε 0.872 | loss 0.00060 | buf 39,000 | 275s
+Ep  3300/40000 | ret -7.3005 | avg(50) -5.9123 | ε 0.869 | loss 0.00056 | buf 39,600 | 281s
+Ep  3350/40000 | ret -4.3012 | avg(50) -6.3372 | ε 0.866 | loss 0.00193 | buf 40,200 | 286s
+Ep  3400/40000 | ret -8.3191 | avg(50) -5.4682 | ε 0.863 | loss 0.00093 | buf 40,800 | 292s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_best.pt
+Ep  3450/40000 | ret -4.3351 | avg(50) -5.8235 | ε 0.860 | loss 0.00081 | buf 41,400 | 298s
+Ep  3500/40000 | ret -2.6493 | avg(50) -6.1475 | ε 0.858 | loss 0.00062 | buf 42,000 | 303s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep03500.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep  3550/40000 | ret -1.6147 | avg(50) -5.1117 | ε 0.855 | loss 0.00082 | buf 42,600 | 310s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_best.pt
+Ep  3600/40000 | ret -3.9307 | avg(50) -5.7255 | ε 0.852 | loss 0.00043 | buf 43,200 | 315s
+Ep  3650/40000 | ret -1.9517 | avg(50) -5.5472 | ε 0.849 | loss 0.00033 | buf 43,800 | 321s
+Ep  3700/40000 | ret -9.2392 | avg(50) -5.7711 | ε 0.846 | loss 0.00048 | buf 44,400 | 327s
+Ep  3750/40000 | ret -2.8961 | avg(50) -5.4406 | ε 0.843 | loss 0.00045 | buf 45,000 | 332s
+Ep  3800/40000 | ret -5.6904 | avg(50) -5.3182 | ε 0.840 | loss 0.00094 | buf 45,600 | 338s
+Ep  3850/40000 | ret -6.5850 | avg(50) -5.5517 | ε 0.838 | loss 0.00064 | buf 46,200 | 344s
+Ep  3900/40000 | ret -6.9849 | avg(50) -5.2699 | ε 0.835 | loss 0.00045 | buf 46,800 | 349s
+Ep  3950/40000 | ret -3.2422 | avg(50) -4.6680 | ε 0.832 | loss 0.00086 | buf 47,400 | 355s
+Ep  4000/40000 | ret -9.6696 | avg(50) -5.4219 | ε 0.829 | loss 0.00103 | buf 48,000 | 361s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep04000.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep  4050/40000 | ret -2.1154 | avg(50) -4.7952 | ε 0.826 | loss 0.00054 | buf 48,600 | 368s
+Ep  4100/40000 | ret -4.4268 | avg(50) -5.6645 | ε 0.823 | loss 0.00052 | buf 49,200 | 373s
+Ep  4150/40000 | ret -8.5531 | avg(50) -5.0415 | ε 0.820 | loss 0.00021 | buf 49,800 | 379s
+Ep  4200/40000 | ret -4.9670 | avg(50) -5.7319 | ε 0.818 | loss 0.00063 | buf 50,400 | 385s
+Ep  4250/40000 | ret -3.4224 | avg(50) -5.4770 | ε 0.815 | loss 0.00167 | buf 51,000 | 390s
+Ep  4300/40000 | ret -2.5182 | avg(50) -4.9884 | ε 0.812 | loss 0.00069 | buf 51,600 | 396s
+Ep  4350/40000 | ret -7.7097 | avg(50) -6.1672 | ε 0.809 | loss 0.00060 | buf 52,200 | 402s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_best.pt
+Ep  4400/40000 | ret -8.1350 | avg(50) -5.0492 | ε 0.806 | loss 0.00032 | buf 52,800 | 407s
+Ep  4450/40000 | ret -10.7228 | avg(50) -5.5263 | ε 0.803 | loss 0.00049 | buf 53,400 | 413s
+Ep  4500/40000 | ret -4.8220 | avg(50) -5.0508 | ε 0.801 | loss 0.00052 | buf 54,000 | 419s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep04500.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep  4550/40000 | ret -1.6122 | avg(50) -5.1874 | ε 0.798 | loss 0.00023 | buf 54,600 | 425s
+Ep  4600/40000 | ret -4.4181 | avg(50) -5.5668 | ε 0.795 | loss 0.00065 | buf 55,200 | 431s
+Ep  4650/40000 | ret -6.9529 | avg(50) -5.5425 | ε 0.792 | loss 0.00075 | buf 55,800 | 437s
+Ep  4700/40000 | ret -4.7380 | avg(50) -5.3101 | ε 0.789 | loss 0.00077 | buf 56,400 | 442s
+Ep  4750/40000 | ret -9.0970 | avg(50) -5.0320 | ε 0.786 | loss 0.00048 | buf 57,000 | 448s
+Ep  4800/40000 | ret -1.9550 | avg(50) -5.2805 | ε 0.783 | loss 0.00058 | buf 57,600 | 454s
+Ep  4850/40000 | ret -4.6602 | avg(50) -5.0454 | ε 0.781 | loss 0.00120 | buf 58,200 | 460s
+Ep  4900/40000 | ret -1.6768 | avg(50) -4.7715 | ε 0.778 | loss 0.00055 | buf 58,800 | 465s
+Ep  4950/40000 | ret -4.2926 | avg(50) -4.2900 | ε 0.775 | loss 0.00072 | buf 59,400 | 471s
+Ep  5000/40000 | ret -2.6416 | avg(50) -5.0126 | ε 0.772 | loss 0.00040 | buf 60,000 | 477s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep05000.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep  5050/40000 | ret -7.7640 | avg(50) -4.9785 | ε 0.769 | loss 0.00041 | buf 60,600 | 483s
+Ep  5100/40000 | ret -8.7170 | avg(50) -5.0573 | ε 0.766 | loss 0.00044 | buf 61,200 | 489s
+Ep  5150/40000 | ret -4.3598 | avg(50) -4.7151 | ε 0.763 | loss 0.00104 | buf 61,800 | 495s
+Ep  5200/40000 | ret -3.9837 | avg(50) -4.6922 | ε 0.761 | loss 0.00134 | buf 62,400 | 501s
+Ep  5250/40000 | ret -5.4680 | avg(50) -4.6298 | ε 0.758 | loss 0.00221 | buf 63,000 | 506s
+Ep  5300/40000 | ret -2.9074 | avg(50) -4.4346 | ε 0.755 | loss 0.00059 | buf 63,600 | 512s
+Ep  5350/40000 | ret -6.1455 | avg(50) -4.5386 | ε 0.752 | loss 0.00029 | buf 64,200 | 518s
+Ep  5400/40000 | ret -10.1800 | avg(50) -5.4898 | ε 0.749 | loss 0.00054 | buf 64,800 | 524s
+Ep  5450/40000 | ret -2.5131 | avg(50) -4.8985 | ε 0.746 | loss 0.00060 | buf 65,400 | 529s
+Ep  5500/40000 | ret -5.9932 | avg(50) -4.3701 | ε 0.744 | loss 0.00047 | buf 66,000 | 535s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep05500.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep  5550/40000 | ret -3.3815 | avg(50) -4.8099 | ε 0.741 | loss 0.00143 | buf 66,600 | 542s
+Ep  5600/40000 | ret -9.2466 | avg(50) -4.6983 | ε 0.738 | loss 0.00181 | buf 67,200 | 547s
+Ep  5650/40000 | ret -4.0798 | avg(50) -4.5089 | ε 0.735 | loss 0.00043 | buf 67,800 | 553s
+Ep  5700/40000 | ret -3.7533 | avg(50) -4.0565 | ε 0.732 | loss 0.00161 | buf 68,400 | 559s
+Ep  5750/40000 | ret -6.5582 | avg(50) -4.8055 | ε 0.729 | loss 0.00051 | buf 69,000 | 565s
+Ep  5800/40000 | ret -2.1357 | avg(50) -4.4431 | ε 0.726 | loss 0.00043 | buf 69,600 | 571s
+Ep  5850/40000 | ret -5.0941 | avg(50) -4.0523 | ε 0.724 | loss 0.00035 | buf 70,200 | 576s
+Ep  5900/40000 | ret -3.5502 | avg(50) -3.8814 | ε 0.721 | loss 0.00039 | buf 70,800 | 582s
+Ep  5950/40000 | ret -2.4694 | avg(50) -4.4572 | ε 0.718 | loss 0.00365 | buf 71,400 | 588s
+Ep  6000/40000 | ret -2.7085 | avg(50) -3.8581 | ε 0.715 | loss 0.00028 | buf 72,000 | 594s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep06000.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep  6050/40000 | ret -3.4336 | avg(50) -4.2520 | ε 0.712 | loss 0.00068 | buf 72,600 | 600s
+Ep  6100/40000 | ret -3.2688 | avg(50) -4.0068 | ε 0.709 | loss 0.00021 | buf 73,200 | 606s
+Ep  6150/40000 | ret -4.4417 | avg(50) -4.4398 | ε 0.706 | loss 0.00031 | buf 73,800 | 612s
+Ep  6200/40000 | ret -3.1425 | avg(50) -4.2743 | ε 0.704 | loss 0.00055 | buf 74,400 | 618s
+Ep  6250/40000 | ret -10.4160 | avg(50) -4.6777 | ε 0.701 | loss 0.00025 | buf 75,000 | 624s
+Ep  6300/40000 | ret -4.9463 | avg(50) -4.7078 | ε 0.698 | loss 0.00112 | buf 75,600 | 629s
+Ep  6350/40000 | ret -9.6138 | avg(50) -4.7913 | ε 0.695 | loss 0.00081 | buf 76,200 | 635s
+Ep  6400/40000 | ret -3.4641 | avg(50) -4.4341 | ε 0.692 | loss 0.00058 | buf 76,800 | 641s
+Ep  6450/40000 | ret -5.3368 | avg(50) -4.8003 | ε 0.689 | loss 0.00052 | buf 77,400 | 647s
+Ep  6500/40000 | ret -5.5755 | avg(50) -4.4347 | ε 0.687 | loss 0.00031 | buf 78,000 | 653s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep06500.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep  6550/40000 | ret -10.7008 | avg(50) -4.0459 | ε 0.684 | loss 0.00149 | buf 78,600 | 659s
+Ep  6600/40000 | ret -9.8537 | avg(50) -4.7250 | ε 0.681 | loss 0.00018 | buf 79,200 | 665s
+Ep  6650/40000 | ret -0.7588 | avg(50) -4.1145 | ε 0.678 | loss 0.00037 | buf 79,800 | 671s
+Ep  6700/40000 | ret -4.0419 | avg(50) -4.4818 | ε 0.675 | loss 0.00039 | buf 80,400 | 677s
+Ep  6750/40000 | ret -3.8011 | avg(50) -4.0280 | ε 0.672 | loss 0.00033 | buf 81,000 | 683s
+Ep  6800/40000 | ret -5.3181 | avg(50) -3.8279 | ε 0.669 | loss 0.00072 | buf 81,600 | 688s
+Ep  6850/40000 | ret -3.3180 | avg(50) -4.2622 | ε 0.667 | loss 0.00019 | buf 82,200 | 694s
+Ep  6900/40000 | ret -1.8560 | avg(50) -3.5089 | ε 0.664 | loss 0.00044 | buf 82,800 | 700s
+Ep  6950/40000 | ret -2.4709 | avg(50) -4.0345 | ε 0.661 | loss 0.00074 | buf 83,400 | 706s
+Ep  7000/40000 | ret -2.8034 | avg(50) -4.0254 | ε 0.658 | loss 0.00032 | buf 84,000 | 712s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep07000.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep  7050/40000 | ret -5.6321 | avg(50) -3.7590 | ε 0.655 | loss 0.00019 | buf 84,600 | 719s
+Ep  7100/40000 | ret -0.4536 | avg(50) -4.0633 | ε 0.652 | loss 0.00038 | buf 85,200 | 724s
+Ep  7150/40000 | ret -2.8482 | avg(50) -4.3946 | ε 0.649 | loss 0.00275 | buf 85,800 | 730s
+Ep  7200/40000 | ret -0.8148 | avg(50) -3.8135 | ε 0.647 | loss 0.00022 | buf 86,400 | 736s
+Ep  7250/40000 | ret -3.3063 | avg(50) -3.9790 | ε 0.644 | loss 0.00069 | buf 87,000 | 742s
+Ep  7300/40000 | ret -6.0009 | avg(50) -3.9026 | ε 0.641 | loss 0.00053 | buf 87,600 | 748s
+Ep  7350/40000 | ret -2.0532 | avg(50) -4.0393 | ε 0.638 | loss 0.00050 | buf 88,200 | 754s
+Ep  7400/40000 | ret -5.5663 | avg(50) -3.6397 | ε 0.635 | loss 0.00028 | buf 88,800 | 760s
+Ep  7450/40000 | ret -1.0655 | avg(50) -3.9362 | ε 0.632 | loss 0.00128 | buf 89,400 | 765s
+Ep  7500/40000 | ret -0.8676 | avg(50) -3.5573 | ε 0.630 | loss 0.00043 | buf 90,000 | 771s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep07500.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep  7550/40000 | ret -1.2630 | avg(50) -3.4455 | ε 0.627 | loss 0.00017 | buf 90,600 | 778s
+Ep  7600/40000 | ret -6.0890 | avg(50) -3.9835 | ε 0.624 | loss 0.00126 | buf 91,200 | 784s
+Ep  7650/40000 | ret -6.4338 | avg(50) -4.1652 | ε 0.621 | loss 0.00017 | buf 91,800 | 790s
+Ep  7700/40000 | ret -3.5056 | avg(50) -3.7948 | ε 0.618 | loss 0.00257 | buf 92,400 | 796s
+Ep  7750/40000 | ret -0.3301 | avg(50) -3.4712 | ε 0.615 | loss 0.00009 | buf 93,000 | 801s
+Ep  7800/40000 | ret -2.4006 | avg(50) -3.6540 | ε 0.612 | loss 0.00020 | buf 93,600 | 807s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_best.pt
+Ep  7850/40000 | ret -3.6687 | avg(50) -2.8784 | ε 0.610 | loss 0.00021 | buf 94,200 | 813s
+Ep  7900/40000 | ret -2.6434 | avg(50) -3.9703 | ε 0.607 | loss 0.00138 | buf 94,800 | 819s
+Ep  7950/40000 | ret -4.1124 | avg(50) -3.1024 | ε 0.604 | loss 0.00107 | buf 95,400 | 825s
+Ep  8000/40000 | ret -3.9463 | avg(50) -3.3142 | ε 0.601 | loss 0.00303 | buf 96,000 | 831s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep08000.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep  8050/40000 | ret -3.1485 | avg(50) -3.8772 | ε 0.598 | loss 0.00016 | buf 96,600 | 838s
+Ep  8100/40000 | ret -6.2390 | avg(50) -3.0175 | ε 0.595 | loss 0.00203 | buf 97,200 | 844s
+Ep  8150/40000 | ret -3.5296 | avg(50) -3.3522 | ε 0.592 | loss 0.00125 | buf 97,800 | 850s
+Ep  8200/40000 | ret -5.8934 | avg(50) -3.4778 | ε 0.590 | loss 0.00030 | buf 98,400 | 855s
+Ep  8250/40000 | ret -3.4477 | avg(50) -4.0398 | ε 0.587 | loss 0.00048 | buf 99,000 | 861s
+Ep  8300/40000 | ret -2.5033 | avg(50) -3.5082 | ε 0.584 | loss 0.00050 | buf 99,600 | 867s
+Ep  8350/40000 | ret -8.0087 | avg(50) -3.2673 | ε 0.581 | loss 0.00028 | buf 100,000 | 873s
+Ep  8400/40000 | ret -0.8414 | avg(50) -2.9697 | ε 0.578 | loss 0.00046 | buf 100,000 | 879s
+Ep  8450/40000 | ret -5.0542 | avg(50) -3.3491 | ε 0.575 | loss 0.00087 | buf 100,000 | 885s
+Ep  8500/40000 | ret -3.2528 | avg(50) -2.8673 | ε 0.573 | loss 0.00043 | buf 100,000 | 891s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep08500.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep  8550/40000 | ret -3.9865 | avg(50) -3.8948 | ε 0.570 | loss 0.00254 | buf 100,000 | 898s
+Ep  8600/40000 | ret -7.6940 | avg(50) -3.2513 | ε 0.567 | loss 0.00012 | buf 100,000 | 904s
+Ep  8650/40000 | ret -2.7404 | avg(50) -3.5933 | ε 0.564 | loss 0.00008 | buf 100,000 | 910s
+Ep  8700/40000 | ret -5.8277 | avg(50) -3.3201 | ε 0.561 | loss 0.00011 | buf 100,000 | 916s
+Ep  8750/40000 | ret -2.6412 | avg(50) -3.2852 | ε 0.558 | loss 0.00018 | buf 100,000 | 922s
+Ep  8800/40000 | ret -1.8965 | avg(50) -3.1962 | ε 0.555 | loss 0.00078 | buf 100,000 | 927s
+Ep  8850/40000 | ret -1.6875 | avg(50) -2.7902 | ε 0.553 | loss 0.00015 | buf 100,000 | 933s
+Ep  8900/40000 | ret -2.1091 | avg(50) -2.7610 | ε 0.550 | loss 0.00078 | buf 100,000 | 939s
+Ep  8950/40000 | ret -2.1411 | avg(50) -3.1054 | ε 0.547 | loss 0.00013 | buf 100,000 | 945s
+Ep  9000/40000 | ret -1.7343 | avg(50) -2.8846 | ε 0.544 | loss 0.00027 | buf 100,000 | 951s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep09000.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep  9050/40000 | ret -3.8956 | avg(50) -3.2680 | ε 0.541 | loss 0.00078 | buf 100,000 | 958s
+Ep  9100/40000 | ret -1.9604 | avg(50) -3.0335 | ε 0.538 | loss 0.00011 | buf 100,000 | 964s
+Ep  9150/40000 | ret -5.4263 | avg(50) -2.9638 | ε 0.535 | loss 0.00040 | buf 100,000 | 970s
+Ep  9200/40000 | ret -2.3935 | avg(50) -3.2010 | ε 0.533 | loss 0.00010 | buf 100,000 | 976s
+Ep  9250/40000 | ret -2.9935 | avg(50) -3.0141 | ε 0.530 | loss 0.00013 | buf 100,000 | 982s
+Ep  9300/40000 | ret -2.1988 | avg(50) -3.0501 | ε 0.527 | loss 0.00019 | buf 100,000 | 988s
+Ep  9350/40000 | ret -5.4236 | avg(50) -3.3875 | ε 0.524 | loss 0.00020 | buf 100,000 | 994s
+Ep  9400/40000 | ret -0.2022 | avg(50) -2.4979 | ε 0.521 | loss 0.00031 | buf 100,000 | 1000s
+Ep  9450/40000 | ret -5.4017 | avg(50) -3.5328 | ε 0.518 | loss 0.00026 | buf 100,000 | 1006s
+Ep  9500/40000 | ret -3.9925 | avg(50) -2.6051 | ε 0.516 | loss 0.00012 | buf 100,000 | 1012s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep09500.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep  9550/40000 | ret -1.8896 | avg(50) -3.1116 | ε 0.513 | loss 0.00008 | buf 100,000 | 1019s
+Ep  9600/40000 | ret -5.5881 | avg(50) -3.0398 | ε 0.510 | loss 0.00224 | buf 100,000 | 1025s
+Ep  9650/40000 | ret -2.5490 | avg(50) -3.1710 | ε 0.507 | loss 0.00018 | buf 100,000 | 1031s
+Ep  9700/40000 | ret -3.9545 | avg(50) -2.9212 | ε 0.504 | loss 0.00112 | buf 100,000 | 1037s
+Ep  9750/40000 | ret -1.6562 | avg(50) -2.8453 | ε 0.501 | loss 0.00027 | buf 100,000 | 1042s
+Ep  9800/40000 | ret -0.3386 | avg(50) -2.6969 | ε 0.498 | loss 0.00008 | buf 100,000 | 1048s
+Ep  9850/40000 | ret -6.6822 | avg(50) -2.9894 | ε 0.496 | loss 0.00046 | buf 100,000 | 1054s
+Ep  9900/40000 | ret -4.1348 | avg(50) -2.8429 | ε 0.493 | loss 0.00022 | buf 100,000 | 1060s
+Ep  9950/40000 | ret -1.6314 | avg(50) -2.9602 | ε 0.490 | loss 0.00067 | buf 100,000 | 1066s
+Ep 10000/40000 | ret -4.4074 | avg(50) -2.7323 | ε 0.487 | loss 0.00027 | buf 100,000 | 1072s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep10000.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 10050/40000 | ret -1.0441 | avg(50) -2.4596 | ε 0.484 | loss 0.00050 | buf 100,000 | 1079s
+Ep 10100/40000 | ret -1.0951 | avg(50) -2.4413 | ε 0.481 | loss 0.00037 | buf 100,000 | 1085s
+Ep 10150/40000 | ret -3.6799 | avg(50) -2.6410 | ε 0.478 | loss 0.00022 | buf 100,000 | 1091s
+Ep 10200/40000 | ret -4.1733 | avg(50) -2.7797 | ε 0.476 | loss 0.00036 | buf 100,000 | 1097s
+Ep 10250/40000 | ret -2.5670 | avg(50) -2.5503 | ε 0.473 | loss 0.00010 | buf 100,000 | 1103s
+Ep 10300/40000 | ret -2.2647 | avg(50) -2.3467 | ε 0.470 | loss 0.00022 | buf 100,000 | 1109s
+Ep 10350/40000 | ret -5.0962 | avg(50) -2.7752 | ε 0.467 | loss 0.00017 | buf 100,000 | 1115s
+Ep 10400/40000 | ret -4.8839 | avg(50) -2.7477 | ε 0.464 | loss 0.00020 | buf 100,000 | 1121s
+Ep 10450/40000 | ret -2.7743 | avg(50) -2.3781 | ε 0.461 | loss 0.00059 | buf 100,000 | 1127s
+Ep 10500/40000 | ret -2.7318 | avg(50) -2.5412 | ε 0.459 | loss 0.00009 | buf 100,000 | 1133s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep10500.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 10550/40000 | ret -1.0779 | avg(50) -2.2360 | ε 0.456 | loss 0.00067 | buf 100,000 | 1140s
+Ep 10600/40000 | ret -1.8318 | avg(50) -2.5176 | ε 0.453 | loss 0.00016 | buf 100,000 | 1146s
+Ep 10650/40000 | ret -0.9886 | avg(50) -2.3868 | ε 0.450 | loss 0.00007 | buf 100,000 | 1152s
+Ep 10700/40000 | ret -2.9998 | avg(50) -2.6571 | ε 0.447 | loss 0.00020 | buf 100,000 | 1158s
+Ep 10750/40000 | ret -2.0258 | avg(50) -2.2061 | ε 0.444 | loss 0.00014 | buf 100,000 | 1164s
+Ep 10800/40000 | ret -0.4552 | avg(50) -2.4544 | ε 0.441 | loss 0.00022 | buf 100,000 | 1170s
+Ep 10850/40000 | ret -2.9817 | avg(50) -2.4643 | ε 0.439 | loss 0.00008 | buf 100,000 | 1177s
+Ep 10900/40000 | ret -0.5426 | avg(50) -2.4116 | ε 0.436 | loss 0.00022 | buf 100,000 | 1183s
+Ep 10950/40000 | ret -1.0031 | avg(50) -2.2339 | ε 0.433 | loss 0.00022 | buf 100,000 | 1189s
+Ep 11000/40000 | ret -2.9527 | avg(50) -2.6544 | ε 0.430 | loss 0.00089 | buf 100,000 | 1195s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep11000.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 11050/40000 | ret -0.8261 | avg(50) -2.1390 | ε 0.427 | loss 0.00005 | buf 100,000 | 1202s
+Ep 11100/40000 | ret -0.8816 | avg(50) -2.2893 | ε 0.424 | loss 0.00004 | buf 100,000 | 1208s
+Ep 11150/40000 | ret -4.6650 | avg(50) -2.8468 | ε 0.421 | loss 0.00015 | buf 100,000 | 1214s
+Ep 11200/40000 | ret -1.2678 | avg(50) -2.2624 | ε 0.419 | loss 0.00016 | buf 100,000 | 1220s
+Ep 11250/40000 | ret -0.7558 | avg(50) -2.1880 | ε 0.416 | loss 0.00012 | buf 100,000 | 1226s
+Ep 11300/40000 | ret -3.1897 | avg(50) -2.2356 | ε 0.413 | loss 0.00024 | buf 100,000 | 1232s
+Ep 11350/40000 | ret -0.6954 | avg(50) -1.8946 | ε 0.410 | loss 0.00010 | buf 100,000 | 1238s
+Ep 11400/40000 | ret -0.7000 | avg(50) -1.8976 | ε 0.407 | loss 0.00016 | buf 100,000 | 1244s
+Ep 11450/40000 | ret -2.5340 | avg(50) -2.0217 | ε 0.404 | loss 0.00024 | buf 100,000 | 1250s
+Ep 11500/40000 | ret -0.7383 | avg(50) -2.0716 | ε 0.402 | loss 0.00033 | buf 100,000 | 1256s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep11500.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 11550/40000 | ret -2.2644 | avg(50) -2.2348 | ε 0.399 | loss 0.00007 | buf 100,000 | 1263s
+Ep 11600/40000 | ret -0.3450 | avg(50) -1.3978 | ε 0.396 | loss 0.00009 | buf 100,000 | 1269s
+Ep 11650/40000 | ret -3.3174 | avg(50) -2.2336 | ε 0.393 | loss 0.00006 | buf 100,000 | 1275s
+Ep 11700/40000 | ret -0.2296 | avg(50) -2.7054 | ε 0.390 | loss 0.00025 | buf 100,000 | 1281s
+Ep 11750/40000 | ret -2.6748 | avg(50) -2.1427 | ε 0.387 | loss 0.00004 | buf 100,000 | 1287s
+Ep 11800/40000 | ret -0.6785 | avg(50) -1.7910 | ε 0.384 | loss 0.00016 | buf 100,000 | 1294s
+Ep 11850/40000 | ret -0.0216 | avg(50) -1.5587 | ε 0.382 | loss 0.00060 | buf 100,000 | 1300s
+Ep 11900/40000 | ret -2.9110 | avg(50) -2.2964 | ε 0.379 | loss 0.00044 | buf 100,000 | 1306s
+Ep 11950/40000 | ret -2.6792 | avg(50) -2.3998 | ε 0.376 | loss 0.00027 | buf 100,000 | 1312s
+Ep 12000/40000 | ret -0.6886 | avg(50) -1.9548 | ε 0.373 | loss 0.00006 | buf 100,000 | 1318s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep12000.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 12050/40000 | ret -0.7871 | avg(50) -1.7202 | ε 0.370 | loss 0.00082 | buf 100,000 | 1325s
+Ep 12100/40000 | ret -2.2227 | avg(50) -1.9173 | ε 0.367 | loss 0.00014 | buf 100,000 | 1331s
+Ep 12150/40000 | ret -4.1303 | avg(50) -2.1717 | ε 0.364 | loss 0.00121 | buf 100,000 | 1337s
+Ep 12200/40000 | ret -0.0866 | avg(50) -1.5907 | ε 0.362 | loss 0.00010 | buf 100,000 | 1343s
+Ep 12250/40000 | ret -3.7455 | avg(50) -2.1868 | ε 0.359 | loss 0.00079 | buf 100,000 | 1349s
+Ep 12300/40000 | ret -2.8716 | avg(50) -1.6276 | ε 0.356 | loss 0.00019 | buf 100,000 | 1355s
+Ep 12350/40000 | ret -3.0831 | avg(50) -2.2395 | ε 0.353 | loss 0.00102 | buf 100,000 | 1362s
+Ep 12400/40000 | ret -2.0854 | avg(50) -1.8695 | ε 0.350 | loss 0.00005 | buf 100,000 | 1368s
+Ep 12450/40000 | ret -1.4454 | avg(50) -1.7998 | ε 0.347 | loss 0.00021 | buf 100,000 | 1374s
+Ep 12500/40000 | ret -0.8257 | avg(50) -2.0462 | ε 0.345 | loss 0.00010 | buf 100,000 | 1380s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep12500.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 12550/40000 | ret -3.2026 | avg(50) -1.9976 | ε 0.342 | loss 0.00010 | buf 100,000 | 1387s
+Ep 12600/40000 | ret -1.0894 | avg(50) -1.9149 | ε 0.339 | loss 0.00051 | buf 100,000 | 1393s
+Ep 12650/40000 | ret -3.1319 | avg(50) -1.5440 | ε 0.336 | loss 0.00014 | buf 100,000 | 1399s
+Ep 12700/40000 | ret -2.7839 | avg(50) -2.0625 | ε 0.333 | loss 0.00033 | buf 100,000 | 1405s
+Ep 12750/40000 | ret -4.8157 | avg(50) -1.6341 | ε 0.330 | loss 0.00039 | buf 100,000 | 1411s
+Ep 12800/40000 | ret -1.0365 | avg(50) -1.4854 | ε 0.327 | loss 0.00011 | buf 100,000 | 1418s
+Ep 12850/40000 | ret -1.4580 | avg(50) -1.5618 | ε 0.325 | loss 0.00012 | buf 100,000 | 1424s
+Ep 12900/40000 | ret -0.4497 | avg(50) -1.4989 | ε 0.322 | loss 0.00004 | buf 100,000 | 1430s
+Ep 12950/40000 | ret -0.6018 | avg(50) -1.5231 | ε 0.319 | loss 0.00015 | buf 100,000 | 1436s
+Ep 13000/40000 | ret -1.1082 | avg(50) -1.5758 | ε 0.316 | loss 0.00020 | buf 100,000 | 1442s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep13000.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 13050/40000 | ret -2.3757 | avg(50) -1.3047 | ε 0.313 | loss 0.00029 | buf 100,000 | 1449s
+Ep 13100/40000 | ret -1.1114 | avg(50) -1.8160 | ε 0.310 | loss 0.00007 | buf 100,000 | 1456s
+Ep 13150/40000 | ret -0.0206 | avg(50) -1.6809 | ε 0.307 | loss 0.00014 | buf 100,000 | 1462s
+Ep 13200/40000 | ret -2.7639 | avg(50) -1.4582 | ε 0.305 | loss 0.00068 | buf 100,000 | 1468s
+Ep 13250/40000 | ret -1.4242 | avg(50) -1.6901 | ε 0.302 | loss 0.00012 | buf 100,000 | 1474s
+Ep 13300/40000 | ret -0.1187 | avg(50) -1.3443 | ε 0.299 | loss 0.00020 | buf 100,000 | 1480s
+Ep 13350/40000 | ret -1.7367 | avg(50) -1.6079 | ε 0.296 | loss 0.00014 | buf 100,000 | 1486s
+Ep 13400/40000 | ret -1.4916 | avg(50) -1.5705 | ε 0.293 | loss 0.00005 | buf 100,000 | 1492s
+Ep 13450/40000 | ret -0.2698 | avg(50) -1.5646 | ε 0.290 | loss 0.00018 | buf 100,000 | 1499s
+Ep 13500/40000 | ret -2.3861 | avg(50) -1.2739 | ε 0.288 | loss 0.00010 | buf 100,000 | 1505s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep13500.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 13550/40000 | ret -1.0426 | avg(50) -1.5149 | ε 0.285 | loss 0.00010 | buf 100,000 | 1512s
+Ep 13600/40000 | ret -1.2517 | avg(50) -1.1478 | ε 0.282 | loss 0.00014 | buf 100,000 | 1518s
+Ep 13650/40000 | ret -1.0719 | avg(50) -0.9558 | ε 0.279 | loss 0.00003 | buf 100,000 | 1525s
+Ep 13700/40000 | ret -0.8944 | avg(50) -1.3130 | ε 0.276 | loss 0.00007 | buf 100,000 | 1531s
+Ep 13750/40000 | ret -2.7814 | avg(50) -1.3239 | ε 0.273 | loss 0.00011 | buf 100,000 | 1537s
+Ep 13800/40000 | ret -0.0583 | avg(50) -1.4432 | ε 0.270 | loss 0.00045 | buf 100,000 | 1543s
+Ep 13850/40000 | ret -0.8379 | avg(50) -1.0949 | ε 0.268 | loss 0.00005 | buf 100,000 | 1549s
+Ep 13900/40000 | ret -0.7663 | avg(50) -1.1446 | ε 0.265 | loss 0.00010 | buf 100,000 | 1555s
+Ep 13950/40000 | ret -1.2841 | avg(50) -1.6662 | ε 0.262 | loss 0.00003 | buf 100,000 | 1562s
+Ep 14000/40000 | ret -1.7503 | avg(50) -1.1364 | ε 0.259 | loss 0.00006 | buf 100,000 | 1568s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep14000.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 14050/40000 | ret -0.8719 | avg(50) -0.9409 | ε 0.256 | loss 0.00011 | buf 100,000 | 1575s
+Ep 14100/40000 | ret -0.2402 | avg(50) -1.0062 | ε 0.253 | loss 0.00005 | buf 100,000 | 1581s
+Ep 14150/40000 | ret -1.2866 | avg(50) -1.0338 | ε 0.250 | loss 0.00018 | buf 100,000 | 1588s
+Ep 14200/40000 | ret -1.4410 | avg(50) -1.1684 | ε 0.248 | loss 0.00006 | buf 100,000 | 1594s
+Ep 14250/40000 | ret -0.2173 | avg(50) -1.5222 | ε 0.245 | loss 0.00011 | buf 100,000 | 1600s
+Ep 14300/40000 | ret -1.3644 | avg(50) -1.1549 | ε 0.242 | loss 0.00007 | buf 100,000 | 1606s
+Ep 14350/40000 | ret -1.9051 | avg(50) -1.1328 | ε 0.239 | loss 0.00014 | buf 100,000 | 1612s
+Ep 14400/40000 | ret -0.5583 | avg(50) -1.0341 | ε 0.236 | loss 0.00033 | buf 100,000 | 1619s
+Ep 14450/40000 | ret -0.0218 | avg(50) -1.0935 | ε 0.233 | loss 0.00003 | buf 100,000 | 1625s
+Ep 14500/40000 | ret -1.0861 | avg(50) -1.3721 | ε 0.231 | loss 0.00010 | buf 100,000 | 1631s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep14500.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 14550/40000 | ret -1.4118 | avg(50) -1.0329 | ε 0.228 | loss 0.00014 | buf 100,000 | 1638s
+Ep 14600/40000 | ret -0.0208 | avg(50) -1.1781 | ε 0.225 | loss 0.00007 | buf 100,000 | 1644s
+Ep 14650/40000 | ret -0.7129 | avg(50) -0.9088 | ε 0.222 | loss 0.00017 | buf 100,000 | 1651s
+Ep 14700/40000 | ret -0.5098 | avg(50) -1.2692 | ε 0.219 | loss 0.00072 | buf 100,000 | 1657s
+Ep 14750/40000 | ret -3.4801 | avg(50) -1.1513 | ε 0.216 | loss 0.00005 | buf 100,000 | 1663s
+Ep 14800/40000 | ret -0.1739 | avg(50) -0.7269 | ε 0.213 | loss 0.00017 | buf 100,000 | 1669s
+Ep 14850/40000 | ret -4.3644 | avg(50) -1.0059 | ε 0.211 | loss 0.00004 | buf 100,000 | 1676s
+Ep 14900/40000 | ret -0.0367 | avg(50) -0.8532 | ε 0.208 | loss 0.00013 | buf 100,000 | 1682s
+Ep 14950/40000 | ret -0.3540 | avg(50) -0.9695 | ε 0.205 | loss 0.00017 | buf 100,000 | 1688s
+Ep 15000/40000 | ret -1.6358 | avg(50) -0.8056 | ε 0.202 | loss 0.00003 | buf 100,000 | 1694s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep15000.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 15050/40000 | ret -2.0648 | avg(50) -0.9169 | ε 0.199 | loss 0.00053 | buf 100,000 | 1702s
+Ep 15100/40000 | ret -0.0576 | avg(50) -0.8505 | ε 0.196 | loss 0.00034 | buf 100,000 | 1708s
+Ep 15150/40000 | ret -0.3498 | avg(50) -0.8216 | ε 0.193 | loss 0.00008 | buf 100,000 | 1714s
+Ep 15200/40000 | ret -0.0408 | avg(50) -0.9399 | ε 0.191 | loss 0.00010 | buf 100,000 | 1720s
+Ep 15250/40000 | ret -0.3436 | avg(50) -0.8719 | ε 0.188 | loss 0.00010 | buf 100,000 | 1727s
+Ep 15300/40000 | ret -0.7920 | avg(50) -0.8210 | ε 0.185 | loss 0.00007 | buf 100,000 | 1733s
+Ep 15350/40000 | ret -0.0216 | avg(50) -0.7880 | ε 0.182 | loss 0.00008 | buf 100,000 | 1739s
+Ep 15400/40000 | ret -1.6487 | avg(50) -0.8312 | ε 0.179 | loss 0.00006 | buf 100,000 | 1745s
+Ep 15450/40000 | ret -1.9570 | avg(50) -0.7193 | ε 0.176 | loss 0.00002 | buf 100,000 | 1752s
+Ep 15500/40000 | ret -0.6569 | avg(50) -0.9764 | ε 0.174 | loss 0.00057 | buf 100,000 | 1758s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep15500.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 15550/40000 | ret -1.3122 | avg(50) -0.8031 | ε 0.171 | loss 0.00005 | buf 100,000 | 1765s
+Ep 15600/40000 | ret -1.0729 | avg(50) -0.6562 | ε 0.168 | loss 0.00009 | buf 100,000 | 1771s
+Ep 15650/40000 | ret -0.2044 | avg(50) -0.7335 | ε 0.165 | loss 0.00002 | buf 100,000 | 1778s
+Ep 15700/40000 | ret -0.5440 | avg(50) -0.6229 | ε 0.162 | loss 0.00007 | buf 100,000 | 1784s
+Ep 15750/40000 | ret -1.3070 | avg(50) -0.8918 | ε 0.159 | loss 0.00027 | buf 100,000 | 1790s
+Ep 15800/40000 | ret -0.1538 | avg(50) -0.9408 | ε 0.156 | loss 0.00001 | buf 100,000 | 1796s
+Ep 15850/40000 | ret -1.1430 | avg(50) -0.7528 | ε 0.154 | loss 0.00003 | buf 100,000 | 1803s
+Ep 15900/40000 | ret -2.7270 | avg(50) -0.7934 | ε 0.151 | loss 0.00001 | buf 100,000 | 1809s
+Ep 15950/40000 | ret -0.0280 | avg(50) -0.9260 | ε 0.148 | loss 0.00002 | buf 100,000 | 1815s
+Ep 16000/40000 | ret -0.0206 | avg(50) -0.5750 | ε 0.145 | loss 0.00002 | buf 100,000 | 1821s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep16000.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 16050/40000 | ret -0.0444 | avg(50) -0.5583 | ε 0.142 | loss 0.00003 | buf 100,000 | 1829s
+Ep 16100/40000 | ret -0.2272 | avg(50) -0.6885 | ε 0.139 | loss 0.00004 | buf 100,000 | 1835s
+Ep 16150/40000 | ret -0.0206 | avg(50) -0.4620 | ε 0.136 | loss 0.00003 | buf 100,000 | 1841s
+Ep 16200/40000 | ret -0.7702 | avg(50) -0.5988 | ε 0.134 | loss 0.00008 | buf 100,000 | 1848s
+Ep 16250/40000 | ret -0.0206 | avg(50) -0.7280 | ε 0.131 | loss 0.00011 | buf 100,000 | 1854s
+Ep 16300/40000 | ret -0.0206 | avg(50) -0.5242 | ε 0.128 | loss 0.00002 | buf 100,000 | 1860s
+Ep 16350/40000 | ret -1.6683 | avg(50) -0.4863 | ε 0.125 | loss 0.00005 | buf 100,000 | 1867s
+Ep 16400/40000 | ret -0.0225 | avg(50) -0.7730 | ε 0.122 | loss 0.00004 | buf 100,000 | 1873s
+Ep 16450/40000 | ret -0.6428 | avg(50) -0.6029 | ε 0.119 | loss 0.00010 | buf 100,000 | 1879s
+Ep 16500/40000 | ret -0.0207 | avg(50) -0.6502 | ε 0.117 | loss 0.00002 | buf 100,000 | 1885s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep16500.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 16550/40000 | ret -1.0509 | avg(50) -0.7032 | ε 0.114 | loss 0.00020 | buf 100,000 | 1893s
+Ep 16600/40000 | ret -0.0206 | avg(50) -0.4272 | ε 0.111 | loss 0.00011 | buf 100,000 | 1899s
+Ep 16650/40000 | ret -0.0208 | avg(50) -0.4790 | ε 0.108 | loss 0.00002 | buf 100,000 | 1905s
+Ep 16700/40000 | ret -0.0225 | avg(50) -0.3950 | ε 0.105 | loss 0.00008 | buf 100,000 | 1912s
+Ep 16750/40000 | ret -0.4982 | avg(50) -0.4885 | ε 0.102 | loss 0.00003 | buf 100,000 | 1918s
+Ep 16800/40000 | ret -0.0206 | avg(50) -0.4148 | ε 0.099 | loss 0.00001 | buf 100,000 | 1924s
+Ep 16850/40000 | ret -0.0216 | avg(50) -0.4097 | ε 0.097 | loss 0.00003 | buf 100,000 | 1931s
+Ep 16900/40000 | ret -0.0227 | avg(50) -0.4482 | ε 0.094 | loss 0.00003 | buf 100,000 | 1937s
+Ep 16950/40000 | ret -0.0206 | avg(50) -0.4688 | ε 0.091 | loss 0.00003 | buf 100,000 | 1943s
+Ep 17000/40000 | ret -0.0346 | avg(50) -0.3874 | ε 0.088 | loss 0.00016 | buf 100,000 | 1950s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep17000.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 17050/40000 | ret -0.0206 | avg(50) -0.3635 | ε 0.085 | loss 0.00005 | buf 100,000 | 1957s
+Ep 17100/40000 | ret -0.0247 | avg(50) -0.3483 | ε 0.082 | loss 0.00032 | buf 100,000 | 1963s
+Ep 17150/40000 | ret -0.0267 | avg(50) -0.3550 | ε 0.079 | loss 0.00003 | buf 100,000 | 1970s
+Ep 17200/40000 | ret -0.7719 | avg(50) -0.2844 | ε 0.077 | loss 0.00003 | buf 100,000 | 1976s
+Ep 17250/40000 | ret -0.8306 | avg(50) -0.4330 | ε 0.074 | loss 0.00002 | buf 100,000 | 1982s
+Ep 17300/40000 | ret -0.0265 | avg(50) -0.2663 | ε 0.071 | loss 0.00049 | buf 100,000 | 1989s
+Ep 17350/40000 | ret -0.0206 | avg(50) -0.3198 | ε 0.068 | loss 0.00002 | buf 100,000 | 1995s
+Ep 17400/40000 | ret -0.0206 | avg(50) -0.1734 | ε 0.065 | loss 0.00004 | buf 100,000 | 2001s
+Ep 17450/40000 | ret -0.4837 | avg(50) -0.2598 | ε 0.062 | loss 0.00002 | buf 100,000 | 2008s
+Ep 17500/40000 | ret -0.7955 | avg(50) -0.2498 | ε 0.060 | loss 0.00001 | buf 100,000 | 2014s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep17500.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 17550/40000 | ret -0.0225 | avg(50) -0.2137 | ε 0.057 | loss 0.00002 | buf 100,000 | 2022s
+Ep 17600/40000 | ret -0.0225 | avg(50) -0.3201 | ε 0.054 | loss 0.00002 | buf 100,000 | 2028s
+Ep 17650/40000 | ret -0.0206 | avg(50) -0.2798 | ε 0.051 | loss 0.00005 | buf 100,000 | 2034s
+Ep 17700/40000 | ret -0.3471 | avg(50) -0.2333 | ε 0.050 | loss 0.00014 | buf 100,000 | 2041s
+Ep 17750/40000 | ret -0.0206 | avg(50) -0.2581 | ε 0.050 | loss 0.00001 | buf 100,000 | 2047s
+Ep 17800/40000 | ret -0.0277 | avg(50) -0.2455 | ε 0.050 | loss 0.00014 | buf 100,000 | 2053s
+Ep 17850/40000 | ret -2.4215 | avg(50) -0.2810 | ε 0.050 | loss 0.00001 | buf 100,000 | 2060s
+Ep 17900/40000 | ret -0.1985 | avg(50) -0.2098 | ε 0.050 | loss 0.00001 | buf 100,000 | 2066s
+Ep 17950/40000 | ret -0.0208 | avg(50) -0.2288 | ε 0.050 | loss 0.00002 | buf 100,000 | 2072s
+Ep 18000/40000 | ret -0.0353 | avg(50) -0.2709 | ε 0.050 | loss 0.00008 | buf 100,000 | 2079s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep18000.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 18050/40000 | ret -0.0208 | avg(50) -0.1730 | ε 0.050 | loss 0.00001 | buf 100,000 | 2086s
+Ep 18100/40000 | ret -0.0206 | avg(50) -0.3018 | ε 0.050 | loss 0.00003 | buf 100,000 | 2093s
+Ep 18150/40000 | ret -0.0432 | avg(50) -0.2726 | ε 0.050 | loss 0.00043 | buf 100,000 | 2099s
+Ep 18200/40000 | ret -0.0207 | avg(50) -0.2400 | ε 0.050 | loss 0.00001 | buf 100,000 | 2105s
+Ep 18250/40000 | ret -0.0334 | avg(50) -0.2001 | ε 0.050 | loss 0.00004 | buf 100,000 | 2112s
+Ep 18300/40000 | ret -0.1163 | avg(50) -0.1889 | ε 0.050 | loss 0.00002 | buf 100,000 | 2118s
+Ep 18350/40000 | ret -0.0206 | avg(50) -0.2048 | ε 0.050 | loss 0.00001 | buf 100,000 | 2124s
+Ep 18400/40000 | ret -0.0252 | avg(50) -0.2646 | ε 0.050 | loss 0.00026 | buf 100,000 | 2131s
+Ep 18450/40000 | ret -0.0216 | avg(50) -0.3011 | ε 0.050 | loss 0.00002 | buf 100,000 | 2137s
+Ep 18500/40000 | ret -0.0401 | avg(50) -0.3547 | ε 0.050 | loss 0.00004 | buf 100,000 | 2143s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep18500.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 18550/40000 | ret -0.0225 | avg(50) -0.2335 | ε 0.050 | loss 0.00004 | buf 100,000 | 2151s
+Ep 18600/40000 | ret -0.3503 | avg(50) -0.1937 | ε 0.050 | loss 0.00003 | buf 100,000 | 2157s
+Ep 18650/40000 | ret -2.8439 | avg(50) -0.3085 | ε 0.050 | loss 0.00001 | buf 100,000 | 2164s
+Ep 18700/40000 | ret -0.0219 | avg(50) -0.1512 | ε 0.050 | loss 0.00001 | buf 100,000 | 2170s
+Ep 18750/40000 | ret -0.5367 | avg(50) -0.3836 | ε 0.050 | loss 0.00004 | buf 100,000 | 2176s
+Ep 18800/40000 | ret -0.0209 | avg(50) -0.2167 | ε 0.050 | loss 0.00004 | buf 100,000 | 2183s
+Ep 18850/40000 | ret -0.0206 | avg(50) -0.1723 | ε 0.050 | loss 0.00001 | buf 100,000 | 2189s
+Ep 18900/40000 | ret -0.0206 | avg(50) -0.3684 | ε 0.050 | loss 0.00001 | buf 100,000 | 2195s
+Ep 18950/40000 | ret -0.6460 | avg(50) -0.1919 | ε 0.050 | loss 0.00014 | buf 100,000 | 2202s
+Ep 19000/40000 | ret -0.0206 | avg(50) -0.2150 | ε 0.050 | loss 0.00001 | buf 100,000 | 2208s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep19000.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 19050/40000 | ret -0.1530 | avg(50) -0.2134 | ε 0.050 | loss 0.00001 | buf 100,000 | 2216s
+Ep 19100/40000 | ret -0.0206 | avg(50) -0.1307 | ε 0.050 | loss 0.00001 | buf 100,000 | 2222s
+Ep 19150/40000 | ret -0.0233 | avg(50) -0.1941 | ε 0.050 | loss 0.00015 | buf 100,000 | 2228s
+Ep 19200/40000 | ret -0.6100 | avg(50) -0.1899 | ε 0.050 | loss 0.00002 | buf 100,000 | 2235s
+Ep 19250/40000 | ret -0.2995 | avg(50) -0.1896 | ε 0.050 | loss 0.00001 | buf 100,000 | 2241s
+Ep 19300/40000 | ret -1.1121 | avg(50) -0.1929 | ε 0.050 | loss 0.00001 | buf 100,000 | 2247s
+Ep 19350/40000 | ret -0.3976 | avg(50) -0.3631 | ε 0.050 | loss 0.00002 | buf 100,000 | 2254s
+Ep 19400/40000 | ret -0.9596 | avg(50) -0.2289 | ε 0.050 | loss 0.00003 | buf 100,000 | 2260s
+Ep 19450/40000 | ret -0.4127 | avg(50) -0.2688 | ε 0.050 | loss 0.00001 | buf 100,000 | 2266s
+Ep 19500/40000 | ret -0.0317 | avg(50) -0.2479 | ε 0.050 | loss 0.00001 | buf 100,000 | 2273s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep19500.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 19550/40000 | ret -0.2697 | avg(50) -0.2517 | ε 0.050 | loss 0.00001 | buf 100,000 | 2280s
+Ep 19600/40000 | ret -0.0206 | avg(50) -0.1962 | ε 0.050 | loss 0.00027 | buf 100,000 | 2287s
+Ep 19650/40000 | ret -0.2999 | avg(50) -0.2008 | ε 0.050 | loss 0.00001 | buf 100,000 | 2293s
+Ep 19700/40000 | ret -0.2743 | avg(50) -0.1921 | ε 0.050 | loss 0.00001 | buf 100,000 | 2299s
+Ep 19750/40000 | ret -0.0206 | avg(50) -0.1325 | ε 0.050 | loss 0.00001 | buf 100,000 | 2306s
+Ep 19800/40000 | ret -0.0206 | avg(50) -0.2589 | ε 0.050 | loss 0.00001 | buf 100,000 | 2312s
+Ep 19850/40000 | ret -0.0210 | avg(50) -0.2973 | ε 0.050 | loss 0.00001 | buf 100,000 | 2318s
+Ep 19900/40000 | ret -0.0206 | avg(50) -0.1256 | ε 0.050 | loss 0.00001 | buf 100,000 | 2325s
+Ep 19950/40000 | ret -0.0228 | avg(50) -0.2493 | ε 0.050 | loss 0.00001 | buf 100,000 | 2331s
+Ep 20000/40000 | ret -0.0206 | avg(50) -0.2360 | ε 0.050 | loss 0.00001 | buf 100,000 | 2337s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep20000.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 20050/40000 | ret -0.0206 | avg(50) -0.2337 | ε 0.050 | loss 0.00001 | buf 100,000 | 2345s
+Ep 20100/40000 | ret -0.0216 | avg(50) -0.2401 | ε 0.050 | loss 0.00001 | buf 100,000 | 2351s
+Ep 20150/40000 | ret -0.3203 | avg(50) -0.3123 | ε 0.050 | loss 0.00001 | buf 100,000 | 2358s
+Ep 20200/40000 | ret -0.3427 | avg(50) -0.2199 | ε 0.050 | loss 0.00009 | buf 100,000 | 2364s
+Ep 20250/40000 | ret -0.9554 | avg(50) -0.2640 | ε 0.050 | loss 0.00001 | buf 100,000 | 2370s
+Ep 20300/40000 | ret -0.7737 | avg(50) -0.2038 | ε 0.050 | loss 0.00000 | buf 100,000 | 2377s
+Ep 20350/40000 | ret -0.0216 | avg(50) -0.2589 | ε 0.050 | loss 0.00002 | buf 100,000 | 2383s
+Ep 20400/40000 | ret -0.0216 | avg(50) -0.1890 | ε 0.050 | loss 0.00001 | buf 100,000 | 2389s
+Ep 20450/40000 | ret -0.1528 | avg(50) -0.2443 | ε 0.050 | loss 0.00006 | buf 100,000 | 2396s
+Ep 20500/40000 | ret -0.1862 | avg(50) -0.2360 | ε 0.050 | loss 0.00001 | buf 100,000 | 2402s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep20500.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 20550/40000 | ret -0.0227 | avg(50) -0.2474 | ε 0.050 | loss 0.00060 | buf 100,000 | 2410s
+Ep 20600/40000 | ret -0.0206 | avg(50) -0.2758 | ε 0.050 | loss 0.00001 | buf 100,000 | 2416s
+Ep 20650/40000 | ret -0.0220 | avg(50) -0.2636 | ε 0.050 | loss 0.00011 | buf 100,000 | 2422s
+Ep 20700/40000 | ret -0.0206 | avg(50) -0.4003 | ε 0.050 | loss 0.00000 | buf 100,000 | 2429s
+Ep 20750/40000 | ret -0.0206 | avg(50) -0.1320 | ε 0.050 | loss 0.00000 | buf 100,000 | 2435s
+Ep 20800/40000 | ret -0.0211 | avg(50) -0.2364 | ε 0.050 | loss 0.00000 | buf 100,000 | 2441s
+Ep 20850/40000 | ret -0.8220 | avg(50) -0.2493 | ε 0.050 | loss 0.00001 | buf 100,000 | 2448s
+Ep 20900/40000 | ret -0.0206 | avg(50) -0.2438 | ε 0.050 | loss 0.00001 | buf 100,000 | 2454s
+Ep 20950/40000 | ret -0.0206 | avg(50) -0.3206 | ε 0.050 | loss 0.00002 | buf 100,000 | 2460s
+Ep 21000/40000 | ret -0.0210 | avg(50) -0.2395 | ε 0.050 | loss 0.00001 | buf 100,000 | 2467s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep21000.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 21050/40000 | ret -0.0220 | avg(50) -0.1837 | ε 0.050 | loss 0.00003 | buf 100,000 | 2474s
+Ep 21100/40000 | ret -0.0223 | avg(50) -0.1940 | ε 0.050 | loss 0.00007 | buf 100,000 | 2481s
+Ep 21150/40000 | ret -0.0206 | avg(50) -0.2237 | ε 0.050 | loss 0.00001 | buf 100,000 | 2487s
+Ep 21200/40000 | ret -0.1976 | avg(50) -0.1464 | ε 0.050 | loss 0.00000 | buf 100,000 | 2493s
+Ep 21250/40000 | ret -0.0311 | avg(50) -0.1356 | ε 0.050 | loss 0.00015 | buf 100,000 | 2500s
+Ep 21300/40000 | ret -0.3986 | avg(50) -0.3281 | ε 0.050 | loss 0.00002 | buf 100,000 | 2506s
+Ep 21350/40000 | ret -2.3656 | avg(50) -0.2684 | ε 0.050 | loss 0.00000 | buf 100,000 | 2512s
+Ep 21400/40000 | ret -0.0206 | avg(50) -0.2011 | ε 0.050 | loss 0.00001 | buf 100,000 | 2519s
+Ep 21450/40000 | ret -0.0569 | avg(50) -0.4230 | ε 0.050 | loss 0.00000 | buf 100,000 | 2525s
+Ep 21500/40000 | ret -0.0376 | avg(50) -0.2755 | ε 0.050 | loss 0.00005 | buf 100,000 | 2531s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep21500.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 21550/40000 | ret -0.8190 | avg(50) -0.2222 | ε 0.050 | loss 0.00001 | buf 100,000 | 2539s
+Ep 21600/40000 | ret -0.0216 | avg(50) -0.2047 | ε 0.050 | loss 0.00000 | buf 100,000 | 2545s
+Ep 21650/40000 | ret -1.8787 | avg(50) -0.2909 | ε 0.050 | loss 0.00000 | buf 100,000 | 2552s
+Ep 21700/40000 | ret -0.0211 | avg(50) -0.1487 | ε 0.050 | loss 0.00005 | buf 100,000 | 2558s
+Ep 21750/40000 | ret -0.0209 | avg(50) -0.1361 | ε 0.050 | loss 0.00001 | buf 100,000 | 2564s
+Ep 21800/40000 | ret -0.0206 | avg(50) -0.1593 | ε 0.050 | loss 0.00000 | buf 100,000 | 2571s
+Ep 21850/40000 | ret -0.6823 | avg(50) -0.1603 | ε 0.050 | loss 0.00001 | buf 100,000 | 2577s
+Ep 21900/40000 | ret -0.1240 | avg(50) -0.2180 | ε 0.050 | loss 0.00003 | buf 100,000 | 2583s
+Ep 21950/40000 | ret -0.1759 | avg(50) -0.4418 | ε 0.050 | loss 0.00012 | buf 100,000 | 2590s
+Ep 22000/40000 | ret -0.0206 | avg(50) -0.1691 | ε 0.050 | loss 0.00000 | buf 100,000 | 2596s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep22000.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 22050/40000 | ret -0.0214 | avg(50) -0.1729 | ε 0.050 | loss 0.00001 | buf 100,000 | 2604s
+Ep 22100/40000 | ret -0.9358 | avg(50) -0.2191 | ε 0.050 | loss 0.00003 | buf 100,000 | 2610s
+Ep 22150/40000 | ret -0.0431 | avg(50) -0.1238 | ε 0.050 | loss 0.00010 | buf 100,000 | 2617s
+Ep 22200/40000 | ret -0.0206 | avg(50) -0.3271 | ε 0.050 | loss 0.00000 | buf 100,000 | 2623s
+Ep 22250/40000 | ret -0.2106 | avg(50) -0.3084 | ε 0.050 | loss 0.00000 | buf 100,000 | 2629s
+Ep 22300/40000 | ret -0.2488 | avg(50) -0.3147 | ε 0.050 | loss 0.00000 | buf 100,000 | 2636s
+Ep 22350/40000 | ret -0.0206 | avg(50) -0.1950 | ε 0.050 | loss 0.00000 | buf 100,000 | 2642s
+Ep 22400/40000 | ret -0.6307 | avg(50) -0.3475 | ε 0.050 | loss 0.00011 | buf 100,000 | 2648s
+Ep 22450/40000 | ret -0.0206 | avg(50) -0.2464 | ε 0.050 | loss 0.00000 | buf 100,000 | 2655s
+Ep 22500/40000 | ret -0.0206 | avg(50) -0.2203 | ε 0.050 | loss 0.00002 | buf 100,000 | 2661s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep22500.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 22550/40000 | ret -0.0206 | avg(50) -0.2188 | ε 0.050 | loss 0.00001 | buf 100,000 | 2669s
+Ep 22600/40000 | ret -0.9869 | avg(50) -0.3041 | ε 0.050 | loss 0.00000 | buf 100,000 | 2675s
+Ep 22650/40000 | ret -1.4742 | avg(50) -0.2334 | ε 0.050 | loss 0.00000 | buf 100,000 | 2681s
+Ep 22700/40000 | ret -0.0213 | avg(50) -0.1284 | ε 0.050 | loss 0.00002 | buf 100,000 | 2688s
+Ep 22750/40000 | ret -0.1034 | avg(50) -0.2530 | ε 0.050 | loss 0.00001 | buf 100,000 | 2694s
+Ep 22800/40000 | ret -0.6351 | avg(50) -0.1734 | ε 0.050 | loss 0.00000 | buf 100,000 | 2700s
+Ep 22850/40000 | ret -0.0208 | avg(50) -0.3375 | ε 0.050 | loss 0.00003 | buf 100,000 | 2707s
+Ep 22900/40000 | ret -0.4248 | avg(50) -0.2912 | ε 0.050 | loss 0.00000 | buf 100,000 | 2713s
+Ep 22950/40000 | ret -0.1141 | avg(50) -0.2947 | ε 0.050 | loss 0.00000 | buf 100,000 | 2719s
+Ep 23000/40000 | ret -0.0209 | avg(50) -0.2342 | ε 0.050 | loss 0.00000 | buf 100,000 | 2726s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep23000.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 23050/40000 | ret -0.0420 | avg(50) -0.2168 | ε 0.050 | loss 0.00000 | buf 100,000 | 2733s
+Ep 23100/40000 | ret -0.0216 | avg(50) -0.1942 | ε 0.050 | loss 0.00001 | buf 100,000 | 2740s
+Ep 23150/40000 | ret -0.0206 | avg(50) -0.2280 | ε 0.050 | loss 0.00000 | buf 100,000 | 2746s
+Ep 23200/40000 | ret -0.0206 | avg(50) -0.2714 | ε 0.050 | loss 0.00000 | buf 100,000 | 2753s
+Ep 23250/40000 | ret -0.0206 | avg(50) -0.2540 | ε 0.050 | loss 0.00000 | buf 100,000 | 2759s
+Ep 23300/40000 | ret -0.0210 | avg(50) -0.2356 | ε 0.050 | loss 0.00000 | buf 100,000 | 2765s
+Ep 23350/40000 | ret -0.0216 | avg(50) -0.2589 | ε 0.050 | loss 0.00001 | buf 100,000 | 2772s
+Ep 23400/40000 | ret -0.0206 | avg(50) -0.2269 | ε 0.050 | loss 0.00000 | buf 100,000 | 2778s
+Ep 23450/40000 | ret -0.0272 | avg(50) -0.1707 | ε 0.050 | loss 0.00003 | buf 100,000 | 2784s
+Ep 23500/40000 | ret -0.0218 | avg(50) -0.2610 | ε 0.050 | loss 0.00001 | buf 100,000 | 2791s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep23500.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 23550/40000 | ret -0.0233 | avg(50) -0.2070 | ε 0.050 | loss 0.00000 | buf 100,000 | 2798s
+Ep 23600/40000 | ret -1.1149 | avg(50) -0.2582 | ε 0.050 | loss 0.00000 | buf 100,000 | 2805s
+Ep 23650/40000 | ret -0.0206 | avg(50) -0.3829 | ε 0.050 | loss 0.00000 | buf 100,000 | 2811s
+Ep 23700/40000 | ret -0.3924 | avg(50) -0.2712 | ε 0.050 | loss 0.00003 | buf 100,000 | 2817s
+Ep 23750/40000 | ret -0.6063 | avg(50) -0.2612 | ε 0.050 | loss 0.00000 | buf 100,000 | 2824s
+Ep 23800/40000 | ret -0.0206 | avg(50) -0.3442 | ε 0.050 | loss 0.00000 | buf 100,000 | 2830s
+Ep 23850/40000 | ret -0.0208 | avg(50) -0.1977 | ε 0.050 | loss 0.00000 | buf 100,000 | 2836s
+Ep 23900/40000 | ret -0.0206 | avg(50) -0.1652 | ε 0.050 | loss 0.00000 | buf 100,000 | 2843s
+Ep 23950/40000 | ret -0.2720 | avg(50) -0.1252 | ε 0.050 | loss 0.00079 | buf 100,000 | 2849s
+Ep 24000/40000 | ret -0.0211 | avg(50) -0.3535 | ε 0.050 | loss 0.00000 | buf 100,000 | 2855s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep24000.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 24050/40000 | ret -0.0211 | avg(50) -0.1685 | ε 0.050 | loss 0.00000 | buf 100,000 | 2863s
+Ep 24100/40000 | ret -1.1910 | avg(50) -0.2439 | ε 0.050 | loss 0.00001 | buf 100,000 | 2869s
+Ep 24150/40000 | ret -0.0272 | avg(50) -0.2607 | ε 0.050 | loss 0.00003 | buf 100,000 | 2876s
+Ep 24200/40000 | ret -0.1721 | avg(50) -0.3069 | ε 0.050 | loss 0.00000 | buf 100,000 | 2882s
+Ep 24250/40000 | ret -0.0212 | avg(50) -0.1272 | ε 0.050 | loss 0.00000 | buf 100,000 | 2888s
+Ep 24300/40000 | ret -1.2987 | avg(50) -0.3553 | ε 0.050 | loss 0.00000 | buf 100,000 | 2895s
+Ep 24350/40000 | ret -0.0221 | avg(50) -0.3580 | ε 0.050 | loss 0.00000 | buf 100,000 | 2901s
+Ep 24400/40000 | ret -0.5144 | avg(50) -0.2145 | ε 0.050 | loss 0.00000 | buf 100,000 | 2907s
+Ep 24450/40000 | ret -1.4722 | avg(50) -0.3028 | ε 0.050 | loss 0.00000 | buf 100,000 | 2914s
+Ep 24500/40000 | ret -0.0266 | avg(50) -0.2674 | ε 0.050 | loss 0.00001 | buf 100,000 | 2920s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep24500.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 24550/40000 | ret -0.0404 | avg(50) -0.1292 | ε 0.050 | loss 0.00001 | buf 100,000 | 2928s
+Ep 24600/40000 | ret -0.0206 | avg(50) -0.1509 | ε 0.050 | loss 0.00000 | buf 100,000 | 2934s
+Ep 24650/40000 | ret -0.1807 | avg(50) -0.1367 | ε 0.050 | loss 0.00000 | buf 100,000 | 2941s
+Ep 24700/40000 | ret -1.0279 | avg(50) -0.2687 | ε 0.050 | loss 0.00000 | buf 100,000 | 2947s
+Ep 24750/40000 | ret -0.0206 | avg(50) -0.2061 | ε 0.050 | loss 0.00000 | buf 100,000 | 2953s
+Ep 24800/40000 | ret -0.0206 | avg(50) -0.2669 | ε 0.050 | loss 0.00000 | buf 100,000 | 2960s
+Ep 24850/40000 | ret -0.0206 | avg(50) -0.2220 | ε 0.050 | loss 0.00000 | buf 100,000 | 2966s
+Ep 24900/40000 | ret -0.0206 | avg(50) -0.2337 | ε 0.050 | loss 0.00000 | buf 100,000 | 2972s
+Ep 24950/40000 | ret -0.0206 | avg(50) -0.1988 | ε 0.050 | loss 0.00000 | buf 100,000 | 2979s
+Ep 25000/40000 | ret -0.0212 | avg(50) -0.2032 | ε 0.050 | loss 0.00002 | buf 100,000 | 2985s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep25000.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 25050/40000 | ret -0.5789 | avg(50) -0.4632 | ε 0.050 | loss 0.00001 | buf 100,000 | 2993s
+Ep 25100/40000 | ret -0.0244 | avg(50) -0.2296 | ε 0.050 | loss 0.00006 | buf 100,000 | 2999s
+Ep 25150/40000 | ret -0.1054 | avg(50) -0.2269 | ε 0.050 | loss 0.00002 | buf 100,000 | 3005s
+Ep 25200/40000 | ret -0.0962 | avg(50) -0.3295 | ε 0.050 | loss 0.00001 | buf 100,000 | 3012s
+Ep 25250/40000 | ret -0.0456 | avg(50) -0.1769 | ε 0.050 | loss 0.00000 | buf 100,000 | 3018s
+Ep 25300/40000 | ret -0.1673 | avg(50) -0.2437 | ε 0.050 | loss 0.00000 | buf 100,000 | 3024s
+Ep 25350/40000 | ret -0.5408 | avg(50) -0.2133 | ε 0.050 | loss 0.00000 | buf 100,000 | 3031s
+Ep 25400/40000 | ret -0.0206 | avg(50) -0.1926 | ε 0.050 | loss 0.00000 | buf 100,000 | 3037s
+Ep 25450/40000 | ret -0.0206 | avg(50) -0.2566 | ε 0.050 | loss 0.00000 | buf 100,000 | 3043s
+Ep 25500/40000 | ret -0.0225 | avg(50) -0.1836 | ε 0.050 | loss 0.00002 | buf 100,000 | 3050s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep25500.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 25550/40000 | ret -0.0206 | avg(50) -0.1716 | ε 0.050 | loss 0.00000 | buf 100,000 | 3057s
+Ep 25600/40000 | ret -0.0206 | avg(50) -0.2494 | ε 0.050 | loss 0.00001 | buf 100,000 | 3064s
+Ep 25650/40000 | ret -0.2765 | avg(50) -0.1872 | ε 0.050 | loss 0.00000 | buf 100,000 | 3070s
+Ep 25700/40000 | ret -0.0206 | avg(50) -0.2148 | ε 0.050 | loss 0.00003 | buf 100,000 | 3076s
+Ep 25750/40000 | ret -0.9815 | avg(50) -0.1958 | ε 0.050 | loss 0.00004 | buf 100,000 | 3083s
+Ep 25800/40000 | ret -0.0277 | avg(50) -0.2566 | ε 0.050 | loss 0.00003 | buf 100,000 | 3089s
+Ep 25850/40000 | ret -0.0207 | avg(50) -0.2366 | ε 0.050 | loss 0.00000 | buf 100,000 | 3095s
+Ep 25900/40000 | ret -0.6551 | avg(50) -0.2661 | ε 0.050 | loss 0.00000 | buf 100,000 | 3102s
+Ep 25950/40000 | ret -0.0206 | avg(50) -0.1169 | ε 0.050 | loss 0.00000 | buf 100,000 | 3108s
+Ep 26000/40000 | ret -0.0206 | avg(50) -0.1851 | ε 0.050 | loss 0.00000 | buf 100,000 | 3115s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep26000.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 26050/40000 | ret -0.0361 | avg(50) -0.1863 | ε 0.050 | loss 0.00000 | buf 100,000 | 3122s
+Ep 26100/40000 | ret -0.7272 | avg(50) -0.2305 | ε 0.050 | loss 0.00000 | buf 100,000 | 3128s
+Ep 26150/40000 | ret -0.0588 | avg(50) -0.1225 | ε 0.050 | loss 0.00000 | buf 100,000 | 3135s
+Ep 26200/40000 | ret -0.0387 | avg(50) -0.3594 | ε 0.050 | loss 0.00000 | buf 100,000 | 3141s
+Ep 26250/40000 | ret -0.0206 | avg(50) -0.2385 | ε 0.050 | loss 0.00000 | buf 100,000 | 3147s
+Ep 26300/40000 | ret -0.0420 | avg(50) -0.2638 | ε 0.050 | loss 0.00000 | buf 100,000 | 3154s
+Ep 26350/40000 | ret -0.0206 | avg(50) -0.2574 | ε 0.050 | loss 0.00001 | buf 100,000 | 3160s
+Ep 26400/40000 | ret -0.0206 | avg(50) -0.1900 | ε 0.050 | loss 0.00000 | buf 100,000 | 3166s
+Ep 26450/40000 | ret -0.0215 | avg(50) -0.2544 | ε 0.050 | loss 0.00004 | buf 100,000 | 3173s
+Ep 26500/40000 | ret -0.0220 | avg(50) -0.3927 | ε 0.050 | loss 0.00000 | buf 100,000 | 3179s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep26500.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 26550/40000 | ret -0.0206 | avg(50) -0.1603 | ε 0.050 | loss 0.00001 | buf 100,000 | 3187s
+Ep 26600/40000 | ret -0.0210 | avg(50) -0.2101 | ε 0.050 | loss 0.00001 | buf 100,000 | 3193s
+Ep 26650/40000 | ret -1.4202 | avg(50) -0.2700 | ε 0.050 | loss 0.00000 | buf 100,000 | 3199s
+Ep 26700/40000 | ret -0.0240 | avg(50) -0.1862 | ε 0.050 | loss 0.00000 | buf 100,000 | 3206s
+Ep 26750/40000 | ret -0.7678 | avg(50) -0.3174 | ε 0.050 | loss 0.00000 | buf 100,000 | 3212s
+Ep 26800/40000 | ret -0.8375 | avg(50) -0.2714 | ε 0.050 | loss 0.00006 | buf 100,000 | 3218s
+Ep 26850/40000 | ret -0.9865 | avg(50) -0.2266 | ε 0.050 | loss 0.00000 | buf 100,000 | 3225s
+Ep 26900/40000 | ret -0.0219 | avg(50) -0.2299 | ε 0.050 | loss 0.00021 | buf 100,000 | 3231s
+Ep 26950/40000 | ret -0.0206 | avg(50) -0.1936 | ε 0.050 | loss 0.00000 | buf 100,000 | 3237s
+Ep 27000/40000 | ret -0.0206 | avg(50) -0.1809 | ε 0.050 | loss 0.00002 | buf 100,000 | 3244s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep27000.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 27050/40000 | ret -0.0665 | avg(50) -0.2638 | ε 0.050 | loss 0.00000 | buf 100,000 | 3251s
+Ep 27100/40000 | ret -0.0206 | avg(50) -0.3517 | ε 0.050 | loss 0.00000 | buf 100,000 | 3258s
+Ep 27150/40000 | ret -0.0206 | avg(50) -0.3580 | ε 0.050 | loss 0.00000 | buf 100,000 | 3264s
+Ep 27200/40000 | ret -0.0206 | avg(50) -0.2851 | ε 0.050 | loss 0.00000 | buf 100,000 | 3271s
+Ep 27250/40000 | ret -0.1773 | avg(50) -0.3653 | ε 0.050 | loss 0.00000 | buf 100,000 | 3277s
+Ep 27300/40000 | ret -0.0206 | avg(50) -0.1093 | ε 0.050 | loss 0.00000 | buf 100,000 | 3283s
+Ep 27350/40000 | ret -0.0455 | avg(50) -0.3490 | ε 0.050 | loss 0.00014 | buf 100,000 | 3290s
+Ep 27400/40000 | ret -0.0206 | avg(50) -0.2413 | ε 0.050 | loss 0.00000 | buf 100,000 | 3296s
+Ep 27450/40000 | ret -1.1308 | avg(50) -0.3014 | ε 0.050 | loss 0.00000 | buf 100,000 | 3302s
+Ep 27500/40000 | ret -0.0206 | avg(50) -0.3093 | ε 0.050 | loss 0.00001 | buf 100,000 | 3309s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep27500.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 27550/40000 | ret -0.0206 | avg(50) -0.2218 | ε 0.050 | loss 0.00000 | buf 100,000 | 3316s
+Ep 27600/40000 | ret -0.0206 | avg(50) -0.2384 | ε 0.050 | loss 0.00001 | buf 100,000 | 3323s
+Ep 27650/40000 | ret -0.0207 | avg(50) -0.3614 | ε 0.050 | loss 0.00000 | buf 100,000 | 3329s
+Ep 27700/40000 | ret -0.0206 | avg(50) -0.3305 | ε 0.050 | loss 0.00001 | buf 100,000 | 3335s
+Ep 27750/40000 | ret -0.2592 | avg(50) -0.1888 | ε 0.050 | loss 0.00001 | buf 100,000 | 3342s
+Ep 27800/40000 | ret -0.0210 | avg(50) -0.2737 | ε 0.050 | loss 0.00001 | buf 100,000 | 3348s
+Ep 27850/40000 | ret -1.2345 | avg(50) -0.2350 | ε 0.050 | loss 0.00001 | buf 100,000 | 3354s
+Ep 27900/40000 | ret -0.0210 | avg(50) -0.1943 | ε 0.050 | loss 0.00000 | buf 100,000 | 3361s
+Ep 27950/40000 | ret -0.0211 | avg(50) -0.3419 | ε 0.050 | loss 0.00001 | buf 100,000 | 3367s
+Ep 28000/40000 | ret -0.0213 | avg(50) -0.2256 | ε 0.050 | loss 0.00000 | buf 100,000 | 3373s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep28000.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 28050/40000 | ret -0.0206 | avg(50) -0.2638 | ε 0.050 | loss 0.00000 | buf 100,000 | 3381s
+Ep 28100/40000 | ret -0.7472 | avg(50) -0.3900 | ε 0.050 | loss 0.00000 | buf 100,000 | 3388s
+Ep 28150/40000 | ret -0.0206 | avg(50) -0.3025 | ε 0.050 | loss 0.00000 | buf 100,000 | 3394s
+Ep 28200/40000 | ret -0.2608 | avg(50) -0.1884 | ε 0.050 | loss 0.00002 | buf 100,000 | 3400s
+Ep 28250/40000 | ret -0.0206 | avg(50) -0.2397 | ε 0.050 | loss 0.00000 | buf 100,000 | 3407s
+Ep 28300/40000 | ret -0.7138 | avg(50) -0.2674 | ε 0.050 | loss 0.00001 | buf 100,000 | 3413s
+Ep 28350/40000 | ret -0.0206 | avg(50) -0.1145 | ε 0.050 | loss 0.00000 | buf 100,000 | 3419s
+Ep 28400/40000 | ret -0.0206 | avg(50) -0.2033 | ε 0.050 | loss 0.00000 | buf 100,000 | 3426s
+Ep 28450/40000 | ret -0.0484 | avg(50) -0.3363 | ε 0.050 | loss 0.00000 | buf 100,000 | 3432s
+Ep 28500/40000 | ret -0.0206 | avg(50) -0.2306 | ε 0.050 | loss 0.00000 | buf 100,000 | 3438s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep28500.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 28550/40000 | ret -0.0206 | avg(50) -0.2954 | ε 0.050 | loss 0.00000 | buf 100,000 | 3446s
+Ep 28600/40000 | ret -0.0208 | avg(50) -0.1246 | ε 0.050 | loss 0.00000 | buf 100,000 | 3452s
+Ep 28650/40000 | ret -0.0206 | avg(50) -0.1348 | ε 0.050 | loss 0.00000 | buf 100,000 | 3459s
+Ep 28700/40000 | ret -1.7844 | avg(50) -0.2340 | ε 0.050 | loss 0.00001 | buf 100,000 | 3465s
+Ep 28750/40000 | ret -0.0206 | avg(50) -0.2432 | ε 0.050 | loss 0.00001 | buf 100,000 | 3471s
+Ep 28800/40000 | ret -0.5957 | avg(50) -0.2463 | ε 0.050 | loss 0.00000 | buf 100,000 | 3478s
+Ep 28850/40000 | ret -0.0216 | avg(50) -0.2633 | ε 0.050 | loss 0.00000 | buf 100,000 | 3484s
+Ep 28900/40000 | ret -0.0220 | avg(50) -0.2118 | ε 0.050 | loss 0.00000 | buf 100,000 | 3490s
+Ep 28950/40000 | ret -0.0206 | avg(50) -0.1737 | ε 0.050 | loss 0.00001 | buf 100,000 | 3497s
+Ep 29000/40000 | ret -0.0207 | avg(50) -0.1397 | ε 0.050 | loss 0.00001 | buf 100,000 | 3503s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep29000.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 29050/40000 | ret -0.0290 | avg(50) -0.2358 | ε 0.050 | loss 0.00001 | buf 100,000 | 3511s
+Ep 29100/40000 | ret -0.0223 | avg(50) -0.2002 | ε 0.050 | loss 0.00000 | buf 100,000 | 3517s
+Ep 29150/40000 | ret -0.0209 | avg(50) -0.2504 | ε 0.050 | loss 0.00000 | buf 100,000 | 3523s
+Ep 29200/40000 | ret -0.0245 | avg(50) -0.1709 | ε 0.050 | loss 0.00002 | buf 100,000 | 3530s
+Ep 29250/40000 | ret -0.0206 | avg(50) -0.2340 | ε 0.050 | loss 0.00000 | buf 100,000 | 3536s
+Ep 29300/40000 | ret -0.0206 | avg(50) -0.1817 | ε 0.050 | loss 0.00000 | buf 100,000 | 3542s
+Ep 29350/40000 | ret -0.0206 | avg(50) -0.2857 | ε 0.050 | loss 0.00000 | buf 100,000 | 3549s
+Ep 29400/40000 | ret -0.0262 | avg(50) -0.3416 | ε 0.050 | loss 0.00000 | buf 100,000 | 3555s
+Ep 29450/40000 | ret -2.3406 | avg(50) -0.2510 | ε 0.050 | loss 0.00000 | buf 100,000 | 3561s
+Ep 29500/40000 | ret -0.6679 | avg(50) -0.3332 | ε 0.050 | loss 0.00000 | buf 100,000 | 3568s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep29500.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 29550/40000 | ret -0.6669 | avg(50) -0.2267 | ε 0.050 | loss 0.00000 | buf 100,000 | 3575s
+Ep 29600/40000 | ret -0.0214 | avg(50) -0.2326 | ε 0.050 | loss 0.00000 | buf 100,000 | 3582s
+Ep 29650/40000 | ret -0.0214 | avg(50) -0.2145 | ε 0.050 | loss 0.00000 | buf 100,000 | 3588s
+Ep 29700/40000 | ret -0.0261 | avg(50) -0.2007 | ε 0.050 | loss 0.00009 | buf 100,000 | 3595s
+Ep 29750/40000 | ret -0.0206 | avg(50) -0.2171 | ε 0.050 | loss 0.00000 | buf 100,000 | 3601s
+Ep 29800/40000 | ret -0.0206 | avg(50) -0.2322 | ε 0.050 | loss 0.00000 | buf 100,000 | 3607s
+Ep 29850/40000 | ret -0.0213 | avg(50) -0.2728 | ε 0.050 | loss 0.00000 | buf 100,000 | 3614s
+Ep 29900/40000 | ret -0.0230 | avg(50) -0.1983 | ε 0.050 | loss 0.00001 | buf 100,000 | 3620s
+Ep 29950/40000 | ret -0.6116 | avg(50) -0.3411 | ε 0.050 | loss 0.00000 | buf 100,000 | 3626s
+Ep 30000/40000 | ret -0.0206 | avg(50) -0.4086 | ε 0.050 | loss 0.00000 | buf 100,000 | 3633s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep30000.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 30050/40000 | ret -0.4815 | avg(50) -0.2095 | ε 0.050 | loss 0.00000 | buf 100,000 | 3640s
+Ep 30100/40000 | ret -1.3385 | avg(50) -0.2235 | ε 0.050 | loss 0.00007 | buf 100,000 | 3647s
+Ep 30150/40000 | ret -0.4796 | avg(50) -0.1734 | ε 0.050 | loss 0.00001 | buf 100,000 | 3653s
+Ep 30200/40000 | ret -0.0206 | avg(50) -0.2209 | ε 0.050 | loss 0.00000 | buf 100,000 | 3659s
+Ep 30250/40000 | ret -0.0432 | avg(50) -0.2931 | ε 0.050 | loss 0.00000 | buf 100,000 | 3666s
+Ep 30300/40000 | ret -0.0223 | avg(50) -0.2387 | ε 0.050 | loss 0.00000 | buf 100,000 | 3672s
+Ep 30350/40000 | ret -0.0206 | avg(50) -0.2524 | ε 0.050 | loss 0.00000 | buf 100,000 | 3679s
+Ep 30400/40000 | ret -0.0206 | avg(50) -0.2837 | ε 0.050 | loss 0.00000 | buf 100,000 | 3685s
+Ep 30450/40000 | ret -0.0209 | avg(50) -0.2183 | ε 0.050 | loss 0.00002 | buf 100,000 | 3691s
+Ep 30500/40000 | ret -1.1127 | avg(50) -0.2931 | ε 0.050 | loss 0.00001 | buf 100,000 | 3697s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep30500.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 30550/40000 | ret -0.4718 | avg(50) -0.2758 | ε 0.050 | loss 0.00000 | buf 100,000 | 3705s
+Ep 30600/40000 | ret -0.4645 | avg(50) -0.2300 | ε 0.050 | loss 0.00001 | buf 100,000 | 3712s
+Ep 30650/40000 | ret -0.0206 | avg(50) -0.1722 | ε 0.050 | loss 0.00000 | buf 100,000 | 3718s
+Ep 30700/40000 | ret -0.0206 | avg(50) -0.2063 | ε 0.050 | loss 0.00000 | buf 100,000 | 3724s
+Ep 30750/40000 | ret -0.0208 | avg(50) -0.3161 | ε 0.050 | loss 0.00000 | buf 100,000 | 3731s
+Ep 30800/40000 | ret -0.0206 | avg(50) -0.1601 | ε 0.050 | loss 0.00000 | buf 100,000 | 3737s
+Ep 30850/40000 | ret -0.0206 | avg(50) -0.2606 | ε 0.050 | loss 0.00002 | buf 100,000 | 3743s
+Ep 30900/40000 | ret -0.0206 | avg(50) -0.3494 | ε 0.050 | loss 0.00001 | buf 100,000 | 3750s
+Ep 30950/40000 | ret -0.2462 | avg(50) -0.2477 | ε 0.050 | loss 0.00000 | buf 100,000 | 3756s
+Ep 31000/40000 | ret -0.9852 | avg(50) -0.2706 | ε 0.050 | loss 0.00000 | buf 100,000 | 3762s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep31000.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 31050/40000 | ret -0.0206 | avg(50) -0.3754 | ε 0.050 | loss 0.00001 | buf 100,000 | 3770s
+Ep 31100/40000 | ret -0.0207 | avg(50) -0.1952 | ε 0.050 | loss 0.00000 | buf 100,000 | 3776s
+Ep 31150/40000 | ret -1.2071 | avg(50) -0.4132 | ε 0.050 | loss 0.00000 | buf 100,000 | 3783s
+Ep 31200/40000 | ret -0.0207 | avg(50) -0.2420 | ε 0.050 | loss 0.00000 | buf 100,000 | 3789s
+Ep 31250/40000 | ret -0.3425 | avg(50) -0.1841 | ε 0.050 | loss 0.00000 | buf 100,000 | 3796s
+Ep 31300/40000 | ret -0.0206 | avg(50) -0.2827 | ε 0.050 | loss 0.00000 | buf 100,000 | 3802s
+Ep 31350/40000 | ret -0.0206 | avg(50) -0.3187 | ε 0.050 | loss 0.00000 | buf 100,000 | 3808s
+Ep 31400/40000 | ret -0.7776 | avg(50) -0.3024 | ε 0.050 | loss 0.00064 | buf 100,000 | 3815s
+Ep 31450/40000 | ret -0.0207 | avg(50) -0.2749 | ε 0.050 | loss 0.00000 | buf 100,000 | 3821s
+Ep 31500/40000 | ret -0.0211 | avg(50) -0.2114 | ε 0.050 | loss 0.00000 | buf 100,000 | 3827s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep31500.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 31550/40000 | ret -0.1807 | avg(50) -0.2527 | ε 0.050 | loss 0.00000 | buf 100,000 | 3835s
+Ep 31600/40000 | ret -0.3989 | avg(50) -0.2357 | ε 0.050 | loss 0.00000 | buf 100,000 | 3841s
+Ep 31650/40000 | ret -0.0246 | avg(50) -0.1592 | ε 0.050 | loss 0.00000 | buf 100,000 | 3848s
+Ep 31700/40000 | ret -2.5127 | avg(50) -0.3467 | ε 0.050 | loss 0.00001 | buf 100,000 | 3854s
+Ep 31750/40000 | ret -0.0264 | avg(50) -0.3535 | ε 0.050 | loss 0.00012 | buf 100,000 | 3860s
+Ep 31800/40000 | ret -1.0515 | avg(50) -0.3216 | ε 0.050 | loss 0.00000 | buf 100,000 | 3867s
+Ep 31850/40000 | ret -0.0211 | avg(50) -0.2733 | ε 0.050 | loss 0.00000 | buf 100,000 | 3873s
+Ep 31900/40000 | ret -0.0206 | avg(50) -0.1944 | ε 0.050 | loss 0.00000 | buf 100,000 | 3880s
+Ep 31950/40000 | ret -0.0206 | avg(50) -0.1693 | ε 0.050 | loss 0.00000 | buf 100,000 | 3886s
+Ep 32000/40000 | ret -0.2037 | avg(50) -0.3745 | ε 0.050 | loss 0.00001 | buf 100,000 | 3892s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep32000.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 32050/40000 | ret -0.0207 | avg(50) -0.3351 | ε 0.050 | loss 0.00000 | buf 100,000 | 3900s
+Ep 32100/40000 | ret -2.3950 | avg(50) -0.2462 | ε 0.050 | loss 0.00000 | buf 100,000 | 3906s
+Ep 32150/40000 | ret -0.0206 | avg(50) -0.1876 | ε 0.050 | loss 0.00001 | buf 100,000 | 3913s
+Ep 32200/40000 | ret -0.0206 | avg(50) -0.3211 | ε 0.050 | loss 0.00000 | buf 100,000 | 3919s
+Ep 32250/40000 | ret -0.3591 | avg(50) -0.2700 | ε 0.050 | loss 0.00000 | buf 100,000 | 3925s
+Ep 32300/40000 | ret -0.5383 | avg(50) -0.3343 | ε 0.050 | loss 0.00001 | buf 100,000 | 3932s
+Ep 32350/40000 | ret -0.0206 | avg(50) -0.2419 | ε 0.050 | loss 0.00000 | buf 100,000 | 3938s
+Ep 32400/40000 | ret -0.0206 | avg(50) -0.2177 | ε 0.050 | loss 0.00000 | buf 100,000 | 3944s
+Ep 32450/40000 | ret -0.0206 | avg(50) -0.1778 | ε 0.050 | loss 0.00000 | buf 100,000 | 3951s
+Ep 32500/40000 | ret -0.6440 | avg(50) -0.1494 | ε 0.050 | loss 0.00000 | buf 100,000 | 3957s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep32500.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 32550/40000 | ret -0.0206 | avg(50) -0.3135 | ε 0.050 | loss 0.00001 | buf 100,000 | 3965s
+Ep 32600/40000 | ret -0.1482 | avg(50) -0.2530 | ε 0.050 | loss 0.00000 | buf 100,000 | 3971s
+Ep 32650/40000 | ret -0.0207 | avg(50) -0.1779 | ε 0.050 | loss 0.00000 | buf 100,000 | 3978s
+Ep 32700/40000 | ret -2.2680 | avg(50) -0.3129 | ε 0.050 | loss 0.00001 | buf 100,000 | 3984s
+Ep 32750/40000 | ret -0.0229 | avg(50) -0.3622 | ε 0.050 | loss 0.00001 | buf 100,000 | 3990s
+Ep 32800/40000 | ret -0.0206 | avg(50) -0.2369 | ε 0.050 | loss 0.00000 | buf 100,000 | 3997s
+Ep 32850/40000 | ret -0.0215 | avg(50) -0.3155 | ε 0.050 | loss 0.00000 | buf 100,000 | 4003s
+Ep 32900/40000 | ret -0.0225 | avg(50) -0.2553 | ε 0.050 | loss 0.00000 | buf 100,000 | 4009s
+Ep 32950/40000 | ret -0.0209 | avg(50) -0.3001 | ε 0.050 | loss 0.00000 | buf 100,000 | 4016s
+Ep 33000/40000 | ret -0.0206 | avg(50) -0.1627 | ε 0.050 | loss 0.00000 | buf 100,000 | 4022s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep33000.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 33050/40000 | ret -0.0382 | avg(50) -0.1716 | ε 0.050 | loss 0.00000 | buf 100,000 | 4030s
+Ep 33100/40000 | ret -0.0207 | avg(50) -0.2016 | ε 0.050 | loss 0.00000 | buf 100,000 | 4036s
+Ep 33150/40000 | ret -1.5357 | avg(50) -0.2276 | ε 0.050 | loss 0.00000 | buf 100,000 | 4043s
+Ep 33200/40000 | ret -0.8391 | avg(50) -0.2134 | ε 0.050 | loss 0.00042 | buf 100,000 | 4049s
+Ep 33250/40000 | ret -0.0211 | avg(50) -0.2414 | ε 0.050 | loss 0.00002 | buf 100,000 | 4056s
+Ep 33300/40000 | ret -0.0221 | avg(50) -0.1987 | ε 0.050 | loss 0.00001 | buf 100,000 | 4062s
+Ep 33350/40000 | ret -0.0215 | avg(50) -0.1793 | ε 0.050 | loss 0.00000 | buf 100,000 | 4068s
+Ep 33400/40000 | ret -0.0206 | avg(50) -0.1574 | ε 0.050 | loss 0.00008 | buf 100,000 | 4075s
+Ep 33450/40000 | ret -1.7746 | avg(50) -0.2757 | ε 0.050 | loss 0.00000 | buf 100,000 | 4081s
+Ep 33500/40000 | ret -0.0206 | avg(50) -0.0716 | ε 0.050 | loss 0.00000 | buf 100,000 | 4087s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep33500.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 33550/40000 | ret -0.0223 | avg(50) -0.2239 | ε 0.050 | loss 0.00000 | buf 100,000 | 4095s
+Ep 33600/40000 | ret -1.5071 | avg(50) -0.2338 | ε 0.050 | loss 0.00000 | buf 100,000 | 4101s
+Ep 33650/40000 | ret -0.0206 | avg(50) -0.1489 | ε 0.050 | loss 0.00000 | buf 100,000 | 4108s
+Ep 33700/40000 | ret -0.5996 | avg(50) -0.2865 | ε 0.050 | loss 0.00000 | buf 100,000 | 4114s
+Ep 33750/40000 | ret -1.0757 | avg(50) -0.3165 | ε 0.050 | loss 0.00000 | buf 100,000 | 4121s
+Ep 33800/40000 | ret -0.1783 | avg(50) -0.3059 | ε 0.050 | loss 0.00000 | buf 100,000 | 4127s
+Ep 33850/40000 | ret -0.0206 | avg(50) -0.3018 | ε 0.050 | loss 0.00000 | buf 100,000 | 4133s
+Ep 33900/40000 | ret -0.3437 | avg(50) -0.1869 | ε 0.050 | loss 0.00000 | buf 100,000 | 4140s
+Ep 33950/40000 | ret -0.0206 | avg(50) -0.2093 | ε 0.050 | loss 0.00002 | buf 100,000 | 4146s
+Ep 34000/40000 | ret -0.7430 | avg(50) -0.2049 | ε 0.050 | loss 0.00000 | buf 100,000 | 4152s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep34000.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 34050/40000 | ret -0.1085 | avg(50) -0.2301 | ε 0.050 | loss 0.00000 | buf 100,000 | 4160s
+Ep 34100/40000 | ret -0.0229 | avg(50) -0.2040 | ε 0.050 | loss 0.00000 | buf 100,000 | 4166s
+Ep 34150/40000 | ret -0.5141 | avg(50) -0.2330 | ε 0.050 | loss 0.00000 | buf 100,000 | 4173s
+Ep 34200/40000 | ret -0.2147 | avg(50) -0.2492 | ε 0.050 | loss 0.00000 | buf 100,000 | 4179s
+Ep 34250/40000 | ret -0.0363 | avg(50) -0.1849 | ε 0.050 | loss 0.00000 | buf 100,000 | 4186s
+Ep 34300/40000 | ret -0.1309 | avg(50) -0.3481 | ε 0.050 | loss 0.00000 | buf 100,000 | 4192s
+Ep 34350/40000 | ret -0.1392 | avg(50) -0.2426 | ε 0.050 | loss 0.00022 | buf 100,000 | 4198s
+Ep 34400/40000 | ret -0.0216 | avg(50) -0.1720 | ε 0.050 | loss 0.00000 | buf 100,000 | 4205s
+Ep 34450/40000 | ret -0.0210 | avg(50) -0.2552 | ε 0.050 | loss 0.00000 | buf 100,000 | 4211s
+Ep 34500/40000 | ret -0.0228 | avg(50) -0.2684 | ε 0.050 | loss 0.00000 | buf 100,000 | 4217s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep34500.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 34550/40000 | ret -0.0212 | avg(50) -0.3185 | ε 0.050 | loss 0.00000 | buf 100,000 | 4225s
+Ep 34600/40000 | ret -0.0206 | avg(50) -0.2307 | ε 0.050 | loss 0.00000 | buf 100,000 | 4231s
+Ep 34650/40000 | ret -0.0206 | avg(50) -0.3224 | ε 0.050 | loss 0.00000 | buf 100,000 | 4238s
+Ep 34700/40000 | ret -0.0788 | avg(50) -0.1511 | ε 0.050 | loss 0.00000 | buf 100,000 | 4244s
+Ep 34750/40000 | ret -0.0516 | avg(50) -0.2304 | ε 0.050 | loss 0.00000 | buf 100,000 | 4250s
+Ep 34800/40000 | ret -0.0229 | avg(50) -0.3103 | ε 0.050 | loss 0.00001 | buf 100,000 | 4257s
+Ep 34850/40000 | ret -0.0206 | avg(50) -0.2227 | ε 0.050 | loss 0.00000 | buf 100,000 | 4263s
+Ep 34900/40000 | ret -0.0206 | avg(50) -0.1646 | ε 0.050 | loss 0.00000 | buf 100,000 | 4270s
+Ep 34950/40000 | ret -0.1807 | avg(50) -0.1875 | ε 0.050 | loss 0.00000 | buf 100,000 | 4276s
+Ep 35000/40000 | ret -0.9607 | avg(50) -0.2222 | ε 0.050 | loss 0.00000 | buf 100,000 | 4282s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep35000.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 35050/40000 | ret -0.0206 | avg(50) -0.2216 | ε 0.050 | loss 0.00000 | buf 100,000 | 4290s
+Ep 35100/40000 | ret -0.0206 | avg(50) -0.1817 | ε 0.050 | loss 0.00000 | buf 100,000 | 4296s
+Ep 35150/40000 | ret -0.0206 | avg(50) -0.3147 | ε 0.050 | loss 0.00000 | buf 100,000 | 4303s
+Ep 35200/40000 | ret -0.0210 | avg(50) -0.3227 | ε 0.050 | loss 0.00000 | buf 100,000 | 4309s
+Ep 35250/40000 | ret -1.1337 | avg(50) -0.2156 | ε 0.050 | loss 0.00000 | buf 100,000 | 4316s
+Ep 35300/40000 | ret -0.0206 | avg(50) -0.1881 | ε 0.050 | loss 0.00000 | buf 100,000 | 4322s
+Ep 35350/40000 | ret -0.0225 | avg(50) -0.3601 | ε 0.050 | loss 0.00001 | buf 100,000 | 4328s
+Ep 35400/40000 | ret -0.0206 | avg(50) -0.2526 | ε 0.050 | loss 0.00000 | buf 100,000 | 4335s
+Ep 35450/40000 | ret -0.0206 | avg(50) -0.2348 | ε 0.050 | loss 0.00000 | buf 100,000 | 4341s
+Ep 35500/40000 | ret -0.0901 | avg(50) -0.2069 | ε 0.050 | loss 0.00000 | buf 100,000 | 4348s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep35500.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 35550/40000 | ret -0.0206 | avg(50) -0.1788 | ε 0.050 | loss 0.00000 | buf 100,000 | 4355s
+Ep 35600/40000 | ret -0.0206 | avg(50) -0.2008 | ε 0.050 | loss 0.00000 | buf 100,000 | 4361s
+Ep 35650/40000 | ret -0.9097 | avg(50) -0.2814 | ε 0.050 | loss 0.00002 | buf 100,000 | 4368s
+Ep 35700/40000 | ret -0.0209 | avg(50) -0.2526 | ε 0.050 | loss 0.00006 | buf 100,000 | 4374s
+Ep 35750/40000 | ret -0.0206 | avg(50) -0.3125 | ε 0.050 | loss 0.00000 | buf 100,000 | 4380s
+Ep 35800/40000 | ret -0.0258 | avg(50) -0.2747 | ε 0.050 | loss 0.00000 | buf 100,000 | 4387s
+Ep 35850/40000 | ret -0.0563 | avg(50) -0.2722 | ε 0.050 | loss 0.00000 | buf 100,000 | 4393s
+Ep 35900/40000 | ret -0.0453 | avg(50) -0.2413 | ε 0.050 | loss 0.00003 | buf 100,000 | 4400s
+Ep 35950/40000 | ret -0.0207 | avg(50) -0.2769 | ε 0.050 | loss 0.00000 | buf 100,000 | 4406s
+Ep 36000/40000 | ret -0.1037 | avg(50) -0.2871 | ε 0.050 | loss 0.00000 | buf 100,000 | 4412s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep36000.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 36050/40000 | ret -0.0206 | avg(50) -0.1639 | ε 0.050 | loss 0.00000 | buf 100,000 | 4420s
+Ep 36100/40000 | ret -0.0207 | avg(50) -0.2681 | ε 0.050 | loss 0.00000 | buf 100,000 | 4426s
+Ep 36150/40000 | ret -0.0206 | avg(50) -0.2168 | ε 0.050 | loss 0.00000 | buf 100,000 | 4433s
+Ep 36200/40000 | ret -0.0206 | avg(50) -0.3025 | ε 0.050 | loss 0.00000 | buf 100,000 | 4439s
+Ep 36250/40000 | ret -0.0206 | avg(50) -0.2195 | ε 0.050 | loss 0.00001 | buf 100,000 | 4445s
+Ep 36300/40000 | ret -0.2658 | avg(50) -0.2185 | ε 0.050 | loss 0.00000 | buf 100,000 | 4452s
+Ep 36350/40000 | ret -0.0206 | avg(50) -0.1492 | ε 0.050 | loss 0.00000 | buf 100,000 | 4458s
+Ep 36400/40000 | ret -0.0206 | avg(50) -0.1947 | ε 0.050 | loss 0.00000 | buf 100,000 | 4465s
+Ep 36450/40000 | ret -0.0206 | avg(50) -0.2451 | ε 0.050 | loss 0.00000 | buf 100,000 | 4471s
+Ep 36500/40000 | ret -0.0206 | avg(50) -0.1322 | ε 0.050 | loss 0.00002 | buf 100,000 | 4477s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep36500.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 36550/40000 | ret -0.0299 | avg(50) -0.1580 | ε 0.050 | loss 0.00005 | buf 100,000 | 4485s
+Ep 36600/40000 | ret -0.0229 | avg(50) -0.1940 | ε 0.050 | loss 0.00000 | buf 100,000 | 4491s
+Ep 36650/40000 | ret -0.0207 | avg(50) -0.1821 | ε 0.050 | loss 0.00000 | buf 100,000 | 4498s
+Ep 36700/40000 | ret -1.1005 | avg(50) -0.2982 | ε 0.050 | loss 0.00000 | buf 100,000 | 4504s
+Ep 36750/40000 | ret -0.0206 | avg(50) -0.3124 | ε 0.050 | loss 0.00000 | buf 100,000 | 4510s
+Ep 36800/40000 | ret -0.0231 | avg(50) -0.2826 | ε 0.050 | loss 0.00000 | buf 100,000 | 4517s
+Ep 36850/40000 | ret -1.8639 | avg(50) -0.2923 | ε 0.050 | loss 0.00000 | buf 100,000 | 4523s
+Ep 36900/40000 | ret -0.0206 | avg(50) -0.3007 | ε 0.050 | loss 0.00003 | buf 100,000 | 4530s
+Ep 36950/40000 | ret -0.0206 | avg(50) -0.1361 | ε 0.050 | loss 0.00000 | buf 100,000 | 4536s
+Ep 37000/40000 | ret -1.1211 | avg(50) -0.3341 | ε 0.050 | loss 0.00000 | buf 100,000 | 4542s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep37000.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 37050/40000 | ret -0.0310 | avg(50) -0.1714 | ε 0.050 | loss 0.00001 | buf 100,000 | 4550s
+Ep 37100/40000 | ret -0.0209 | avg(50) -0.2934 | ε 0.050 | loss 0.00000 | buf 100,000 | 4556s
+Ep 37150/40000 | ret -0.0211 | avg(50) -0.2673 | ε 0.050 | loss 0.00000 | buf 100,000 | 4563s
+Ep 37200/40000 | ret -0.3892 | avg(50) -0.2393 | ε 0.050 | loss 0.00000 | buf 100,000 | 4569s
+Ep 37250/40000 | ret -0.0210 | avg(50) -0.2935 | ε 0.050 | loss 0.00000 | buf 100,000 | 4575s
+Ep 37300/40000 | ret -0.3113 | avg(50) -0.2892 | ε 0.050 | loss 0.00000 | buf 100,000 | 4582s
+Ep 37350/40000 | ret -1.6109 | avg(50) -0.2326 | ε 0.050 | loss 0.00000 | buf 100,000 | 4588s
+Ep 37400/40000 | ret -0.0229 | avg(50) -0.1470 | ε 0.050 | loss 0.00004 | buf 100,000 | 4595s
+Ep 37450/40000 | ret -0.0216 | avg(50) -0.1935 | ε 0.050 | loss 0.00001 | buf 100,000 | 4601s
+Ep 37500/40000 | ret -0.6540 | avg(50) -0.2033 | ε 0.050 | loss 0.00000 | buf 100,000 | 4607s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep37500.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 37550/40000 | ret -0.0206 | avg(50) -0.1741 | ε 0.050 | loss 0.00000 | buf 100,000 | 4615s
+Ep 37600/40000 | ret -0.3425 | avg(50) -0.1923 | ε 0.050 | loss 0.00001 | buf 100,000 | 4622s
+Ep 37650/40000 | ret -1.4482 | avg(50) -0.1985 | ε 0.050 | loss 0.00000 | buf 100,000 | 4628s
+Ep 37700/40000 | ret -0.0206 | avg(50) -0.1346 | ε 0.050 | loss 0.00000 | buf 100,000 | 4634s
+Ep 37750/40000 | ret -1.2552 | avg(50) -0.2100 | ε 0.050 | loss 0.00000 | buf 100,000 | 4641s
+Ep 37800/40000 | ret -0.1899 | avg(50) -0.2549 | ε 0.050 | loss 0.00000 | buf 100,000 | 4647s
+Ep 37850/40000 | ret -0.0292 | avg(50) -0.2655 | ε 0.050 | loss 0.00013 | buf 100,000 | 4653s
+Ep 37900/40000 | ret -0.0206 | avg(50) -0.3291 | ε 0.050 | loss 0.00000 | buf 100,000 | 4660s
+Ep 37950/40000 | ret -0.0778 | avg(50) -0.2720 | ε 0.050 | loss 0.00000 | buf 100,000 | 4666s
+Ep 38000/40000 | ret -0.0206 | avg(50) -0.1980 | ε 0.050 | loss 0.00000 | buf 100,000 | 4673s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep38000.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 38050/40000 | ret -0.0209 | avg(50) -0.1792 | ε 0.050 | loss 0.00000 | buf 100,000 | 4680s
+Ep 38100/40000 | ret -0.8886 | avg(50) -0.2316 | ε 0.050 | loss 0.00000 | buf 100,000 | 4687s
+Ep 38150/40000 | ret -1.7380 | avg(50) -0.3177 | ε 0.050 | loss 0.00000 | buf 100,000 | 4693s
+Ep 38200/40000 | ret -0.0208 | avg(50) -0.1812 | ε 0.050 | loss 0.00001 | buf 100,000 | 4699s
+Ep 38250/40000 | ret -0.0206 | avg(50) -0.2473 | ε 0.050 | loss 0.00000 | buf 100,000 | 4706s
+Ep 38300/40000 | ret -0.0212 | avg(50) -0.2651 | ε 0.050 | loss 0.00000 | buf 100,000 | 4712s
+Ep 38350/40000 | ret -0.1190 | avg(50) -0.2162 | ε 0.050 | loss 0.00001 | buf 100,000 | 4719s
+Ep 38400/40000 | ret -0.0377 | avg(50) -0.1737 | ε 0.050 | loss 0.00004 | buf 100,000 | 4725s
+Ep 38450/40000 | ret -0.0226 | avg(50) -0.3154 | ε 0.050 | loss 0.00000 | buf 100,000 | 4731s
+Ep 38500/40000 | ret -0.0211 | avg(50) -0.3076 | ε 0.050 | loss 0.00000 | buf 100,000 | 4738s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep38500.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 38550/40000 | ret -0.0206 | avg(50) -0.2164 | ε 0.050 | loss 0.00000 | buf 100,000 | 4745s
+Ep 38600/40000 | ret -0.0206 | avg(50) -0.1946 | ε 0.050 | loss 0.00000 | buf 100,000 | 4752s
+Ep 38650/40000 | ret -0.9628 | avg(50) -0.2422 | ε 0.050 | loss 0.00009 | buf 100,000 | 4758s
+Ep 38700/40000 | ret -0.0206 | avg(50) -0.1822 | ε 0.050 | loss 0.00000 | buf 100,000 | 4765s
+Ep 38750/40000 | ret -0.0206 | avg(50) -0.2520 | ε 0.050 | loss 0.00000 | buf 100,000 | 4771s
+Ep 38800/40000 | ret -0.0206 | avg(50) -0.4204 | ε 0.050 | loss 0.00000 | buf 100,000 | 4777s
+Ep 38850/40000 | ret -0.2995 | avg(50) -0.2327 | ε 0.050 | loss 0.00000 | buf 100,000 | 4784s
+Ep 38900/40000 | ret -0.0206 | avg(50) -0.2856 | ε 0.050 | loss 0.00000 | buf 100,000 | 4790s
+Ep 38950/40000 | ret -0.0206 | avg(50) -0.2619 | ε 0.050 | loss 0.00000 | buf 100,000 | 4796s
+Ep 39000/40000 | ret -0.6708 | avg(50) -0.2911 | ε 0.050 | loss 0.00003 | buf 100,000 | 4803s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep39000.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 39050/40000 | ret -0.3425 | avg(50) -0.2117 | ε 0.050 | loss 0.00000 | buf 100,000 | 4810s
+Ep 39100/40000 | ret -0.7687 | avg(50) -0.2969 | ε 0.050 | loss 0.00000 | buf 100,000 | 4817s
+Ep 39150/40000 | ret -0.0206 | avg(50) -0.2786 | ε 0.050 | loss 0.00000 | buf 100,000 | 4823s
+Ep 39200/40000 | ret -0.2346 | avg(50) -0.1631 | ε 0.050 | loss 0.00000 | buf 100,000 | 4830s
+Ep 39250/40000 | ret -0.0206 | avg(50) -0.2521 | ε 0.050 | loss 0.00000 | buf 100,000 | 4836s
+Ep 39300/40000 | ret -0.6189 | avg(50) -0.2559 | ε 0.050 | loss 0.00000 | buf 100,000 | 4842s
+Ep 39350/40000 | ret -0.0216 | avg(50) -0.3532 | ε 0.050 | loss 0.00000 | buf 100,000 | 4849s
+Ep 39400/40000 | ret -0.0206 | avg(50) -0.3054 | ε 0.050 | loss 0.00001 | buf 100,000 | 4855s
+Ep 39450/40000 | ret -0.0206 | avg(50) -0.3399 | ε 0.050 | loss 0.00000 | buf 100,000 | 4861s
+Ep 39500/40000 | ret -0.7782 | avg(50) -0.1845 | ε 0.050 | loss 0.00000 | buf 100,000 | 4868s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep39500.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+Ep 39550/40000 | ret -0.0206 | avg(50) -0.1350 | ε 0.050 | loss 0.00000 | buf 100,000 | 4876s
+Ep 39600/40000 | ret -0.0210 | avg(50) -0.2103 | ε 0.050 | loss 0.00000 | buf 100,000 | 4882s
+Ep 39650/40000 | ret -0.9795 | avg(50) -0.2509 | ε 0.050 | loss 0.00000 | buf 100,000 | 4888s
+Ep 39700/40000 | ret -0.0206 | avg(50) -0.3268 | ε 0.050 | loss 0.00000 | buf 100,000 | 4895s
+Ep 39750/40000 | ret -0.6717 | avg(50) -0.2756 | ε 0.050 | loss 0.00000 | buf 100,000 | 4901s
+Ep 39800/40000 | ret -0.0216 | avg(50) -0.2013 | ε 0.050 | loss 0.00000 | buf 100,000 | 4907s
+Ep 39850/40000 | ret -1.8605 | avg(50) -0.3445 | ε 0.050 | loss 0.00000 | buf 100,000 | 4914s
+Ep 39900/40000 | ret -0.0209 | avg(50) -0.2610 | ε 0.050 | loss 0.00000 | buf 100,000 | 4920s
+Ep 39950/40000 | ret -0.0206 | avg(50) -0.2937 | ε 0.050 | loss 0.00000 | buf 100,000 | 4927s
+Ep 40000/40000 | ret -0.0206 | avg(50) -0.2408 | ε 0.050 | loss 0.00001 | buf 100,000 | 4933s
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_ep40000.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+[agent] Checkpoint saved → online_RL/runs/20260528_185349/dqn_final.pt
+[train] Returns plot → online_RL/runs/20260528_185349/returns.png
+[train] Q-loss plot  → online_RL/runs/20260528_185349/q_loss.png
+[train] Epsilon plot → online_RL/runs/20260528_185349/epsilon.png
+
+=================================================================
+[train] Training complete in 82.3 min
+[train] Best episode return : -0.0206
+[train] Best checkpoint     : online_RL/runs/20260528_185349/dqn_best.pt
+[train] Final checkpoint    : online_RL/runs/20260528_185349/dqn_final.pt
+=================================================================
+============================================================
+Training finished: Thu May 28 20:16:09 EDT 2026  (exit code: 0)
+============================================================

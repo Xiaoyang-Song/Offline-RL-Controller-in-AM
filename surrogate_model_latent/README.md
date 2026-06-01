@@ -1,8 +1,9 @@
-# Latent-Space Dynamics Surrogate for LPBF Digital Twin
+# Latent-Space Ensemble Dynamics Surrogate for LPBF Digital Twin
 
 A physics-aware surrogate model for predicting the temperature field evolution
-in a Laser Powder Bed Fusion (LPBF) process, formulated as a **stochastic
-transition in a learned latent space** with uncertainty-aware predictions.
+in a Laser Powder Bed Fusion (LPBF) process, formulated as a **deterministic
+ensemble transition in a learned latent space** with epistemic uncertainty
+estimates for online RL.
 
 ---
 
@@ -16,15 +17,30 @@ temperature field $s_{t+1}$ after the laser pass, over 12 build layers.
 
 ## Architecture
 
-The model has three learned components:
+One shared Encoder and Decoder, with **K independent deterministic transition
+MLPs** forming the ensemble:
 
 ```
-s_t  ──[Encoder]──► z_t ──[GaussianTransitionMLP]──► μ_Δz, log σ_Δz
-                                                            │
-                          z_{t+1} = z_t + μ_Δz + ε·σ_Δz   │  ε ~ N(0, I)
-                                                            ▼
-s_{t+1}  ◄──[Decoder]──  z_{t+1}
+s_t  ──[Encoder]──► z_t ──┬──[Trans_1]──► μ_Δz_1 ──┐
+        (shared)           ├──[Trans_2]──► μ_Δz_2    │  mean → z_{t+1}
+                           │      ⋮                   │  std  → epistemic σ
+                           └──[Trans_K]──► μ_Δz_K ──┘
+                                                   │
+s_{t+1}  ◄──[Decoder]──────────────────────────── z_{t+1}
+              (shared)
 ```
+
+### Why ensembles instead of a Gaussian MLP?
+
+A single Gaussian transition MLP only models **aleatoric** uncertainty (inherent
+process noise). Since the LPBF simulation is deterministic, the optimal σ under
+any NLL-based loss collapses to zero as the model improves — making the
+uncertainty signal useless.
+
+Ensemble disagreement models **epistemic** uncertainty — uncertainty from
+limited data coverage. K members agree on in-distribution (state, action) pairs
+and diverge on out-of-distribution inputs, giving the online RL controller a
+reliable signal about when not to trust the model.
 
 ### Encoder
 A deterministic residual MLP mapping the temperature field to a compact latent
@@ -34,23 +50,20 @@ $$z_t = f_\phi(s_t), \quad z_t \in \mathbb{R}^{d_z}$$
 
 Default: `state_dim=1053 → hidden=256 (×3 residual blocks) → latent_dim=64`
 
-### Gaussian Transition MLP
-A stochastic MLP predicting the **mean and log-standard-deviation of the latent
-delta**, conditioned on the current latent state and action:
+### Deterministic Transition MLP (per ensemble member)
+Each member independently predicts the latent delta conditioned on the current
+latent state and action:
 
-$$(\mu_{\Delta z},\, \log \sigma_{\Delta z}) = g_\theta(z_t,\, a_t)$$
+$$\mu_{\Delta z}^{(k)} = g_{\theta_k}(z_t,\, a_t), \quad k = 1, \ldots, K$$
 
-The next latent state is:
+The ensemble mean and std are:
 
-$$z_{t+1} = z_t + \mu_{\Delta z} + \varepsilon \cdot \exp(\log \sigma_{\Delta z}), \quad \varepsilon \sim \mathcal{N}(0, I)$$
+$$\bar{\mu}_{\Delta z} = \frac{1}{K}\sum_k \mu_{\Delta z}^{(k)}, \qquad
+\sigma_{\text{epist}} = \text{std}_k\!\left(\mu_{\Delta z}^{(k)}\right)$$
 
-During training the **deterministic path** (mean only, $\varepsilon = 0$) is
-used for reconstruction losses. Stochastic sampling is used at rollout /
-inference time to propagate uncertainty.
+The next latent is stepped with the mean: $z_{t+1} = z_t + \bar{\mu}_{\Delta z}$.
 
-Default: `(latent_dim+1=65) → hidden=128 (×3 residual blocks) → 2×latent_dim`
-
-Log-sigma is clamped to $[-5,\, 2]$ to prevent NLL explosion or collapse.
+Default: `(latent_dim+1) → hidden=128 (×3 residual blocks) → latent_dim`  ×K members
 
 ### Decoder
 A deterministic residual MLP mapping back to state space:
@@ -71,68 +84,55 @@ layer $t$ (see ROI section below).
 
 ### 1. Autoencoder Reconstruction Loss
 
-Ensures the encoder–decoder pair forms a faithful autoencoder of the current
-state:
+Ensures the shared encoder–decoder pair forms a faithful autoencoder of the
+current state:
 
 $$\mathcal{L}_{\text{recon-st}} = \frac{1}{N} \sum_i w_t^{(i)} \bigl(\hat{s}_t^{(i)} - s_t^{(i)}\bigr)^2, \quad \hat{s}_t = h_\psi(f_\phi(s_t))$$
 
-### 2. Next-State Prediction Loss
+### 2. Per-Member Next-State Prediction Loss
 
-Ensures the full encoder → transition (mean) → decoder chain correctly predicts
-$s_{t+1}$:
+Each ensemble member independently predicts $s_{t+1}$. All K losses are
+averaged so every member learns the full dynamics:
 
-$$\mathcal{L}_{\text{recon-st1}} = \frac{1}{N} \sum_i w_t^{(i)} \bigl(\hat{s}_{t+1}^{(i)} - s_{t+1}^{(i)}\bigr)^2, \quad \hat{s}_{t+1} = h_\psi\!\left(z_t + \mu_{\Delta z}\right)$$
+$$\mathcal{L}_{\text{recon-st1}} = \frac{1}{K} \sum_{k=1}^{K} \frac{1}{N} \sum_i w_t^{(i)} \bigl(\hat{s}_{t+1,k}^{(i)} - s_{t+1}^{(i)}\bigr)^2, \quad \hat{s}_{t+1,k} = h_\psi\!\left(z_t + \mu_{\Delta z}^{(k)}\right)$$
 
-### 3. Gaussian NLL Transition Loss
+The batched decoder call `decode(K×B predictions)` makes this efficient — a
+single decoder forward pass covers all K members.
 
-Trains the transition model to be **calibrated in latent space**. The ground
-truth latent delta is obtained by encoding the next state:
+### 3. Multi-Step Rollout Loss (optional)
 
-$$\Delta z^* = f_\phi(s_{t+1}) - z_t$$
+Auto-regressive reconstruction loss over $k$ steps using the ensemble mean for
+stepping (no teacher forcing):
 
-The Gaussian NLL of $\Delta z^*$ under the predicted distribution $\mathcal{N}(\mu_{\Delta z},\, \sigma_{\Delta z}^2)$ is:
-
-$$\mathcal{L}_{\text{nll}} = \frac{1}{d_z} \sum_{j=1}^{d_z} \frac{1}{2} \left[ 2 \log \sigma_{\Delta z}^{(j)} + \frac{\left(\Delta z^{*(j)} - \text{sg}[\mu_{\Delta z}^{(j)}]\right)^2}{\sigma_{\Delta z}^{(j)\,2}} \right]$$
-
-where $\text{sg}[\cdot]$ denotes **stop-gradient** (`.detach()` in PyTorch).
-
-The constant $\frac{1}{2}\log(2\pi)$ is omitted as it does not affect gradients.
-
-**Why β-NLL instead of standard NLL?** (Seitzer et al., ICLR 2022)
-
-Standard NLL ($\beta=1$, no stop-gradient) causes **variance collapse**: as $\mu$ improves, the residuals shrink, and the NLL gradient pushes $\sigma \to 0$ to match — eventually saturating the lower clamp at `log_sigma_min=-5` ($\sigma \approx 0.0067$, constant across all layers).
-
-The β-NLL fixes this by stop-grading the $\sigma^{2\beta}$ weight on the quadratic term:
-
-| $\beta$ | $\mu$ gradient | $\sigma$ gradient | Effect |
-|---------|---------------|-------------------|--------|
-| 0 | $-({\Delta z^* - \mu})/\sigma^2$ | only from $\log\sigma^2$ | full stop-grad; $\sigma$ trains independently of $\mu$ quality |
-| **0.5** | $-({\Delta z^* - \mu})/\sigma$ | balanced | **recommended** — breaks collapse while keeping $\mu$ uncertainty-aware |
-| 1 | $-(\Delta z^* - \mu)$ | standard | uniform $\mu$ gradient; $\sigma$ can still collapse |
-
-With $\beta=0.5$, $\mu$ is trained jointly by both reconstruction losses and a softer NLL signal, while $\sigma$ learns to predict the actual per-layer residual magnitude without racing $\mu$ to zero.
-
-### 4. Multi-Step Rollout Loss (optional)
-
-Auto-regressive reconstruction loss over $k$ steps in latent space (no teacher
-forcing, no sampling — uses mean path):
-
-$$z_{t+1}^{\text{pred}} = z_t^{\text{pred}} + \mu_{\Delta z}(z_t^{\text{pred}},\, a_t)$$
+$$z_{t+1}^{\text{pred}} = z_t^{\text{pred}} + \bar{\mu}_{\Delta z}(z_t^{\text{pred}},\, a_t)$$
 
 $$\mathcal{L}_{\text{rollout}} = \frac{1}{k} \sum_{t=1}^{k} \frac{1}{N} \sum_i w_{t-1}^{(i)} \bigl(h_\psi(z_t^{\text{pred}})^{(i)} - s_t^{(i)}\bigr)^2$$
 
-This penalises **error accumulation** across layers, analogous to the rollout
-loss in `surrogate_model/`.
+This penalises **error accumulation** across layers.
 
 ### Total Loss
 
-$$\boxed{\mathcal{L} = \lambda_{\text{rs}}\,\mathcal{L}_{\text{recon-st}} + \lambda_{\text{rs1}}\,\mathcal{L}_{\text{recon-st1}} + \lambda_{\text{nll}}\,\mathcal{L}_{\text{nll}} + \lambda_{\text{ro}}\,\mathcal{L}_{\text{rollout}}}$$
+$$\boxed{\mathcal{L} = \lambda_{\text{rs}}\,\mathcal{L}_{\text{recon-st}} + \lambda_{\text{rs1}}\,\mathcal{L}_{\text{recon-st1}} + \lambda_{\text{ro}}\,\mathcal{L}_{\text{rollout}}}$$
 
-Default weights: $\lambda_{\text{rs}} = 1.0,\; \lambda_{\text{rs1}} = 1.0,\; \lambda_{\text{nll}} = 0.1,\; \lambda_{\text{ro}} = 0.1$
+Default weights: $\lambda_{\text{rs}} = 1.0,\; \lambda_{\text{rs1}} = 1.0,\; \lambda_{\text{ro}} = 0.1$
 
-The NLL weight is kept smaller because the NLL is on a different scale
-(latent space, dimensionality $d_z$) compared to the MSE losses (state space,
-dimensionality 1053).
+---
+
+## Epistemic Uncertainty
+
+At inference, the ensemble std over latent deltas is the epistemic uncertainty
+signal:
+
+$$\sigma_{\text{epist}}(z_t, a_t) = \text{std}_k\!\left(\mu_{\Delta z}^{(k)}\right) \in \mathbb{R}^{d_z}$$
+
+This quantity is:
+- **Small** when (z_t, a_t) is well covered by training data — all K members agree
+- **Large** when (z_t, a_t) is out of distribution — members diverge
+
+For online RL, the mean over latent dimensions $\bar{\sigma}_{\text{epist}} = \frac{1}{d_z}\sum_j \sigma_{\text{epist},j}$ is returned per rollout step and can be used to:
+- Gate model-based rollouts (trust model only when $\bar{\sigma}_{\text{epist}}$ is small)
+- Provide an exploration bonus (visit states with high $\bar{\sigma}_{\text{epist}}$)
+- Detect when real environment interaction is needed (MBPO-style branching)
 
 ---
 
@@ -175,23 +175,16 @@ A sigmoid soft-step converts distance to weight:
 
 $$\tilde{w}^{(i,l)} = 1 + (\lambda_{\text{roi}} - 1) \cdot \underbrace{\sigma\!\left(-\frac{d^{(i,l)}}{\delta}\right)}_{\to\,1 \text{ inside},\; \to\,0 \text{ outside}}$$
 
-where $\delta = \delta_{\text{frac}} \times \min(W, H)$ is the soft-edge width.
-
-Each row is then normalised so the **mean weight per layer equals 1**:
-
-$$w^{(i,l)} = \frac{\tilde{w}^{(i,l)}}{\frac{1}{N}\sum_j \tilde{w}^{(j,l)}}$$
+Each row is normalised so the mean weight per layer equals 1.
 
 ### Parameters
 
 | Parameter | Default | Meaning |
 |-----------|---------|---------|
-| `ROI_INITIAL_FRACTION` | `0.4` | `squareSideFraction` at layer 0 — from MATLAB `initialFraction` |
-| `ROI_FINAL_FRACTION` | `0.5` | `squareSideFraction` at layer 11 — from MATLAB `finalFraction` |
-| `ROI_BOOST` | `5.0` | $\lambda_{\text{roi}}$: weight multiplier inside the square |
-| `ROI_EDGE_SIGMA_FRAC` | `0.05` | $\delta_{\text{frac}}$: soft-edge width (numerical only, no physical meaning) |
-
-`ROI_INITIAL_FRACTION` and `ROI_FINAL_FRACTION` should match the MATLAB
-`paramsStruct` exactly and should not be changed unless the simulation changes.
+| `ROI_INITIAL_FRACTION` | `0.4` | `squareSideFraction` at layer 0 |
+| `ROI_FINAL_FRACTION` | `0.5` | `squareSideFraction` at layer 11 |
+| `ROI_BOOST` | `5.0` | Weight multiplier inside the square |
+| `ROI_EDGE_SIGMA_FRAC` | `0.05` | Soft-edge width as fraction of min(width, height) |
 
 ---
 
@@ -211,7 +204,7 @@ sbatch jobs/train_latent_surrogate.sh
 Override any argument at submission time:
 
 ```bash
-sbatch jobs/train_latent_surrogate.sh --latent_dim 128 --nll_weight 0.05
+sbatch jobs/train_latent_surrogate.sh --n_ensemble 7 --latent_dim 64
 ```
 
 ### Key hyperparameters
@@ -219,14 +212,23 @@ sbatch jobs/train_latent_surrogate.sh --latent_dim 128 --nll_weight 0.05
 | Argument | Default | Meaning |
 |----------|---------|---------|
 | `--latent_dim` | `64` | Latent space dimension $d_z$ |
+| `--n_ensemble` | `5` | Number of ensemble members $K$ |
 | `--enc_hidden / enc_depth` | `256 / 3` | Encoder width and depth |
-| `--trans_hidden / trans_depth` | `128 / 3` | Transition MLP width and depth |
+| `--trans_hidden / trans_depth` | `128 / 3` | Transition MLP width and depth (per member) |
 | `--dec_hidden / dec_depth` | `256 / 3` | Decoder width and depth |
 | `--recon_st_weight` | `1.0` | $\lambda_{\text{rs}}$ |
 | `--recon_st1_weight` | `1.0` | $\lambda_{\text{rs1}}$ |
-| `--nll_weight` | `0.1` | $\lambda_{\text{nll}}$ |
 | `--rollout_steps` | `12` | $k$ for rollout loss (0 = off) |
 | `--rollout_weight` | `0.1` | $\lambda_{\text{ro}}$ |
+
+### Parameter count (K=5, latent_dim=32)
+
+| Component | Parameters |
+|-----------|-----------|
+| Encoder (shared) | 676,384 |
+| Transitions (×5) | 546,720 |
+| Decoder (shared) | 677,405 |
+| **Total** | **1,900,509** |
 
 ### Outputs
 
@@ -235,7 +237,7 @@ surrogate_model_latent/runs/<timestamp>/
   latent_best.pt          ← best validation checkpoint
   latent_final.pt         ← final epoch checkpoint
   loss_curves.png         ← total train / val loss
-  loss_components.png     ← per-component breakdown
+  loss_components.png     ← per-component breakdown (recon_st, recon_st1, rollout)
 ```
 
 ---
@@ -254,9 +256,9 @@ python -m surrogate_model_latent.evaluate \
 |--------|-------------|
 | Per-layer MAE [K] | Teacher-forced single-step, raw Kelvin |
 | Per-layer RMSE [K] | Single-step vs auto-regressive rollout |
-| Per-layer mean $\sigma$ | Mean transition uncertainty across latent dims |
+| Per-layer epistemic std | Mean ensemble std over latent dims per rollout step |
 | Autoencoder RMSE [K] | Encoder → decoder round-trip error |
-| Loss components | `recon_st`, `recon_st1`, `nll` on test set |
+| Loss components | `recon_st`, `recon_st1` on test set |
 
 ### Outputs
 
@@ -264,11 +266,11 @@ python -m surrogate_model_latent.evaluate \
 <run_dir>/
   per_layer_mae.png
   per_layer_rmse.png
-  per_layer_uncertainty.png
+  per_layer_uncertainty.png       ← epistemic std per layer (ensemble disagreement)
   traj_000/
-    layer_01_LP<p>W.png     ← GT | Pred | Error  (jet/hot colormap, MATLAB style)
+    layer_01_LP<p>W.png           ← GT | Pred | Error  (jet/hot colormap, MATLAB style)
     action_sequence.png
-    sigma_per_layer.png
+    sigma_per_layer.png           ← epistemic std per layer for this trajectory
     actions.txt
 ```
 
@@ -278,10 +280,11 @@ python -m surrogate_model_latent.evaluate \
 
 ```
 surrogate_model_latent/
-  model.py      ← Encoder, GaussianTransitionMLP, Decoder, LatentDynamicsModel
+  model.py      ← Encoder, DeterministicTransitionMLP, Decoder,
+                   EnsembleLatentDynamicsModel
   dataset.py    ← LatentSurrogateDataset, LatentTrajectoryDataset,
                    build_normalizers, compute_roi_weights_table
-  train.py      ← multi-term loss, training loop, load_latent_surrogate()
+  train.py      ← loss functions, training loop, load_latent_surrogate()
   evaluate.py   ← per-layer metrics, 2-D field plots (MATLAB pdeplot style)
   README.md     ← this file
 
@@ -296,7 +299,8 @@ jobs/
 | | `surrogate_model` | `surrogate_model_latent` |
 |---|---|---|
 | Prediction space | State space directly | Latent space $\mathbb{R}^{d_z}$ |
-| Uncertainty | None | Per-dim $\sigma$ from transition MLP |
-| Loss | MSE + rollout MSE | Recon-st + Recon-st1 + NLL + rollout |
+| Uncertainty | None | Epistemic: ensemble std of K members |
+| Uncertainty type | — | Epistemic (OOD detection, online RL) |
+| Loss | MSE + rollout MSE | Recon-st + Recon-st1 (per-member) + rollout |
 | Physics weights | None | Square ROI, per-layer, growing |
-| Parameters | ~1.5 M | ~1.5 M (split across 3 networks) |
+| Parameters (K=5) | ~1.5 M | ~1.9 M (K-1 extra transition MLPs) |

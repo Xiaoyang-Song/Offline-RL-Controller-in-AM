@@ -1,4 +1,4 @@
-from .model import LatentDynamicsModel, Encoder, GaussianTransitionMLP, Decoder
+from .model import EnsembleLatentDynamicsModel, Encoder, DeterministicTransitionMLP, Decoder
 from .dataset import (
     LatentSurrogateDataset,
     LatentTrajectoryDataset,

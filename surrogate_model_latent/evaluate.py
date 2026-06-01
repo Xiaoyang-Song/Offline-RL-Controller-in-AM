@@ -55,7 +55,7 @@ from surrogate_model_latent.dataset import (
     LatentTrajectoryDataset,
     LatentSurrogateDataset,
 )
-from surrogate_model_latent.train import load_latent_surrogate, compute_single_step_losses
+from surrogate_model_latent.train import load_latent_surrogate, compute_single_step_losses, weighted_mse
 
 
 # =============================================================================
@@ -115,10 +115,10 @@ def evaluate_single_step(
             a_in = traj_a[:, t,     :]
             s_gt = traj_s[:, t + 1, :]
 
-            z_t             = model.encode(s_in)
-            mu_delta, _     = model.predict_delta(z_t, a_in)
-            s_pred          = model.decode(z_t + mu_delta)
-            diff_k          = (s_pred - s_gt) * ss    # Kelvin
+            z_t            = model.encode(s_in)
+            mu_mean, _     = model.predict_ensemble(z_t, a_in)
+            s_pred         = model.decode(z_t + mu_mean)
+            diff_k         = (s_pred - s_gt) * ss    # Kelvin
 
             abs_err[t].extend(diff_k.abs().mean(dim=-1).cpu().numpy().tolist())
             sq_err[t].extend((diff_k ** 2).mean(dim=-1).cpu().numpy().tolist())
@@ -165,10 +165,10 @@ def evaluate_rollout(
         T = min(T1 - 1, traj_len)
 
         # Auto-regressive rollout in latent space
-        pred_states, pred_sigmas = model.rollout(
-            traj_s[:, 0, :], traj_a[:, :T, :], deterministic=True
+        pred_states, epistemic_stds = model.rollout(
+            traj_s[:, 0, :], traj_a[:, :T, :]
         )
-        # pred_states : (B, T, D)   pred_sigmas : (B, T, latent_dim)
+        # pred_states    : (B, T, D)   epistemic_stds : (B, T)
 
         for t in range(T):
             s_pred_k = pred_states[:, t, :] * ss + sm
@@ -180,7 +180,7 @@ def evaluate_rollout(
         pred_np    = (pred_states * ss + sm).cpu().numpy()                  # (B, T, D)
         gt_np      = (traj_s[:, 1:T+1, :] * ss + sm).cpu().numpy()         # (B, T, D)
         actions_np = traj_a[:, :T, 0].cpu().numpy() * action_std + action_mean  # (B, T)
-        sigma_np   = pred_sigmas.mean(dim=-1).cpu().numpy()                 # (B, T)
+        sigma_np   = epistemic_stds.cpu().numpy()                           # (B, T)
 
         for b in range(B):
             all_preds.append(pred_np[b])
@@ -210,12 +210,11 @@ def evaluate_loss_components(
         a         = a.to(device)
         s2        = s2.to(device)
         layer_idx = layer_idx.to(device)
-        L_rs, L_rs1, L_nll = compute_single_step_losses(
+        L_rs, L_rs1 = compute_single_step_losses(
             model, s, a, s2, layer_idx, roi_table
         )
         agg["recon_st"]  += L_rs.item()
         agg["recon_st1"] += L_rs1.item()
-        agg["nll"]       += L_nll.item()
         n += 1
     return {k: v / max(n, 1) for k, v in agg.items()}
 
@@ -298,18 +297,18 @@ def plot_action_sequence(
 
 
 def plot_sigma_sequence(
-    sigmas:   np.ndarray,   # (T,) mean σ per layer
+    sigmas:   np.ndarray,   # (T,) mean ensemble std per layer
     traj_idx: int,
     out_path: str,
 ) -> None:
-    """Per-layer mean transition σ for one trajectory."""
+    """Per-layer mean epistemic uncertainty (ensemble std) for one trajectory."""
     T      = len(sigmas)
     layers = np.arange(1, T + 1)
     fig, ax = plt.subplots(figsize=(9, 3))
     ax.plot(layers, sigmas, marker="o", color="tab:orange", linewidth=1.5)
     ax.set_xlabel("Layer")
-    ax.set_ylabel("Mean transition σ")
-    ax.set_title(f"Trajectory {traj_idx} — Per-layer Transition Uncertainty")
+    ax.set_ylabel("Mean ensemble std (epistemic uncertainty)")
+    ax.set_title(f"Trajectory {traj_idx} — Per-layer Epistemic Uncertainty")
     ax.set_xticks(layers)
     ax.grid(True, alpha=0.3)
     fig.tight_layout()
@@ -444,10 +443,10 @@ def plot_per_layer_uncertainty(
     layers = np.arange(1, len(per_layer_sigma) + 1)
     fig, ax = plt.subplots(figsize=(9, 5))
     ax.plot(layers, per_layer_sigma, marker="o", color="tab:orange",
-            label="Mean transition σ (latent space)")
+            label="Mean ensemble std (epistemic uncertainty)")
     ax.set_xlabel("Layer index")
-    ax.set_ylabel("Mean transition σ")
-    ax.set_title("Latent Surrogate — Per-Layer Transition Uncertainty (auto-regressive)")
+    ax.set_ylabel("Mean ensemble std")
+    ax.set_title("Latent Ensemble Surrogate — Per-Layer Epistemic Uncertainty (auto-regressive)")
     ax.legend()
     ax.grid(True, alpha=0.3)
     ax.set_xticks(layers)

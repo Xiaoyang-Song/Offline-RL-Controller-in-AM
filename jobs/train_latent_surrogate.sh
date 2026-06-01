@@ -44,19 +44,18 @@ DATA_PATH="Data/Dataset:layer_12_stepsize_10_samples_3000_150_400_lc.pkl"
 
 # Model architecture
 LATENT_DIM=32       # latent space dimension
+N_ENSEMBLE=5        # number of ensemble transition members
 ENC_HIDDEN=256      # encoder hidden width
 ENC_DEPTH=3         # encoder residual blocks
-TRANS_HIDDEN=128    # transition MLP hidden width
-TRANS_DEPTH=3       # transition MLP residual blocks
+TRANS_HIDDEN=128    # transition MLP hidden width (per member)
+TRANS_DEPTH=3       # transition MLP residual blocks (per member)
 DEC_HIDDEN=256      # decoder hidden width
 DEC_DEPTH=3         # decoder residual blocks
 DROPOUT=0.1
 
 # Loss weights
 RECON_ST_WEIGHT=1.0   # autoencoder reconstruction of s_t
-RECON_ST1_WEIGHT=1.0  # predicted s_{t+1} reconstruction
-NLL_WEIGHT=0.2        # β-NLL weight
-NLL_BETA=0.5          # β for β-NLL: 0=full stop-grad, 0.5=balanced, 1=uniform μ gradient
+RECON_ST1_WEIGHT=1.0  # per-member predicted s_{t+1} reconstruction (averaged over K)
 
 # Multi-step rollout: set ROLLOUT_STEPS>1 to enable
 # Recommended: 12 (full trajectory) — prevents rollout error accumulation
@@ -86,6 +85,7 @@ SEED=42
 python -m surrogate_model_latent.train \
     --data_path        "$DATA_PATH" \
     --latent_dim       $LATENT_DIM \
+    --n_ensemble       $N_ENSEMBLE \
     --enc_hidden       $ENC_HIDDEN \
     --enc_depth        $ENC_DEPTH \
     --trans_hidden     $TRANS_HIDDEN \
@@ -95,8 +95,6 @@ python -m surrogate_model_latent.train \
     --dropout          $DROPOUT \
     --recon_st_weight  $RECON_ST_WEIGHT \
     --recon_st1_weight $RECON_ST1_WEIGHT \
-    --nll_weight       $NLL_WEIGHT \
-    --nll_beta         $NLL_BETA \
     --rollout_steps    $ROLLOUT_STEPS \
     --rollout_weight   $ROLLOUT_WEIGHT \
     --roi_boost              $ROI_BOOST \
