@@ -399,7 +399,7 @@ def plot_loss(loss_history, fname='q_learning_loss.png'):
 
 if __name__ == '__main__':
     # n = 5000
-    n=1000
+    n=500
     step_size = 10
     trajectory_length = 12
     lb = 150

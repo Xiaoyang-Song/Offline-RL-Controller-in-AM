@@ -45,7 +45,8 @@ echo "GPU      : $(python -c 'import torch; print(torch.cuda.get_device_name(0) 
 echo "============================================================"
 
 # ── Surrogate checkpoint (latent ensemble) ───────────────────────────────────
-SURROGATE="surrogate_model_latent/runs/20260601_162903/latent_best.pt"
+# SURROGATE="surrogate_model_latent/runs/20260601_162903/latent_best.pt"
+SURROGATE="surrogate_model_latent/runs/20260602_125822/latent_best.pt"
 
 # ── Environment parameters (must match MATLAB paramsStruct in test.py) ───────
 T_L=2000.0          # lower nominal temperature bound [K]  (tempRange(1))

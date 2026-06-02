@@ -40,7 +40,8 @@ echo "============================================================"
 
 # ── default hyper-parameters ─────────────────────────────────────────────────
 # DATA_PATH="Data/Dataset:layer_12_stepsize_10_samples_5000_150_400.pkl"
-DATA_PATH="Data/Dataset:layer_12_stepsize_10_samples_3000_150_400_lc.pkl"
+# DATA_PATH="Data/Dataset:layer_12_stepsize_10_samples_3000_150_400_lc.pkl"
+DATA_PATH="Data/Dataset:layer_12_stepsize_10_samples_500_150_400_lc.pkl"
 
 # Model architecture
 LATENT_DIM=32       # latent space dimension
