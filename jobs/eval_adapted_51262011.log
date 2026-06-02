@@ -1,0 +1,21 @@
+============================================================
+Job ID   : 51262011
+Node     : gl1022
+Started  : Mon Jun  1 22:09:03 EDT 2026
+============================================================
+Python : /home/xysong/.conda/envs/RL/bin/python
+Torch  : 2.5.1+cu121
+CUDA   : True
+MATLAB : /sw/pkgs/arc/matlab/R2024b/bin/matlab
+============================================================
+adapt_dir        : surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150
+base_checkpoint  : surrogate_domain_adaptation/runs/base/20260601_174626/base_best.pt
+cool_time        : 0.15 s
+K values         : 0 5 10 20 50 100
+============================================================
+
+Running MATLAB evaluations (coolTime=0.15 s)...
+
+------------------------------------------------------------
+  K=0  checkpoint: surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K000/online_rl/dqn_best.pt
+------------------------------------------------------------

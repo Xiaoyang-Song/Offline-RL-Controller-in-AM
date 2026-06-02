@@ -14,3 +14,522 @@ adapted_checkpoint: surrogate_domain_adaptation/runs/base/20260601_174626/adapt_
 out_dir           : surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl
 ============================================================
 [job] K=20: training on domain-adapted surrogate
+=================================================================
+[train] Online DQN — LPBF Laser-Power Controller
+[train] Output dir  : surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl
+[train] Device      : cuda
+[train] Mode        : standard
+=================================================================
+
+[train] Loading base model : surrogate_domain_adaptation/runs/base/20260601_174626/base_best.pt
+[train] Loading adapters   : surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/adapted.pt
+[train] Surrogate   : AdaptedEnsembleLatentDynamicsModel(adapters=[enc+trans+dec], base=1,963,645 params (frozen), adapter=12,576 params (trainable))
+[LPBFEnv] Mesh loaded: 1053 nodes  X∈[0.00, 12.00]  Y∈[0.00, 3.00]
+[train] Action space : 26 actions  (150–400 W)
+[train] Temp window  : [2000, 2800] K
+[train] obs_dim      : 1054  (1053 nodes + 1 layer token)
+[train] QNet(state_dim=1054, num_actions=26, hidden=256, depth=4, n_layers=12, layer_embed_dim=8, params=809,594)
+[train] ReplayBuffer(capacity=100,000, size=0, state_dim=1054)
+
+[train] Starting 30000 episodes  (warmup=50, Double-DQN=True, target_update_freq=10)
+-----------------------------------------------------------------
+Ep     1/30000 | ret -10.8235 | avg(1) -10.8235 | ε 1.000 | loss nan | σ_norm 1.404 | buf 12 | 0s [warmup]
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_best.pt
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_best.pt
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_best.pt
+Ep   100/30000 | ret -7.3358 | avg(100) -8.3846 | ε 0.989 | loss 0.00059 | σ_norm 1.075 | buf 1,200 | 11s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_best.pt
+Ep   200/30000 | ret -7.3092 | avg(100) -8.3271 | ε 0.966 | loss 0.00071 | σ_norm 0.999 | buf 2,400 | 25s
+Ep   300/30000 | ret -5.7987 | avg(100) -8.1712 | ε 0.943 | loss 0.00024 | σ_norm 1.002 | buf 3,600 | 39s
+Ep   400/30000 | ret -9.3464 | avg(100) -7.9621 | ε 0.920 | loss 0.00085 | σ_norm 0.999 | buf 4,800 | 54s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_best.pt
+Ep   500/30000 | ret -7.5340 | avg(100) -7.4132 | ε 0.897 | loss 0.00012 | σ_norm 1.003 | buf 6,000 | 68s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_best.pt
+Ep   600/30000 | ret -9.0212 | avg(100) -7.1407 | ε 0.875 | loss 0.00014 | σ_norm 0.999 | buf 7,200 | 83s
+Ep   700/30000 | ret -11.7552 | avg(100) -7.2355 | ε 0.852 | loss 0.00017 | σ_norm 1.000 | buf 8,400 | 98s
+Ep   800/30000 | ret -7.3634 | avg(100) -6.6645 | ε 0.829 | loss 0.00011 | σ_norm 1.004 | buf 9,600 | 112s
+Ep   900/30000 | ret -4.9432 | avg(100) -6.7184 | ε 0.806 | loss 0.00014 | σ_norm 1.000 | buf 10,800 | 127s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_best.pt
+Ep  1000/30000 | ret -9.7912 | avg(100) -6.2690 | ε 0.783 | loss 0.00013 | σ_norm 1.000 | buf 12,000 | 142s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_ep01000.pt
+[train] Returns plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/returns.png
+[train] Q-loss plot  → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/q_loss.png
+[train] Epsilon plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epsilon.png
+[train] Epistemic-std plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epistemic_std.png
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_best.pt
+Ep  1100/30000 | ret -7.0148 | avg(100) -6.0601 | ε 0.761 | loss 0.00304 | σ_norm 0.999 | buf 13,200 | 158s
+Ep  1200/30000 | ret -7.5685 | avg(100) -5.8374 | ε 0.738 | loss 0.00007 | σ_norm 1.003 | buf 14,400 | 173s
+Ep  1300/30000 | ret -5.1364 | avg(100) -5.2519 | ε 0.715 | loss 0.00006 | σ_norm 0.997 | buf 15,600 | 187s
+Ep  1400/30000 | ret -8.9703 | avg(100) -5.9184 | ε 0.692 | loss 0.00008 | σ_norm 1.000 | buf 16,800 | 202s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_best.pt
+Ep  1500/30000 | ret -4.7248 | avg(100) -5.2172 | ε 0.669 | loss 0.00034 | σ_norm 1.004 | buf 18,000 | 218s
+Ep  1600/30000 | ret -7.1639 | avg(100) -4.8976 | ε 0.647 | loss 0.00007 | σ_norm 1.002 | buf 19,200 | 233s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_best.pt
+Ep  1700/30000 | ret -7.1652 | avg(100) -4.6728 | ε 0.624 | loss 0.00005 | σ_norm 0.998 | buf 20,400 | 248s
+Ep  1800/30000 | ret -7.4024 | avg(100) -4.4635 | ε 0.601 | loss 0.00007 | σ_norm 1.001 | buf 21,600 | 263s
+Ep  1900/30000 | ret -4.6878 | avg(100) -4.3288 | ε 0.578 | loss 0.00011 | σ_norm 0.999 | buf 22,800 | 278s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_best.pt
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_best.pt
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_best.pt
+Ep  2000/30000 | ret -6.4655 | avg(100) -3.6232 | ε 0.555 | loss 0.00005 | σ_norm 1.004 | buf 24,000 | 294s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_ep02000.pt
+[train] Returns plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/returns.png
+[train] Q-loss plot  → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/q_loss.png
+[train] Epsilon plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epsilon.png
+[train] Epistemic-std plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epistemic_std.png
+Ep  2100/30000 | ret -2.9009 | avg(100) -3.7000 | ε 0.533 | loss 0.00009 | σ_norm 1.000 | buf 25,200 | 310s
+Ep  2200/30000 | ret -6.4656 | avg(100) -3.6575 | ε 0.510 | loss 0.00005 | σ_norm 0.999 | buf 26,400 | 325s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_best.pt
+Ep  2300/30000 | ret -1.9767 | avg(100) -3.5244 | ε 0.487 | loss 0.00003 | σ_norm 1.003 | buf 27,600 | 341s
+Ep  2400/30000 | ret -0.4995 | avg(100) -3.1575 | ε 0.464 | loss 0.00004 | σ_norm 0.998 | buf 28,800 | 356s
+Ep  2500/30000 | ret -2.8041 | avg(100) -3.1534 | ε 0.441 | loss 0.00003 | σ_norm 1.000 | buf 30,000 | 371s
+Ep  2600/30000 | ret -5.0267 | avg(100) -2.8068 | ε 0.419 | loss 0.00003 | σ_norm 1.000 | buf 31,200 | 387s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_best.pt
+Ep  2700/30000 | ret -3.5365 | avg(100) -2.4735 | ε 0.396 | loss 0.00004 | σ_norm 1.001 | buf 32,400 | 402s
+Ep  2800/30000 | ret -2.6520 | avg(100) -2.7168 | ε 0.373 | loss 0.00006 | σ_norm 0.998 | buf 33,600 | 418s
+Ep  2900/30000 | ret -6.1619 | avg(100) -2.4261 | ε 0.350 | loss 0.00001 | σ_norm 1.000 | buf 34,800 | 433s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_best.pt
+Ep  3000/30000 | ret -5.2751 | avg(100) -2.0013 | ε 0.327 | loss 0.00002 | σ_norm 1.003 | buf 36,000 | 449s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_ep03000.pt
+[train] Returns plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/returns.png
+[train] Q-loss plot  → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/q_loss.png
+[train] Epsilon plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epsilon.png
+[train] Epistemic-std plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epistemic_std.png
+Ep  3100/30000 | ret -2.2209 | avg(100) -1.6756 | ε 0.305 | loss 0.00005 | σ_norm 0.999 | buf 37,200 | 465s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_best.pt
+Ep  3200/30000 | ret -0.7691 | avg(100) -1.8682 | ε 0.282 | loss 0.00003 | σ_norm 1.000 | buf 38,400 | 481s
+Ep  3300/30000 | ret -8.2212 | avg(100) -1.6787 | ε 0.259 | loss 0.00001 | σ_norm 0.999 | buf 39,600 | 497s
+Ep  3400/30000 | ret -1.0187 | avg(100) -1.6554 | ε 0.236 | loss 0.00006 | σ_norm 1.000 | buf 40,800 | 513s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_best.pt
+Ep  3500/30000 | ret -1.9181 | avg(100) -1.5081 | ε 0.213 | loss 0.00002 | σ_norm 1.000 | buf 42,000 | 528s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_best.pt
+Ep  3600/30000 | ret -1.3313 | avg(100) -1.2688 | ε 0.191 | loss 0.00001 | σ_norm 1.001 | buf 43,200 | 544s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_best.pt
+Ep  3700/30000 | ret -0.3193 | avg(100) -1.0788 | ε 0.168 | loss 0.00003 | σ_norm 1.000 | buf 44,400 | 560s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_best.pt
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_best.pt
+Ep  3800/30000 | ret -0.2086 | avg(100) -0.9819 | ε 0.145 | loss 0.00002 | σ_norm 0.999 | buf 45,600 | 576s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_best.pt
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_best.pt
+Ep  3900/30000 | ret -0.0195 | avg(100) -0.8407 | ε 0.122 | loss 0.00002 | σ_norm 1.000 | buf 46,800 | 592s
+Ep  4000/30000 | ret -1.2936 | avg(100) -0.6256 | ε 0.099 | loss 0.00003 | σ_norm 1.000 | buf 48,000 | 608s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_ep04000.pt
+[train] Returns plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/returns.png
+[train] Q-loss plot  → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/q_loss.png
+[train] Epsilon plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epsilon.png
+[train] Epistemic-std plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epistemic_std.png
+Ep  4100/30000 | ret -0.0226 | avg(100) -0.4622 | ε 0.077 | loss 0.00003 | σ_norm 1.001 | buf 49,200 | 625s
+Ep  4200/30000 | ret -0.0337 | avg(100) -0.2716 | ε 0.054 | loss 0.00003 | σ_norm 0.998 | buf 50,400 | 641s
+Ep  4300/30000 | ret -0.0414 | avg(100) -0.3370 | ε 0.050 | loss 0.00001 | σ_norm 1.000 | buf 51,600 | 657s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_best.pt
+Ep  4400/30000 | ret -0.0197 | avg(100) -0.3555 | ε 0.050 | loss 0.00001 | σ_norm 1.001 | buf 52,800 | 673s
+Ep  4500/30000 | ret -0.0249 | avg(100) -0.2202 | ε 0.050 | loss 0.00002 | σ_norm 1.000 | buf 54,000 | 689s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_best.pt
+Ep  4600/30000 | ret -0.5928 | avg(100) -0.2017 | ε 0.050 | loss 0.00001 | σ_norm 0.999 | buf 55,200 | 705s
+Ep  4700/30000 | ret -1.5053 | avg(100) -0.2855 | ε 0.050 | loss 0.00003 | σ_norm 1.000 | buf 56,400 | 721s
+Ep  4800/30000 | ret -0.5614 | avg(100) -0.2684 | ε 0.050 | loss 0.00001 | σ_norm 1.001 | buf 57,600 | 737s
+Ep  4900/30000 | ret -0.0228 | avg(100) -0.2833 | ε 0.050 | loss 0.00002 | σ_norm 1.000 | buf 58,800 | 753s
+Ep  5000/30000 | ret -0.0203 | avg(100) -0.2674 | ε 0.050 | loss 0.00002 | σ_norm 0.999 | buf 60,000 | 769s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_ep05000.pt
+[train] Returns plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/returns.png
+[train] Q-loss plot  → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/q_loss.png
+[train] Epsilon plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epsilon.png
+[train] Epistemic-std plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epistemic_std.png
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_best.pt
+Ep  5100/30000 | ret -0.0310 | avg(100) -0.2708 | ε 0.050 | loss 0.00005 | σ_norm 1.000 | buf 61,200 | 787s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_best.pt
+Ep  5200/30000 | ret -0.0270 | avg(100) -0.2732 | ε 0.050 | loss 0.00005 | σ_norm 0.999 | buf 62,400 | 803s
+Ep  5300/30000 | ret -0.0204 | avg(100) -0.3254 | ε 0.050 | loss 0.00001 | σ_norm 1.000 | buf 63,600 | 819s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_best.pt
+Ep  5400/30000 | ret -0.0220 | avg(100) -0.3706 | ε 0.050 | loss 0.00002 | σ_norm 1.000 | buf 64,800 | 835s
+Ep  5500/30000 | ret -0.0252 | avg(100) -0.2609 | ε 0.050 | loss 0.00001 | σ_norm 1.000 | buf 66,000 | 851s
+Ep  5600/30000 | ret -0.0316 | avg(100) -0.2466 | ε 0.050 | loss 0.00004 | σ_norm 0.999 | buf 67,200 | 867s
+Ep  5700/30000 | ret -0.0217 | avg(100) -0.3035 | ε 0.050 | loss 0.00004 | σ_norm 0.999 | buf 68,400 | 883s
+Ep  5800/30000 | ret -0.0239 | avg(100) -0.2811 | ε 0.050 | loss 0.00002 | σ_norm 1.002 | buf 69,600 | 899s
+Ep  5900/30000 | ret -0.0207 | avg(100) -0.3830 | ε 0.050 | loss 0.00001 | σ_norm 0.999 | buf 70,800 | 915s
+Ep  6000/30000 | ret -0.0203 | avg(100) -0.1999 | ε 0.050 | loss 0.00003 | σ_norm 0.999 | buf 72,000 | 931s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_ep06000.pt
+[train] Returns plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/returns.png
+[train] Q-loss plot  → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/q_loss.png
+[train] Epsilon plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epsilon.png
+[train] Epistemic-std plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epistemic_std.png
+Ep  6100/30000 | ret -0.4802 | avg(100) -0.2145 | ε 0.050 | loss 0.00005 | σ_norm 1.001 | buf 73,200 | 948s
+Ep  6200/30000 | ret -1.0803 | avg(100) -0.3853 | ε 0.050 | loss 0.00002 | σ_norm 1.000 | buf 74,400 | 964s
+Ep  6300/30000 | ret -0.0222 | avg(100) -0.2288 | ε 0.050 | loss 0.00001 | σ_norm 1.000 | buf 75,600 | 980s
+Ep  6400/30000 | ret -1.2088 | avg(100) -0.3017 | ε 0.050 | loss 0.00002 | σ_norm 1.001 | buf 76,800 | 996s
+Ep  6500/30000 | ret -0.0198 | avg(100) -0.1744 | ε 0.050 | loss 0.00001 | σ_norm 0.999 | buf 78,000 | 1012s
+Ep  6600/30000 | ret -0.0436 | avg(100) -0.2657 | ε 0.050 | loss 0.00003 | σ_norm 0.999 | buf 79,200 | 1028s
+Ep  6700/30000 | ret -1.0111 | avg(100) -0.2473 | ε 0.050 | loss 0.00001 | σ_norm 1.000 | buf 80,400 | 1044s
+Ep  6800/30000 | ret -0.1282 | avg(100) -0.2862 | ε 0.050 | loss 0.00001 | σ_norm 1.001 | buf 81,600 | 1060s
+Ep  6900/30000 | ret -0.0202 | avg(100) -0.3288 | ε 0.050 | loss 0.00001 | σ_norm 0.999 | buf 82,800 | 1077s
+Ep  7000/30000 | ret -0.0227 | avg(100) -0.2559 | ε 0.050 | loss 0.00001 | σ_norm 1.000 | buf 84,000 | 1093s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_ep07000.pt
+[train] Returns plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/returns.png
+[train] Q-loss plot  → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/q_loss.png
+[train] Epsilon plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epsilon.png
+[train] Epistemic-std plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epistemic_std.png
+Ep  7100/30000 | ret -0.0217 | avg(100) -0.2961 | ε 0.050 | loss 0.00001 | σ_norm 1.000 | buf 85,200 | 1110s
+Ep  7200/30000 | ret -1.5766 | avg(100) -0.4693 | ε 0.050 | loss 0.00001 | σ_norm 1.001 | buf 86,400 | 1126s
+Ep  7300/30000 | ret -0.0297 | avg(100) -0.2450 | ε 0.050 | loss 0.00068 | σ_norm 0.999 | buf 87,600 | 1142s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_best.pt
+Ep  7400/30000 | ret -0.0212 | avg(100) -0.3246 | ε 0.050 | loss 0.00001 | σ_norm 0.999 | buf 88,800 | 1158s
+Ep  7500/30000 | ret -0.0215 | avg(100) -0.3098 | ε 0.050 | loss 0.00001 | σ_norm 1.001 | buf 90,000 | 1174s
+Ep  7600/30000 | ret -0.0231 | avg(100) -0.3130 | ε 0.050 | loss 0.00001 | σ_norm 1.000 | buf 91,200 | 1190s
+Ep  7700/30000 | ret -0.0234 | avg(100) -0.2551 | ε 0.050 | loss 0.00002 | σ_norm 0.999 | buf 92,400 | 1206s
+Ep  7800/30000 | ret -1.8023 | avg(100) -0.3582 | ε 0.050 | loss 0.00001 | σ_norm 1.001 | buf 93,600 | 1223s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_best.pt
+Ep  7900/30000 | ret -0.0245 | avg(100) -0.3206 | ε 0.050 | loss 0.00001 | σ_norm 0.999 | buf 94,800 | 1239s
+Ep  8000/30000 | ret -0.0204 | avg(100) -0.2798 | ε 0.050 | loss 0.00001 | σ_norm 1.000 | buf 96,000 | 1255s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_ep08000.pt
+[train] Returns plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/returns.png
+[train] Q-loss plot  → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/q_loss.png
+[train] Epsilon plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epsilon.png
+[train] Epistemic-std plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epistemic_std.png
+Ep  8100/30000 | ret -0.0220 | avg(100) -0.2955 | ε 0.050 | loss 0.00001 | σ_norm 1.001 | buf 97,200 | 1272s
+Ep  8200/30000 | ret -0.0256 | avg(100) -0.2987 | ε 0.050 | loss 0.00001 | σ_norm 0.999 | buf 98,400 | 1288s
+Ep  8300/30000 | ret -0.0212 | avg(100) -0.1892 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 99,600 | 1304s
+Ep  8400/30000 | ret -0.1212 | avg(100) -0.2867 | ε 0.050 | loss 0.00001 | σ_norm 0.999 | buf 100,000 | 1320s
+Ep  8500/30000 | ret -0.9381 | avg(100) -0.2099 | ε 0.050 | loss 0.00001 | σ_norm 1.001 | buf 100,000 | 1337s
+Ep  8600/30000 | ret -0.0193 | avg(100) -0.3833 | ε 0.050 | loss 0.00001 | σ_norm 1.000 | buf 100,000 | 1353s
+Ep  8700/30000 | ret -0.2072 | avg(100) -0.3201 | ε 0.050 | loss 0.00001 | σ_norm 1.000 | buf 100,000 | 1369s
+Ep  8800/30000 | ret -0.5957 | avg(100) -0.2791 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 1385s
+Ep  8900/30000 | ret -0.0234 | avg(100) -0.2855 | ε 0.050 | loss 0.00001 | σ_norm 1.000 | buf 100,000 | 1401s
+Ep  9000/30000 | ret -0.0198 | avg(100) -0.2037 | ε 0.050 | loss 0.00002 | σ_norm 1.000 | buf 100,000 | 1417s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_ep09000.pt
+[train] Returns plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/returns.png
+[train] Q-loss plot  → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/q_loss.png
+[train] Epsilon plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epsilon.png
+[train] Epistemic-std plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epistemic_std.png
+Ep  9100/30000 | ret -0.1517 | avg(100) -0.2586 | ε 0.050 | loss 0.00001 | σ_norm 0.999 | buf 100,000 | 1434s
+Ep  9200/30000 | ret -0.0516 | avg(100) -0.2627 | ε 0.050 | loss 0.00001 | σ_norm 1.001 | buf 100,000 | 1450s
+Ep  9300/30000 | ret -0.0249 | avg(100) -0.2651 | ε 0.050 | loss 0.00001 | σ_norm 0.999 | buf 100,000 | 1467s
+Ep  9400/30000 | ret -0.0210 | avg(100) -0.3375 | ε 0.050 | loss 0.00001 | σ_norm 1.000 | buf 100,000 | 1483s
+Ep  9500/30000 | ret -0.6927 | avg(100) -0.2579 | ε 0.050 | loss 0.00001 | σ_norm 1.001 | buf 100,000 | 1499s
+Ep  9600/30000 | ret -0.0210 | avg(100) -0.3132 | ε 0.050 | loss 0.00001 | σ_norm 1.000 | buf 100,000 | 1515s
+Ep  9700/30000 | ret -1.7775 | avg(100) -0.2991 | ε 0.050 | loss 0.00001 | σ_norm 1.000 | buf 100,000 | 1531s
+Ep  9800/30000 | ret -0.0200 | avg(100) -0.2845 | ε 0.050 | loss 0.00001 | σ_norm 1.000 | buf 100,000 | 1547s
+Ep  9900/30000 | ret -0.0205 | avg(100) -0.2710 | ε 0.050 | loss 0.00001 | σ_norm 1.000 | buf 100,000 | 1563s
+Ep 10000/30000 | ret -0.0203 | avg(100) -0.3502 | ε 0.050 | loss 0.00001 | σ_norm 1.001 | buf 100,000 | 1579s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_ep10000.pt
+[train] Returns plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/returns.png
+[train] Q-loss plot  → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/q_loss.png
+[train] Epsilon plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epsilon.png
+[train] Epistemic-std plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epistemic_std.png
+Ep 10100/30000 | ret -0.0231 | avg(100) -0.1768 | ε 0.050 | loss 0.00001 | σ_norm 0.999 | buf 100,000 | 1596s
+Ep 10200/30000 | ret -0.7378 | avg(100) -0.2775 | ε 0.050 | loss 0.00002 | σ_norm 0.999 | buf 100,000 | 1612s
+Ep 10300/30000 | ret -1.0858 | avg(100) -0.3139 | ε 0.050 | loss 0.00001 | σ_norm 1.000 | buf 100,000 | 1628s
+Ep 10400/30000 | ret -0.0208 | avg(100) -0.3609 | ε 0.050 | loss 0.00001 | σ_norm 1.000 | buf 100,000 | 1645s
+Ep 10500/30000 | ret -0.0340 | avg(100) -0.2148 | ε 0.050 | loss 0.00001 | σ_norm 1.000 | buf 100,000 | 1661s
+Ep 10600/30000 | ret -0.0225 | avg(100) -0.3371 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 1677s
+Ep 10700/30000 | ret -0.0196 | avg(100) -0.2995 | ε 0.050 | loss 0.00001 | σ_norm 0.999 | buf 100,000 | 1693s
+Ep 10800/30000 | ret -0.0216 | avg(100) -0.2485 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 1709s
+Ep 10900/30000 | ret -0.0223 | avg(100) -0.2535 | ε 0.050 | loss 0.00001 | σ_norm 1.000 | buf 100,000 | 1725s
+Ep 11000/30000 | ret -0.0780 | avg(100) -0.2432 | ε 0.050 | loss 0.00002 | σ_norm 1.000 | buf 100,000 | 1741s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_ep11000.pt
+[train] Returns plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/returns.png
+[train] Q-loss plot  → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/q_loss.png
+[train] Epsilon plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epsilon.png
+[train] Epistemic-std plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epistemic_std.png
+Ep 11100/30000 | ret -0.0660 | avg(100) -0.3267 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 1758s
+Ep 11200/30000 | ret -0.0192 | avg(100) -0.3783 | ε 0.050 | loss 0.00001 | σ_norm 1.000 | buf 100,000 | 1775s
+Ep 11300/30000 | ret -0.5905 | avg(100) -0.2538 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 1791s
+Ep 11400/30000 | ret -0.0209 | avg(100) -0.3053 | ε 0.050 | loss 0.00001 | σ_norm 1.000 | buf 100,000 | 1807s
+Ep 11500/30000 | ret -0.0216 | avg(100) -0.2960 | ε 0.050 | loss 0.00001 | σ_norm 1.000 | buf 100,000 | 1823s
+Ep 11600/30000 | ret -1.4746 | avg(100) -0.3342 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 1839s
+Ep 11700/30000 | ret -0.0742 | avg(100) -0.2938 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 1855s
+Ep 11800/30000 | ret -0.2121 | avg(100) -0.3083 | ε 0.050 | loss 0.00001 | σ_norm 1.002 | buf 100,000 | 1871s
+Ep 11900/30000 | ret -0.0198 | avg(100) -0.2356 | ε 0.050 | loss 0.00001 | σ_norm 0.998 | buf 100,000 | 1887s
+Ep 12000/30000 | ret -0.0210 | avg(100) -0.3046 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 1903s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_ep12000.pt
+[train] Returns plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/returns.png
+[train] Q-loss plot  → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/q_loss.png
+[train] Epsilon plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epsilon.png
+[train] Epistemic-std plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epistemic_std.png
+Ep 12100/30000 | ret -0.0199 | avg(100) -0.2432 | ε 0.050 | loss 0.00000 | σ_norm 1.001 | buf 100,000 | 1921s
+Ep 12200/30000 | ret -0.0199 | avg(100) -0.3548 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 1937s
+Ep 12300/30000 | ret -0.0580 | avg(100) -0.2530 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 1953s
+Ep 12400/30000 | ret -0.3834 | avg(100) -0.3158 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 1969s
+Ep 12500/30000 | ret -0.0223 | avg(100) -0.3527 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 1985s
+Ep 12600/30000 | ret -1.3312 | avg(100) -0.3054 | ε 0.050 | loss 0.00000 | σ_norm 1.001 | buf 100,000 | 2001s
+Ep 12700/30000 | ret -0.0211 | avg(100) -0.2867 | ε 0.050 | loss 0.00000 | σ_norm 0.998 | buf 100,000 | 2018s
+Ep 12800/30000 | ret -0.0436 | avg(100) -0.3049 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 2034s
+Ep 12900/30000 | ret -1.2764 | avg(100) -0.3645 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 2050s
+Ep 13000/30000 | ret -0.0240 | avg(100) -0.2296 | ε 0.050 | loss 0.00000 | σ_norm 1.001 | buf 100,000 | 2066s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_ep13000.pt
+[train] Returns plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/returns.png
+[train] Q-loss plot  → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/q_loss.png
+[train] Epsilon plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epsilon.png
+[train] Epistemic-std plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epistemic_std.png
+Ep 13100/30000 | ret -0.0265 | avg(100) -0.3069 | ε 0.050 | loss 0.00000 | σ_norm 1.001 | buf 100,000 | 2083s
+Ep 13200/30000 | ret -0.0256 | avg(100) -0.2877 | ε 0.050 | loss 0.00000 | σ_norm 0.998 | buf 100,000 | 2099s
+Ep 13300/30000 | ret -0.0208 | avg(100) -0.2502 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 2115s
+Ep 13400/30000 | ret -0.0199 | avg(100) -0.2187 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 2132s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_best.pt
+Ep 13500/30000 | ret -0.9621 | avg(100) -0.3071 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 2148s
+Ep 13600/30000 | ret -0.4404 | avg(100) -0.2077 | ε 0.050 | loss 0.00001 | σ_norm 1.001 | buf 100,000 | 2164s
+Ep 13700/30000 | ret -0.0195 | avg(100) -0.2733 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 2180s
+Ep 13800/30000 | ret -1.0790 | avg(100) -0.3569 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 2196s
+Ep 13900/30000 | ret -0.1584 | avg(100) -0.3177 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 2212s
+Ep 14000/30000 | ret -0.0214 | avg(100) -0.2988 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 2228s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_ep14000.pt
+[train] Returns plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/returns.png
+[train] Q-loss plot  → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/q_loss.png
+[train] Epsilon plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epsilon.png
+[train] Epistemic-std plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epistemic_std.png
+Ep 14100/30000 | ret -0.9216 | avg(100) -0.3231 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 2246s
+Ep 14200/30000 | ret -0.0212 | avg(100) -0.3171 | ε 0.050 | loss 0.00000 | σ_norm 1.001 | buf 100,000 | 2262s
+Ep 14300/30000 | ret -0.0328 | avg(100) -0.2888 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 2278s
+Ep 14400/30000 | ret -0.0197 | avg(100) -0.2959 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 2294s
+Ep 14500/30000 | ret -0.0214 | avg(100) -0.3064 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 2310s
+Ep 14600/30000 | ret -0.0220 | avg(100) -0.3184 | ε 0.050 | loss 0.00001 | σ_norm 1.000 | buf 100,000 | 2326s
+Ep 14700/30000 | ret -0.0245 | avg(100) -0.2151 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 2343s
+Ep 14800/30000 | ret -0.0192 | avg(100) -0.3225 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 2359s
+Ep 14900/30000 | ret -0.5378 | avg(100) -0.3130 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 2375s
+Ep 15000/30000 | ret -0.0212 | avg(100) -0.2397 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 2391s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_ep15000.pt
+[train] Returns plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/returns.png
+[train] Q-loss plot  → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/q_loss.png
+[train] Epsilon plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epsilon.png
+[train] Epistemic-std plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epistemic_std.png
+Ep 15100/30000 | ret -0.4711 | avg(100) -0.3041 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 2408s
+Ep 15200/30000 | ret -0.0210 | avg(100) -0.2840 | ε 0.050 | loss 0.00000 | σ_norm 1.001 | buf 100,000 | 2424s
+Ep 15300/30000 | ret -0.0291 | avg(100) -0.4244 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 2441s
+Ep 15400/30000 | ret -0.5309 | avg(100) -0.3149 | ε 0.050 | loss 0.00000 | σ_norm 1.001 | buf 100,000 | 2457s
+Ep 15500/30000 | ret -0.0200 | avg(100) -0.4225 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 2473s
+Ep 15600/30000 | ret -0.9185 | avg(100) -0.2943 | ε 0.050 | loss 0.00001 | σ_norm 1.001 | buf 100,000 | 2489s
+Ep 15700/30000 | ret -0.0195 | avg(100) -0.2202 | ε 0.050 | loss 0.00001 | σ_norm 1.000 | buf 100,000 | 2505s
+Ep 15800/30000 | ret -0.8071 | avg(100) -0.2377 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 2521s
+Ep 15900/30000 | ret -0.0250 | avg(100) -0.2712 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 2537s
+Ep 16000/30000 | ret -0.0510 | avg(100) -0.2812 | ε 0.050 | loss 0.00000 | σ_norm 0.998 | buf 100,000 | 2553s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_ep16000.pt
+[train] Returns plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/returns.png
+[train] Q-loss plot  → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/q_loss.png
+[train] Epsilon plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epsilon.png
+[train] Epistemic-std plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epistemic_std.png
+Ep 16100/30000 | ret -0.0194 | avg(100) -0.3092 | ε 0.050 | loss 0.00000 | σ_norm 1.001 | buf 100,000 | 2571s
+Ep 16200/30000 | ret -0.0214 | avg(100) -0.2534 | ε 0.050 | loss 0.00001 | σ_norm 0.999 | buf 100,000 | 2587s
+Ep 16300/30000 | ret -0.0201 | avg(100) -0.3495 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 2603s
+Ep 16400/30000 | ret -0.8027 | avg(100) -0.3192 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 2619s
+Ep 16500/30000 | ret -0.0196 | avg(100) -0.3570 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 2635s
+Ep 16600/30000 | ret -0.0205 | avg(100) -0.1964 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 2651s
+Ep 16700/30000 | ret -0.0220 | avg(100) -0.2400 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 2667s
+Ep 16800/30000 | ret -0.4002 | avg(100) -0.2693 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 2684s
+Ep 16900/30000 | ret -1.2798 | avg(100) -0.3217 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 2700s
+Ep 17000/30000 | ret -0.1424 | avg(100) -0.1965 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 2716s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_ep17000.pt
+[train] Returns plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/returns.png
+[train] Q-loss plot  → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/q_loss.png
+[train] Epsilon plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epsilon.png
+[train] Epistemic-std plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epistemic_std.png
+Ep 17100/30000 | ret -1.0245 | avg(100) -0.3346 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 2733s
+Ep 17200/30000 | ret -0.0203 | avg(100) -0.1721 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 2749s
+Ep 17300/30000 | ret -0.0202 | avg(100) -0.3892 | ε 0.050 | loss 0.00000 | σ_norm 1.001 | buf 100,000 | 2765s
+Ep 17400/30000 | ret -0.0203 | avg(100) -0.3129 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 2782s
+Ep 17500/30000 | ret -0.0226 | avg(100) -0.3487 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 2798s
+Ep 17600/30000 | ret -0.5942 | avg(100) -0.4459 | ε 0.050 | loss 0.00000 | σ_norm 1.002 | buf 100,000 | 2814s
+Ep 17700/30000 | ret -0.0208 | avg(100) -0.2617 | ε 0.050 | loss 0.00000 | σ_norm 0.998 | buf 100,000 | 2830s
+Ep 17800/30000 | ret -0.0221 | avg(100) -0.2685 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 2846s
+Ep 17900/30000 | ret -0.0197 | avg(100) -0.3282 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 2862s
+Ep 18000/30000 | ret -1.3336 | avg(100) -0.3139 | ε 0.050 | loss 0.00000 | σ_norm 1.001 | buf 100,000 | 2878s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_ep18000.pt
+[train] Returns plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/returns.png
+[train] Q-loss plot  → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/q_loss.png
+[train] Epsilon plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epsilon.png
+[train] Epistemic-std plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epistemic_std.png
+Ep 18100/30000 | ret -0.0192 | avg(100) -0.2045 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 2896s
+Ep 18200/30000 | ret -0.0628 | avg(100) -0.3109 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 2912s
+Ep 18300/30000 | ret -0.0203 | avg(100) -0.3298 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 2928s
+Ep 18400/30000 | ret -0.0194 | avg(100) -0.3101 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 2944s
+Ep 18500/30000 | ret -0.0192 | avg(100) -0.2552 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 2960s
+Ep 18600/30000 | ret -0.3206 | avg(100) -0.2609 | ε 0.050 | loss 0.00000 | σ_norm 1.001 | buf 100,000 | 2976s
+Ep 18700/30000 | ret -0.0201 | avg(100) -0.3959 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 2993s
+Ep 18800/30000 | ret -0.4836 | avg(100) -0.4044 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 3009s
+Ep 18900/30000 | ret -0.4585 | avg(100) -0.2640 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 3025s
+Ep 19000/30000 | ret -0.0205 | avg(100) -0.3054 | ε 0.050 | loss 0.00000 | σ_norm 1.001 | buf 100,000 | 3041s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_ep19000.pt
+[train] Returns plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/returns.png
+[train] Q-loss plot  → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/q_loss.png
+[train] Epsilon plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epsilon.png
+[train] Epistemic-std plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epistemic_std.png
+Ep 19100/30000 | ret -0.0235 | avg(100) -0.2759 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 3058s
+Ep 19200/30000 | ret -2.4445 | avg(100) -0.3305 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 3075s
+Ep 19300/30000 | ret -0.0197 | avg(100) -0.2893 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 3091s
+Ep 19400/30000 | ret -0.0200 | avg(100) -0.3213 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 3107s
+Ep 19500/30000 | ret -0.0204 | avg(100) -0.2956 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 3123s
+Ep 19600/30000 | ret -0.0195 | avg(100) -0.3967 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 3139s
+Ep 19700/30000 | ret -0.0289 | avg(100) -0.3873 | ε 0.050 | loss 0.00001 | σ_norm 1.000 | buf 100,000 | 3155s
+Ep 19800/30000 | ret -0.0206 | avg(100) -0.3571 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 3171s
+Ep 19900/30000 | ret -0.0199 | avg(100) -0.3197 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 3188s
+Ep 20000/30000 | ret -0.6140 | avg(100) -0.2471 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 3204s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_ep20000.pt
+[train] Returns plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/returns.png
+[train] Q-loss plot  → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/q_loss.png
+[train] Epsilon plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epsilon.png
+[train] Epistemic-std plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epistemic_std.png
+Ep 20100/30000 | ret -0.0217 | avg(100) -0.3357 | ε 0.050 | loss 0.00000 | σ_norm 1.001 | buf 100,000 | 3221s
+Ep 20200/30000 | ret -0.0206 | avg(100) -0.3697 | ε 0.050 | loss 0.00000 | σ_norm 0.998 | buf 100,000 | 3237s
+Ep 20300/30000 | ret -0.4391 | avg(100) -0.3417 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 3253s
+Ep 20400/30000 | ret -0.0236 | avg(100) -0.2619 | ε 0.050 | loss 0.00001 | σ_norm 1.000 | buf 100,000 | 3269s
+Ep 20500/30000 | ret -1.5971 | avg(100) -0.2494 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 3286s
+Ep 20600/30000 | ret -0.0200 | avg(100) -0.3611 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 3302s
+Ep 20700/30000 | ret -0.0227 | avg(100) -0.2200 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 3318s
+Ep 20800/30000 | ret -0.0207 | avg(100) -0.2523 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 3334s
+Ep 20900/30000 | ret -0.0209 | avg(100) -0.3284 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 3350s
+Ep 21000/30000 | ret -0.0245 | avg(100) -0.2600 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 3367s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_ep21000.pt
+[train] Returns plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/returns.png
+[train] Q-loss plot  → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/q_loss.png
+[train] Epsilon plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epsilon.png
+[train] Epistemic-std plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epistemic_std.png
+Ep 21100/30000 | ret -2.6293 | avg(100) -0.3463 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 3384s
+Ep 21200/30000 | ret -0.7090 | avg(100) -0.3657 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 3400s
+Ep 21300/30000 | ret -0.0200 | avg(100) -0.3572 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 3416s
+Ep 21400/30000 | ret -0.7012 | avg(100) -0.2263 | ε 0.050 | loss 0.00001 | σ_norm 1.000 | buf 100,000 | 3432s
+Ep 21500/30000 | ret -0.0201 | avg(100) -0.2452 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 3448s
+Ep 21600/30000 | ret -0.0193 | avg(100) -0.3055 | ε 0.050 | loss 0.00000 | σ_norm 1.001 | buf 100,000 | 3464s
+Ep 21700/30000 | ret -0.0198 | avg(100) -0.2539 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 3481s
+Ep 21800/30000 | ret -0.4136 | avg(100) -0.3005 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 3497s
+Ep 21900/30000 | ret -0.0218 | avg(100) -0.2795 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 3513s
+Ep 22000/30000 | ret -0.0192 | avg(100) -0.2597 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 3529s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_ep22000.pt
+[train] Returns plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/returns.png
+[train] Q-loss plot  → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/q_loss.png
+[train] Epsilon plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epsilon.png
+[train] Epistemic-std plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epistemic_std.png
+Ep 22100/30000 | ret -0.0209 | avg(100) -0.3403 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 3547s
+Ep 22200/30000 | ret -1.1457 | avg(100) -0.3209 | ε 0.050 | loss 0.00000 | σ_norm 1.001 | buf 100,000 | 3563s
+Ep 22300/30000 | ret -0.1092 | avg(100) -0.2419 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 3579s
+Ep 22400/30000 | ret -0.0189 | avg(100) -0.2370 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 3595s
+Ep 22500/30000 | ret -1.3876 | avg(100) -0.2640 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 3611s
+Ep 22600/30000 | ret -0.0214 | avg(100) -0.2203 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 3627s
+Ep 22700/30000 | ret -0.0220 | avg(100) -0.3262 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 3643s
+Ep 22800/30000 | ret -0.0216 | avg(100) -0.3250 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 3659s
+Ep 22900/30000 | ret -0.0572 | avg(100) -0.3468 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 3676s
+Ep 23000/30000 | ret -0.0192 | avg(100) -0.1906 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 3692s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_ep23000.pt
+[train] Returns plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/returns.png
+[train] Q-loss plot  → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/q_loss.png
+[train] Epsilon plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epsilon.png
+[train] Epistemic-std plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epistemic_std.png
+Ep 23100/30000 | ret -0.0214 | avg(100) -0.3211 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 3709s
+Ep 23200/30000 | ret -2.6596 | avg(100) -0.3121 | ε 0.050 | loss 0.00000 | σ_norm 1.001 | buf 100,000 | 3725s
+Ep 23300/30000 | ret -0.0193 | avg(100) -0.2812 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 3742s
+Ep 23400/30000 | ret -0.6934 | avg(100) -0.2741 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 3758s
+Ep 23500/30000 | ret -0.0225 | avg(100) -0.2642 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 3774s
+Ep 23600/30000 | ret -0.0745 | avg(100) -0.3178 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 3790s
+Ep 23700/30000 | ret -0.0247 | avg(100) -0.3119 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 3806s
+Ep 23800/30000 | ret -0.5920 | avg(100) -0.2482 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 3822s
+Ep 23900/30000 | ret -0.0750 | avg(100) -0.2123 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 3839s
+Ep 24000/30000 | ret -0.1539 | avg(100) -0.3881 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 3855s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_ep24000.pt
+[train] Returns plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/returns.png
+[train] Q-loss plot  → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/q_loss.png
+[train] Epsilon plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epsilon.png
+[train] Epistemic-std plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epistemic_std.png
+Ep 24100/30000 | ret -0.0224 | avg(100) -0.2725 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 3872s
+Ep 24200/30000 | ret -0.4260 | avg(100) -0.3132 | ε 0.050 | loss 0.00000 | σ_norm 1.001 | buf 100,000 | 3888s
+Ep 24300/30000 | ret -0.4938 | avg(100) -0.3114 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 3904s
+Ep 24400/30000 | ret -1.6707 | avg(100) -0.3330 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 3921s
+Ep 24500/30000 | ret -0.0214 | avg(100) -0.2757 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 3937s
+Ep 24600/30000 | ret -0.0194 | avg(100) -0.3559 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 3953s
+Ep 24700/30000 | ret -0.0219 | avg(100) -0.3127 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 3969s
+Ep 24800/30000 | ret -0.0223 | avg(100) -0.2040 | ε 0.050 | loss 0.00000 | σ_norm 1.001 | buf 100,000 | 3985s
+Ep 24900/30000 | ret -0.1289 | avg(100) -0.3915 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 4001s
+Ep 25000/30000 | ret -0.4533 | avg(100) -0.3927 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 4017s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_ep25000.pt
+[train] Returns plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/returns.png
+[train] Q-loss plot  → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/q_loss.png
+[train] Epsilon plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epsilon.png
+[train] Epistemic-std plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epistemic_std.png
+Ep 25100/30000 | ret -0.4465 | avg(100) -0.2320 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 4035s
+Ep 25200/30000 | ret -1.0607 | avg(100) -0.3210 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 4051s
+Ep 25300/30000 | ret -0.0605 | avg(100) -0.3358 | ε 0.050 | loss 0.00000 | σ_norm 1.001 | buf 100,000 | 4067s
+Ep 25400/30000 | ret -0.0805 | avg(100) -0.2989 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 4084s
+Ep 25500/30000 | ret -1.4002 | avg(100) -0.4356 | ε 0.050 | loss 0.00000 | σ_norm 1.001 | buf 100,000 | 4100s
+Ep 25600/30000 | ret -0.5578 | avg(100) -0.2809 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 4116s
+Ep 25700/30000 | ret -0.2379 | avg(100) -0.2940 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 4132s
+Ep 25800/30000 | ret -0.0208 | avg(100) -0.1780 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 4148s
+Ep 25900/30000 | ret -0.0219 | avg(100) -0.2754 | ε 0.050 | loss 0.00000 | σ_norm 1.002 | buf 100,000 | 4165s
+Ep 26000/30000 | ret -0.0529 | avg(100) -0.3251 | ε 0.050 | loss 0.00000 | σ_norm 0.998 | buf 100,000 | 4181s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_ep26000.pt
+[train] Returns plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/returns.png
+[train] Q-loss plot  → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/q_loss.png
+[train] Epsilon plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epsilon.png
+[train] Epistemic-std plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epistemic_std.png
+Ep 26100/30000 | ret -1.9393 | avg(100) -0.2222 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 4198s
+Ep 26200/30000 | ret -0.0191 | avg(100) -0.2253 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 4214s
+Ep 26300/30000 | ret -0.9470 | avg(100) -0.2845 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 4231s
+Ep 26400/30000 | ret -0.0204 | avg(100) -0.4436 | ε 0.050 | loss 0.00000 | σ_norm 1.002 | buf 100,000 | 4247s
+Ep 26500/30000 | ret -0.0273 | avg(100) -0.2995 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 4263s
+Ep 26600/30000 | ret -0.3105 | avg(100) -0.3216 | ε 0.050 | loss 0.00000 | σ_norm 1.001 | buf 100,000 | 4279s
+Ep 26700/30000 | ret -1.6888 | avg(100) -0.4088 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 4295s
+Ep 26800/30000 | ret -0.0226 | avg(100) -0.3403 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 4312s
+Ep 26900/30000 | ret -0.1113 | avg(100) -0.3316 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 4328s
+Ep 27000/30000 | ret -0.0196 | avg(100) -0.2536 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 4344s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_ep27000.pt
+[train] Returns plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/returns.png
+[train] Q-loss plot  → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/q_loss.png
+[train] Epsilon plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epsilon.png
+[train] Epistemic-std plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epistemic_std.png
+Ep 27100/30000 | ret -0.0247 | avg(100) -0.2300 | ε 0.050 | loss 0.00000 | σ_norm 1.001 | buf 100,000 | 4361s
+Ep 27200/30000 | ret -0.0208 | avg(100) -0.3908 | ε 0.050 | loss 0.00000 | σ_norm 0.998 | buf 100,000 | 4378s
+Ep 27300/30000 | ret -0.0200 | avg(100) -0.2679 | ε 0.050 | loss 0.00000 | σ_norm 1.001 | buf 100,000 | 4394s
+Ep 27400/30000 | ret -0.3313 | avg(100) -0.2371 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 4410s
+Ep 27500/30000 | ret -0.4546 | avg(100) -0.3285 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 4426s
+Ep 27600/30000 | ret -0.0230 | avg(100) -0.3362 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 4442s
+Ep 27700/30000 | ret -0.0196 | avg(100) -0.2988 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 4459s
+Ep 27800/30000 | ret -0.0472 | avg(100) -0.4200 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 4475s
+Ep 27900/30000 | ret -0.0195 | avg(100) -0.2468 | ε 0.050 | loss 0.00000 | σ_norm 0.998 | buf 100,000 | 4491s
+Ep 28000/30000 | ret -0.0201 | avg(100) -0.2360 | ε 0.050 | loss 0.00000 | σ_norm 1.001 | buf 100,000 | 4507s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_ep28000.pt
+[train] Returns plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/returns.png
+[train] Q-loss plot  → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/q_loss.png
+[train] Epsilon plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epsilon.png
+[train] Epistemic-std plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epistemic_std.png
+Ep 28100/30000 | ret -0.0214 | avg(100) -0.2769 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 4525s
+Ep 28200/30000 | ret -0.0204 | avg(100) -0.3583 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 4541s
+Ep 28300/30000 | ret -0.8436 | avg(100) -0.2069 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 4557s
+Ep 28400/30000 | ret -0.0209 | avg(100) -0.3350 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 4573s
+Ep 28500/30000 | ret -0.4768 | avg(100) -0.3498 | ε 0.050 | loss 0.00000 | σ_norm 1.001 | buf 100,000 | 4589s
+Ep 28600/30000 | ret -0.0200 | avg(100) -0.2270 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 4606s
+Ep 28700/30000 | ret -0.0200 | avg(100) -0.3223 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 4622s
+Ep 28800/30000 | ret -0.0198 | avg(100) -0.3511 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 4638s
+Ep 28900/30000 | ret -0.5575 | avg(100) -0.2904 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 4654s
+Ep 29000/30000 | ret -0.0198 | avg(100) -0.2854 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 4670s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_ep29000.pt
+[train] Returns plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/returns.png
+[train] Q-loss plot  → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/q_loss.png
+[train] Epsilon plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epsilon.png
+[train] Epistemic-std plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epistemic_std.png
+Ep 29100/30000 | ret -0.0192 | avg(100) -0.2698 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 4688s
+Ep 29200/30000 | ret -0.0193 | avg(100) -0.2647 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 4704s
+Ep 29300/30000 | ret -0.1457 | avg(100) -0.2952 | ε 0.050 | loss 0.00000 | σ_norm 1.001 | buf 100,000 | 4720s
+Ep 29400/30000 | ret -0.0208 | avg(100) -0.3151 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 4736s
+Ep 29500/30000 | ret -0.3491 | avg(100) -0.2632 | ε 0.050 | loss 0.00000 | σ_norm 1.001 | buf 100,000 | 4752s
+Ep 29600/30000 | ret -0.0198 | avg(100) -0.3370 | ε 0.050 | loss 0.00000 | σ_norm 0.999 | buf 100,000 | 4769s
+Ep 29700/30000 | ret -0.0210 | avg(100) -0.2644 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 4785s
+Ep 29800/30000 | ret -0.2366 | avg(100) -0.2276 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 4801s
+Ep 29900/30000 | ret -0.0192 | avg(100) -0.2879 | ε 0.050 | loss 0.00000 | σ_norm 1.000 | buf 100,000 | 4817s
+Ep 30000/30000 | ret -1.3649 | avg(100) -0.2525 | ε 0.050 | loss 0.00000 | σ_norm 1.001 | buf 100,000 | 4833s
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_ep30000.pt
+[train] Returns plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/returns.png
+[train] Q-loss plot  → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/q_loss.png
+[train] Epsilon plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epsilon.png
+[train] Epistemic-std plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epistemic_std.png
+[agent] Checkpoint saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_final.pt
+[train] Returns plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/returns.png
+[train] Q-loss plot  → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/q_loss.png
+[train] Epsilon plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epsilon.png
+[train] Epistemic-std plot → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/epistemic_std.png
+
+=================================================================
+[train] Training complete in 80.6 min
+[train] Mode               : standard
+[train] Best episode return: -0.0185
+[train] Best checkpoint    : surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_best.pt
+[train] Final checkpoint   : surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_final.pt
+=================================================================
+============================================================
+Training finished: Mon Jun  1 21:14:24 EDT 2026  (exit code: 0)
+Checkpoint: surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_best.pt
+============================================================
