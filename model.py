@@ -399,7 +399,7 @@ def plot_loss(loss_history, fname='q_learning_loss.png'):
 
 if __name__ == '__main__':
     # n = 5000
-    n=3000
+    n=1000
     step_size = 10
     trajectory_length = 12
     lb = 150
@@ -422,7 +422,7 @@ if __name__ == '__main__':
     h=256
     gamma=0.99
     K=40000
-    lr=1e-3
+    lr=1e-4
     scheduler_step_size=10000
     gamma_lr=0.1
     checkpoint, loss_history = train_fqi(
