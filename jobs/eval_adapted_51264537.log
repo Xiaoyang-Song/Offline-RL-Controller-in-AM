@@ -1,0 +1,519 @@
+============================================================
+Job ID   : 51264537
+Node     : gl1002
+Started  : Mon Jun  1 23:08:06 EDT 2026
+============================================================
+Python : /home/xysong/.conda/envs/RL/bin/python
+Torch  : 2.5.1+cu121
+CUDA   : True
+MATLAB : /sw/pkgs/arc/matlab/R2024b/bin/matlab
+============================================================
+adapt_dir        : surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150
+base_checkpoint  : surrogate_domain_adaptation/runs/base/20260601_174626/base_best.pt
+cool_time        : 0.15 s
+K values         : 0 5 10 20 50 100
+============================================================
+
+Running MATLAB evaluations (coolTime=0.15 s)...
+
+------------------------------------------------------------
+  K=0  checkpoint: surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K000/online_rl/dqn_best.pt
+------------------------------------------------------------
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[agent] Loaded checkpoint from surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K000/online_rl/dqn_best.pt  (ε=0.297, updates=37,020)
+Online DQN agent loaded: QNet(state_dim=1054, num_actions=26, hidden=256, depth=4, n_layers=12, layer_embed_dim=8, params=809,594)
+Action chosen at step 1: LP = 260.0
+Running Layer 1 simulation in MATLAB...
+Reward: -0.7160218280760674
+Action chosen at step 2: LP = 160.0
+Running Layer 2 simulation in MATLAB...
+Reward: -0.6751513273520297
+Action chosen at step 3: LP = 180.0
+Running Layer 3 simulation in MATLAB...
+Reward: -0.47206951131455294
+Action chosen at step 4: LP = 170.0
+Running Layer 4 simulation in MATLAB...
+Reward: -0.43798262901960405
+Action chosen at step 5: LP = 150.0
+Running Layer 5 simulation in MATLAB...
+Reward: -0.5401776978065734
+Action chosen at step 6: LP = 150.0
+Running Layer 6 simulation in MATLAB...
+Reward: -0.35960661668117444
+Action chosen at step 7: LP = 150.0
+Running Layer 7 simulation in MATLAB...
+Reward: -0.27845175071027645
+Action chosen at step 8: LP = 150.0
+Running Layer 8 simulation in MATLAB...
+Reward: -0.2356911571691752
+Action chosen at step 9: LP = 150.0
+Running Layer 9 simulation in MATLAB...
+Reward: -0.21415803137810016
+Action chosen at step 10: LP = 150.0
+Running Layer 10 simulation in MATLAB...
+Reward: -0.06865400200805058
+Action chosen at step 11: LP = 150.0
+Running Layer 11 simulation in MATLAB...
+Reward: -0.034874185598872565
+Action chosen at step 12: LP = 150.0
+Running Layer 12 simulation in MATLAB...
+Reward: -0.020311494216283053
+
+Results saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K000/online_rl/matlab_eval.json
+
+Total return: -4.0532
+  K=0: done → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K000/online_rl/matlab_eval.json
+
+------------------------------------------------------------
+  K=5  checkpoint: surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K005/online_rl/dqn_best.pt
+------------------------------------------------------------
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[agent] Loaded checkpoint from surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K005/online_rl/dqn_best.pt  (ε=0.050, updates=53,604)
+Online DQN agent loaded: QNet(state_dim=1054, num_actions=26, hidden=256, depth=4, n_layers=12, layer_embed_dim=8, params=809,594)
+Action chosen at step 1: LP = 400.0
+Running Layer 1 simulation in MATLAB...
+Reward: -0.020899577894609625
+Action chosen at step 2: LP = 230.0
+Running Layer 2 simulation in MATLAB...
+Reward: -0.01254760593882232
+Action chosen at step 3: LP = 250.0
+Running Layer 3 simulation in MATLAB...
+Reward: 0.0
+Action chosen at step 4: LP = 270.0
+Running Layer 4 simulation in MATLAB...
+Reward: 0.0
+Action chosen at step 5: LP = 240.0
+Running Layer 5 simulation in MATLAB...
+Reward: 0.0
+Action chosen at step 6: LP = 190.0
+Running Layer 6 simulation in MATLAB...
+Reward: 0.0
+Action chosen at step 7: LP = 170.0
+Running Layer 7 simulation in MATLAB...
+Reward: 0.0
+Action chosen at step 8: LP = 150.0
+Running Layer 8 simulation in MATLAB...
+Reward: -0.017678515451330524
+Action chosen at step 9: LP = 150.0
+Running Layer 9 simulation in MATLAB...
+Reward: -0.07623881570071502
+Action chosen at step 10: LP = 150.0
+Running Layer 10 simulation in MATLAB...
+Reward: -0.031214545962664802
+Action chosen at step 11: LP = 150.0
+Running Layer 11 simulation in MATLAB...
+Reward: -0.017828085370311313
+Action chosen at step 12: LP = 150.0
+Running Layer 12 simulation in MATLAB...
+Reward: -0.013337789383043901
+
+Results saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K005/online_rl/matlab_eval.json
+
+Total return: -0.1897
+  K=5: done → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K005/online_rl/matlab_eval.json
+
+------------------------------------------------------------
+  K=10  checkpoint: surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K010/online_rl/dqn_best.pt
+------------------------------------------------------------
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[agent] Loaded checkpoint from surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K010/online_rl/dqn_best.pt  (ε=0.050, updates=192,072)
+Online DQN agent loaded: QNet(state_dim=1054, num_actions=26, hidden=256, depth=4, n_layers=12, layer_embed_dim=8, params=809,594)
+Action chosen at step 1: LP = 400.0
+Running Layer 1 simulation in MATLAB...
+Reward: -0.020899577894609625
+Action chosen at step 2: LP = 230.0
+Running Layer 2 simulation in MATLAB...
+Reward: -0.01254760593882232
+Action chosen at step 3: LP = 310.0
+Running Layer 3 simulation in MATLAB...
+Reward: 0.0
+Action chosen at step 4: LP = 250.0
+Running Layer 4 simulation in MATLAB...
+Reward: 0.0
+Action chosen at step 5: LP = 210.0
+Running Layer 5 simulation in MATLAB...
+Reward: 0.0
+Action chosen at step 6: LP = 190.0
+Running Layer 6 simulation in MATLAB...
+Reward: 0.0
+Action chosen at step 7: LP = 190.0
+Running Layer 7 simulation in MATLAB...
+Reward: 0.0
+Action chosen at step 8: LP = 180.0
+Running Layer 8 simulation in MATLAB...
+Reward: 0.0
+Action chosen at step 9: LP = 170.0
+Running Layer 9 simulation in MATLAB...
+Reward: -0.0037412252901431564
+Action chosen at step 10: LP = 150.0
+Running Layer 10 simulation in MATLAB...
+Reward: -0.0055082792392461685
+Action chosen at step 11: LP = 150.0
+Running Layer 11 simulation in MATLAB...
+Reward: -0.00634714935555494
+Action chosen at step 12: LP = 150.0
+Running Layer 12 simulation in MATLAB...
+Reward: -0.007107532396386296
+
+Results saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K010/online_rl/matlab_eval.json
+
+Total return: -0.0562
+  K=10: done → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K010/online_rl/matlab_eval.json
+
+------------------------------------------------------------
+  K=20  checkpoint: surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_best.pt
+------------------------------------------------------------
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[agent] Loaded checkpoint from surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/dqn_best.pt  (ε=0.050, updates=160,356)
+Online DQN agent loaded: QNet(state_dim=1054, num_actions=26, hidden=256, depth=4, n_layers=12, layer_embed_dim=8, params=809,594)
+Action chosen at step 1: LP = 400.0
+Running Layer 1 simulation in MATLAB...
+Reward: -0.020899577894609625
+Action chosen at step 2: LP = 240.0
+Running Layer 2 simulation in MATLAB...
+Reward: -0.002255187387657972
+Action chosen at step 3: LP = 270.0
+Running Layer 3 simulation in MATLAB...
+Reward: 0.0
+Action chosen at step 4: LP = 240.0
+Running Layer 4 simulation in MATLAB...
+Reward: 0.0
+Action chosen at step 5: LP = 230.0
+Running Layer 5 simulation in MATLAB...
+Reward: 0.0
+Action chosen at step 6: LP = 200.0
+Running Layer 6 simulation in MATLAB...
+Reward: 0.0
+Action chosen at step 7: LP = 180.0
+Running Layer 7 simulation in MATLAB...
+Reward: 0.0
+Action chosen at step 8: LP = 170.0
+Running Layer 8 simulation in MATLAB...
+Reward: 0.0
+Action chosen at step 9: LP = 170.0
+Running Layer 9 simulation in MATLAB...
+Reward: -0.006574773501083693
+Action chosen at step 10: LP = 160.0
+Running Layer 10 simulation in MATLAB...
+Reward: -0.001354463343483276
+Action chosen at step 11: LP = 160.0
+Running Layer 11 simulation in MATLAB...
+Reward: 0.0
+Action chosen at step 12: LP = 150.0
+Running Layer 12 simulation in MATLAB...
+Reward: -0.0030788412351851814
+
+Results saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/matlab_eval.json
+
+Total return: -0.0342
+  K=20: done → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K020/online_rl/matlab_eval.json
+
+------------------------------------------------------------
+  K=50  checkpoint: surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K050/online_rl/dqn_best.pt
+------------------------------------------------------------
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[agent] Loaded checkpoint from surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K050/online_rl/dqn_best.pt  (ε=0.370, updates=33,156)
+Online DQN agent loaded: QNet(state_dim=1054, num_actions=26, hidden=256, depth=4, n_layers=12, layer_embed_dim=8, params=809,594)
+Action chosen at step 1: LP = 400.0
+Running Layer 1 simulation in MATLAB...
+Reward: -0.020899577894609625
+Action chosen at step 2: LP = 280.0
+Running Layer 2 simulation in MATLAB...
+Reward: 0.0
+Action chosen at step 3: LP = 280.0
+Running Layer 3 simulation in MATLAB...
+Reward: 0.0
+Action chosen at step 4: LP = 250.0
+Running Layer 4 simulation in MATLAB...
+Reward: 0.0
+Action chosen at step 5: LP = 250.0
+Running Layer 5 simulation in MATLAB...
+Reward: 0.0
+Action chosen at step 6: LP = 220.0
+Running Layer 6 simulation in MATLAB...
+Reward: 0.0
+Action chosen at step 7: LP = 210.0
+Running Layer 7 simulation in MATLAB...
+Reward: 0.0
+Action chosen at step 8: LP = 180.0
+Running Layer 8 simulation in MATLAB...
+Reward: 0.0
+Action chosen at step 9: LP = 220.0
+Running Layer 9 simulation in MATLAB...
+Reward: 0.0
+Action chosen at step 10: LP = 180.0
+Running Layer 10 simulation in MATLAB...
+Reward: 0.0
+Action chosen at step 11: LP = 150.0
+Running Layer 11 simulation in MATLAB...
+Reward: 0.0
+Action chosen at step 12: LP = 180.0
+Running Layer 12 simulation in MATLAB...
+Reward: 0.0
+
+Results saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K050/online_rl/matlab_eval.json
+
+Total return: -0.0209
+  K=50: done → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K050/online_rl/matlab_eval.json
+
+------------------------------------------------------------
+  K=100  checkpoint: surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K100/online_rl/dqn_best.pt
+------------------------------------------------------------
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+[agent] Loaded checkpoint from surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K100/online_rl/dqn_best.pt  (ε=0.080, updates=48,432)
+Online DQN agent loaded: QNet(state_dim=1054, num_actions=26, hidden=256, depth=4, n_layers=12, layer_embed_dim=8, params=809,594)
+Action chosen at step 1: LP = 400.0
+Running Layer 1 simulation in MATLAB...
+Reward: -0.020899577894609625
+Action chosen at step 2: LP = 260.0
+Running Layer 2 simulation in MATLAB...
+Reward: 0.0
+Action chosen at step 3: LP = 230.0
+Running Layer 3 simulation in MATLAB...
+Reward: 0.0
+Action chosen at step 4: LP = 230.0
+Running Layer 4 simulation in MATLAB...
+Reward: 0.0
+Action chosen at step 5: LP = 260.0
+Running Layer 5 simulation in MATLAB...
+Reward: 0.0
+Action chosen at step 6: LP = 200.0
+Running Layer 6 simulation in MATLAB...
+Reward: 0.0
+Action chosen at step 7: LP = 200.0
+Running Layer 7 simulation in MATLAB...
+Reward: 0.0
+Action chosen at step 8: LP = 200.0
+Running Layer 8 simulation in MATLAB...
+Reward: 0.0
+Action chosen at step 9: LP = 220.0
+Running Layer 9 simulation in MATLAB...
+Reward: -0.00020750196079960323
+Action chosen at step 10: LP = 160.0
+Running Layer 10 simulation in MATLAB...
+Reward: 0.0
+Action chosen at step 11: LP = 160.0
+Running Layer 11 simulation in MATLAB...
+Reward: 0.0
+Action chosen at step 12: LP = 180.0
+Running Layer 12 simulation in MATLAB...
+Reward: 0.0
+
+Results saved → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K100/online_rl/matlab_eval.json
+
+Total return: -0.0211
+  K=100: done → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K100/online_rl/matlab_eval.json
+
+============================================================
+Finished: Mon Jun  1 23:42:21 EDT 2026  (eval_failed=0)
+============================================================

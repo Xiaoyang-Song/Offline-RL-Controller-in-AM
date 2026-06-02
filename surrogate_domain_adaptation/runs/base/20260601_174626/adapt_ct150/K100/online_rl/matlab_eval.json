@@ -1,0 +1,35 @@
+{
+  "mode": "OnlineRL",
+  "cool_time": 0.15,
+  "checkpoint": "surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/K100/online_rl/dqn_best.pt",
+  "surrogate": "surrogate_domain_adaptation/runs/base/20260601_174626/base_best.pt",
+  "per_layer_rewards": [
+    -0.020899577894609625,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    -0.00020750196079960323,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "per_layer_actions": [
+    400.0,
+    260.0,
+    230.0,
+    230.0,
+    260.0,
+    200.0,
+    200.0,
+    200.0,
+    220.0,
+    160.0,
+    160.0,
+    180.0
+  ],
+  "total_return": -0.021107079855409227
+}

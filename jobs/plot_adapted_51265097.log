@@ -1,0 +1,33 @@
+============================================================
+Job ID   : 51265097
+Node     : gl3071
+Started  : Mon Jun  1 23:44:01 EDT 2026
+============================================================
+Python : /home/xysong/.conda/envs/RL/bin/python
+============================================================
+adapt_dir : surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150
+============================================================
+[sweep] adapt_dir : surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150
+[sweep] out_dir   : surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150
+[sweep] K=  0: total_return = -4.0532  (cool_time=0.15 s)
+[sweep] K=  5: total_return = -0.1897  (cool_time=0.15 s)
+[sweep] K= 10: total_return = -0.0562  (cool_time=0.15 s)
+[sweep] K= 20: total_return = -0.0342  (cool_time=0.15 s)
+[sweep] K= 50: total_return = -0.0209  (cool_time=0.15 s)
+[sweep] K=100: total_return = -0.0211  (cool_time=0.15 s)
+[sweep] → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/return_vs_K.png
+[sweep] → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/per_layer_rewards.png
+[sweep] → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/per_layer_actions.png
+[sweep] → surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/metrics_table.txt
+
+[sweep] All outputs in: surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150
+
+============================================================
+Finished: Mon Jun  1 23:44:09 EDT 2026  (exit=0)
+
+Outputs:
+  surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/return_vs_K.png
+  surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/per_layer_rewards.png
+  surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/per_layer_actions.png
+  surrogate_domain_adaptation/runs/base/20260601_174626/adapt_ct150/metrics_table.txt
+============================================================

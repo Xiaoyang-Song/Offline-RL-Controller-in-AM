@@ -1,4 +1,5 @@
 import json
+import tempfile
 import scipy.io
 import subprocess
 import os
@@ -212,22 +213,13 @@ for i in range(nSteps):
     script_path = os.path.abspath("../LPBF-Simulation/test/runSim.m")
 
     print(f"Running Layer {i+1} simulation in MATLAB...")
-    result = subprocess.run(
-        [
-            "matlab",
-            "-nodisplay",
-            "-nosplash",
-            "-nodesktop",
-            "-r", f"try, run('{script_path}'); catch ME, disp(getReport(ME)); exit(1); end; exit(0);"
-        ],
-        text=True,
-        capture_output=True
-    )
-
-    # if result.stdout.strip():
-    #     print("MATLAB stdout:", result.stdout[-2000:])  # last 2000 chars to avoid spam
-    # if result.stderr.strip():
-    #     print("MATLAB stderr:", result.stderr[-2000:])
+    try:
+        result = subprocess.run(
+            ["matlab", "-batch", f"run('{script_path}')"],
+            timeout=300,   # 5 min per layer; raises if MATLAB hangs
+        )
+    except subprocess.TimeoutExpired:
+        raise RuntimeError(f"MATLAB timed out on layer {i+1} (>300 s)")
 
     if result.returncode != 0:
         raise RuntimeError(f"MATLAB failed with return code {result.returncode}")
