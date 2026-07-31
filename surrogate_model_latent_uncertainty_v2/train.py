@@ -100,7 +100,7 @@ def parse_args() -> argparse.Namespace:
                    help="Number of ensemble transition members K (shared by both stages).")
     p.add_argument("--n_layers",        type=int,   default=12,
                    help="Number of build layers (sets layer embedding table size).")
-    p.add_argument("--layer_embed_dim", type=int,   default=8)
+    p.add_argument("--layer_embed_dim", type=int,   default=16)
     p.add_argument("--enc_hidden",    type=int,   default=256)
     p.add_argument("--enc_depth",     type=int,   default=3)
     p.add_argument("--trans_hidden",  type=int,   default=128)
