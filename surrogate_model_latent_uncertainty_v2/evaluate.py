@@ -113,15 +113,23 @@ class _DropBootstrapMask:
 def evaluate_single_step(
     model,
     traj_loader,
-    device:   str,
-    traj_len: int = 12,
+    state_std: torch.Tensor,
+    device:    str,
+    traj_len:  int = 12,
 ):
     """
     Teacher-forced 1-step evaluation. Each stage is fed its own GROUND-TRUTH
     input (cooling stage conditions on encode(h_gt), not the heating stage's
     prediction) — matches the training regime and isolates each stage's error.
+
+    model.decode(...) and the dataset's tensors are both in normalised
+    (z-scored) space, so differences must be rescaled by state_std to land
+    in raw Kelvin: (a_norm - b_norm) * state_std == a_raw - b_raw exactly
+    (the additive state_mean cancels in the subtraction, so only the
+    multiplicative std needs to be reapplied — no need for state_mean here).
     """
     model.eval()
+    ss = state_std.to(device)
     heat_abs = [[] for _ in range(traj_len)]
     heat_sq  = [[] for _ in range(traj_len)]
     cool_abs = [[] for _ in range(traj_len)]
@@ -146,14 +154,14 @@ def evaluate_single_step(
             z_t = model.encode(s_in)
             mu_heat, _, _, _ = model.predict_heating_ensemble(z_t, a_in, layer_idx)
             heat_pred = model.decode(z_t + mu_heat)
-            diff_heat = heat_pred - h_gt
+            diff_heat = (heat_pred - h_gt) * ss
             heat_abs[t].extend(diff_heat.abs().mean(dim=-1).cpu().numpy().tolist())
             heat_sq[t].extend((diff_heat ** 2).mean(dim=-1).cpu().numpy().tolist())
 
             z_heat_gt = model.encode(h_gt)
             mu_cool, _, _, _ = model.predict_cooling_ensemble(z_heat_gt, c_in, layer_idx)
             next_pred = model.decode(z_heat_gt + mu_cool)
-            diff_cool = next_pred - s_gt
+            diff_cool = (next_pred - s_gt) * ss
             cool_abs[t].extend(diff_cool.abs().mean(dim=-1).cpu().numpy().tolist())
             cool_sq[t].extend((diff_cool ** 2).mean(dim=-1).cpu().numpy().tolist())
 
@@ -169,14 +177,23 @@ def evaluate_single_step(
 def evaluate_rollout(
     model,
     traj_loader,
+    state_mean:  torch.Tensor, state_std: torch.Tensor,
     action_mean: float, action_std: float,
     cool_mean:   float, cool_std:   float,
     device:      str,
     traj_len:    int = 12,
 ):
     """Auto-regressive rollout via model.rollout — the two stages chained
-    using the model's OWN predictions, matching inference-time behaviour."""
+    using the model's OWN predictions, matching inference-time behaviour.
+
+    model.rollout(...) returns normalised-space fields (same space as the
+    dataset tensors it was fed), so both the RMSE/MAE (via the *ss diff
+    trick) and the raw arrays used for plotting (via full affine denorm)
+    need to be converted back to Kelvin here — mirrors v1's evaluate_rollout.
+    """
     model.eval()
+    sm = state_mean.to(device)
+    ss = state_std.to(device)
     heat_sq, heat_abs = [[] for _ in range(traj_len)], [[] for _ in range(traj_len)]
     cool_sq, cool_abs = [[] for _ in range(traj_len)], [[] for _ in range(traj_len)]
 
@@ -201,18 +218,18 @@ def evaluate_rollout(
         total_epi, total_ale, total_std = out["total_epistemic"], out["total_aleatoric"], out["total_std"]
 
         for t in range(T):
-            dh = pred_heat[:, t, :] - traj_h[:, t, :]
+            dh = (pred_heat[:, t, :] - traj_h[:, t, :]) * ss
             heat_sq[t].extend(dh.pow(2).mean(dim=-1).cpu().numpy().tolist())
             heat_abs[t].extend(dh.abs().mean(dim=-1).cpu().numpy().tolist())
 
-            dc = pred_next[:, t, :] - traj_s[:, t + 1, :]
+            dc = (pred_next[:, t, :] - traj_s[:, t + 1, :]) * ss
             cool_sq[t].extend(dc.pow(2).mean(dim=-1).cpu().numpy().tolist())
             cool_abs[t].extend(dc.abs().mean(dim=-1).cpu().numpy().tolist())
 
-        heat_pred_np = pred_heat.cpu().numpy()
-        heat_gt_np   = traj_h[:, :T, :].cpu().numpy()
-        next_pred_np = pred_next.cpu().numpy()
-        next_gt_np   = traj_s[:, 1:T+1, :].cpu().numpy()
+        heat_pred_np = (pred_heat * ss + sm).cpu().numpy()
+        heat_gt_np   = (traj_h[:, :T, :] * ss + sm).cpu().numpy()
+        next_pred_np = (pred_next * ss + sm).cpu().numpy()
+        next_gt_np   = (traj_s[:, 1:T+1, :] * ss + sm).cpu().numpy()
         actions_np   = traj_a[:, :T, 0].cpu().numpy() * action_std + action_mean
         cooltime_np  = traj_c[:, :T, 0].cpu().numpy() * cool_std   + cool_mean
         heat_epi_np, heat_ale_np = heat_epi.cpu().numpy(), heat_ale.cpu().numpy()
@@ -276,9 +293,12 @@ def evaluate_loss_components(model, flat_loader, device, roi_table) -> dict:
 
 
 @torch.no_grad()
-def evaluate_recon(model, traj_loader, device) -> Tuple:
-    """RMSE of encoder → decoder round-trip on all test states and heat fields [K]."""
+def evaluate_recon(model, traj_loader, state_std: torch.Tensor, device) -> Tuple:
+    """RMSE of encoder → decoder round-trip on all test states and heat fields [K].
+    Rescales the normalised-space round-trip error by state_std (diff trick,
+    see evaluate_single_step) to report it in Kelvin."""
     model.eval()
+    ss = state_std.to(device)
     se_s, n_s = 0.0, 0
     se_h, n_h = 0.0, 0
     for traj_s, traj_h, _, _ in traj_loader:
@@ -287,20 +307,24 @@ def evaluate_recon(model, traj_loader, device) -> Tuple:
         B, T1, D = traj_s.shape
         s_flat = traj_s.reshape(B * T1, D)
         recon_s = model.decode(model.encode(s_flat))
-        se_s += (recon_s - s_flat).pow(2).mean(dim=-1).sum().item()
+        se_s += ((recon_s - s_flat) * ss).pow(2).mean(dim=-1).sum().item()
         n_s  += B * T1
 
         _, T, _ = traj_h.shape
         h_flat = traj_h.reshape(B * T, D)
         recon_h = model.decode(model.encode(h_flat))
-        se_h += (recon_h - h_flat).pow(2).mean(dim=-1).sum().item()
+        se_h += ((recon_h - h_flat) * ss).pow(2).mean(dim=-1).sum().item()
         n_h  += B * T
     return float(np.sqrt(se_s / max(n_s, 1))), float(np.sqrt(se_h / max(n_h, 1)))
 
 
 @torch.no_grad()
-def compute_per_layer_mean_gt(traj_loader, device, traj_len: int = 12):
-    """Mean ground-truth temperature (raw Kelvin) per layer, for heat and next-state fields."""
+def compute_per_layer_mean_gt(traj_loader, state_mean: torch.Tensor, state_std: torch.Tensor,
+                               device, traj_len: int = 12):
+    """Mean ground-truth temperature (raw Kelvin) per layer, for heat and next-state fields.
+    Denormalises BEFORE averaging (state_mean/state_std vary per node, so
+    averaging normalised values first would not commute with rescaling after)."""
+    sm, ss = state_mean.to(device), state_std.to(device)
     heat_sums, heat_counts = np.zeros(traj_len), np.zeros(traj_len)
     next_sums, next_counts = np.zeros(traj_len), np.zeros(traj_len)
 
@@ -309,9 +333,9 @@ def compute_per_layer_mean_gt(traj_loader, device, traj_len: int = 12):
         B, T1, D = traj_s.shape
         T = min(T1 - 1, traj_len)
         for t in range(T):
-            heat_sums[t]  += traj_h[:, t, :].mean().item() * B
+            heat_sums[t]  += (traj_h[:, t, :] * ss + sm).mean().item() * B
             heat_counts[t] += B
-            next_sums[t]  += traj_s[:, t + 1, :].mean().item() * B
+            next_sums[t]  += (traj_s[:, t + 1, :] * ss + sm).mean().item() * B
             next_counts[t] += B
 
     return heat_sums / np.maximum(heat_counts, 1), next_sums / np.maximum(next_counts, 1)
@@ -323,7 +347,7 @@ def compute_per_layer_mean_gt(traj_loader, device, traj_len: int = 12):
 
 def _plot_field_2d(ax, values, triang, title, vmin=300, vmax=5000):
     tpc = ax.tripcolor(triang, values, cmap="jet", vmin=vmin, vmax=vmax, shading="gouraud")
-    ax.triplot(triang, color="k", linewidth=0.15, alpha=0.3)
+    ax.triplot(triang, color="k", linewidth=0.4, alpha=0.6)
     plt.colorbar(tpc, ax=ax, label="Temperature [K]")
     ax.set_aspect("auto"); ax.set_xlabel("X"); ax.set_ylabel("Y")
     ax.set_title(title, fontsize=9)
@@ -416,7 +440,7 @@ def plot_example_trajectory(
             herr = np.abs(hp - hg)
             tpc = axes[0, 2].tripcolor(triang, herr, cmap="hot", vmin=0,
                                        vmax=max(herr.max(), 1.0), shading="gouraud")
-            axes[0, 2].triplot(triang, color="k", linewidth=0.15, alpha=0.3)
+            axes[0, 2].triplot(triang, color="k", linewidth=0.4, alpha=0.6)
             plt.colorbar(tpc, ax=axes[0, 2], label="Abs Error [K]")
             axes[0, 2].set_aspect("auto")
             axes[0, 2].set_title(f"Heating Error  mean={h_mae:.2f}K", fontsize=9)
@@ -426,7 +450,7 @@ def plot_example_trajectory(
             nerr = np.abs(np_ - ng)
             tpc2 = axes[1, 2].tripcolor(triang, nerr, cmap="hot", vmin=0,
                                         vmax=max(nerr.max(), 1.0), shading="gouraud")
-            axes[1, 2].triplot(triang, color="k", linewidth=0.15, alpha=0.3)
+            axes[1, 2].triplot(triang, color="k", linewidth=0.4, alpha=0.6)
             plt.colorbar(tpc2, ax=axes[1, 2], label="Abs Error [K]")
             axes[1, 2].set_aspect("auto")
             axes[1, 2].set_title(f"Cooling Error  mean={n_mae:.2f}K", fontsize=9)
@@ -625,15 +649,16 @@ def main() -> None:
         for k, v in comps.items():
             print(f"  {k:<14}: {v:.6f}")
 
-        ae_rmse_s, ae_rmse_h = evaluate_recon(model, traj_loader, device)
+        ae_rmse_s, ae_rmse_h = evaluate_recon(model, traj_loader, state_std, device)
         print(f"  AE RMSE (s_t)      : {ae_rmse_s:.4f} K")
         print(f"  AE RMSE (u_heat_t) : {ae_rmse_h:.4f} K")
 
         h_ss_mae, h_ss_rmse, c_ss_mae, c_ss_rmse = evaluate_single_step(
-            model, traj_loader, device, traj_len=traj_len
+            model, traj_loader, state_std, device, traj_len=traj_len
         )
 
-        ro = evaluate_rollout(model, traj_loader, lp_mean, lp_std, cool_mean, cool_std,
+        ro = evaluate_rollout(model, traj_loader, state_mean, state_std,
+                              lp_mean, lp_std, cool_mean, cool_std,
                               device, traj_len=traj_len)
 
         print(f"\n  {'Layer':>6}  {'Heat SS RMSE':>13}  {'Heat RO RMSE':>13}  "
@@ -673,7 +698,9 @@ def main() -> None:
 
     pct_refs = {}
     for split_name, (traj_loader, _) in split_loaders.items():
-        pct_refs[split_name] = compute_per_layer_mean_gt(traj_loader, device, traj_len=traj_len)
+        pct_refs[split_name] = compute_per_layer_mean_gt(
+            traj_loader, state_mean, state_std, device, traj_len=traj_len
+        )
 
     _plot_two_panel_metric(metric_results, os.path.join(out_dir, "per_layer_rmse.png"),
                            "RMSE [K]", "RMSE", pct_refs=pct_refs)
