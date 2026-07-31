@@ -44,11 +44,32 @@ and $\lambda$ is updated by projected dual ascent after each batch:
 
 $$\lambda \leftarrow \big[\lambda + \alpha_\lambda(\widehat{J}_u - \delta)\big]_+$$
 
-`train.py` implements this literally: no replay buffer, no baseline
-subtraction, no entropy bonus — a fresh batch of $N$ trajectories is
+`train.py` implements this literally by default: no replay buffer, no
+baseline subtraction, no entropy bonus — a fresh batch of $N$ trajectories is
 collected with the current policy every iteration, used for exactly one
 policy-gradient step and one dual-ascent step, then discarded (matches the
 "Monte Carlo Uncertainty-Constrained Policy Gradient" algorithm box exactly).
+
+### Optional per-timestep baseline (`--use_baseline`)
+
+Off by default. Vanilla Monte Carlo REINFORCE has a specific credit-assignment
+weakness on long horizons: $G_{r,t}$ sums *every future reward*, so an early
+action's gradient weight is dominated by later, largely
+action-irrelevant rewards (e.g. by layer ~9-11 the surrogate predicts heat has
+already saturated past $T_h$ regardless of that layer's power, while layer 0's
+own reward — which genuinely depends on its action — gets swamped inside the
+12-layer sum). `--use_baseline` subtracts the batch's empirical mean return at
+each timestep before forming the advantage:
+
+$$G_{r,t} \leftarrow G_{r,t} - \tfrac{1}{N}\textstyle\sum_i G_{r,t}^{(i)}, \qquad
+G_{u,t} \leftarrow G_{u,t} - \tfrac{1}{N}\textstyle\sum_i G_{u,t}^{(i)}$$
+
+This is unbiased (subtracting any action-independent baseline from a REINFORCE
+return leaves the gradient's expectation unchanged) and stays a pure Monte
+Carlo quantity — no bootstrapping, no separate value network — consistent
+with the method's "Monte Carlo" framing. It only touches the policy-gradient
+advantage: $\widehat{J}_u$ (compared against $\delta$, driving the $\lambda$
+update) always uses the raw, un-baselined $G_{u,0}$.
 
 ## Why the policy operates in latent space
 

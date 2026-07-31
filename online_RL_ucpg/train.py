@@ -15,11 +15,33 @@ Implements Algorithm 1 exactly:
     J_u_hat = (1/N) sum_i sum_t gamma_u^t u_t^(i)          [ = (1/N) sum_i G_u,0^(i) ]
     lambda <- [lambda + alpha_lambda * (J_u_hat - delta)]_+
 
-No replay buffer, no baseline subtraction, no entropy bonus — this is a
-faithful, literal implementation of the algorithm as specified, not a
-variance-reduced variant. Each batch of N trajectories is generated fresh by
-the CURRENT policy and used for exactly one gradient step (on-policy Monte
-Carlo), matching the algorithm box.
+No replay buffer, no entropy bonus — this is otherwise a faithful, literal
+implementation of the algorithm as specified. Each batch of N trajectories is
+generated fresh by the CURRENT policy and used for exactly one gradient step
+(on-policy Monte Carlo), matching the algorithm box.
+
+Optional per-timestep baseline (--use_baseline)
+--------------------------------------------------
+Off by default (exactly matches the algorithm box: raw G_r,t, G_u,t). When
+enabled, subtracts the batch's empirical mean return at each timestep before
+forming the advantage:
+    G_r,t - baseline_r,t,   baseline_r,t = mean_i G_r,t^(i)
+    G_u,t - baseline_u,t,   baseline_u,t = mean_i G_u,t^(i)
+This does NOT change the policy-gradient estimator in expectation (subtracting
+any action-independent baseline from a REINFORCE return term is unbiased) —
+it only reduces variance. It matters most for EARLY layers: G_r,t sums every
+future reward, so early-layer actions get a gradient weight dominated by
+large, mostly action-irrelevant later-layer rewards (heat has already
+saturated by layer ~9-11 regardless of what happened at layer 0), drowning
+out the actual local signal. Subtracting the batch-mean return at each
+timestep removes exactly that action-irrelevant, state/horizon-driven
+component, leaving a much cleaner per-layer credit-assignment signal.
+Still a pure Monte Carlo quantity (empirical batch average, no bootstrapping,
+no separate value network) — matches the "Monte Carlo" framing of the method.
+Note: J_u_hat (the constraint estimate compared against delta, and the
+quantity that drives the lambda dual update) always uses the RAW G_u,0 — the
+baseline only ever touches the policy-gradient advantage, never the
+constraint estimate itself.
 
 Purpose of this experiment
 ----------------------------
@@ -117,6 +139,12 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--lr_theta",     type=float, default=3e-4, help="alpha_theta.")
     p.add_argument("--lr_lambda",    type=float, default=1e-2, help="alpha_lambda.")
     p.add_argument("--max_grad_norm", type=float, default=10.0)
+    p.add_argument("--use_baseline", action="store_true",
+                   help="Subtract the batch's per-timestep empirical mean return "
+                        "from G_r,t and G_u,t before forming the advantage (variance "
+                        "reduction; fixes early-layer credit assignment). Off by "
+                        "default to match the algorithm literally. Never affects "
+                        "J_u_hat / the lambda update, which always use raw G_u,0.")
 
     # ── logging / checkpointing ────────────────────────────────────────────────
     p.add_argument("--log_freq",  type=int, default=20)
@@ -310,7 +338,18 @@ def main() -> None:
 
         G_r = discounted_returns(rewards, args.gamma_r)   # (N, T)
         G_u = discounted_returns(u,       args.gamma_u)   # (N, T)
-        advantage = G_r - agent.lam * G_u                  # uses lambda from PREVIOUS iteration
+
+        if args.use_baseline:
+            # Per-timestep empirical baseline (batch mean at each t) — pure Monte
+            # Carlo, no bootstrapping. Reduces variance and repairs early-layer
+            # credit assignment without changing the gradient estimator's expectation.
+            G_r_adv = G_r - G_r.mean(axis=0, keepdims=True)
+            G_u_adv = G_u - G_u.mean(axis=0, keepdims=True)
+        else:
+            G_r_adv = G_r
+            G_u_adv = G_u
+
+        advantage = G_r_adv - agent.lam * G_u_adv           # uses lambda from PREVIOUS iteration
 
         N, T, obs_dim = obs.shape
         obs_flat       = torch.tensor(obs.reshape(N * T, obs_dim), dtype=torch.float32, device=device)
