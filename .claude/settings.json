@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/../LPBF-Simulation/simulation_v2 *)",
+      "Read(//nfs/turbo/coe-sunwbgt/xysong/LPBF-Simulation/simulation_v2/**)"
+    ]
+  }
+}
