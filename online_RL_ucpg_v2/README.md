@@ -122,7 +122,7 @@ v1 exactly.
 
 ## 2. Continuous Gaussian policy
 
-$\pi_\theta: \mathcal Z \to \mathcal N(\mu_\theta(z_t, t), \sigma_\theta)$,
+$\pi_\theta: \mathcal Z \to \mathcal N(\mu_\theta(z_t, t), \sigma_\theta(t))$,
 implemented in `model.ContinuousLatentPolicyNet`:
 
 $$
@@ -132,19 +132,32 @@ $$
 
 where $f_\theta$ is the same trunk architecture as v1's `LatentPolicyNet`
 (layer-embedding, residual MLP stem/trunk) with a scalar head instead of
-$|\mathcal A|$ logits. $\sigma_\theta$ is a single, **state-independent**
-learnable scale (standard practice for Gaussian policy-gradient methods —
-avoids the network learning a degenerate state-dependent exploration
-collapse early in training), expressed as a PETS-style soft-clamped
-log-fraction of the action half-range $r_a$ so the bound is scale-invariant
-regardless of `--action_min/--action_max`:
+$|\mathcal A|$ logits. $\sigma_\theta(t)$ is a **layer-specific** (one
+learnable value per build layer $t$, looked up the same way as the layer
+embedding — still state-independent *within* a layer), expressed as a
+PETS-style soft-clamped log-fraction of the action half-range $r_a$, with
+the soft-clamp bounds shared across layers so only the per-layer raw value
+differs and the bound stays scale-invariant regardless of
+`--action_min/--action_max`:
 
-$$\sigma_\theta = r_a \cdot \exp\big(\mathrm{softclamp}(\ell_\theta;\ \ell_{\min}, \ell_{\max})\big)$$
+$$\sigma_\theta(t) = r_a \cdot \exp\big(\mathrm{softclamp}(\ell_\theta(t);\ \ell_{\min}, \ell_{\max})\big)$$
 
 the exact soft-clamp construction (`max - softplus(max - x)`, then
 `min + softplus(x - min)`) already used for the surrogate's own transition
 heads (`GaussianTransitionMLP`) — reused here for consistency, not
 reinvented.
+
+**Why per-layer, not one global $\sigma_\theta$.** Layer 0 always sees the
+identical latent input (the fixed initial 300K field encoded once), so
+choosing its action is a stateless "find the peak of one fixed curve"
+problem — it can and should sharpen (shrink $\sigma$) independently of
+later, more state-variable layers whose optimal action genuinely depends on
+history. A single global $\sigma_\theta$ couples every layer's exploration
+together: noisy gradient signal from harder layers can keep an
+already-solved layer's $\sigma$ artificially wide, and vice versa. Giving
+every layer its own $\sigma_\theta(t)$ (still sharing the soft-clamp bounds,
+so none of them can collapse to exactly 0 or blow up) removes that coupling
+at essentially no extra cost — $n\_layers$ extra scalar parameters.
 
 **Why $\tanh$ only touches the mean, never the sample.** $a_t \sim
 \mathcal N(\mu_\theta, \sigma_\theta)$ is sampled **unclipped** — no

@@ -142,7 +142,9 @@ class UCPGAgentV2:
         entropy : float — mean policy entropy over the batch (diagnostic only,
                   not part of the loss — the algorithm as specified has no
                   entropy bonus). For a Gaussian, entropy = 0.5*log(2*pi*e*sigma^2),
-                  a direct, monotonic readout of the (state-independent) sigma.
+                  a direct, monotonic readout of sigma — now averaged across
+                  whatever mix of layers happened to be in this batch, since
+                  sigma is layer-specific (see model.ContinuousLatentPolicyNet).
         """
         mu, sigma = self.policy(obs_flat)
         dist      = Normal(mu, sigma)

@@ -25,13 +25,20 @@ Architecture
            already a normalised scalar, so no embedding table is needed)
   Trunk  : depth x ResidualBlock(H)
   mu head    : Linear(H -> 1) -> tanh -> rescaled to [action_min, action_max]
-  sigma      : a single, state-INDEPENDENT learnable scale (standard practice
-               for Gaussian policy-gradient methods, e.g. Spinning Up / TRPO's
-               continuous-control policies — avoids the network learning a
-               degenerate state-dependent exploration collapse early in
-               training), expressed as a PETS-style soft-clamped log-fraction
-               of the action half-range so the bound is scale-invariant no
-               matter what --action_min/--action_max are set to.
+  sigma      : LAYER-specific (but still state-independent within a layer)
+               learnable scale — one raw log-sigma value per build layer,
+               looked up by the same layer_idx used for the layer embedding.
+               Layer 1 always sees the identical latent input (s_0 is fixed),
+               so it's a pure 1-D "find the peak of a fixed curve" problem
+               that benefits from being able to sharpen (shrink sigma)
+               independently of harder, more state-variable later layers —
+               a single GLOBAL sigma (the original design) couples every
+               layer's exploration together and lets noisy gradient signal
+               from one layer disturb another's. Expressed as a PETS-style
+               soft-clamped log-fraction of the action half-range (bounds
+               shared across layers, only the raw per-layer value differs)
+               so it stays scale-invariant no matter what
+               --action_min/--action_max are set to.
 
 Why the mean is squashed but the SAMPLE is not
 ------------------------------------------------
@@ -93,9 +100,13 @@ class ContinuousLatentPolicyNet(nn.Module):
     dropout         : dropout probability inside each block (0 = off)
     n_layers        : number of LPBF build layers (sets embedding table size)
     layer_embed_dim : dimension of the learned layer embedding
-    log_sigma_init  : initial value of the (log-fraction-of-half-range) std
-    min_log_sigma   : lower soft bound on log-fraction std (prevents collapse to 0)
-    max_log_sigma   : upper soft bound on log-fraction std (prevents runaway exploration)
+    log_sigma_init  : initial value of the (log-fraction-of-half-range) std,
+                      shared as the starting point for EVERY layer's own
+                      parameter (they diverge from there during training)
+    min_log_sigma   : lower soft bound on log-fraction std (prevents collapse to 0),
+                      shared across all layers
+    max_log_sigma   : upper soft bound on log-fraction std (prevents runaway exploration),
+                      shared across all layers
     """
 
     def __init__(
@@ -141,9 +152,11 @@ class ContinuousLatentPolicyNet(nn.Module):
         nn.init.uniform_(self.mu_head.weight, -3e-3, 3e-3)
         nn.init.zeros_(self.mu_head.bias)
 
-        # State-INDEPENDENT log-std, expressed as a PETS-style soft-clamped
-        # log-fraction of the action half-range (see module docstring).
-        self.raw_log_sigma = nn.Parameter(torch.tensor(float(log_sigma_init)))
+        # One log-std per build layer (looked up by layer_idx in forward()),
+        # expressed as a PETS-style soft-clamped log-fraction of the action
+        # half-range with bounds SHARED across layers (see module docstring).
+        # All layers start from the same log_sigma_init and diverge from there.
+        self.raw_log_sigma = nn.Parameter(torch.full((n_layers,), float(log_sigma_init)))
         self.min_log_sigma = nn.Parameter(torch.tensor(float(min_log_sigma)))
         self.max_log_sigma = nn.Parameter(torch.tensor(float(max_log_sigma)))
 
@@ -168,10 +181,10 @@ class ContinuousLatentPolicyNet(nn.Module):
         mu_raw = self.mu_head(x).squeeze(-1)                                 # (B,)
         mu     = self.action_center + self.action_half_range * torch.tanh(mu_raw)
 
-        log_sigma = self.max_log_sigma - F.softplus(self.max_log_sigma - self.raw_log_sigma)
+        raw_log_sigma = self.raw_log_sigma[layer_idx]                        # (B,) per-sample, by layer
+        log_sigma = self.max_log_sigma - F.softplus(self.max_log_sigma - raw_log_sigma)
         log_sigma = self.min_log_sigma + F.softplus(log_sigma - self.min_log_sigma)
-        sigma = self.action_half_range * log_sigma.exp()
-        sigma = sigma.expand_as(mu)
+        sigma = self.action_half_range * log_sigma.exp()                     # (B,)
 
         return mu, sigma
 
