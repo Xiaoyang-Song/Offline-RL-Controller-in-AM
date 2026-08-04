@@ -1,5 +1,5 @@
 name,return_mean,return_std,uncertainty_mean,action_mean,action_std
-1. Offline Q-learning,-2.452226,0.145871,0.002212,185.3667,59.7232
+1. Offline Q-learning,-2.287968,0.161109,0.002175,178.9333,47.5731
 4. Kalman filter,-2.627657,0.339573,0.002234,189.9735,54.3103
 4. Particle filter,-2.670354,0.319312,0.002236,191.8337,54.5000
 3. Constant (best=170W, reference only),-3.894604,0.249883,0.002124,170.0000,0.0000

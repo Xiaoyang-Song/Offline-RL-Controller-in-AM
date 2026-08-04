@@ -78,24 +78,25 @@ def _snap_to_grid(actions: np.ndarray, grid: np.ndarray) -> np.ndarray:
 
 def _to_tensors(tr: dict, action_idx: np.ndarray, device: str):
     return (
-        torch.tensor(tr["s"],     dtype=torch.float32, device=device),
-        torch.tensor(action_idx,  dtype=torch.long,    device=device),
-        torch.tensor(tr["r"],     dtype=torch.float32, device=device),
-        torch.tensor(tr["s2"],    dtype=torch.float32, device=device),
-        torch.tensor(tr["layer"], dtype=torch.long,    device=device),
-        torch.tensor(tr["done"],  dtype=torch.bool,    device=device),
+        torch.tensor(tr["s"],         dtype=torch.float32, device=device),
+        torch.tensor(action_idx,      dtype=torch.long,    device=device),
+        torch.tensor(tr["r"],         dtype=torch.float32, device=device),
+        torch.tensor(tr["s2"],        dtype=torch.float32, device=device),
+        torch.tensor(tr["layer"],     dtype=torch.long,    device=device),
+        torch.tensor(tr["done"],      dtype=torch.bool,    device=device),
+        torch.tensor(tr["cool_time"], dtype=torch.float32, device=device),
     )
 
 
 @torch.no_grad()
-def _eval_loss(qnet, target, s, a, r, s2, layer, done, gamma, n_layers, batch_size=4096):
+def _eval_loss(qnet, target, s, a, r, s2, layer, done, cool, gamma, n_layers, batch_size=4096):
     total, n = 0.0, 0
     for i in range(0, s.shape[0], batch_size):
-        sb, ab, rb, s2b, lb, db = (t[i:i + batch_size] for t in (s, a, r, s2, layer, done))
+        sb, ab, rb, s2b, lb, db, cb = (t[i:i + batch_size] for t in (s, a, r, s2, layer, done, cool))
         next_layer = (lb + 1).clamp(max=n_layers - 1)
-        q_next = target(s2b, next_layer).max(dim=-1).values
+        q_next = target(s2b, next_layer, cb).max(dim=-1).values
         y = rb + gamma * (~db).float() * q_next
-        q_pred = qnet(sb, lb).gather(-1, ab.unsqueeze(-1)).squeeze(-1)
+        q_pred = qnet(sb, lb, cb).gather(-1, ab.unsqueeze(-1)).squeeze(-1)
         total += nn.functional.mse_loss(q_pred, y, reduction="sum").item()
         n += sb.shape[0]
     return total / max(n, 1)
@@ -129,20 +130,25 @@ def main() -> None:
     state_mean = tr_data["s"].mean(axis=0)
     state_std  = tr_data["s"].std(axis=0)
     state_std[state_std < 1e-6] = 1e-6
+    cool_mean = float(tr_data["cool_time"].mean())
+    cool_std  = float(tr_data["cool_time"].std())
+    if cool_std < 1e-6:
+        cool_std = 1.0
 
     state_dim = tr_data["s"].shape[1]
     n_actions = len(ACTION_GRID)
 
     def normalise(tr):
         tr = dict(tr)
-        tr["s"]  = (tr["s"]  - state_mean) / state_std
-        tr["s2"] = (tr["s2"] - state_mean) / state_std
+        tr["s"]         = (tr["s"]         - state_mean) / state_std
+        tr["s2"]        = (tr["s2"]        - state_mean) / state_std
+        tr["cool_time"] = (tr["cool_time"] - cool_mean)  / cool_std
         return tr
 
     tr_idx = _snap_to_grid(tr_data["a"], ACTION_GRID)
     va_idx = _snap_to_grid(va_data["a"], ACTION_GRID)
-    s, a, r, s2, layer, done = _to_tensors(normalise(tr_data), tr_idx, device)
-    vs, va, vr, vs2, vlayer, vdone = _to_tensors(normalise(va_data), va_idx, device)
+    s, a, r, s2, layer, done, cool = _to_tensors(normalise(tr_data), tr_idx, device)
+    vs, va, vr, vs2, vlayer, vdone, vcool = _to_tensors(normalise(va_data), va_idx, device)
 
     qnet   = RawQNet(state_dim, n_actions, args.hidden, args.depth, args.n_layers, args.layer_embed_dim).to(device)
     target = copy.deepcopy(qnet).eval()
@@ -161,14 +167,14 @@ def main() -> None:
         epoch_loss, n_batches = 0.0, 0
         for i in range(0, n, args.batch_size):
             idx = perm[i:i + args.batch_size]
-            sb, ab, rb, s2b, lb, db = s[idx], a[idx], r[idx], s2[idx], layer[idx], done[idx]
+            sb, ab, rb, s2b, lb, db, cb = s[idx], a[idx], r[idx], s2[idx], layer[idx], done[idx], cool[idx]
 
             with torch.no_grad():
                 next_layer = (lb + 1).clamp(max=args.n_layers - 1)
-                q_next = target(s2b, next_layer).max(dim=-1).values
+                q_next = target(s2b, next_layer, cb).max(dim=-1).values
                 y = rb + args.gamma * (~db).float() * q_next
 
-            q_pred = qnet(sb, lb).gather(-1, ab.unsqueeze(-1)).squeeze(-1)
+            q_pred = qnet(sb, lb, cb).gather(-1, ab.unsqueeze(-1)).squeeze(-1)
             loss = nn.functional.mse_loss(q_pred, y)
 
             optimizer.zero_grad()
@@ -181,7 +187,7 @@ def main() -> None:
         if epoch % args.target_sync_freq == 0:
             target.load_state_dict(qnet.state_dict())
 
-        val_loss = _eval_loss(qnet, target, vs, va, vr, vs2, vlayer, vdone, args.gamma, args.n_layers)
+        val_loss = _eval_loss(qnet, target, vs, va, vr, vs2, vlayer, vdone, vcool, args.gamma, args.n_layers)
         train_losses.append(epoch_loss / max(n_batches, 1))
         val_losses.append(val_loss)
 
@@ -192,7 +198,8 @@ def main() -> None:
             "qnet_state_dict": qnet.state_dict(),
             "model_config": dict(state_dim=state_dim, n_actions=n_actions, hidden=args.hidden,
                                  depth=args.depth, n_layers=args.n_layers, layer_embed_dim=args.layer_embed_dim),
-            "state_mean": state_mean, "state_std": state_std, "action_grid": ACTION_GRID,
+            "state_mean": state_mean, "state_std": state_std,
+            "cool_mean": cool_mean, "cool_std": cool_std, "action_grid": ACTION_GRID,
             "gamma": args.gamma, "epoch": epoch, "val_loss": val_loss, "train_args": vars(args),
         }
         if val_loss < best_val:
