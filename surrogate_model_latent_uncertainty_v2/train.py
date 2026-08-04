@@ -93,6 +93,13 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--test_fraction", type=float, default=0.10)
     p.add_argument("--initial_temp",  type=float, default=300.0)
     p.add_argument("--seed",          type=int,   default=42)
+    p.add_argument("--lp_filter_min", type=float, default=None,
+                   help="Optional: restrict training transitions to laser power >= this [W] "
+                        "(deliberately train a 'narrow' surrogate — see "
+                        "TwoStageLatentSurrogateDataset's lp_filter docstring). "
+                        "Requires --lp_filter_max too; incompatible with --rollout_steps > 1.")
+    p.add_argument("--lp_filter_max", type=float, default=None,
+                   help="Optional: restrict training transitions to laser power <= this [W].")
 
     # ── model ─────────────────────────────────────────────────────────────────
     p.add_argument("--latent_dim",    type=int,   default=64)
@@ -574,6 +581,17 @@ def main() -> None:
 
     # ── datasets ─────────────────────────────────────────────────────────────
     use_rollout = args.rollout_steps > 1
+
+    have_lp_filter = args.lp_filter_min is not None or args.lp_filter_max is not None
+    if have_lp_filter:
+        if args.lp_filter_min is None or args.lp_filter_max is None:
+            raise ValueError("--lp_filter_min and --lp_filter_max must be given together.")
+        if use_rollout:
+            raise ValueError("--lp_filter_min/--lp_filter_max require --rollout_steps <= 1 "
+                             "(filtering breaks the trajectory contiguity rollout loss needs).")
+        print(f"[train] LP filter active: training transitions restricted to "
+              f"[{args.lp_filter_min}, {args.lp_filter_max}] W (narrow-surrogate experiment)")
+
     ds_kwargs   = dict(
         state_mean=state_mean, state_std=state_std,
         lp_mean=lp_mean, lp_std=lp_std,
@@ -585,8 +603,9 @@ def main() -> None:
         train_ds = TwoStageLatentTrajectoryDataset(train_trajs, **ds_kwargs)
         val_ds   = TwoStageLatentTrajectoryDataset(val_trajs,   **ds_kwargs)
     else:
-        train_ds = TwoStageLatentSurrogateDataset(train_trajs, **ds_kwargs)
-        val_ds   = TwoStageLatentSurrogateDataset(val_trajs,   **ds_kwargs)
+        lp_filter = (args.lp_filter_min, args.lp_filter_max) if have_lp_filter else None
+        train_ds = TwoStageLatentSurrogateDataset(train_trajs, **ds_kwargs, lp_filter=lp_filter)
+        val_ds   = TwoStageLatentSurrogateDataset(val_trajs,   **ds_kwargs, lp_filter=lp_filter)
 
     loader_kw    = dict(batch_size=args.batch_size, num_workers=args.num_workers,
                         pin_memory=(device == "cuda"))

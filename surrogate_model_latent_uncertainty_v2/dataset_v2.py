@@ -265,6 +265,19 @@ class TwoStageLatentSurrogateDataset(Dataset):
     All state-like tensors (s_t, u_heat_t, s_{t+1}) are z-score normalised
     with the SAME (shared) state_mean/state_std, since they share one
     encoder/decoder. lp_t and cool_t are normalised independently.
+
+    lp_filter (optional): restrict the TRANSITIONS the heating/cooling
+    networks actually train on to those whose laser power falls in
+    [lo, hi] — e.g. for deliberately training a "narrow" surrogate (see
+    experiments comparing it to a surrogate trained on the full range).
+    State-chaining above still walks every original trajectory in full
+    (so s_t is always the true, physically-correct predecessor state,
+    regardless of what LP produced it) — filtering only drops which
+    resulting transitions are kept for training, it never fabricates or
+    skips over states. Only usable with this flat dataset (single-step
+    training): TwoStageLatentTrajectoryDataset (rollout loss) needs
+    unbroken 12-layer trajectories, which this filter would leave with
+    gaps in — it deliberately has no equivalent parameter.
     """
 
     def __init__(
@@ -279,6 +292,7 @@ class TwoStageLatentSurrogateDataset(Dataset):
         initial_temp:    float = 300.0,
         n_ensemble:      int   = 5,
         bootstrap_seed:  int   = 0,
+        lp_filter:       Optional[Tuple[float, float]] = None,
     ):
         super().__init__()
         state_mean = state_mean.cpu()
@@ -304,6 +318,19 @@ class TwoStageLatentSurrogateDataset(Dataset):
                 next_states.append(nxt)
                 layer_indices.append(layer_idx)
                 prev = nxt
+
+        if lp_filter is not None:
+            lo, hi = lp_filter
+            keep = [i for i, lp in enumerate(lp_actions) if lo <= lp <= hi]
+            n_total = len(lp_actions)
+            states        = [states[i]        for i in keep]
+            lp_actions    = [lp_actions[i]     for i in keep]
+            cool_times    = [cool_times[i]     for i in keep]
+            heat_states   = [heat_states[i]    for i in keep]
+            next_states   = [next_states[i]    for i in keep]
+            layer_indices = [layer_indices[i]  for i in keep]
+            print(f"[TwoStageLatentSurrogateDataset] lp_filter=[{lo}, {hi}]W kept "
+                  f"{len(keep):,}/{n_total:,} transitions")
 
         S  = torch.tensor(np.stack(states),      dtype=torch.float32)
         A  = torch.tensor(lp_actions,             dtype=torch.float32).unsqueeze(-1)
