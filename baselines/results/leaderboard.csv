@@ -1,0 +1,6 @@
+name,return_mean,return_std,uncertainty_mean,action_mean,action_std
+4. Particle filter,-2.616610,0.342887,0.002260,188.2115,56.0284
+4. Kalman filter,-2.663693,0.323260,0.002229,191.1978,53.8709
+3. Constant (best=170W, reference only),-3.811641,0.244854,0.002119,170.0000,0.0000
+2. Proportional,-9.713572,2.591946,0.002178,249.8407,0.6980
+3. Constant (mean of sweep),-13.294350,8.051281,0.002294,250.0000,89.4427

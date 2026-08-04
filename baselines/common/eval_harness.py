@@ -29,10 +29,14 @@ each one only reads the fields relevant to its own design:
 """
 
 import os
+import re
 import sys
 from dataclasses import dataclass
 from typing import Callable, List, Optional
 
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
 import numpy as np
 import torch
 
@@ -163,6 +167,52 @@ def summarize(name: str, result: dict) -> dict:
         action_mean=float(result["actions"].mean()),
         action_std=float(result["actions"].std()),
     )
+
+
+def slugify(name: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "_", name.lower()).strip("_")
+
+
+def plot_reward_and_action_per_layer(
+    rewards: np.ndarray,   # (n_ep, T)
+    actions: np.ndarray,   # (n_ep, T)
+    method_name: str,
+    out_path: str,
+) -> None:
+    """
+    Per-layer reward/action trace for one baseline — identical layout to
+    online_RL_ucpg_v2/evaluate.py's plot_reward_and_action_per_layer, so
+    every method's plot is directly visually comparable to the RL policy's.
+    """
+    n_ep, T = rewards.shape
+    layers  = np.arange(1, T + 1)
+
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 8), sharex=True)
+
+    for i in range(n_ep):
+        ax1.plot(layers, rewards[i], alpha=0.25, linewidth=0.7, color="steelblue")
+    ax1.plot(layers, rewards.mean(axis=0), color="steelblue", linewidth=2.5,
+             label=f"Mean reward (n={n_ep})")
+    ax1.axhline(0, color="green", linestyle="--", linewidth=1, label="Perfect (0 deviation)")
+    ax1.set_ylabel("Reward (−meanDeviation, end-of-heating)")
+    ax1.set_title(f"{method_name} — Per-Layer Reward")
+    ax1.legend(); ax1.grid(True, alpha=0.3)
+
+    mean_a = actions.mean(axis=0)
+    std_a  = actions.std(axis=0)
+    ax2.bar(layers, mean_a, alpha=0.7, color="darkorange", label="Mean LP [W]")
+    ax2.errorbar(layers, mean_a, yerr=std_a, fmt="none", color="black",
+                capsize=3, linewidth=1)
+    ax2.set_ylabel("Laser Power [W]")
+    ax2.set_xlabel("Layer")
+    ax2.set_title(f"{method_name} — Action Sequence (mean ± std)")
+    ax2.set_xticks(layers)
+    ax2.legend(); ax2.grid(True, alpha=0.3, axis="y")
+
+    fig.tight_layout()
+    fig.savefig(out_path, dpi=150)
+    plt.close(fig)
+    print(f"[eval_harness] Saved → {out_path}")
 
 
 def print_leaderboard(rows: List[dict]) -> None:

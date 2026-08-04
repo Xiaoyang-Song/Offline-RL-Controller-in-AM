@@ -33,7 +33,10 @@ import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from baselines.common.eval_harness import Harness, LatentAgentController, summarize, print_leaderboard
+from baselines.common.eval_harness import (
+    Harness, LatentAgentController, summarize, print_leaderboard,
+    plot_reward_and_action_per_layer, slugify,
+)
 from baselines.constant.controller import sweep_constant_controllers
 
 
@@ -104,41 +107,59 @@ def main() -> None:
 
     rows = []
 
+    def _evaluate(name: str, ctrl, n_episodes: int) -> None:
+        """Roll out `ctrl`, add its row to the leaderboard, AND save its
+        per-layer reward/action plot — every method gets both from one rollout."""
+        result = harness.run_many(ctrl, n_episodes)
+        rows.append(summarize(name, result))
+        plot_reward_and_action_per_layer(
+            result["rewards"], result["actions"], name,
+            os.path.join(args.out_dir, f"per_layer_{slugify(name)}.png"),
+        )
+
     # ── 0. Naive policy gradient ────────────────────────────────────────────
     if args.naive_pg_checkpoint:
         ctrl = LatentAgentController(args.naive_pg_checkpoint, device=device, greedy=True)
-        rows.append(summarize("0. Naive PG", harness.run_many(ctrl, args.n_episodes)))
+        _evaluate("0. Naive PG", ctrl, args.n_episodes)
 
     # ── 1. Offline Q-learning ────────────────────────────────────────────────
     if args.offline_q_checkpoint:
         from baselines.offline_q.model import load_offline_q_controller
         ctrl = load_offline_q_controller(args.offline_q_checkpoint, device=device)
-        rows.append(summarize("1. Offline Q-learning", harness.run_many(ctrl, args.n_episodes)))
+        _evaluate("1. Offline Q-learning", ctrl, args.n_episodes)
 
     # ── 2. Proportional controller ──────────────────────────────────────────
     if args.proportional_fitted:
         from baselines.proportional.controller import load_proportional_controller
         ctrl = load_proportional_controller(args.proportional_fitted)
-        rows.append(summarize("2. Proportional", harness.run_many(ctrl, args.n_episodes)))
+        _evaluate("2. Proportional", ctrl, args.n_episodes)
 
     # ── 3. Constant policy sweep ─────────────────────────────────────────────
     if not args.skip_constant:
-        sweep_rows = []
+        sweep_rows, sweep_results = [], []
         for w, ctrl in sweep_constant_controllers():
-            r = summarize(f"const_{w:.0f}W", harness.run_many(ctrl, args.n_episodes_constant))
-            sweep_rows.append(r)
+            result = harness.run_many(ctrl, args.n_episodes_constant)
+            sweep_rows.append(summarize(f"const_{w:.0f}W", result))
+            sweep_results.append(result)
         means = np.array([r["return_mean"]  for r in sweep_rows])
         watts = np.array([float(r["name"].split("_")[1][:-1]) for r in sweep_rows])
-        best  = sweep_rows[int(np.argmax(means))]
+        best_idx = int(np.argmax(means))
+        best = sweep_rows[best_idx]
 
         rows.append(dict(name="3. Constant (mean of sweep)", return_mean=float(means.mean()),
                          return_std=float(means.std()),
                          uncertainty_mean=float(np.mean([r["uncertainty_mean"] for r in sweep_rows])),
                          action_mean=float(watts.mean()), action_std=float(watts.std())))
-        rows.append(dict(name=f"3. Constant (best={best['action_mean']:.0f}W, reference only)",
+        best_name = f"3. Constant (best={best['action_mean']:.0f}W, reference only)"
+        rows.append(dict(name=best_name,
                          return_mean=best["return_mean"], return_std=best["return_std"],
                          uncertainty_mean=best["uncertainty_mean"],
                          action_mean=best["action_mean"], action_std=0.0))
+        best_result = sweep_results[best_idx]
+        plot_reward_and_action_per_layer(
+            best_result["rewards"], best_result["actions"], best_name,
+            os.path.join(args.out_dir, f"per_layer_{slugify(best_name)}.png"),
+        )
 
         fig, ax = plt.subplots(figsize=(9, 4.5))
         ax.plot(watts, means, marker="o", color="darkorange")
@@ -156,13 +177,13 @@ def main() -> None:
         kctrl = load_kalman_controller(args.kalman_particle_fitted, R=args.kalman_R, seed=args.seed)
         pctrl = load_particle_controller(args.kalman_particle_fitted, R=args.particle_R,
                                          n_particles=args.particle_n, seed=args.seed)
-        rows.append(summarize("4. Kalman filter", harness.run_many(kctrl, args.n_episodes)))
-        rows.append(summarize("4. Particle filter", harness.run_many(pctrl, args.n_episodes)))
+        _evaluate("4. Kalman filter", kctrl, args.n_episodes)
+        _evaluate("4. Particle filter", pctrl, args.n_episodes)
 
     # ── (optional) real UCPG v2 policy, for a full leaderboard ───────────────
     if args.ucpg_v2_checkpoint:
         ctrl = LatentAgentController(args.ucpg_v2_checkpoint, device=device, greedy=True)
-        rows.append(summarize("UCPG v2 (ours)", harness.run_many(ctrl, args.n_episodes)))
+        _evaluate("UCPG v2 (ours)", ctrl, args.n_episodes)
 
     if not rows:
         print("[evaluate_baselines] No methods selected — pass at least one checkpoint/fitted-params "

@@ -1,0 +1,104 @@
+============================================================
+Job ID   : 56076808
+Node     : gl3052
+Started  : Mon Aug  3 22:11:08 EDT 2026
+============================================================
+Python : /home/xysong/.conda/envs/RL/bin/python
+============================================================
+[baselines] === 1. Offline Q-learning ===
+=================================================================
+[offline_q] Baseline 1 — offline (fitted) Q-learning, discrete actions, raw field
+[offline_q] Output dir : baselines/offline_q/runs/cpu_run
+[offline_q] Device     : cpu
+=================================================================
+[dataset_v2] Loaded 5000 trajectories × 12 layers from DatasetV2_layer_12_samples_5000.pkl
+[dataset_v2] Split → train 4000 | val 500 | test 500
+[offline_q] Train transitions: 48000  |  Val transitions: 6000
+[offline_q] RawQNet(state_dim=1053, n_actions=31, n_layers=12, params=678,271)
+Epoch    1/50 | train 0.13742 | val 0.03173 | 3s
+Epoch    2/50 | train 0.02662 | val 0.34140 | 5s
+Epoch    3/50 | train 0.06363 | val 0.01049 | 8s
+Epoch    4/50 | train 0.00867 | val 0.20054 | 10s
+Epoch    5/50 | train 0.02495 | val 0.00839 | 13s
+Epoch    6/50 | train 0.01213 | val 0.13790 | 15s
+Epoch    7/50 | train 0.02081 | val 0.00829 | 18s
+Epoch    8/50 | train 0.00745 | val 0.11775 | 20s
+Epoch    9/50 | train 0.02056 | val 0.00831 | 23s
+Epoch   10/50 | train 0.00620 | val 0.10772 | 25s
+Epoch   11/50 | train 0.01730 | val 0.01289 | 28s
+Epoch   12/50 | train 0.00855 | val 0.08600 | 30s
+Epoch   13/50 | train 0.01451 | val 0.01141 | 33s
+Epoch   14/50 | train 0.01175 | val 0.06235 | 35s
+Epoch   15/50 | train 0.01289 | val 0.00989 | 38s
+Epoch   16/50 | train 0.00920 | val 0.06366 | 40s
+Epoch   17/50 | train 0.01137 | val 0.00759 | 43s
+Epoch   18/50 | train 0.00772 | val 0.06167 | 45s
+Epoch   19/50 | train 0.01461 | val 0.01495 | 47s
+Epoch   20/50 | train 0.01005 | val 0.07056 | 50s
+Epoch   21/50 | train 0.01944 | val 0.01566 | 52s
+Epoch   22/50 | train 0.01452 | val 0.06883 | 55s
+Epoch   23/50 | train 0.02303 | val 0.02033 | 57s
+Epoch   24/50 | train 0.01949 | val 0.03296 | 60s
+Epoch   25/50 | train 0.01317 | val 0.01490 | 62s
+Epoch   26/50 | train 0.01170 | val 0.01314 | 65s
+Epoch   27/50 | train 0.00686 | val 0.00596 | 67s
+Epoch   28/50 | train 0.00710 | val 0.00933 | 70s
+Epoch   29/50 | train 0.00766 | val 0.00977 | 72s
+Epoch   30/50 | train 0.00781 | val 0.01204 | 75s
+Epoch   31/50 | train 0.01154 | val 0.00847 | 77s
+Epoch   32/50 | train 0.01206 | val 0.01295 | 80s
+Epoch   33/50 | train 0.00898 | val 0.00903 | 82s
+Epoch   34/50 | train 0.00974 | val 0.01390 | 85s
+Epoch   35/50 | train 0.01017 | val 0.01036 | 87s
+Epoch   36/50 | train 0.00949 | val 0.01703 | 89s
+Epoch   37/50 | train 0.01436 | val 0.01308 | 92s
+Epoch   38/50 | train 0.01291 | val 0.01272 | 94s
+Epoch   39/50 | train 0.01118 | val 0.01096 | 97s
+Epoch   40/50 | train 0.01130 | val 0.01780 | 99s
+Epoch   41/50 | train 0.01713 | val 0.01671 | 102s
+Epoch   42/50 | train 0.01621 | val 0.01792 | 104s
+Epoch   43/50 | train 0.01345 | val 0.01342 | 107s
+Epoch   44/50 | train 0.01320 | val 0.02088 | 109s
+Epoch   45/50 | train 0.01630 | val 0.01835 | 112s
+Epoch   46/50 | train 0.01729 | val 0.01729 | 114s
+Epoch   47/50 | train 0.01373 | val 0.01973 | 117s
+Epoch   48/50 | train 0.01431 | val 0.01468 | 119s
+Epoch   49/50 | train 0.01187 | val 0.01295 | 122s
+Epoch   50/50 | train 0.01186 | val 0.01403 | 124s
+
+[offline_q] Done. Best val loss: 0.00596
+[offline_q] Best checkpoint: baselines/offline_q/runs/cpu_run/offline_q_best.pt
+[baselines] === 2. Proportional controller ===
+[dataset_v2] Loaded 5000 trajectories × 12 layers from DatasetV2_layer_12_samples_5000.pkl
+[dataset_v2] Split → train 4000 | val 500 | test 500
+[proportional] Fit on 4000 trajectories: K_p=-0.0011  bias=250.75  T_mid=2400.0  residual_std=89.43
+[proportional] Saved → baselines/proportional/fitted.pt
+[baselines] === 4. Kalman / particle filter ===
+[dataset_v2] Loaded 5000 trajectories × 12 layers from DatasetV2_layer_12_samples_5000.pkl
+[dataset_v2] Split → train 4000 | val 500 | test 500
+[kalman_particle] Fit on 4000 trajectories: alpha=0.9883  beta=6.8022  gamma_c=-127.06  Q=87176.16  T_mid=2400.0
+[kalman_particle] Saved → baselines/kalman_particle/fitted.pt
+[baselines] === Aggregating all results ===
+======================================================================
+  Baselines — Aggregated Evaluation
+======================================================================
+  Surrogate (shared environment) : surrogate_model_latent_uncertainty_v2/runs/20260803_184916/two_stage_best.pt
+  Episodes/method                : 50
+======================================================================
+[TwoStageLatentLPBFEnv] Mesh loaded: 1053 nodes  X∈[0.00, 12.00]  Y∈[0.00, 3.00]
+[evaluate_baselines] Saved → baselines/results/constant_sweep.png
+
+Method                     Return (mean±std)   Uncertainty     Action (mean±std)
+--------------------------------------------------------------------------------
+1. Offline Q-learning   -2.4522 ± 0.1459        0.00221     185.4 ± 59.7   
+4. Kalman filter        -2.6277 ± 0.3396        0.00223     190.0 ± 54.3   
+4. Particle filter      -2.6704 ± 0.3193        0.00224     191.8 ± 54.5   
+3. Constant (best=170W, reference only)  -3.8946 ± 0.2499        0.00212     170.0 ± 0.0    
+2. Proportional         -9.9042 ± 3.2023        0.00218     249.9 ± 0.7    
+3. Constant (mean of sweep) -13.5530 ± 7.9044        0.00230     250.0 ± 89.4   
+
+[evaluate_baselines] Saved → baselines/results/leaderboard.csv
+[evaluate_baselines] Saved → baselines/results/leaderboard.png
+============================================================
+Baselines finished: Mon Aug  3 22:14:18 EDT 2026  (exit code: 0)
+============================================================

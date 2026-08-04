@@ -1,0 +1,11 @@
+============================================================
+Job ID   : 56074690
+Node     : gl1008
+Started  : Mon Aug  3 21:58:59 EDT 2026
+============================================================
+Python : /home/xysong/.conda/envs/RL/bin/python
+Torch  : 2.5.1+cu121
+CUDA   : True
+============================================================
+[baselines] === 0. Naive policy gradient ===
+[2026-08-03T22:00:01.053] error: *** JOB 56074690 ON gl1008 CANCELLED AT 2026-08-03T22:00:01 DUE to SIGNAL Terminated ***
