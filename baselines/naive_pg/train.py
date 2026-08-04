@@ -60,6 +60,14 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--cool_time_max", type=float, default=0.15)
     p.add_argument("--action_min",  type=float, default=100.0)
     p.add_argument("--action_max",  type=float, default=400.0)
+    p.add_argument("--ood_min", type=float, default=None,
+                   help="Optional diagnostic: the surrogate's actual trained action range is "
+                        "[ood_min, ood_max] (e.g. a narrow surrogate trained on 150-300W while "
+                        "--action_min/--action_max let the policy roam 100-400W). Actions OUTSIDE "
+                        "this range are logged as 'OOD fraction' every iteration. Must be given "
+                        "together with --ood_max — this is the head-to-head comparison against "
+                        "online_RL_ucpg_v2's --ood_min/--ood_max (see its train.py docstring).")
+    p.add_argument("--ood_max", type=float, default=None, help="See --ood_min.")
 
     p.add_argument("--hidden",          type=int,   default=128)
     p.add_argument("--depth",           type=int,   default=3)
@@ -89,6 +97,11 @@ def parse_args() -> argparse.Namespace:
 def main() -> None:
     args   = parse_args()
     device = args.device or ("cuda" if torch.cuda.is_available() else "cpu")
+
+    have_ood = args.ood_min is not None or args.ood_max is not None
+    if have_ood and (args.ood_min is None or args.ood_max is None):
+        raise ValueError("--ood_min and --ood_max must be given together.")
+
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
 
@@ -127,7 +140,7 @@ def main() -> None:
     )
     print(f"[naive_pg] {agent}")
 
-    hist_return, hist_loss, hist_entropy = [], [], []
+    hist_return, hist_loss, hist_entropy, hist_frac_ood = [], [], [], []
     best_return = -float("inf")
 
     t0 = time.time()
@@ -146,12 +159,15 @@ def main() -> None:
         raw_return = float(rewards.sum(axis=1).mean())
 
         hist_return.append(raw_return); hist_loss.append(loss); hist_entropy.append(entropy)
+        if have_ood:
+            hist_frac_ood.append(float(((actions < args.ood_min) | (actions > args.ood_max)).mean()))
 
         if k % args.log_freq == 0 or k == 1:
             n_recent = min(args.log_freq, len(hist_return))
+            ood_str  = (f" | OOD-action {hist_frac_ood[-1]*100:5.1f}%" if have_ood else "")
             print(f"Iter {k:5d}/{args.n_iterations} | return {raw_return:+.4f} "
                   f"(avg{n_recent} {np.mean(hist_return[-n_recent:]):+.4f}) | "
-                  f"loss {loss:+.4f} | entropy {entropy:.3f} | {time.time()-t0:.0f}s")
+                  f"loss {loss:+.4f} | entropy {entropy:.3f}{ood_str} | {time.time()-t0:.0f}s")
 
         if raw_return > best_return:
             best_return = raw_return
@@ -160,18 +176,30 @@ def main() -> None:
 
         if k % args.save_freq == 0:
             agent.save(os.path.join(out_dir, f"naive_pg_iter{k:05d}.pt"),
-                      extra={"iteration": k, "hist_return": hist_return, "train_args": vars(args)})
+                      extra={"iteration": k, "hist_return": hist_return,
+                            "hist_frac_ood": hist_frac_ood, "train_args": vars(args)})
             _plot_series(hist_return, "Undiscounted episode return", "Naive PG — Reward Return",
                         os.path.join(out_dir, "return.png"))
             _plot_series(hist_loss, "Policy loss", "Naive PG — Policy Gradient Loss",
                         os.path.join(out_dir, "loss.png"), color="tab:orange")
             _plot_series(hist_entropy, "Mean policy entropy", "Naive PG — Policy Entropy",
                         os.path.join(out_dir, "entropy.png"), color="tab:green")
+            if have_ood:
+                _plot_series(hist_frac_ood, "Fraction of actions outside [ood_min, ood_max]",
+                            f"Naive PG — Fraction of Chosen Actions Outside "
+                            f"[{args.ood_min:.0f}, {args.ood_max:.0f}] W",
+                            os.path.join(out_dir, "ood_action_fraction.png"), color="tab:brown")
 
     agent.save(os.path.join(out_dir, "naive_pg_final.pt"),
-              extra={"iteration": args.n_iterations, "hist_return": hist_return, "train_args": vars(args)})
+              extra={"iteration": args.n_iterations, "hist_return": hist_return,
+                    "hist_frac_ood": hist_frac_ood, "train_args": vars(args)})
     _plot_series(hist_return, "Undiscounted episode return", "Naive PG — Reward Return",
                 os.path.join(out_dir, "return.png"))
+    if have_ood:
+        _plot_series(hist_frac_ood, "Fraction of actions outside [ood_min, ood_max]",
+                    f"Naive PG — Fraction of Chosen Actions Outside "
+                    f"[{args.ood_min:.0f}, {args.ood_max:.0f}] W",
+                    os.path.join(out_dir, "ood_action_fraction.png"), color="tab:brown")
     print(f"\n[naive_pg] Done. Best return: {best_return:.4f}")
     print(f"[naive_pg] Best checkpoint: {os.path.join(out_dir, 'naive_pg_best.pt')}")
 

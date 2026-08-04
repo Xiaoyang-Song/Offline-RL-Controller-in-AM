@@ -31,9 +31,14 @@ What changed vs. online_RL_ucpg/train.py
     END-OF-HEATING field (see env.py's docstring); it also draws one
     cool_time per EPISODE (not per layer, not an action) — see
     --cool_time_min/--cool_time_max.
-  - --ood_threshold is now optional (default: none logged) since this
-    package isn't tied to the narrow-vs-wide surrogate ablation online_RL_ucpg
-    was built for; pass it if you want that diagnostic.
+  - --ood_min/--ood_max are optional (default: none logged) — pass BOTH to
+    run the same narrow-surrogate-vs-wide-policy ablation online_RL_ucpg (v1)
+    was built for (see README.md's "Experiment this package was built for").
+    Generalised to a two-sided RANGE rather than v1's single upper
+    threshold, since here the narrow surrogate's range (e.g. 150-300W) can
+    sit strictly INSIDE the full action range (100-400W) — unlike v1, where
+    the narrow floor happened to equal the wide floor, so only an upper
+    bound was ever needed.
   - New per-iteration diagnostic: mean/std of the policy's chosen action
     (action_stats.png) — the continuous analogue of watching a categorical
     distribution sharpen, directly visualising exploration collapsing (or
@@ -104,10 +109,14 @@ def parse_args() -> argparse.Namespace:
     # ── policy action range (soft "aim range" for the Gaussian mean, NOT a hard bound) ──
     p.add_argument("--action_min",  type=float, default=100.0)
     p.add_argument("--action_max",  type=float, default=400.0)
-    p.add_argument("--ood_threshold", type=float, default=None,
-                   help="Optional diagnostic: actions above this [W] are logged as "
-                        "'OOD fraction' every iteration (does not affect training). "
-                        "Omit to skip this diagnostic.")
+    p.add_argument("--ood_min", type=float, default=None,
+                   help="Optional diagnostic: the surrogate's actual trained action range is "
+                        "[ood_min, ood_max] (e.g. a narrow surrogate trained on 150-300W while "
+                        "--action_min/--action_max let the policy roam 100-400W). Actions OUTSIDE "
+                        "this range are logged as 'OOD fraction' every iteration (does not affect "
+                        "training). Must be given together with --ood_max; omit both to skip.")
+    p.add_argument("--ood_max", type=float, default=None,
+                   help="See --ood_min.")
 
     # ── policy network architecture ───────────────────────────────────────────
     p.add_argument("--hidden",          type=int,   default=128)
@@ -259,6 +268,10 @@ def main() -> None:
     args   = parse_args()
     device = args.device or ("cuda" if torch.cuda.is_available() else "cpu")
 
+    have_ood = args.ood_min is not None or args.ood_max is not None
+    if have_ood and (args.ood_min is None or args.ood_max is None):
+        raise ValueError("--ood_min and --ood_max must be given together.")
+
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
 
@@ -387,14 +400,13 @@ def main() -> None:
         hist_entropy.append(entropy)
         hist_action_mean.append(act_mean)
         hist_action_std.append(act_std)
-        if args.ood_threshold is not None:
-            hist_frac_ood.append(float((actions > args.ood_threshold).mean()))
+        if have_ood:
+            hist_frac_ood.append(float(((actions < args.ood_min) | (actions > args.ood_max)).mean()))
 
         if k % args.log_freq == 0 or k == 1:
             n_recent = min(args.log_freq, len(hist_return))
             elapsed  = time.time() - t0
-            ood_str  = (f" | OOD-action {hist_frac_ood[-1]*100:5.1f}%"
-                       if args.ood_threshold is not None else "")
+            ood_str  = (f" | OOD-action {hist_frac_ood[-1]*100:5.1f}%" if have_ood else "")
             print(
                 f"Iter {k:5d}/{args.n_iterations} | "
                 f"return {raw_return:+.4f} (avg{n_recent} {np.mean(hist_return[-n_recent:]):+.4f}) | "
@@ -449,9 +461,10 @@ def main() -> None:
             _plot_action_stats(hist_action_mean, hist_action_std,
                                args.action_min, args.action_max,
                                os.path.join(out_dir, "action_stats.png"))
-            if args.ood_threshold is not None:
-                _plot_series(hist_frac_ood, "Fraction of actions > threshold",
-                            f"UCPG v2 — Fraction of Chosen Actions Above {args.ood_threshold:.0f} W",
+            if have_ood:
+                _plot_series(hist_frac_ood, "Fraction of actions outside [ood_min, ood_max]",
+                            f"UCPG v2 — Fraction of Chosen Actions Outside "
+                            f"[{args.ood_min:.0f}, {args.ood_max:.0f}] W",
                             os.path.join(out_dir, "ood_action_fraction.png"), color="tab:brown")
 
     # ── final checkpoint + plots ───────────────────────────────────────────────
@@ -483,9 +496,10 @@ def main() -> None:
     _plot_action_stats(hist_action_mean, hist_action_std,
                        args.action_min, args.action_max,
                        os.path.join(out_dir, "action_stats.png"))
-    if args.ood_threshold is not None:
-        _plot_series(hist_frac_ood, "Fraction of actions > threshold",
-                    f"UCPG v2 — Fraction of Chosen Actions Above {args.ood_threshold:.0f} W",
+    if have_ood:
+        _plot_series(hist_frac_ood, "Fraction of actions outside [ood_min, ood_max]",
+                    f"UCPG v2 — Fraction of Chosen Actions Outside "
+                    f"[{args.ood_min:.0f}, {args.ood_max:.0f}] W",
                     os.path.join(out_dir, "ood_action_fraction.png"), color="tab:brown")
 
     total_time = time.time() - t0

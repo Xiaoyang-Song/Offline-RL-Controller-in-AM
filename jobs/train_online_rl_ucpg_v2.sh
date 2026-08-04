@@ -66,6 +66,18 @@ COOL_TIME_MAX=0.15
 ACTION_MIN=100.0
 ACTION_MAX=400.0
 
+# ── OOD diagnostic (optional — README.md §5's narrow-surrogate experiment) ──
+# Set BOTH to the surrogate's actual trained range (e.g. if $SURROGATE above
+# is a narrow_150_300W run) to log "fraction of chosen actions outside this
+# range" during training. Leave both empty to skip (default: no OOD logging,
+# appropriate when $SURROGATE was trained on the full 100-400W range).
+OOD_MIN=
+OOD_MAX=
+OOD_ARGS=()
+if [[ -n "$OOD_MIN" && -n "$OOD_MAX" ]]; then
+    OOD_ARGS=(--ood_min "$OOD_MIN" --ood_max "$OOD_MAX")
+fi
+
 # ── Policy network architecture ───────────────────────────────────────────────
 HIDDEN=128
 DEPTH=3
@@ -127,6 +139,7 @@ python -m online_RL_ucpg_v2.train \
     --log_freq        $LOG_FREQ         \
     --save_freq       $SAVE_FREQ        \
     --seed            $SEED             \
+    "${OOD_ARGS[@]}"                    \
     "$@"
 
 EXIT_CODE=$?

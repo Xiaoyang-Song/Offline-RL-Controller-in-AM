@@ -218,6 +218,67 @@ round-tripping through the decoder and back through the encoder every step
 — the raw field is only decoded twice per step (end-of-heating, for reward;
 end-of-cooling, for logging), never fed back through the encoder.
 
+## 5. Experiment this package was built for
+
+Same experiment v1 was built around, adapted to v2's setup: train the
+surrogate on a **narrow** laser-power range, then let the UCPG policy
+choose from the **wider**, real range the raw dataset actually covers,
+while the environment is still backed by the narrow-trained surrogate. The
+untrained region is then genuinely out-of-distribution for the surrogate —
+epistemic $\sigma$ should rise sharply there (we verified this directly: at
+1000W, epistemic uncertainty was ~12x its in-range value) — so a working
+uncertainty constraint should discourage the policy from drifting there,
+**without the reward function ever being told the boundary exists**.
+
+**One structural difference from v1, worth knowing before you set this up.**
+v1's narrow/wide ranges shared the same floor (e.g. narrow 150-300W, wide
+150-400W), so there was only ever an upper OOD boundary to check. Here, the
+narrow surrogate (e.g. 150-300W, via
+`surrogate_model_latent_uncertainty_v2.train`'s `--lp_filter_min/--lp_filter_max`)
+sits *strictly inside* the real data's full range (100-400W) — so letting
+the policy roam the full range creates OOD on **both sides**, not just one.
+That's why `--ood_min/--ood_max` here is a genuine two-sided range rather
+than v1's single `--ood_threshold`: "OOD" means outside `[ood_min, ood_max]`,
+matching whatever range the surrogate you're backing the environment with
+was actually trained on.
+
+`--ood_min/--ood_max` (on both this package's `train.py`/`evaluate.py` *and*
+`baselines/naive_pg/train.py`, for a head-to-head comparison) are pure
+logging/plotting parameters — they play no role in the loss or constraint
+itself, only in tracking "fraction of chosen actions outside this range"
+during training and evaluation.
+
+### 1. Train the narrow surrogate
+
+```bash
+python -m surrogate_model_latent_uncertainty_v2.train \
+    --data_path Data/DatasetV2_layer_12_samples_5000.pkl \
+    --lp_filter_min 150 --lp_filter_max 300 \
+    --out_dir surrogate_model_latent_uncertainty_v2/runs/narrow_150_300W \
+    # ... (match your wide surrogate's other hyperparameters for a controlled comparison)
+```
+
+### 2. Train both policies against it, allowed to roam the full range
+
+```bash
+python -m online_RL_ucpg_v2.train \
+    --surrogate surrogate_model_latent_uncertainty_v2/runs/narrow_150_300W/two_stage_best.pt \
+    --action_min 100 --action_max 400 \
+    --ood_min 150 --ood_max 300 \
+    --delta 0.05
+
+python -m baselines.naive_pg.train \
+    --surrogate surrogate_model_latent_uncertainty_v2/runs/narrow_150_300W/two_stage_best.pt \
+    --action_min 100 --action_max 400 \
+    --ood_min 150 --ood_max 300
+```
+
+Watch `ood_action_fraction.png` for both runs during training, and
+`eval_action_histogram.png` (from `evaluate.py --plot`) afterward — the
+red-shaded regions mark where the surrogate has no training support. The
+headline comparison: does naive PG's chosen-action mass creep into the
+shaded regions while UCPG's stays inside `[150, 300]`W?
+
 ## Usage
 
 ### Training
@@ -237,9 +298,9 @@ logged `J_u` values under the near-random initial policy to calibrate a
 sensible $\delta$ — too high and the constraint never binds, too low and the
 policy can't do anything useful.
 
-`--ood_threshold` is optional; pass it (e.g. `--ood_threshold 300`) to also
-log "fraction of chosen actions above this power" if you want to reuse v1's
-narrow-surrogate/wide-policy OOD-avoidance diagnostic here.
+`--ood_min/--ood_max` are optional; pass both (e.g. `--ood_min 150 --ood_max 300`)
+to also log "fraction of chosen actions outside this range" — see §5 for
+the full narrow-surrogate/wide-policy OOD-avoidance experiment.
 
 ### Evaluation
 
@@ -270,7 +331,7 @@ online_RL_ucpg_v2/runs/<timestamp>/
   entropy.png                ← mean policy entropy (= f(sigma_theta), exploration diagnostic)
   action_stats.png          ← mean ± std of CHOSEN actions per iteration (continuous analogue
                                of watching a categorical distribution sharpen)
-  ood_action_fraction.png   ← only if --ood_threshold given
+  ood_action_fraction.png   ← only if --ood_min/--ood_max given
 ```
 
 ## File Structure

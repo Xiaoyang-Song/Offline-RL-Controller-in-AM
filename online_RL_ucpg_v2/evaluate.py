@@ -5,8 +5,10 @@ Surrogate-based evaluation of a trained UCPG v2 (continuous-action) policy.
 
 Reports, for both the greedy (deterministic mean) and stochastic (sampled)
 policy: mean return, mean uncertainty, and the chosen-action distribution
-(mean/std/min/max, plus an optional OOD fraction if --ood_threshold is
-given). With --plot, also saves:
+(mean/std/min/max, plus an optional OOD fraction if --ood_min/--ood_max are
+given — the surrogate's actual trained action range; see
+online_RL_ucpg_v2/train.py's docstring for why this is a two-sided range,
+not v1's single upper threshold). With --plot, also saves:
   eval_action_histogram.png     — continuous action density (greedy vs. stochastic)
   eval_reward_and_action.png    — per-layer reward/action trace (mean ± std)
   eval_policy_mean_std.png      — the POLICY's own mu_theta(z_t) ± sigma_theta
@@ -72,8 +74,12 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--action_max",  type=float, default=400.0)
 
     # ── evaluation settings ───────────────────────────────────────────────────
-    p.add_argument("--ood_threshold", type=float, default=None,
-                   help="Optional: actions above this [W] are counted as OOD in the summary.")
+    p.add_argument("--ood_min", type=float, default=None,
+                   help="Optional: the surrogate's actual trained action range is [ood_min, "
+                        "ood_max]; actions OUTSIDE it are counted as OOD in the summary/plots. "
+                        "Must be given together with --ood_max.")
+    p.add_argument("--ood_max", type=float, default=None,
+                   help="See --ood_min.")
     p.add_argument("--n_episodes", type=int, default=50,
                    help="Number of evaluation episodes for each of (greedy, stochastic).")
     p.add_argument("--plot",  action="store_true",
@@ -147,7 +153,7 @@ def policy_mean_std_per_layer(env: TwoStageLatentLPBFEnv, agent: UCPGAgentV2):
 # =============================================================================
 
 def summarize(label: str, actions: np.ndarray, rewards: np.ndarray, u: np.ndarray,
-             ood_threshold) -> None:
+             ood_range) -> None:
     n_total = actions.size
     ep_return = rewards.sum(axis=1)
     print(f"\n  [{label}]  {actions.shape[0]} episodes × {actions.shape[1]} layers "
@@ -157,9 +163,10 @@ def summarize(label: str, actions: np.ndarray, rewards: np.ndarray, u: np.ndarra
     print(f"    Uncertainty u_t  : mean={u.mean():.5f}  max={u.max():.5f}")
     print(f"    Action power     : mean={actions.mean():.1f}W  std={actions.std():.1f}W  "
           f"median={np.median(actions):.1f}W  min={actions.min():.1f}W  max={actions.max():.1f}W")
-    if ood_threshold is not None:
-        n_ood = int((actions > ood_threshold).sum())
-        print(f"    Actions > {ood_threshold:.0f}W : {n_ood}/{n_total} "
+    if ood_range is not None:
+        ood_min, ood_max = ood_range
+        n_ood = int(((actions < ood_min) | (actions > ood_max)).sum())
+        print(f"    Actions outside [{ood_min:.0f}, {ood_max:.0f}]W : {n_ood}/{n_total} "
               f"({n_ood/n_total*100:.1f}%)")
 
 
@@ -168,7 +175,7 @@ def plot_action_histogram(
     actions_stoch:  np.ndarray,
     action_min:     float,
     action_max:     float,
-    ood_threshold,
+    ood_range,
     out_path:       str,
 ) -> None:
     lo = min(actions_greedy.min(), actions_stoch.min(), action_min)
@@ -182,12 +189,22 @@ def plot_action_histogram(
             density=True, label="Stochastic policy (sampled)")
     ax.axvspan(action_min, action_max, color="green", alpha=0.05,
                label=f"Policy aim range [{action_min:.0f}, {action_max:.0f}]W")
-    if ood_threshold is not None:
-        ax.axvline(ood_threshold, color="red", linestyle="--", linewidth=1.5,
-                   label=f"OOD threshold ({ood_threshold:.0f} W)")
+    if ood_range is not None:
+        ood_min, ood_max = ood_range
+        # Shade BOTH excluded regions — unlike v1 (single upper threshold),
+        # the surrogate's trained range can sit strictly inside the policy's
+        # aim range, so "OOD" can happen on either side.
+        ax.axvline(ood_min, color="red", linestyle="--", linewidth=1.5,
+                   label=f"Surrogate training range [{ood_min:.0f}, {ood_max:.0f}]W")
+        ax.axvline(ood_max, color="red", linestyle="--", linewidth=1.5)
+        if lo < ood_min:
+            ax.axvspan(lo, ood_min, color="red", alpha=0.06)
+        if hi > ood_max:
+            ax.axvspan(ood_max, hi, color="red", alpha=0.06)
     ax.set_xlabel("Laser power [W]")
     ax.set_ylabel("Density")
-    ax.set_title("UCPG v2 — Chosen Action Distribution (continuous)")
+    ax.set_title("UCPG v2 — Chosen Action Distribution (continuous)"
+                + ("\n(shaded region(s) = surrogate never trained here)" if ood_range else ""))
     ax.legend(fontsize=9)
     ax.grid(True, alpha=0.3)
     fig.tight_layout()
@@ -259,6 +276,11 @@ def main() -> None:
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
 
+    have_ood = args.ood_min is not None or args.ood_max is not None
+    if have_ood and (args.ood_min is None or args.ood_max is None):
+        raise ValueError("--ood_min and --ood_max must be given together.")
+    ood_range = (args.ood_min, args.ood_max) if have_ood else None
+
     print("=" * 65)
     print("  UCPG v2 — Surrogate-based Policy Evaluation (continuous action)")
     print("=" * 65)
@@ -300,17 +322,17 @@ def main() -> None:
 
     # ── greedy evaluation ─────────────────────────────────────────────────────
     actions_g, rewards_g, u_g = run_many(env, agent, args.n_episodes, greedy=True)
-    summarize("GREEDY", actions_g, rewards_g, u_g, args.ood_threshold)
+    summarize("GREEDY", actions_g, rewards_g, u_g, ood_range)
 
     # ── stochastic evaluation (matches training-time behaviour) ──────────────
     actions_s, rewards_s, u_s = run_many(env, agent, args.n_episodes, greedy=False)
-    summarize("STOCHASTIC", actions_s, rewards_s, u_s, args.ood_threshold)
+    summarize("STOCHASTIC", actions_s, rewards_s, u_s, ood_range)
 
     print(f"\n{'='*65}")
-    if args.ood_threshold is not None:
-        n_ood_g = int((actions_g > args.ood_threshold).sum())
-        n_ood_s = int((actions_s > args.ood_threshold).sum())
-        print(f"  Greedy policy chose an action above {args.ood_threshold:.0f} W in "
+    if have_ood:
+        n_ood_g = int(((actions_g < args.ood_min) | (actions_g > args.ood_max)).sum())
+        n_ood_s = int(((actions_s < args.ood_min) | (actions_s > args.ood_max)).sum())
+        print(f"  Greedy policy chose an action outside [{args.ood_min:.0f}, {args.ood_max:.0f}] W in "
               f"{n_ood_g}/{actions_g.size} steps ({n_ood_g/actions_g.size*100:.1f}%)")
         print(f"  Stochastic policy: {n_ood_s}/{actions_s.size} steps "
               f"({n_ood_s/actions_s.size*100:.1f}%)")
@@ -319,7 +341,7 @@ def main() -> None:
     if args.plot:
         out_dir = os.path.dirname(os.path.abspath(args.checkpoint))
         plot_action_histogram(
-            actions_g, actions_s, args.action_min, args.action_max, args.ood_threshold,
+            actions_g, actions_s, args.action_min, args.action_max, ood_range,
             os.path.join(out_dir, "eval_action_histogram.png"),
         )
         plot_reward_and_action_per_layer(
