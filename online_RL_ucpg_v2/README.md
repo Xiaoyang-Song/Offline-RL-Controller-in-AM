@@ -336,6 +336,32 @@ python -m online_RL_ucpg_v2.compare_policies \
     --id_ranges "100-150,200-250,300-350" --out_dir online_RL_ucpg_v2/runs/compare_gap
 ```
 
+**Or run the whole thing as one `sbatch` submission.**
+`jobs/oneshot_gap_experiment.sh` runs steps 1-4 above sequentially inside a
+SINGLE SLURM job/allocation (surrogate train → surrogate eval → UCPG v2
+train → naive_pg train → real-sim eval + compare) with fixed,
+non-timestamped checkpoint paths baked in — no manual `<...ckpt>` filling-in
+needed, and only one job to submit and wait on:
+
+```bash
+sbatch jobs/oneshot_gap_experiment.sh
+```
+
+Estimated total wall time ~12-13h (6h surrogate train + 1h surrogate eval +
+2h UCPG + 2h naive_pg + ~1.5h real-sim eval, sequential in one GPU
+allocation — the GPU sits idle during the last, CPU/MATLAB-only stage,
+traded for the simplicity of one job). If surrogate training, UCPG
+training, or naive_pg training fails, the script stops immediately rather
+than continuing with a nonexistent checkpoint; surrogate evaluation is
+diagnostic-only and a failure there doesn't stop the rest. The standalone
+per-stage scripts it inlines (`jobs/train_surrogate_v2_gap_perturb.sh`,
+`jobs/evaluate_surrogate_v2_gap.sh`, `jobs/train_ucpg_v2_gap.sh`,
+`baselines/jobs/train_naive_pg_gap.sh`, `jobs/evaluate_real_gap_experiment.sh`)
+still exist separately if you'd rather submit them one at a time (e.g. to
+rerun just one stage without repeating the others) — edit
+`jobs/oneshot_gap_experiment.sh` directly for different hyperparameters,
+keeping both in sync if you also use the standalone scripts.
+
 ## Comparing against the naive baseline (`compare_policies.py`)
 
 `baselines/naive_pg/train.py` reuses this package's environment/surrogate/

@@ -451,6 +451,15 @@ dataset supports `--perturb_frac`/`--lp_filter_ranges` (both require
 `--rollout_steps <= 1`) — see the "Not ported" note below for why the
 trajectory/rollout dataset doesn't.
 
+**Full pipeline, one `sbatch` submission.** `jobs/oneshot_gap_experiment.sh`
+runs this training run, its evaluation, both RL policies' training
+(`online_RL_ucpg_v2` and `baselines/naive_pg`), and their real-simulator
+comparison sequentially inside a SINGLE SLURM job — one `sbatch` call, one
+job to wait on (~12-13h total) — see
+[`online_RL_ucpg_v2/README.md`](../online_RL_ucpg_v2/README.md#gapped-variant--patchylimited-access-coverage-not-just-an-edge)
+for the full stage breakdown. Run `sbatch jobs/oneshot_gap_experiment.sh`
+once `Data/DatasetV2_layer_12_samples_5000.pkl` exists.
+
 ## Not ported (yet)
 
 `--perturb_frac` and `lp_filter`/`--lp_filter_ranges` are intentionally flat
