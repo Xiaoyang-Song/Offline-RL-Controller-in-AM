@@ -72,6 +72,22 @@ python -m online_RL_ucpg_v2.evaluate_real \
     --results_out jobs/eval_real_ucpg_v2.json \
     --plot
 
+# ── 2. Side-by-side comparison (see online_RL_ucpg_v2/compare_policies.py) ──
+# Set to $SURROGATE's actual training coverage (its --lp_filter_min/--lp_filter_max
+# or --lp_filter_ranges) to also report each policy's fraction of chosen actions
+# outside that coverage. Leave empty to skip (still produces the return comparison).
+ID_RANGES=""
+ID_RANGES_ARGS=()
+if [[ -n "$ID_RANGES" ]]; then
+    ID_RANGES_ARGS=(--id_ranges "$ID_RANGES")
+fi
+
+echo "[eval_real] === Comparison ==="
+python -m online_RL_ucpg_v2.compare_policies \
+    --results naive_pg=jobs/eval_real_naive_pg.json ucpg_v2=jobs/eval_real_ucpg_v2.json \
+    "${ID_RANGES_ARGS[@]}" \
+    --out_dir online_RL_ucpg_v2/runs/compare_real_eval
+
 EXIT_CODE=$?
 echo "============================================================"
 echo "Real-physics evaluation finished: $(date)  (exit code: $EXIT_CODE)"

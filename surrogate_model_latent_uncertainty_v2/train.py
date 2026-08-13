@@ -100,6 +100,27 @@ def parse_args() -> argparse.Namespace:
                         "Requires --lp_filter_max too; incompatible with --rollout_steps > 1.")
     p.add_argument("--lp_filter_max", type=float, default=None,
                    help="Optional: restrict training transitions to laser power <= this [W].")
+    p.add_argument("--lp_filter_ranges", type=str, default=None,
+                   help="Optional: comma-separated 'lo-hi' ranges, e.g. '150-200,300-350', "
+                        "restricting training transitions to the UNION of these laser-power "
+                        "ranges — for a deliberately GAPPED surrogate (data on both sides of an "
+                        "interior gap, e.g. nothing in (200, 300) above). Mutually exclusive with "
+                        "--lp_filter_min/--lp_filter_max (pick one); same --rollout_steps <= 1 "
+                        "restriction applies.")
+    p.add_argument("--perturb_frac", type=float, default=0.0,
+                   help="Optional: additive i.i.d. Gaussian noise applied to the heating/"
+                        "next-state TARGET fields only (not inputs), scaled PER NODE as "
+                        "perturb_frac * that node's own state_std (e.g. 0.1 = 10%% of each "
+                        "node's natural variation across the dataset) — NOT a fixed Kelvin "
+                        "value, since per-node std varies enormously across the mesh (observed "
+                        "~30-1700 K). Models measurement/process noise, making transitions "
+                        "genuinely harder to fit and giving the Gaussian NLL real aleatoric "
+                        "signal to calibrate against. Reasonable starting range: 0.05-0.2. 0.0 "
+                        "(default) is a no-op. Flat single-step dataset only (see "
+                        "TwoStageLatentSurrogateDataset's perturb_frac docstring); requires "
+                        "--rollout_steps <= 1.")
+    p.add_argument("--perturb_seed", type=int, default=0,
+                   help="RNG seed for --perturb_frac noise (independent of --bootstrap_seed).")
 
     # ── model ─────────────────────────────────────────────────────────────────
     p.add_argument("--latent_dim",    type=int,   default=64)
@@ -119,6 +140,13 @@ def parse_args() -> argparse.Namespace:
     # ── bootstrap ensemble ────────────────────────────────────────────────────
     p.add_argument("--bootstrap_seed", type=int, default=-1,
                    help="RNG seed for the per-member bootstrap resamples (default: same as --seed).")
+    p.add_argument("--bootstrap_frac", type=float, default=1.0,
+                   help="Fraction of N samples each ensemble member draws (with replacement) "
+                        "for its bootstrap resample (default 1.0 = standard N-out-of-N "
+                        "bootstrap). Lowering this (e.g. 0.5) decorrelates the K members further "
+                        "and makes epistemic (ensemble-disagreement) uncertainty larger and more "
+                        "informative — see make_bootstrap_masks' docstring for why the default "
+                        "bootstrap tends to produce small epistemic signal.")
 
     # ── loss weights ─────────────────────────────────────────────────────────
     p.add_argument("--recon_s_weight",    type=float, default=1.0,
@@ -157,6 +185,20 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--device",  type=str, default="")
 
     return p.parse_args()
+
+
+def _parse_lp_filter_ranges(spec: str):
+    """'150-200,300-350' -> [(150.0, 200.0), (300.0, 350.0)]"""
+    ranges = []
+    for part in spec.split(","):
+        part = part.strip()
+        if not part:
+            continue
+        lo_str, hi_str = part.split("-")
+        ranges.append((float(lo_str), float(hi_str)))
+    if not ranges:
+        raise ValueError(f"--lp_filter_ranges='{spec}' parsed to an empty range list.")
+    return ranges
 
 
 # =============================================================================
@@ -582,15 +624,36 @@ def main() -> None:
     # ── datasets ─────────────────────────────────────────────────────────────
     use_rollout = args.rollout_steps > 1
 
-    have_lp_filter = args.lp_filter_min is not None or args.lp_filter_max is not None
-    if have_lp_filter:
+    have_lp_minmax  = args.lp_filter_min is not None or args.lp_filter_max is not None
+    have_lp_ranges  = args.lp_filter_ranges is not None
+    if have_lp_minmax and have_lp_ranges:
+        raise ValueError("--lp_filter_min/--lp_filter_max and --lp_filter_ranges are mutually "
+                          "exclusive — use --lp_filter_ranges 'lo-hi' for a single contiguous "
+                          "range too if needed.")
+    have_lp_filter = have_lp_minmax or have_lp_ranges
+
+    lp_filter = None
+    if have_lp_ranges:
+        if use_rollout:
+            raise ValueError("--lp_filter_ranges requires --rollout_steps <= 1 "
+                             "(filtering breaks the trajectory contiguity rollout loss needs).")
+        lp_filter = _parse_lp_filter_ranges(args.lp_filter_ranges)
+        range_str = ", ".join(f"[{lo}, {hi}]" for lo, hi in lp_filter)
+        print(f"[train] LP filter active: training transitions restricted to the UNION of "
+              f"{range_str} W (gapped-surrogate experiment)")
+    elif have_lp_minmax:
         if args.lp_filter_min is None or args.lp_filter_max is None:
             raise ValueError("--lp_filter_min and --lp_filter_max must be given together.")
         if use_rollout:
             raise ValueError("--lp_filter_min/--lp_filter_max require --rollout_steps <= 1 "
                              "(filtering breaks the trajectory contiguity rollout loss needs).")
+        lp_filter = (args.lp_filter_min, args.lp_filter_max)
         print(f"[train] LP filter active: training transitions restricted to "
               f"[{args.lp_filter_min}, {args.lp_filter_max}] W (narrow-surrogate experiment)")
+
+    if args.perturb_frac > 0.0 and use_rollout:
+        raise ValueError("--perturb_frac requires --rollout_steps <= 1 (target-noise "
+                         "perturbation is only implemented for the flat single-step dataset).")
 
     ds_kwargs   = dict(
         state_mean=state_mean, state_std=state_std,
@@ -598,14 +661,20 @@ def main() -> None:
         cool_mean=cool_mean, cool_std=cool_std,
         initial_temp=args.initial_temp,
         n_ensemble=args.n_ensemble, bootstrap_seed=bootstrap_seed,
+        bootstrap_resample_frac=args.bootstrap_frac,
     )
     if use_rollout:
         train_ds = TwoStageLatentTrajectoryDataset(train_trajs, **ds_kwargs)
         val_ds   = TwoStageLatentTrajectoryDataset(val_trajs,   **ds_kwargs)
     else:
-        lp_filter = (args.lp_filter_min, args.lp_filter_max) if have_lp_filter else None
-        train_ds = TwoStageLatentSurrogateDataset(train_trajs, **ds_kwargs, lp_filter=lp_filter)
-        val_ds   = TwoStageLatentSurrogateDataset(val_trajs,   **ds_kwargs, lp_filter=lp_filter)
+        # Same lp_filter/perturb_frac applied to val as train (matches the pre-existing
+        # lp_filter_min/max behaviour) — val measures held-out performance on the SAME
+        # restricted/corrupted distribution the model is being trained on, which is what
+        # early stopping/checkpoint selection should track for this experiment.
+        flat_kwargs = dict(lp_filter=lp_filter, perturb_frac=args.perturb_frac,
+                            perturb_seed=args.perturb_seed)
+        train_ds = TwoStageLatentSurrogateDataset(train_trajs, **ds_kwargs, **flat_kwargs)
+        val_ds   = TwoStageLatentSurrogateDataset(val_trajs,   **ds_kwargs, **flat_kwargs)
 
     loader_kw    = dict(batch_size=args.batch_size, num_workers=args.num_workers,
                         pin_memory=(device == "cuda"))

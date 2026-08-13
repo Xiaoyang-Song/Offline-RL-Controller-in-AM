@@ -279,6 +279,92 @@ red-shaded regions mark where the surrogate has no training support. The
 headline comparison: does naive PG's chosen-action mass creep into the
 shaded regions while UCPG's stays inside `[150, 300]`W?
 
+### Gapped variant — patchy/limited-access coverage, not just an edge
+
+The single-narrow-range experiment above only tests EXTRAPOLATION (OOD past
+an edge). `surrogate_model_latent_uncertainty_v2.train`'s `--lp_filter_ranges`
+(see that package's README) trains a surrogate with genuine INTERIOR gaps
+instead — e.g. data on `[100,150]`, `[200,250]`, `[300,350]`, nothing in
+`(150,200)` or `(250,300)` — an INTERPOLATION-uncertainty test, which is a
+harder case for epistemic uncertainty to catch (a smooth function is easier
+to interpolate across a gap than to extrapolate past an edge) and a more
+realistic failure mode for the reward function to accidentally reward:
+nothing about `meanDeviation` knows the gaps exist, so if the surrogate's
+ensemble MEAN happens to look good there (even while its members disagree),
+a naive policy has no signal telling it not to go there. This particular
+split imitates LIMITED DATA ACCESS to a historically-known-good `150-300` W
+operating window: two of the three training bands sit just outside it
+(`100-150`, `300-350`), and the two interior gaps (`150-200`, `250-300`) eat
+two-thirds of that window, leaving only a thin `200-250` W sliver inside it
+covered — plus a third gap at the top edge (`350-400`) as a pure
+extrapolation test alongside the two interpolation ones.
+
+```bash
+# 1. Train the patchy-coverage surrogate (see surrogate_model_latent_uncertainty_v2's
+#    README / jobs/train_surrogate_v2_gap_perturb.sh for the full recipe,
+#    including --perturb_frac and --bootstrap_frac to sharpen the epistemic
+#    signal in the gaps)
+python -m surrogate_model_latent_uncertainty_v2.train \
+    --data_path Data/DatasetV2_layer_12_samples_5000.pkl \
+    --lp_filter_ranges "100-150,200-250,300-350" --perturb_frac 0.1 --bootstrap_frac 0.5 \
+    --out_dir surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1
+
+# 2. Train both policies against it (NOTE: --ood_min/--ood_max here is a
+#    single contiguous range, a live TRAINING-TIME diagnostic only — it
+#    CANNOT represent three separate gaps, so LEAVE IT UNSET here (see
+#    jobs/train_ucpg_v2_gap.sh / baselines/jobs/train_naive_pg_gap.sh, which
+#    do this by default). The authoritative check is step 3/4 below,
+#    against the real simulator.)
+python -m online_RL_ucpg_v2.train \
+    --surrogate surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/two_stage_best.pt \
+    --action_min 100 --action_max 400 --delta 0.05
+
+python -m baselines.naive_pg.train \
+    --surrogate surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/two_stage_best.pt \
+    --action_min 100 --action_max 400
+
+# 3. Ground-truth check: evaluate BOTH checkpoints against the REAL PDE
+#    simulator (module load matlab first — see jobs/evaluate_real_ucpg_v2.sh)
+python -m online_RL_ucpg_v2.evaluate_real --checkpoint <naive_pg_ckpt> \
+    --surrogate <patchy surrogate ckpt> --results_out jobs/eval_real_naive_pg.json
+python -m online_RL_ucpg_v2.evaluate_real --checkpoint <ucpg_v2_ckpt> \
+    --surrogate <patchy surrogate ckpt> --results_out jobs/eval_real_ucpg_v2.json
+
+# 4. Compare — see compare_policies.py below
+python -m online_RL_ucpg_v2.compare_policies \
+    --results naive_pg=jobs/eval_real_naive_pg.json ucpg_v2=jobs/eval_real_ucpg_v2.json \
+    --id_ranges "100-150,200-250,300-350" --out_dir online_RL_ucpg_v2/runs/compare_gap
+```
+
+## Comparing against the naive baseline (`compare_policies.py`)
+
+`baselines/naive_pg/train.py` reuses this package's environment/surrogate/
+policy-architecture code UNMODIFIED — the only difference is whether the
+Lagrangian uncertainty term is present in the advantage at all (see that
+package's docstring). Once you have `evaluate_real.py --results_out` JSON
+for both a `naive_pg` and a `ucpg_v2` checkpoint (against the SAME
+surrogate), `compare_policies.py` is a lightweight (no torch/MATLAB
+dependency — pure post-hoc JSON analysis) side-by-side comparison:
+
+```bash
+python -m online_RL_ucpg_v2.compare_policies \
+    --results naive_pg=jobs/eval_real_naive_pg.json ucpg_v2=jobs/eval_real_ucpg_v2.json \
+    --id_ranges "100-150,200-250,300-350" \
+    --out_dir online_RL_ucpg_v2/runs/compare_gap
+```
+
+Prints, per policy: REAL-simulator return (mean ± std across episodes — the
+only reward number that isn't self-deceiving for actions the surrogate
+can't reliably model, see `evaluate_real.py`'s docstring) and the fraction
+of chosen actions landing outside `--id_ranges` (the surrogate's actual
+training coverage). Saves `compare_returns_actions.png` (return bar chart +
+action-histogram overlay, training coverage shaded) and
+`compare_summary.json`. `--results` takes any number of `label=path.json`
+pairs, so this generalizes past a two-way naive-vs-UCPG comparison if more
+baselines are added later. `--id_ranges` accepts either a single `lo-hi`
+(plain narrow surrogate) or multiple comma-separated ranges (gapped
+surrogate) — same syntax as `train.py`'s `--lp_filter_ranges`.
+
 ## Usage
 
 ### Training
@@ -344,8 +430,11 @@ online_RL_ucpg_v2/
   agent.py    ← UCPGAgentV2 (policy-gradient update, dual ascent, checkpointing)
   train.py    ← Algorithm 1 main loop (continuous action)
   evaluate.py ← greedy/stochastic rollout, action distribution, policy mu±sigma trace
+  evaluate_real.py    ← ground-truth check against the REAL PDE simulator (not the surrogate)
+  compare_policies.py ← side-by-side naive_pg vs. UCPG comparison from evaluate_real.py's JSON
   README.md   ← this file
 
 jobs/
   train_online_rl_ucpg_v2.sh   ← SLURM job script
+  evaluate_real_ucpg_v2.sh     ← SLURM job script (real-simulator eval, both checkpoints)
 ```

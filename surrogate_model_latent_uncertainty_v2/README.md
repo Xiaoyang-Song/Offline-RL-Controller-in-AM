@@ -348,9 +348,117 @@ python -m surrogate_model_latent_uncertainty_v2.evaluate \
     --data_path  Data/DatasetV2_layer_12_samples_200.pkl
 ```
 
+## OOD / epistemic-uncertainty validation (`evaluate_ood.py`)
+
+Evaluating a checkpoint on its own train/val/test split can't show whether
+epistemic uncertainty works — all three splits share one action-power
+distribution, so there's no real distribution shift for the K bootstrap
+members to disagree about. `evaluate_ood.py` instead evaluates a checkpoint
+trained on a **restricted** laser-power range against the wider dataset it
+was filtered from (no new simulation needed):
+
+```bash
+# Narrow (single contiguous range), matches train.py's --lp_filter_min/--lp_filter_max
+python -m surrogate_model_latent_uncertainty_v2.evaluate_ood \
+    --checkpoint surrogate_model_latent_uncertainty_v2/runs/narrow_150_300W/two_stage_best.pt \
+    --data_path  Data/DatasetV2_layer_12_samples_5000.pkl \
+    --id_action_min 150 --id_action_max 300
+
+# Gapped/patchy (multiple ranges), matches train.py's --lp_filter_ranges — pass the SAME ranges
+python -m surrogate_model_latent_uncertainty_v2.evaluate_ood \
+    --checkpoint surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/two_stage_best.pt \
+    --data_path  Data/DatasetV2_layer_12_samples_5000.pkl \
+    --id_ranges "100-150,200-250,300-350"
+```
+
+Outputs `ood_uncertainty_vs_action.png` (epistemic σ / aleatoric σ / RMSE vs.
+laser power, ID range(s) shaded) and `ood_epistemic_vs_error.png` (scatter,
+ID vs. OOD colored), plus a console table. A working epistemic channel shows
+BOTH epistemic σ and true RMSE climbing together outside the shaded ID
+region(s) — including in an interior gap that's bracketed by training data
+on both sides, not just past the outermost edge.
+
+## Harder / gapped-surrogate experiments (perturbation, multi-range filtering, sharper epistemic)
+
+Three training-time options, off by default (bit-identical to omitting them),
+for deliberately building a surrogate whose epistemic uncertainty has a real
+signal to demonstrate — e.g. for comparing an uncertainty-aware RL policy
+([`online_RL_ucpg_v2`](../online_RL_ucpg_v2/)) against a naive one
+([`baselines/naive_pg`](../baselines/naive_pg/)) that has no way to avoid a
+region the surrogate can't reliably model:
+
+- **`--perturb_frac <0-1>`** — additive Gaussian noise applied to the
+  heating/next-state TARGET fields only (never to inputs, never to the clean
+  trajectory chain used to build subsequent states), scaled PER NODE as
+  `perturb_frac * that node's own state_std` — see
+  `TwoStageLatentSurrogateDataset`'s `perturb_frac` docstring in
+  `dataset_v2.py`. This is a *fraction of that node's natural variation*
+  across the dataset, not a fixed Kelvin value — per-node `state_std` varies
+  enormously across the mesh (observed ~30-1700 K), so a flat Kelvin noise
+  level would be imperceptible on high-variance nodes and destructive on
+  low-variance ones. `0.1` means "10% noise everywhere, relative to each
+  node's own scale"; reasonable starting range is `0.05`-`0.2`. Models
+  realistic measurement/process noise: makes transitions genuinely harder to
+  fit and gives the Gaussian NLL real aleatoric signal to calibrate against,
+  instead of the σ-collapse a clean deterministic simulation otherwise
+  invites. `--perturb_seed` controls the noise draw independently of
+  `--bootstrap_seed`.
+- **`--lp_filter_ranges "100-150,200-250,300-350"`** — generalizes
+  `--lp_filter_min`/`--lp_filter_max` (still supported, mutually exclusive
+  with this flag) to the UNION of multiple laser-power ranges, leaving
+  genuine INTERIOR gaps (here, `(150, 200)` and `(250, 300)`) bracketed by
+  training data on both sides — an interpolation-uncertainty test, not just
+  the boundary/extrapolation test a single narrow range gives you — plus a
+  third gap at the top edge (`(350, 400)`) for a pure extrapolation test
+  alongside the two interpolation ones. Any number of ranges is supported,
+  not just two or three: use this to imitate PATCHY/limited data access to a
+  specific region — e.g. the pattern above deliberately eats two-thirds of
+  the `150-300` W band (a historically-known-good operating window) while
+  leaving a thin `200-250` W sliver inside it still covered, simulating a
+  historical dataset that only sparsely sampled the actually-good settings.
+  See `TwoStageLatentSurrogateDataset`'s `lp_filter` docstring for the exact
+  union semantics.
+- **`--bootstrap_frac <0-1>`** — each of the K ensemble members draws
+  `round(frac * N)` bootstrap samples instead of the standard N-out-of-N
+  (`frac=1.0`, the default). Standard N-out-of-N members overlap heavily
+  (~2/3 of samples shared between any two), which is why the default
+  ensemble's epistemic (disagreement) signal has been observed to be small
+  in practice. Lowering `frac` (e.g. `0.5`) decorrelates the K members
+  further, raising epistemic σ — especially in sparse regions — at the cost
+  of each member seeing less data. See `make_bootstrap_masks`' docstring in
+  `dataset_v2.py`.
+
+Example — a surrogate trained on 5000 trajectories with patchy coverage,
+target noise, and a decorrelated ensemble (also `jobs/train_surrogate_v2_gap_perturb.sh`):
+
+```bash
+python -m surrogate_model_latent_uncertainty_v2.train \
+    --data_path Data/DatasetV2_layer_12_samples_5000.pkl \
+    --lp_filter_ranges "100-150,200-250,300-350" \
+    --perturb_frac 0.1 \
+    --bootstrap_frac 0.5 \
+    --out_dir surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1
+```
+
+Then stress-test it with `evaluate_ood.py --id_ranges "100-150,200-250,300-350"`
+(above) — watch epistemic σ and RMSE both rise in `(150, 200)` and
+`(250, 300)` (interior gaps) and outside `[100, 350]` (top edge).
+`--perturb_frac` and `--bootstrap_frac`
+are empirical knobs: start around the values above and sweep — too small and
+the epistemic signal stays flat everywhere; too large (either one) and the
+reconstruction loss stops converging at all. Only the flat, single-step
+dataset supports `--perturb_frac`/`--lp_filter_ranges` (both require
+`--rollout_steps <= 1`) — see the "Not ported" note below for why the
+trajectory/rollout dataset doesn't.
+
 ## Not ported (yet)
 
-`evaluate_ood.py` from v1 (OOD-generalization diagnostics) was intentionally
-left out of this pass — revisit once the core two-stage model is trained and
-it's clear which OOD axes (laser power range? cool time range?) matter most
-for this dataset.
+`--perturb_frac` and `lp_filter`/`--lp_filter_ranges` are intentionally flat
+(`TwoStageLatentSurrogateDataset`) single-step-only. `TwoStageLatentTrajectoryDataset`
+(used for the optional rollout loss) stores each trajectory's true physical
+states in ONE array that serves as both the rollout's input side and its
+supervision targets; naively adding target-only noise or dropping filtered
+transitions there would either corrupt the auto-regressive chain's inputs or
+break the contiguity the rollout loss needs. Revisit with an explicit
+input/target split in that dataset if rollout-loss training under
+perturbation/gapped filtering turns out to matter.

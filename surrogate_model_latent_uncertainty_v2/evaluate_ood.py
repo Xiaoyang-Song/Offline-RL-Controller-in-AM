@@ -22,6 +22,13 @@ are split into:
                                — the range the checkpoint actually trained on
   OOD (out-of-distribution) : laser power outside that range — never seen
 
+For a checkpoint trained with --lp_filter_ranges (a GAPPED surrogate, e.g.
+[150,200] U [300,350]), pass the same ranges via --id_ranges instead of
+--id_action_min/--id_action_max — ID becomes the UNION of those ranges, and
+OOD includes both the interior gap (e.g. (200, 300), bracketed by ID data on
+both sides — an interpolation-uncertainty test) and the outer edges. See
+--id_ranges' help for the exact syntax.
+
 Why this checks the HEATING stage specifically
 ---------------------------------------------------
 Laser power only conditions the HEATING transition
@@ -68,7 +75,7 @@ from torch.utils.data import DataLoader
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from surrogate_model_latent_uncertainty_v2.dataset_v2 import load_trajectories, TwoStageLatentSurrogateDataset
-from surrogate_model_latent_uncertainty_v2.train import load_two_stage_surrogate
+from surrogate_model_latent_uncertainty_v2.train import load_two_stage_surrogate, _parse_lp_filter_ranges
 
 
 # =============================================================================
@@ -174,8 +181,11 @@ def summarize_region(data: dict, mask: np.ndarray, label: str) -> dict:
 # Plotting
 # =============================================================================
 
-def plot_uncertainty_vs_action(binned: dict, id_action_min: float, id_action_max: float,
-                               out_path: str) -> None:
+def plot_uncertainty_vs_action(binned: dict, id_ranges, out_path: str) -> None:
+    """id_ranges: list of (lo, hi) ID ranges — a single-range checkpoint just
+    passes a one-element list; each range gets its own shaded axvspan, so a
+    GAPPED checkpoint's interior OOD gap shows up unshaded BETWEEN two shaded
+    ID bands rather than as a single contiguous span."""
     centers = binned["centers"]
     fig, axes = plt.subplots(1, 3, figsize=(16, 4.5))
     panels = [
@@ -185,16 +195,18 @@ def plot_uncertainty_vs_action(binned: dict, id_action_min: float, id_action_max
     ]
     for ax, (key, title, color) in zip(axes, panels):
         ax.plot(centers, binned[key], marker="o", color=color, linewidth=1.5)
-        ax.axvspan(id_action_min, id_action_max, color="tab:green", alpha=0.08,
-                   label="Training range (ID)")
-        ax.axvline(id_action_max, color="grey", linestyle="--", linewidth=1)
-        ax.axvline(id_action_min, color="grey", linestyle="--", linewidth=1)
+        for i, (lo, hi) in enumerate(id_ranges):
+            ax.axvspan(lo, hi, color="tab:green", alpha=0.08,
+                      label="Training range (ID)" if i == 0 else None)
+            ax.axvline(hi, color="grey", linestyle="--", linewidth=1)
+            ax.axvline(lo, color="grey", linestyle="--", linewidth=1)
         ax.set_xlabel("Laser power [W]")
         ax.set_title(title, fontsize=9)
         ax.grid(True, alpha=0.3)
         ax.legend(fontsize=7, loc="upper left")
+    range_str = ", ".join(f"[{lo:.0f}, {hi:.0f}]" for lo, hi in id_ranges)
     fig.suptitle("OOD Stress Test (heating stage) — Uncertainty & Error vs. Laser Power "
-                f"(shaded = training range [{id_action_min:.0f}, {id_action_max:.0f}] W)",
+                f"(shaded = training range(s) {range_str} W)",
                 fontsize=11)
     fig.tight_layout()
     fig.savefig(out_path, dpi=150)
@@ -248,7 +260,13 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--id_action_max", type=float, default=300.0,
                    help="Upper bound of the checkpoint's training laser-power range [W] "
                         "(should match its --lp_filter_max). Actions outside "
-                        "[id_action_min, id_action_max] are treated as OOD.")
+                        "[id_action_min, id_action_max] are treated as OOD. Ignored if "
+                        "--id_ranges is given.")
+    p.add_argument("--id_ranges", type=str, default=None,
+                   help="For a GAPPED checkpoint trained with train.py's --lp_filter_ranges: "
+                        "comma-separated 'lo-hi' ranges, e.g. '150-200,300-350' (should match "
+                        "the checkpoint's --lp_filter_ranges exactly). ID = union of these "
+                        "ranges; overrides --id_action_min/--id_action_max when given.")
     p.add_argument("--n_bins",      type=int, default=12)
     p.add_argument("--batch_size",  type=int, default=256)
     p.add_argument("--num_workers", type=int, default=4)
@@ -275,14 +293,19 @@ def main() -> None:
      cool_mean, cool_std, _roi) = load_two_stage_surrogate(args.checkpoint, device)
     print(f"[evaluate_ood] {model}")
 
+    id_ranges = (_parse_lp_filter_ranges(args.id_ranges) if args.id_ranges is not None
+                else [(args.id_action_min, args.id_action_max)])
+    range_str = ", ".join(f"[{lo}, {hi}]" for lo, hi in id_ranges)
+
     trajs = load_trajectories(args.data_path)
     all_actions = np.array([step.lp_action for traj in trajs for step in traj])
     print(f"[evaluate_ood] Wide dataset laser-power range: "
           f"[{all_actions.min():.1f}, {all_actions.max():.1f}] W  "
-          f"(checkpoint trained on [{args.id_action_min:.1f}, {args.id_action_max:.1f}] W)")
-    if all_actions.max() <= args.id_action_max and all_actions.min() >= args.id_action_min:
+          f"(checkpoint trained on {range_str} W)")
+    all_id = np.array([any(lo <= a <= hi for lo, hi in id_ranges) for a in all_actions])
+    if all_id.all():
         print("[evaluate_ood] WARNING: this dataset does not actually extend past "
-              "[--id_action_min, --id_action_max] — there is no real OOD region to test.")
+              "the training range(s) — there is no real OOD region to test.")
 
     ds = TwoStageLatentSurrogateDataset(
         trajs, state_mean=state_mean.cpu(), state_std=state_std.cpu(),
@@ -295,7 +318,9 @@ def main() -> None:
     print("[evaluate_ood] Running forward pass over all transitions (heating stage) ...")
     data = collect_ood_samples(model, loader, state_mean, state_std, lp_mean, lp_std, device)
 
-    id_mask = (data["action"] >= args.id_action_min) & (data["action"] <= args.id_action_max)
+    id_mask = np.zeros_like(data["action"], dtype=bool)
+    for lo, hi in id_ranges:
+        id_mask |= (data["action"] >= lo) & (data["action"] <= hi)
 
     print(f"\n[evaluate_ood] {'═'*90}")
     print("[evaluate_ood] SUMMARY  (n, mean epistemic σ, mean aleatoric σ, RMSE, "
@@ -313,7 +338,7 @@ def main() -> None:
         print(f"  {lo:7.1f}-{hi:7.1f}  {binned['counts'][i]:7d}  "
               f"{binned['epi'][i]:10.5f}  {binned['ale'][i]:10.5f}  {binned['rmse'][i]:10.2f}")
 
-    plot_uncertainty_vs_action(binned, args.id_action_min, args.id_action_max,
+    plot_uncertainty_vs_action(binned, id_ranges,
                                os.path.join(out_dir, "ood_uncertainty_vs_action.png"))
     plot_epistemic_vs_error_scatter(data, id_mask,
                                     os.path.join(out_dir, "ood_epistemic_vs_error.png"))

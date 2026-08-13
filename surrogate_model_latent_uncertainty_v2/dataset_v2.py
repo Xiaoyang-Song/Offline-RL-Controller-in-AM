@@ -41,7 +41,7 @@ MDP convention
 
 import os
 import pickle
-from typing import List, NamedTuple, Optional, Tuple
+from typing import List, NamedTuple, Optional, Tuple, Union
 
 import numpy as np
 import torch
@@ -234,23 +234,40 @@ def uniform_weights_table(n_layers: int, state_dim: int) -> np.ndarray:
 # =============================================================================
 
 def make_bootstrap_masks(
-    n_samples:  int,
-    n_ensemble: int,
-    seed:       int = 0,
+    n_samples:      int,
+    n_ensemble:     int,
+    seed:           int   = 0,
+    resample_frac:  float = 1.0,
 ) -> np.ndarray:
     """Per-member bootstrap multiplicity masks — see
-    surrogate_model_latent_uncertainty/dataset.py for the full derivation."""
+    surrogate_model_latent_uncertainty/dataset.py for the full derivation.
+
+    resample_frac (default 1.0, i.e. the original N-out-of-N bootstrap):
+    each member draws round(resample_frac * n_samples) indices with
+    replacement from {0, ..., n_samples-1} instead of n_samples. Standard
+    N-out-of-N bootstrap members overlap heavily (~2/3 of samples shared
+    between any two members for large N), which is exactly why v1/v2's
+    default epistemic (ensemble-disagreement) signal has been observed to
+    be small in practice — the members just don't disagree much. Lowering
+    resample_frac below 1.0 shrinks each member's effective sample and
+    increases the fraction of samples any given member never sees
+    (expected unseen fraction ≈ exp(-resample_frac)), decorrelating the K
+    members further and making their disagreement (epistemic_std) larger
+    and more informative, especially in sparse regions of the training
+    distribution — at the cost of each member seeing less data individually.
+    """
     rng   = np.random.default_rng(seed)
+    n_draws = max(1, int(round(n_samples * resample_frac)))
     masks = np.zeros((n_samples, n_ensemble), dtype=np.float32)
     for k in range(n_ensemble):
-        draws  = rng.integers(0, n_samples, size=n_samples)
+        draws  = rng.integers(0, n_samples, size=n_draws)
         counts = np.bincount(draws, minlength=n_samples)
         masks[:, k] = counts.astype(np.float32)
 
     frac_unseen = (masks == 0).mean()
-    print(f"[dataset_v2] Bootstrap masks: {masks.shape}, "
+    print(f"[dataset_v2] Bootstrap masks: {masks.shape}, resample_frac={resample_frac}, "
           f"~{frac_unseen*100:.1f}% of (sample, member) pairs unseen "
-          f"(expected ≈ {np.exp(-1)*100:.1f}% for large N)")
+          f"(expected ≈ {np.exp(-resample_frac)*100:.1f}%)")
     return masks
 
 
@@ -270,6 +287,13 @@ class TwoStageLatentSurrogateDataset(Dataset):
     networks actually train on to those whose laser power falls in
     [lo, hi] — e.g. for deliberately training a "narrow" surrogate (see
     experiments comparing it to a surrogate trained on the full range).
+    Also accepts a LIST of (lo, hi) ranges, e.g.
+    [(150, 200), (300, 350)], in which case a transition is kept if its
+    laser power falls in ANY of the ranges — the union — leaving a genuine
+    INTERIOR gap (e.g. (200, 300)) that is bracketed by training data on
+    both sides (an interpolation-uncertainty test) as well as the usual
+    edge/extrapolation gaps outside the outermost range. A single (lo, hi)
+    tuple is still accepted unchanged (equivalent to a one-range list).
     State-chaining above still walks every original trajectory in full
     (so s_t is always the true, physically-correct predecessor state,
     regardless of what LP produced it) — filtering only drops which
@@ -278,6 +302,27 @@ class TwoStageLatentSurrogateDataset(Dataset):
     training): TwoStageLatentTrajectoryDataset (rollout loss) needs
     unbroken 12-layer trajectories, which this filter would leave with
     gaps in — it deliberately has no equivalent parameter.
+
+    perturb_frac / perturb_seed (optional): additive independent Gaussian
+    noise applied ONLY to the stored copies of the two supervised TARGET
+    fields (u_heat_t, s_{t+1}) used for reconstruction/NLL losses — never to
+    s_t (the input) and never to the clean values used to chain prev -> next
+    state across layers while building this dataset. Scaled PER NODE as
+    perturb_frac * state_std[node] (state_std is the same per-node std
+    build_normalizers computed for z-scoring) rather than a fixed Kelvin
+    value, since state_std varies enormously across the mesh (observed
+    ~30-1700 K depending on node) — a flat Kelvin noise level would be
+    imperceptible on high-variance nodes and destructive on low-variance
+    ones. perturb_frac=0.1 means "add noise equal to 10% of this node's own
+    natural variation across the dataset" — reasonable starting range is
+    roughly 0.05-0.2; much above that and the reconstruction loss stops
+    converging, much below and there's no real aleatoric signal for the
+    Gaussian NLL to calibrate against. This models realistic measurement/
+    process noise on the observed data without altering the underlying
+    physical trajectory. Default perturb_frac=0.0 is a no-op (bit-identical
+    to omitting the argument). Combined with a restricted/gapped lp_filter,
+    this also tends to sharpen epistemic disagreement in sparse regions,
+    since bootstrap members fit their own noise draws differently there.
     """
 
     def __init__(
@@ -292,7 +337,10 @@ class TwoStageLatentSurrogateDataset(Dataset):
         initial_temp:    float = 300.0,
         n_ensemble:      int   = 5,
         bootstrap_seed:  int   = 0,
-        lp_filter:       Optional[Tuple[float, float]] = None,
+        bootstrap_resample_frac: float = 1.0,
+        lp_filter:       Optional[Union[Tuple[float, float], List[Tuple[float, float]]]] = None,
+        perturb_frac:    float = 0.0,
+        perturb_seed:    int   = 0,
     ):
         super().__init__()
         state_mean = state_mean.cpu()
@@ -320,8 +368,12 @@ class TwoStageLatentSurrogateDataset(Dataset):
                 prev = nxt
 
         if lp_filter is not None:
-            lo, hi = lp_filter
-            keep = [i for i, lp in enumerate(lp_actions) if lo <= lp <= hi]
+            # Normalise to a list of (lo, hi) ranges — a bare (lo, hi) tuple
+            # (lp_filter[0] is a number, not itself a range) is wrapped into
+            # a one-range list so the single-range call sites are unchanged.
+            ranges = [lp_filter] if isinstance(lp_filter[0], (int, float)) else list(lp_filter)
+            keep = [i for i, lp in enumerate(lp_actions)
+                    if any(lo <= lp <= hi for lo, hi in ranges)]
             n_total = len(lp_actions)
             states        = [states[i]        for i in keep]
             lp_actions    = [lp_actions[i]     for i in keep]
@@ -329,8 +381,20 @@ class TwoStageLatentSurrogateDataset(Dataset):
             heat_states   = [heat_states[i]    for i in keep]
             next_states   = [next_states[i]    for i in keep]
             layer_indices = [layer_indices[i]  for i in keep]
-            print(f"[TwoStageLatentSurrogateDataset] lp_filter=[{lo}, {hi}]W kept "
+            range_str = ", ".join(f"[{lo}, {hi}]" for lo, hi in ranges)
+            print(f"[TwoStageLatentSurrogateDataset] lp_filter={range_str}W kept "
                   f"{len(keep):,}/{n_total:,} transitions")
+
+        if perturb_frac > 0.0:
+            rng = np.random.default_rng(perturb_seed)
+            noise_std = (perturb_frac * state_std).numpy()  # (state_dim,) raw K, per node
+            heat_states = [h + rng.normal(0.0, noise_std).astype(np.float32) for h in heat_states]
+            next_states = [s + rng.normal(0.0, noise_std).astype(np.float32) for s in next_states]
+            print(f"[TwoStageLatentSurrogateDataset] perturb_frac={perturb_frac:.1%} of per-node "
+                  f"state_std → noise std {noise_std.min():.2f}-{noise_std.max():.2f}K "
+                  f"(mean {noise_std.mean():.2f}K) applied to {len(heat_states):,} "
+                  f"heating/next-state TARGETS (inputs s_t and the physical trajectory chain "
+                  f"remain clean)")
 
         S  = torch.tensor(np.stack(states),      dtype=torch.float32)
         A  = torch.tensor(lp_actions,             dtype=torch.float32).unsqueeze(-1)
@@ -346,7 +410,8 @@ class TwoStageLatentSurrogateDataset(Dataset):
         self.layer_indices = torch.tensor(layer_indices, dtype=torch.long)
 
         self.n_ensemble = n_ensemble
-        masks = make_bootstrap_masks(len(self.states), n_ensemble, seed=bootstrap_seed)
+        masks = make_bootstrap_masks(len(self.states), n_ensemble, seed=bootstrap_seed,
+                                      resample_frac=bootstrap_resample_frac)
         self.bootstrap_masks = torch.tensor(masks, dtype=torch.float32)  # (N, K)
 
         print(f"[TwoStageLatentSurrogateDataset] {len(self.states):,} transitions, "
@@ -397,6 +462,7 @@ class TwoStageLatentTrajectoryDataset(Dataset):
         initial_temp:    float = 300.0,
         n_ensemble:      int   = 5,
         bootstrap_seed:  int   = 0,
+        bootstrap_resample_frac: float = 1.0,
     ):
         super().__init__()
         state_mean = state_mean.cpu()
@@ -430,7 +496,8 @@ class TwoStageLatentTrajectoryDataset(Dataset):
             ))
 
         self.n_ensemble = n_ensemble
-        masks = make_bootstrap_masks(len(self.samples), n_ensemble, seed=bootstrap_seed)
+        masks = make_bootstrap_masks(len(self.samples), n_ensemble, seed=bootstrap_seed,
+                                      resample_frac=bootstrap_resample_frac)
         self.bootstrap_masks = torch.tensor(masks, dtype=torch.float32)  # (N_traj, K)
 
         print(f"[TwoStageLatentTrajectoryDataset] {len(self.samples):,} trajectories, "
