@@ -1,0 +1,359 @@
+============================================================
+Job ID   : 57259403
+Node     : gl1006
+Started  : Wed Aug 12 22:42:37 EDT 2026
+============================================================
+Python : /home/xysong/.conda/envs/RL/bin/python
+Torch  : 2.5.1+cu121
+CUDA   : True
+MATLAB : /sw/pkgs/arc/matlab/R2024b/bin/matlab
+============================================================
+
+############################################################
+# STAGE 1/5: Train surrogate  (Wed Aug 12 22:42:45 EDT 2026)
+############################################################
+[train] Output dir : surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1
+[train] Device     : cuda
+[dataset_v2] Loaded 5000 trajectories × 12 layers from DatasetV2_layer_12_samples_5000.pkl
+[dataset_v2] Split → train 4000 | val 500 | test 500
+[dataset_v2] State mean ∈ [164.2, 2761.5], std ∈ [31.5926, 1672.6]
+[dataset_v2] Laser power mean = 249.87 W, std = 89.44 W
+[dataset_v2] Cool time    mean = 0.1005 s, std = 0.0314 s
+[dataset_v2] ROI weight table: (12, 1053), range [0.801, 4.219]
+[train] ROI weights loaded from mesh: /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model/mesh.mat
+[train] LP filter active: training transitions restricted to the UNION of [100.0, 150.0], [200.0, 250.0], [300.0, 350.0] W (gapped-surrogate experiment)
+[TwoStageLatentSurrogateDataset] lp_filter=[100.0, 150.0], [200.0, 250.0], [300.0, 350.0]W kept 27,880/48,000 transitions
+[TwoStageLatentSurrogateDataset] perturb_frac=10.0% of per-node state_std → noise std 3.16-167.26K (mean 22.16K) applied to 27,880 heating/next-state TARGETS (inputs s_t and the physical trajectory chain remain clean)
+[dataset_v2] Bootstrap masks: (27880, 5), resample_frac=0.5, ~60.6% of (sample, member) pairs unseen (expected ≈ 60.7%)
+[TwoStageLatentSurrogateDataset] 27,880 transitions, state_dim=1053, layers 0–11, bootstrap K=5 (transition-level resampling)
+[TwoStageLatentSurrogateDataset] lp_filter=[100.0, 150.0], [200.0, 250.0], [300.0, 350.0]W kept 3,529/6,000 transitions
+[TwoStageLatentSurrogateDataset] perturb_frac=10.0% of per-node state_std → noise std 3.16-167.26K (mean 22.16K) applied to 3,529 heating/next-state TARGETS (inputs s_t and the physical trajectory chain remain clean)
+[dataset_v2] Bootstrap masks: (3529, 5), resample_frac=0.5, ~60.7% of (sample, member) pairs unseen (expected ≈ 60.7%)
+[TwoStageLatentSurrogateDataset] 3,529 transitions, state_dim=1053, layers 0–11, bootstrap K=5 (transition-level resampling)
+[train] TwoStageEnsembleGaussianLatentDynamicsModel(state=1053, latent=64, lp_dim=1, cool_dim=1, K=5, n_layers=12, embed=16 | enc=684,608  heat×5=640,960  cool×5=640,960  dec=685,597 | total=2,652,125)
+
+[train] Starting training for up to 500 epochs (patience=30)
+[train] Loss mode : single-step only
+[train] Weights   → recon_s=1.0  recon_heat=1.0  nll_heat=0.1  recon_cool=1.0  nll_cool=0.1  rollout=0.1
+[train] Ensemble  → K=5 members, bootstrap_seed=42
+--------------------------------------------------------------------------------
+Epoch    1/500 | train 0.37213 [rs=0.1356 rh=0.1582 nh=-1.2802 rc=0.1465 nc=-1.0436 ro=0.0000] | val 0.03670 | lr 1.00e-03 |   12.5s ✓ best
+Epoch    2/500 | train -0.06558 [rs=0.0571 rh=0.0725 nh=-1.9439 rc=0.0714 nc=-1.5275 ro=0.0000] | val -0.13829 | lr 1.00e-03 |   24.6s ✓ best
+Epoch    3/500 | train 0.15903 [rs=0.0906 rh=0.1030 nh=-1.4834 rc=0.1005 nc=-1.0358 ro=0.0000] | val 0.06515 | lr 1.00e-03 |   35.5s (no improvement 1/30)
+Epoch    4/500 | train -0.03939 [rs=0.0586 rh=0.0757 nh=-1.8944 rc=0.0726 nc=-1.4089 ro=0.0000] | val -0.22748 | lr 1.00e-03 |   47.5s ✓ best
+Epoch    5/500 | train -0.27250 [rs=0.0327 rh=0.0514 nh=-2.4837 rc=0.0498 nc=-2.1428 ro=0.0000] | val -0.34200 | lr 1.00e-03 |   58.7s ✓ best
+Epoch    6/500 | train -0.37853 [rs=0.0251 rh=0.0442 nh=-2.8453 rc=0.0419 nc=-2.5352 ro=0.0000] | val -0.41106 | lr 1.00e-03 |   70.2s ✓ best
+Epoch    7/500 | train -0.33773 [rs=0.0320 rh=0.0509 nh=-2.8224 rc=0.0480 nc=-2.4264 ro=0.0000] | val -0.16272 | lr 1.00e-03 |   82.4s (no improvement 1/30)
+Epoch    8/500 | train -0.23483 [rs=0.0444 rh=0.0642 nh=-2.6062 rc=0.0616 nc=-2.1596 ro=0.0000] | val -0.24057 | lr 9.99e-04 |   94.4s (no improvement 2/30)
+Epoch    9/500 | train -0.17125 [rs=0.0445 rh=0.0634 nh=-2.3224 rc=0.0608 nc=-1.7914 ro=0.0000] | val -0.20881 | lr 9.99e-04 |  107.1s (no improvement 3/30)
+Epoch   10/500 | train -0.28694 [rs=0.0365 rh=0.0574 nh=-2.7610 rc=0.0545 nc=-2.2100 ro=0.0000] | val -0.32841 | lr 9.99e-04 |  119.1s (no improvement 4/30)
+Epoch   11/500 | train -0.44019 [rs=0.0214 rh=0.0422 nh=-3.1218 rc=0.0385 nc=-2.7634 ro=0.0000] | val -0.50184 | lr 9.99e-04 |  130.2s ✓ best
+Epoch   12/500 | train -0.40803 [rs=0.0230 rh=0.0441 nh=-3.0240 rc=0.0403 nc=-2.6201 ro=0.0000] | val -0.47146 | lr 9.99e-04 |  141.2s (no improvement 1/30)
+Epoch   13/500 | train -0.49550 [rs=0.0179 rh=0.0381 nh=-3.3258 rc=0.0342 nc=-2.9618 ro=0.0000] | val -0.54173 | lr 9.98e-04 |  153.8s ✓ best
+Epoch   14/500 | train -0.50324 [rs=0.0174 rh=0.0375 nh=-3.3659 rc=0.0338 nc=-2.9869 ro=0.0000] | val -0.26932 | lr 9.98e-04 |  164.7s (no improvement 1/30)
+Epoch   15/500 | train -0.37570 [rs=0.0237 rh=0.0423 nh=-2.8199 rc=0.0406 nc=-2.4994 ro=0.0000] | val -0.43702 | lr 9.98e-04 |  176.8s (no improvement 2/30)
+Epoch   16/500 | train -0.52871 [rs=0.0139 rh=0.0307 nh=-3.3580 rc=0.0290 nc=-3.0474 ro=0.0000] | val -0.55385 | lr 9.98e-04 |  189.7s ✓ best
+Epoch   17/500 | train -0.54206 [rs=0.0142 rh=0.0303 nh=-3.4248 rc=0.0293 nc=-3.1083 ro=0.0000] | val -0.57875 | lr 9.97e-04 |  202.6s ✓ best
+Epoch   18/500 | train -0.55578 [rs=0.0130 rh=0.0273 nh=-3.4535 rc=0.0272 nc=-3.1204 ro=0.0000] | val -0.54198 | lr 9.97e-04 |  215.4s (no improvement 1/30)
+Epoch   19/500 | train -0.45249 [rs=0.0162 rh=0.0304 nh=-2.9967 rc=0.0301 nc=-2.6575 ro=0.0000] | val -0.19311 | lr 9.96e-04 |  228.3s (no improvement 2/30)
+Epoch   20/500 | train -0.45904 [rs=0.0153 rh=0.0289 nh=-3.0014 rc=0.0291 nc=-2.6628 ro=0.0000] | val -0.49526 | lr 9.96e-04 |  241.2s (no improvement 3/30)
+Epoch   21/500 | train -0.51872 [rs=0.0153 rh=0.0290 nh=-3.2964 rc=0.0289 nc=-2.9668 ro=0.0000] | val -0.53910 | lr 9.96e-04 |  254.2s (no improvement 4/30)
+Epoch   22/500 | train -0.53346 [rs=0.0150 rh=0.0276 nh=-3.3607 rc=0.0287 nc=-3.0263 ro=0.0000] | val -0.54379 | lr 9.95e-04 |  267.1s (no improvement 5/30)
+Epoch   23/500 | train -0.57352 [rs=0.0124 rh=0.0257 nh=-3.5032 rc=0.0258 nc=-3.1763 ro=0.0000] | val -0.60795 | lr 9.95e-04 |  279.4s ✓ best
+Epoch   24/500 | train -0.57815 [rs=0.0127 rh=0.0264 nh=-3.5441 rc=0.0264 nc=-3.1994 ro=0.0000] | val -0.64745 | lr 9.94e-04 |  291.1s ✓ best
+Epoch   25/500 | train -0.53532 [rs=0.0146 rh=0.0281 nh=-3.3742 rc=0.0286 nc=-3.0182 ro=0.0000] | val -0.59192 | lr 9.94e-04 |  303.9s (no improvement 1/30)
+Epoch   26/500 | train -0.47018 [rs=0.0185 rh=0.0339 nh=-3.1558 rc=0.0332 nc=-2.7797 ro=0.0000] | val -0.43222 | lr 9.93e-04 |  316.6s (no improvement 2/30)
+Epoch   27/500 | train -0.59819 [rs=0.0109 rh=0.0244 nh=-3.5573 rc=0.0245 nc=-3.2965 ro=0.0000] | val -0.67626 | lr 9.93e-04 |  329.5s ✓ best
+Epoch   28/500 | train -0.66458 [rs=0.0096 rh=0.0229 nh=-3.8861 rc=0.0227 nc=-3.5727 ro=0.0000] | val -0.66497 | lr 9.92e-04 |  342.4s (no improvement 1/30)
+Epoch   29/500 | train -0.70595 [rs=0.0079 rh=0.0213 nh=-4.0542 rc=0.0208 nc=-3.7426 ro=0.0000] | val -0.64561 | lr 9.92e-04 |  355.1s (no improvement 2/30)
+Epoch   30/500 | train -0.74304 [rs=0.0081 rh=0.0223 nh=-4.2459 rc=0.0220 nc=-3.9469 ro=0.0000] | val -0.81553 | lr 9.91e-04 |  367.9s ✓ best
+Epoch   31/500 | train -0.81962 [rs=0.0054 rh=0.0187 nh=-4.5507 rc=0.0180 nc=-4.2666 ro=0.0000] | val -0.82619 | lr 9.91e-04 |  379.3s ✓ best
+Epoch   32/500 | train -0.34992 [rs=0.0415 rh=0.0588 nh=-2.9603 rc=0.0608 nc=-2.7541 ro=0.0000] | val -0.44496 | lr 9.90e-04 |  391.3s (no improvement 1/30)
+Epoch   33/500 | train -0.16463 [rs=0.0476 rh=0.0622 nh=-2.2510 rc=0.0614 nc=-1.8152 ro=0.0000] | val -0.57321 | lr 9.89e-04 |  402.2s (no improvement 2/30)
+Epoch   34/500 | train -0.41605 [rs=0.0238 rh=0.0391 nh=-2.9487 rc=0.0396 nc=-2.6769 ro=0.0000] | val -0.60062 | lr 9.89e-04 |  413.1s (no improvement 3/30)
+Epoch   35/500 | train -0.69370 [rs=0.0102 rh=0.0227 nh=-4.0024 rc=0.0239 nc=-3.7615 ro=0.0000] | val -0.72563 | lr 9.88e-04 |  424.0s (no improvement 4/30)
+Epoch   36/500 | train -0.77028 [rs=0.0073 rh=0.0197 nh=-4.3029 rc=0.0201 nc=-4.0899 ro=0.0000] | val -0.77369 | lr 9.87e-04 |  436.0s (no improvement 5/30)
+Epoch   37/500 | train -0.62123 [rs=0.0113 rh=0.0247 nh=-3.6359 rc=0.0248 nc=-3.4562 ro=0.0000] | val -0.72242 | lr 9.87e-04 |  446.9s (no improvement 6/30)
+Epoch   38/500 | train -0.65427 [rs=0.0127 rh=0.0255 nh=-3.8451 rc=0.0266 nc=-3.6371 ro=0.0000] | val -0.61208 | lr 9.86e-04 |  458.0s (no improvement 7/30)
+Epoch   39/500 | train -0.61669 [rs=0.0152 rh=0.0281 nh=-3.6992 rc=0.0286 nc=-3.4991 ro=0.0000] | val -0.68023 | lr 9.85e-04 |  468.9s (no improvement 8/30)
+Epoch   40/500 | train -0.49683 [rs=0.0229 rh=0.0404 nh=-3.3200 rc=0.0402 nc=-3.1200 ro=0.0000] | val -0.52144 | lr 9.84e-04 |  480.9s (no improvement 9/30)
+Epoch   41/500 | train -0.61317 [rs=0.0161 rh=0.0292 nh=-3.7590 rc=0.0300 nc=-3.4540 ro=0.0000] | val -0.70043 | lr 9.84e-04 |  492.2s (no improvement 10/30)
+Epoch   42/500 | train -0.74544 [rs=0.0099 rh=0.0226 nh=-4.2063 rc=0.0225 nc=-4.0477 ro=0.0000] | val -0.74400 | lr 9.83e-04 |  505.1s (no improvement 11/30)
+Epoch   43/500 | train -0.66721 [rs=0.0119 rh=0.0254 nh=-3.8421 rc=0.0254 nc=-3.7330 ro=0.0000] | val -0.68240 | lr 9.82e-04 |  517.9s (no improvement 12/30)
+Epoch   44/500 | train -0.49732 [rs=0.0202 rh=0.0380 nh=-3.2007 rc=0.0357 nc=-3.1042 ro=0.0000] | val -0.48348 | lr 9.81e-04 |  530.8s (no improvement 13/30)
+Epoch   45/500 | train -0.70796 [rs=0.0100 rh=0.0225 nh=-4.0107 rc=0.0228 nc=-3.8675 ro=0.0000] | val -0.80818 | lr 9.80e-04 |  542.9s (no improvement 14/30)
+Epoch   46/500 | train -0.81422 [rs=0.0076 rh=0.0202 nh=-4.4996 rc=0.0204 nc=-4.3432 ro=0.0000] | val -0.82918 | lr 9.79e-04 |  555.2s ✓ best
+Epoch   47/500 | train -0.50383 [rs=0.0234 rh=0.0425 nh=-3.2343 rc=0.0405 nc=-3.3121 ro=0.0000] | val -0.47294 | lr 9.79e-04 |  567.9s (no improvement 1/30)
+Epoch   48/500 | train -0.60183 [rs=0.0119 rh=0.0253 nh=-3.4619 rc=0.0252 nc=-3.4544 ro=0.0000] | val -0.60700 | lr 9.78e-04 |  578.9s (no improvement 2/30)
+Epoch   49/500 | train -0.55602 [rs=0.0183 rh=0.0323 nh=-3.4273 rc=0.0324 nc=-3.3155 ro=0.0000] | val -0.62373 | lr 9.77e-04 |  591.7s (no improvement 3/30)
+Epoch   50/500 | train -0.63299 [rs=0.0103 rh=0.0237 nh=-3.5802 rc=0.0230 nc=-3.5723 ro=0.0000] | val -0.53816 | lr 9.76e-04 |  603.6s (no improvement 4/30)
+Epoch   51/500 | train -0.63331 [rs=0.0109 rh=0.0244 nh=-3.5812 rc=0.0241 nc=-3.6053 ro=0.0000] | val -0.67950 | lr 9.75e-04 |  614.5s (no improvement 5/30)
+Epoch   52/500 | train -0.67594 [rs=0.0088 rh=0.0214 nh=-3.7125 rc=0.0210 nc=-3.7862 ro=0.0000] | val -0.68577 | lr 9.74e-04 |  627.4s (no improvement 6/30)
+Epoch   53/500 | train -0.72671 [rs=0.0080 rh=0.0204 nh=-3.9550 rc=0.0203 nc=-4.0184 ro=0.0000] | val -0.74991 | lr 9.73e-04 |  640.3s (no improvement 7/30)
+Epoch   54/500 | train -0.72702 [rs=0.0102 rh=0.0228 nh=-4.0134 rc=0.0232 nc=-4.0664 ro=0.0000] | val -0.71891 | lr 9.72e-04 |  653.0s (no improvement 8/30)
+Epoch   55/500 | train -0.74690 [rs=0.0096 rh=0.0219 nh=-4.0969 rc=0.0220 nc=-4.1396 ro=0.0000] | val -0.77030 | lr 9.71e-04 |  666.0s (no improvement 9/30)
+Epoch   56/500 | train -0.77450 [rs=0.0080 rh=0.0200 nh=-4.1986 rc=0.0200 nc=-4.2409 ro=0.0000] | val -0.78245 | lr 9.70e-04 |  678.0s (no improvement 10/30)
+Epoch   57/500 | train -0.76659 [rs=0.0107 rh=0.0228 nh=-4.2353 rc=0.0236 nc=-4.2511 ro=0.0000] | val -0.65133 | lr 9.69e-04 |  688.9s (no improvement 11/30)
+Epoch   58/500 | train 1.99119 [rs=0.0547 rh=0.0755 nh=6.5342 rc=0.0772 nc=10.4495 ro=0.0000] | val -0.21576 | lr 9.67e-04 |  699.8s (no improvement 12/30)
+Epoch   59/500 | train -0.19651 [rs=0.0267 rh=0.0416 nh=-1.9372 rc=0.0413 nc=-1.5756 ro=0.0000] | val -0.40935 | lr 9.66e-04 |  712.6s (no improvement 13/30)
+Epoch   60/500 | train -0.38043 [rs=0.0161 rh=0.0320 nh=-2.4352 rc=0.0299 nc=-2.4907 ro=0.0000] | val -0.22191 | lr 9.65e-04 |  724.6s (no improvement 14/30)
+Epoch   61/500 | train -0.30390 [rs=0.0236 rh=0.0432 nh=-2.1654 rc=0.0399 nc=-2.3826 ro=0.0000] | val -0.06152 | lr 9.64e-04 |  735.5s (no improvement 15/30)
+Epoch   62/500 | train -0.31538 [rs=0.0242 rh=0.0411 nh=-2.3682 rc=0.0413 nc=-2.3057 ro=0.0000] | val -0.33691 | lr 9.63e-04 |  747.5s (no improvement 16/30)
+Epoch   63/500 | train -0.49672 [rs=0.0170 rh=0.0326 nh=-3.0633 rc=0.0323 nc=-3.0801 ro=0.0000] | val -0.63126 | lr 9.62e-04 |  758.7s (no improvement 17/30)
+Epoch   64/500 | train -0.68462 [rs=0.0086 rh=0.0222 nh=-3.7745 rc=0.0219 nc=-3.8388 ro=0.0000] | val -0.73135 | lr 9.61e-04 |  770.8s (no improvement 18/30)
+Epoch   65/500 | train -0.74235 [rs=0.0071 rh=0.0202 nh=-4.0275 rc=0.0197 nc=-4.0837 ro=0.0000] | val -0.75423 | lr 9.59e-04 |  781.7s (no improvement 19/30)
+Epoch   66/500 | train -0.79486 [rs=0.0063 rh=0.0191 nh=-4.2591 rc=0.0184 nc=-4.3287 ro=0.0000] | val -0.82086 | lr 9.58e-04 |  793.6s (no improvement 20/30)
+Epoch   67/500 | train -0.82438 [rs=0.0059 rh=0.0184 nh=-4.3965 rc=0.0179 nc=-4.4605 ro=0.0000] | val -0.85003 | lr 9.57e-04 |  804.7s ✓ best
+Epoch   68/500 | train -0.83788 [rs=0.0062 rh=0.0188 nh=-4.4459 rc=0.0181 nc=-4.5571 ro=0.0000] | val -0.83695 | lr 9.56e-04 |  815.6s (no improvement 1/30)
+Epoch   69/500 | train -0.84137 [rs=0.0070 rh=0.0199 nh=-4.4758 rc=0.0197 nc=-4.6113 ro=0.0000] | val -0.85820 | lr 9.54e-04 |  826.6s ✓ best
+Epoch   70/500 | train -0.86644 [rs=0.0058 rh=0.0185 nh=-4.5730 rc=0.0178 nc=-4.7031 ro=0.0000] | val -0.87309 | lr 9.53e-04 |  839.5s ✓ best
+Epoch   71/500 | train -0.88198 [rs=0.0069 rh=0.0198 nh=-4.6688 rc=0.0194 nc=-4.8154 ro=0.0000] | val -0.90183 | lr 9.52e-04 |  852.0s ✓ best
+Epoch   72/500 | train -0.89487 [rs=0.0060 rh=0.0188 nh=-4.7041 rc=0.0180 nc=-4.8617 ro=0.0000] | val -0.84583 | lr 9.50e-04 |  863.3s (no improvement 1/30)
+Epoch   73/500 | train -0.87779 [rs=0.0068 rh=0.0200 nh=-4.6256 rc=0.0194 nc=-4.8179 ro=0.0000] | val -0.88729 | lr 9.49e-04 |  875.3s (no improvement 2/30)
+Epoch   74/500 | train -0.91045 [rs=0.0056 rh=0.0187 nh=-4.7665 rc=0.0179 nc=-4.9446 ro=0.0000] | val -0.91002 | lr 9.47e-04 |  888.2s ✓ best
+Epoch   75/500 | train -0.89707 [rs=0.0074 rh=0.0207 nh=-4.7403 rc=0.0202 nc=-4.9232 ro=0.0000] | val -0.89722 | lr 9.46e-04 |  901.0s (no improvement 1/30)
+Epoch   76/500 | train -0.90958 [rs=0.0066 rh=0.0200 nh=-4.7639 rc=0.0193 nc=-4.9909 ro=0.0000] | val -0.88554 | lr 9.45e-04 |  913.9s (no improvement 2/30)
+Epoch   77/500 | train -0.87985 [rs=0.0109 rh=0.0253 nh=-4.6938 rc=0.0242 nc=-4.9617 ro=0.0000] | val -0.87604 | lr 9.43e-04 |  926.8s (no improvement 3/30)
+Epoch   78/500 | train -0.91741 [rs=0.0089 rh=0.0231 nh=-4.8697 rc=0.0216 nc=-5.0690 ro=0.0000] | val -0.97875 | lr 9.42e-04 |  938.8s ✓ best
+Epoch   79/500 | train -0.95082 [rs=0.0072 rh=0.0207 nh=-4.9977 rc=0.0192 nc=-5.1885 ro=0.0000] | val -0.93725 | lr 9.40e-04 |  949.9s (no improvement 1/30)
+Epoch   80/500 | train -0.88577 [rs=0.0159 rh=0.0314 nh=-4.8860 rc=0.0298 nc=-5.0759 ro=0.0000] | val -0.96742 | lr 9.39e-04 |  962.9s (no improvement 2/30)
+Epoch   81/500 | train -0.96974 [rs=0.0085 rh=0.0220 nh=-5.1243 rc=0.0205 nc=-5.3127 ro=0.0000] | val -0.95283 | lr 9.37e-04 |  975.2s (no improvement 3/30)
+Epoch   82/500 | train -0.98231 [rs=0.0076 rh=0.0211 nh=-5.1828 rc=0.0195 nc=-5.3340 ro=0.0000] | val -0.94945 | lr 9.36e-04 |  986.2s (no improvement 4/30)
+Epoch   83/500 | train -0.93375 [rs=0.0145 rh=0.0287 nh=-5.0772 rc=0.0262 nc=-5.2587 ro=0.0000] | val -0.87555 | lr 9.34e-04 |  997.1s (no improvement 5/30)
+Epoch   84/500 | train -0.94920 [rs=0.0121 rh=0.0269 nh=-5.1252 rc=0.0248 nc=-5.2898 ro=0.0000] | val -0.98732 | lr 9.33e-04 | 1008.1s ✓ best
+Epoch   85/500 | train -0.93107 [rs=0.0138 rh=0.0284 nh=-5.0782 rc=0.0269 nc=-5.2286 ro=0.0000] | val -1.01186 | lr 9.31e-04 | 1019.1s ✓ best
+Epoch   86/500 | train -1.01090 [rs=0.0058 rh=0.0188 nh=-5.2720 rc=0.0176 nc=-5.4480 ro=0.0000] | val -1.02507 | lr 9.29e-04 | 1030.3s ✓ best
+Epoch   87/500 | train -0.99180 [rs=0.0085 rh=0.0222 nh=-5.2320 rc=0.0209 nc=-5.4278 ro=0.0000] | val -0.95580 | lr 9.28e-04 | 1041.2s (no improvement 1/30)
+Epoch   88/500 | train -0.96674 [rs=0.0125 rh=0.0268 nh=-5.2165 rc=0.0246 nc=-5.3688 ro=0.0000] | val -1.02999 | lr 9.26e-04 | 1053.5s ✓ best
+Epoch   89/500 | train -0.99340 [rs=0.0105 rh=0.0239 nh=-5.3000 rc=0.0233 nc=-5.4633 ro=0.0000] | val -0.86736 | lr 9.25e-04 | 1064.5s (no improvement 1/30)
+Epoch   90/500 | train -0.83171 [rs=0.0264 rh=0.0430 nh=-4.8363 rc=0.0429 nc=-5.0592 ro=0.0000] | val -0.83285 | lr 9.23e-04 | 1075.4s (no improvement 2/30)
+Epoch   91/500 | train -0.07044 [rs=0.0743 rh=0.1057 nh=-2.2701 rc=0.1004 nc=-2.3410 ro=0.0000] | val 0.27783 | lr 9.21e-04 | 1086.4s (no improvement 3/30)
+Epoch   92/500 | train 0.02987 [rs=0.0461 rh=0.0676 nh=-1.2018 rc=0.0676 nc=-1.0367 ro=0.0000] | val -0.31219 | lr 9.20e-04 | 1097.3s (no improvement 4/30)
+Epoch   93/500 | train -0.38235 [rs=0.0419 rh=0.0561 nh=-3.1969 rc=0.0572 nc=-2.7951 ro=0.0000] | val -0.53260 | lr 9.18e-04 | 1109.2s (no improvement 5/30)
+Epoch   94/500 | train -0.66767 [rs=0.0247 rh=0.0418 nh=-4.2075 rc=0.0403 nc=-3.9733 ro=0.0000] | val -0.75180 | lr 9.16e-04 | 1120.2s (no improvement 6/30)
+Epoch   95/500 | train -0.80692 [rs=0.0163 rh=0.0311 nh=-4.6875 rc=0.0304 nc=-4.4898 ro=0.0000] | val -0.80163 | lr 9.14e-04 | 1131.2s (no improvement 7/30)
+Epoch   96/500 | train -0.67308 [rs=0.0283 rh=0.0436 nh=-4.3049 rc=0.0446 nc=-4.0671 ro=0.0000] | val -0.82973 | lr 9.13e-04 | 1142.1s (no improvement 8/30)
+Epoch   97/500 | train -0.86067 [rs=0.0128 rh=0.0261 nh=-4.8406 rc=0.0254 nc=-4.6912 ro=0.0000] | val -0.86409 | lr 9.11e-04 | 1154.0s (no improvement 9/30)
+Epoch   98/500 | train -0.72193 [rs=0.0174 rh=0.0307 nh=-4.2977 rc=0.0321 nc=-4.0686 ro=0.0000] | val -0.81729 | lr 9.09e-04 | 1166.8s (no improvement 10/30)
+Epoch   99/500 | train -0.68399 [rs=0.0187 rh=0.0323 nh=-4.1286 rc=0.0325 nc=-3.8999 ro=0.0000] | val -0.79043 | lr 9.07e-04 | 1179.2s (no improvement 11/30)
+Epoch  100/500 | train -0.74176 [rs=0.0147 rh=0.0283 nh=-4.3314 rc=0.0277 nc=-4.0983 ro=0.0000] | val -0.68421 | lr 9.05e-04 | 1191.9s (no improvement 12/30)
+Epoch  101/500 | train -0.79825 [rs=0.0136 rh=0.0267 nh=-4.5692 rc=0.0255 nc=-4.3606 ro=0.0000] | val -0.86469 | lr 9.04e-04 | 1204.8s (no improvement 13/30)
+Epoch  102/500 | train -0.86974 [rs=0.0136 rh=0.0269 nh=-4.8789 rc=0.0257 nc=-4.7699 ro=0.0000] | val -0.92231 | lr 9.02e-04 | 1217.7s (no improvement 14/30)
+Epoch  103/500 | train -0.72500 [rs=0.0177 rh=0.0325 nh=-4.2882 rc=0.0309 nc=-4.1196 ro=0.0000] | val -0.66010 | lr 9.00e-04 | 1230.4s (no improvement 15/30)
+Epoch  104/500 | train -0.85949 [rs=0.0092 rh=0.0222 nh=-4.7666 rc=0.0215 nc=-4.5954 ro=0.0000] | val -0.96592 | lr 8.98e-04 | 1243.3s (no improvement 16/30)
+Epoch  105/500 | train -0.95752 [rs=0.0067 rh=0.0192 nh=-5.1620 rc=0.0185 nc=-5.0579 ro=0.0000] | val -1.00318 | lr 8.96e-04 | 1255.9s (no improvement 17/30)
+Epoch  106/500 | train -0.96809 [rs=0.0057 rh=0.0182 nh=-5.2055 rc=0.0170 nc=-5.0710 ro=0.0000] | val -0.96215 | lr 8.94e-04 | 1266.8s (no improvement 18/30)
+Epoch  107/500 | train -0.92368 [rs=0.0061 rh=0.0187 nh=-4.9998 rc=0.0181 nc=-4.8548 ro=0.0000] | val -0.79037 | lr 8.92e-04 | 1277.7s (no improvement 19/30)
+Epoch  108/500 | train -0.80008 [rs=0.0106 rh=0.0248 nh=-4.5112 rc=0.0239 nc=-4.3350 ro=0.0000] | val -0.74134 | lr 8.90e-04 | 1290.4s (no improvement 20/30)
+Epoch  109/500 | train -0.81375 [rs=0.0089 rh=0.0217 nh=-4.5721 rc=0.0213 nc=-4.3115 ro=0.0000] | val -0.91040 | lr 8.88e-04 | 1303.2s (no improvement 21/30)
+Epoch  110/500 | train -0.77171 [rs=0.0093 rh=0.0224 nh=-4.3658 rc=0.0219 nc=-4.1208 ro=0.0000] | val -0.84063 | lr 8.86e-04 | 1315.2s (no improvement 22/30)
+Epoch  111/500 | train -0.77995 [rs=0.0083 rh=0.0211 nh=-4.3775 rc=0.0209 nc=-4.1482 ro=0.0000] | val -0.58605 | lr 8.84e-04 | 1326.1s (no improvement 23/30)
+Epoch  112/500 | train -0.64057 [rs=0.0105 rh=0.0232 nh=-3.7702 rc=0.0230 nc=-3.4486 ro=0.0000] | val -0.56369 | lr 8.82e-04 | 1337.2s (no improvement 24/30)
+Epoch  113/500 | train -0.65461 [rs=0.0091 rh=0.0217 nh=-3.8042 rc=0.0213 nc=-3.4914 ro=0.0000] | val -0.71483 | lr 8.80e-04 | 1349.2s (no improvement 25/30)
+Epoch  114/500 | train -0.69217 [rs=0.0071 rh=0.0200 nh=-3.9503 rc=0.0192 nc=-3.6413 ro=0.0000] | val -0.72110 | lr 8.78e-04 | 1360.6s (no improvement 26/30)
+Epoch  115/500 | train -0.68309 [rs=0.0077 rh=0.0205 nh=-3.8946 rc=0.0199 nc=-3.6323 ro=0.0000] | val -0.68221 | lr 8.76e-04 | 1372.6s (no improvement 27/30)
+Epoch  116/500 | train -0.68035 [rs=0.0082 rh=0.0205 nh=-3.8670 rc=0.0200 nc=-3.6394 ro=0.0000] | val -0.70396 | lr 8.74e-04 | 1383.5s (no improvement 28/30)
+Epoch  117/500 | train -0.68830 [rs=0.0080 rh=0.0206 nh=-3.8946 rc=0.0199 nc=-3.6885 ro=0.0000] | val -0.66222 | lr 8.72e-04 | 1394.4s (no improvement 29/30)
+Epoch  118/500 | train -0.67542 [rs=0.0084 rh=0.0212 nh=-3.8221 rc=0.0205 nc=-3.6519 ro=0.0000] | val -0.71792 | lr 8.70e-04 | 1405.4s (no improvement 30/30)
+[train] Early stopping at epoch 118.
+[train] Loss plot → surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/loss_curves.png
+[train] Component loss plot → surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/loss_components.png
+
+[train] Done.  Best val loss : -1.029989
+[train] Best checkpoint  : surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/two_stage_best.pt
+[train] Final checkpoint : surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/two_stage_final.pt
+[oneshot] Stage 1 done. Checkpoint: surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/two_stage_best.pt
+
+############################################################
+# STAGE 2/5: Evaluate surrogate  (Wed Aug 12 23:06:26 EDT 2026)
+############################################################
+[evaluate] Output dir : /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1
+[evaluate] Device     : cuda
+[evaluate] Mesh loaded: 1053 nodes, 488 triangles. X∈[0.00,12.00], Y∈[0.00,3.00]
+[evaluate] TwoStageEnsembleGaussianLatentDynamicsModel(state=1053, latent=64, lp_dim=1, cool_dim=1, K=5, n_layers=12, embed=16 | enc=684,608  heat×5=640,960  cool×5=640,960  dec=685,597 | total=2,652,125)
+[dataset_v2] Loaded 5000 trajectories × 12 layers from DatasetV2_layer_12_samples_5000.pkl
+[dataset_v2] Split → train 4000 | val 500 | test 500
+[dataset_v2] Bootstrap masks: (4000, 5), resample_frac=1.0, ~37.1% of (sample, member) pairs unseen (expected ≈ 36.8%)
+[TwoStageLatentTrajectoryDataset] 4,000 trajectories, T=12, state_dim=1053, bootstrap K=5 (trajectory-level resampling)
+[dataset_v2] Bootstrap masks: (48000, 5), resample_frac=1.0, ~36.8% of (sample, member) pairs unseen (expected ≈ 36.8%)
+[TwoStageLatentSurrogateDataset] 48,000 transitions, state_dim=1053, layers 0–11, bootstrap K=5 (transition-level resampling)
+[dataset_v2] Bootstrap masks: (500, 5), resample_frac=1.0, ~36.7% of (sample, member) pairs unseen (expected ≈ 36.8%)
+[TwoStageLatentTrajectoryDataset] 500 trajectories, T=12, state_dim=1053, bootstrap K=5 (trajectory-level resampling)
+[dataset_v2] Bootstrap masks: (6000, 5), resample_frac=1.0, ~36.6% of (sample, member) pairs unseen (expected ≈ 36.8%)
+[TwoStageLatentSurrogateDataset] 6,000 transitions, state_dim=1053, layers 0–11, bootstrap K=5 (transition-level resampling)
+[dataset_v2] Bootstrap masks: (500, 5), resample_frac=1.0, ~36.7% of (sample, member) pairs unseen (expected ≈ 36.8%)
+[TwoStageLatentTrajectoryDataset] 500 trajectories, T=12, state_dim=1053, bootstrap K=5 (trajectory-level resampling)
+[dataset_v2] Bootstrap masks: (6000, 5), resample_frac=1.0, ~36.6% of (sample, member) pairs unseen (expected ≈ 36.8%)
+[TwoStageLatentSurrogateDataset] 6,000 transitions, state_dim=1053, layers 0–11, bootstrap K=5 (transition-level resampling)
+
+[evaluate] ════════════════════ TRAIN SET ════════════════════
+  recon_s       : 0.006955
+  recon_heat_ae : 0.011364
+  recon_heat    : 0.010681
+  nll_heat      : -5.384779
+  recon_cool    : 0.008301
+  nll_cool      : -5.584246
+  AE RMSE (s_t)      : 25.7128 K
+  AE RMSE (u_heat_t) : 38.6778 K
+
+   Layer   Heat SS RMSE   Heat RO RMSE   Cool SS RMSE   Cool RO RMSE
+       1         22.734         22.734         15.984         21.604
+       2         24.468         26.338         21.381         32.872
+       3         26.951         41.217         22.624         37.162
+       4         30.245         50.845         23.733         42.785
+       5         34.572         54.938         23.631         44.133
+       6         39.302         66.331         19.272         44.656
+       7         31.332         68.527         20.338         51.200
+       8         32.788         77.870         22.223         58.588
+       9         42.687         96.294         24.794         66.070
+      10         41.726        111.256         27.359         77.682
+      11         38.380        123.965         33.061         86.972
+      12         42.164        145.773         40.702         96.432
+
+[evaluate] ════════════════════ VAL SET ════════════════════
+  recon_s       : 0.007076
+  recon_heat_ae : 0.011363
+  recon_heat    : 0.010878
+  nll_heat      : -5.370207
+  recon_cool    : 0.008523
+  nll_cool      : -5.573977
+  AE RMSE (s_t)      : 25.9261 K
+  AE RMSE (u_heat_t) : 38.6319 K
+
+   Layer   Heat SS RMSE   Heat RO RMSE   Cool SS RMSE   Cool RO RMSE
+       1         22.758         22.758         16.471         22.006
+       2         24.383         26.242         21.780         32.884
+       3         26.914         40.199         22.665         36.985
+       4         30.891         50.653         24.549         43.440
+       5         33.907         54.697         22.904         43.784
+       6         38.761         65.333         19.485         43.668
+       7         30.777         66.295         20.497         49.823
+       8         33.121         75.258         22.523         58.624
+       9         42.544         94.221         25.233         66.464
+      10         41.781        110.995         28.579         79.231
+      11         39.260        128.230         32.945         90.328
+      12         41.866        152.066         39.927        101.135
+
+[evaluate] ════════════════════ TEST SET ════════════════════
+  recon_s       : 0.007263
+  recon_heat_ae : 0.011618
+  recon_heat    : 0.010972
+  nll_heat      : -5.394252
+  recon_cool    : 0.008858
+  nll_cool      : -5.604899
+  AE RMSE (s_t)      : 27.0817 K
+  AE RMSE (u_heat_t) : 39.3853 K
+
+   Layer   Heat SS RMSE   Heat RO RMSE   Cool SS RMSE   Cool RO RMSE
+       1         22.595         22.595         16.167         21.891
+       2         24.229         26.511         20.830         32.976
+       3         27.561         40.662         22.719         37.237
+       4         29.231         50.499         23.168         42.149
+       5         33.101         52.995         24.065         43.791
+       6         41.033         65.465         20.481         45.910
+       7         30.745         67.639         20.428         52.033
+       8         33.042         76.621         22.476         58.872
+       9         44.225         95.047         25.768         66.085
+      10         42.872        111.490         29.723         78.737
+      11         40.217        127.573         36.060         88.478
+      12         44.639        145.823         43.196         96.721
+
+[evaluate] ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+[evaluate] SUMMARY
+[evaluate] ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+  Split     ae_rmse_s [K]  ae_rmse_h [K]heat_ss_rmse [K]heat_ro_rmse [K]cool_ss_rmse [K]cool_ro_rmse [K] heat_epist_std cool_epist_std      total_std
+  train           25.7128        38.6778        33.9457        73.8408        24.5920        55.0130         0.0016         0.0010         0.0054
+  val             25.9261        38.6319        33.9135        73.9123        24.7965        55.6977         0.0016         0.0010         0.0055
+  test            27.0817        39.3853        34.4575        73.5766        25.4234        55.4067         0.0015         0.0010         0.0051
+[evaluate] ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/per_layer_rmse.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/per_layer_mae.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/per_layer_uncertainty.png
+[evaluate] Saving field plots for 3 test trajectories ...
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_000/actions.txt
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_000/action_sequence.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_000/sigma_per_layer.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_000/layer_01_LP300W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_000/layer_02_LP370W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_000/layer_03_LP270W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_000/layer_04_LP160W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_000/layer_05_LP120W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_000/layer_06_LP340W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_000/layer_07_LP180W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_000/layer_08_LP210W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_000/layer_09_LP400W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_000/layer_10_LP300W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_000/layer_11_LP190W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_000/layer_12_LP270W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_001/actions.txt
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_001/action_sequence.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_001/sigma_per_layer.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_001/layer_01_LP350W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_001/layer_02_LP400W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_001/layer_03_LP230W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_001/layer_04_LP160W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_001/layer_05_LP390W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_001/layer_06_LP260W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_001/layer_07_LP390W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_001/layer_08_LP190W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_001/layer_09_LP170W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_001/layer_10_LP250W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_001/layer_11_LP310W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_001/layer_12_LP170W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_002/actions.txt
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_002/action_sequence.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_002/sigma_per_layer.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_002/layer_01_LP200W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_002/layer_02_LP100W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_002/layer_03_LP240W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_002/layer_04_LP380W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_002/layer_05_LP330W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_002/layer_06_LP100W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_002/layer_07_LP380W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_002/layer_08_LP390W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_002/layer_09_LP400W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_002/layer_10_LP340W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_002/layer_11_LP320W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/traj_002/layer_12_LP230W.png
+
+[evaluate] Complete. All outputs in: /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1
+[evaluate_ood] Output dir : /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1
+[evaluate_ood] Device     : cuda
+[evaluate_ood] TwoStageEnsembleGaussianLatentDynamicsModel(state=1053, latent=64, lp_dim=1, cool_dim=1, K=5, n_layers=12, embed=16 | enc=684,608  heat×5=640,960  cool×5=640,960  dec=685,597 | total=2,652,125)
+[dataset_v2] Loaded 5000 trajectories × 12 layers from DatasetV2_layer_12_samples_5000.pkl
+[evaluate_ood] Wide dataset laser-power range: [100.0, 400.0] W  (checkpoint trained on [100.0, 150.0], [200.0, 250.0], [300.0, 350.0] W)
+[dataset_v2] Bootstrap masks: (60000, 5), resample_frac=1.0, ~36.8% of (sample, member) pairs unseen (expected ≈ 36.8%)
+[TwoStageLatentSurrogateDataset] 60,000 transitions, state_dim=1053, layers 0–11, bootstrap K=5 (transition-level resampling)
+[evaluate_ood] Running forward pass over all transitions (heating stage) ...
+
+[evaluate_ood] ══════════════════════════════════════════════════════════════════════════════════════════
+[evaluate_ood] SUMMARY  (n, mean epistemic σ, mean aleatoric σ, RMSE, corr(epistemic σ, per-sample squared error))
+[evaluate_ood] ══════════════════════════════════════════════════════════════════════════════════════════
+  ID           n= 34951  epist σ=0.00135  aleat σ=0.00337  RMSE=  32.65 K  corr(epi,err) pearson=-0.007 spearman=0.007
+  OOD          n= 25049  epist σ=0.00177  aleat σ=0.00411  RMSE=  37.30 K  corr(epi,err) pearson=0.033 spearman=0.159
+  ALL          n= 60000  epist σ=0.00152  aleat σ=0.00368  RMSE=  34.67 K  corr(epi,err) pearson=0.022 spearman=0.090
+[evaluate_ood] ══════════════════════════════════════════════════════════════════════════════════════════
+
+     Power bin [W]        n     Epist σ     Aleat σ    RMSE [K]
+    100.0-  125.0     5942     0.00101     0.00246       28.93
+    125.0-  150.0     3803     0.00097     0.00239       29.24
+    150.0-  175.0     5694     0.00098     0.00234       30.29
+    175.0-  200.0     3853     0.00103     0.00251       31.20
+    200.0-  225.0     5813     0.00114     0.00286       31.12
+    225.0-  250.0     3925     0.00124     0.00310       31.92
+    250.0-  275.0     5813     0.00141     0.00355       33.33
+    275.0-  300.0     3940     0.00157     0.00400       34.07
+    300.0-  325.0     5749     0.00176     0.00452       35.08
+    325.0-  350.0     3942     0.00185     0.00470       37.11
+    350.0-  375.0     5800     0.00226     0.00538       40.08
+    375.0-  400.0     5726     0.00277     0.00582       46.58
+[evaluate_ood] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/ood_uncertainty_vs_action.png
+[evaluate_ood] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1/ood_epistemic_vs_error.png
+
+[evaluate_ood] Complete. All outputs in: /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1
+[oneshot] Stage 2 done.
+
+############################################################
+# STAGE 3/5: Train UCPG v2  (Wed Aug 12 23:08:33 EDT 2026)
+############################################################
