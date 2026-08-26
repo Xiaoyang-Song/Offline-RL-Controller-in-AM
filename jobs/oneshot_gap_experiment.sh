@@ -81,10 +81,10 @@ DATA_PATH="Data/DatasetV2_layer_12_samples_5000.pkl"
 LP_FILTER_RANGES="100-150,200-250,300-350"   # ID ranges — see script header
 ID_RANGES="$LP_FILTER_RANGES"                 # same string, used by eval/compare too
 
-SURROGATE_OUT_DIR="surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.1"
+SURROGATE_OUT_DIR="surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25"
 SURROGATE_CKPT="$SURROGATE_OUT_DIR/two_stage_best.pt"
-UCPG_OUT_DIR="online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.1"
-NAIVE_PG_OUT_DIR="baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.1"
+UCPG_OUT_DIR="online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25"
+NAIVE_PG_OUT_DIR="baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25"
 RESULTS_DIR="jobs/results_gap_experiment"
 mkdir -p "$RESULTS_DIR"
 
@@ -97,9 +97,9 @@ echo "############################################################"
 echo "# STAGE 1/5: Train surrogate  ($(date))"
 echo "############################################################"
 
-PERTURB_FRAC=0.1     # fraction of each node's own state_std — see dataset_v2.py
+PERTURB_FRAC=0.25     # fraction of each node's own state_std — see dataset_v2.py
 PERTURB_SEED=0
-BOOTSTRAP_FRAC=0.5    # each of K=5 members bootstraps only this fraction of N
+BOOTSTRAP_FRAC=0.25    # each of K=5 members bootstraps only this fraction of N
 N_ENSEMBLE=5
 EPOCHS=500
 BATCH_SIZE=128
@@ -180,7 +180,7 @@ ACTION_MAX=400.0
 HIDDEN=128
 DEPTH=3
 DROPOUT=0.0
-LAYER_EMBED_DIM=8
+LAYER_EMBED_DIM=32
 LOG_SIGMA_INIT=-1.0
 MIN_LOG_SIGMA=-3.0
 MAX_LOG_SIGMA=0.0

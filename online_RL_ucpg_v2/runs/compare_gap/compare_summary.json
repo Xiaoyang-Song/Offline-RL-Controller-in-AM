@@ -1,0 +1,20 @@
+{
+  "naive_pg": {
+    "checkpoint": "baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt",
+    "n_episodes": 5,
+    "return_mean": -6.488137558266186,
+    "return_std": 0.0,
+    "action_mean": 148.71469116210938,
+    "action_std": 68.85363111532732,
+    "frac_outside_id": 0.25
+  },
+  "ucpg_v2": {
+    "checkpoint": "online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt",
+    "n_episodes": 5,
+    "return_mean": -6.3410471673628,
+    "return_std": 0.0,
+    "action_mean": 148.06371434529623,
+    "action_std": 67.35871968344904,
+    "frac_outside_id": 0.25
+  }
+}

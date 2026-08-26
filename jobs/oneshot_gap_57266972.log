@@ -1,0 +1,1150 @@
+============================================================
+Job ID   : 57266972
+Node     : gl1020
+Started  : Thu Aug 13 02:48:59 EDT 2026
+============================================================
+Python : /home/xysong/.conda/envs/RL/bin/python
+Torch  : 2.5.1+cu121
+CUDA   : True
+MATLAB : /sw/pkgs/arc/matlab/R2024b/bin/matlab
+============================================================
+
+############################################################
+# STAGE 1/5: Train surrogate  (Thu Aug 13 02:49:08 EDT 2026)
+############################################################
+[train] Output dir : surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25
+[train] Device     : cuda
+[dataset_v2] Loaded 5000 trajectories × 12 layers from DatasetV2_layer_12_samples_5000.pkl
+[dataset_v2] Split → train 4000 | val 500 | test 500
+[dataset_v2] State mean ∈ [164.2, 2761.5], std ∈ [31.5926, 1672.6]
+[dataset_v2] Laser power mean = 249.87 W, std = 89.44 W
+[dataset_v2] Cool time    mean = 0.1005 s, std = 0.0314 s
+[dataset_v2] ROI weight table: (12, 1053), range [0.801, 4.219]
+[train] ROI weights loaded from mesh: /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model/mesh.mat
+[train] LP filter active: training transitions restricted to the UNION of [100.0, 150.0], [200.0, 250.0], [300.0, 350.0] W (gapped-surrogate experiment)
+[TwoStageLatentSurrogateDataset] lp_filter=[100.0, 150.0], [200.0, 250.0], [300.0, 350.0]W kept 27,880/48,000 transitions
+[TwoStageLatentSurrogateDataset] perturb_frac=25.0% of per-node state_std → noise std 7.90-418.15K (mean 55.39K) applied to 27,880 heating/next-state TARGETS (inputs s_t and the physical trajectory chain remain clean)
+[dataset_v2] Bootstrap masks: (27880, 5), resample_frac=0.25, ~77.8% of (sample, member) pairs unseen (expected ≈ 77.9%)
+[TwoStageLatentSurrogateDataset] 27,880 transitions, state_dim=1053, layers 0–11, bootstrap K=5 (transition-level resampling)
+[TwoStageLatentSurrogateDataset] lp_filter=[100.0, 150.0], [200.0, 250.0], [300.0, 350.0]W kept 3,529/6,000 transitions
+[TwoStageLatentSurrogateDataset] perturb_frac=25.0% of per-node state_std → noise std 7.90-418.15K (mean 55.39K) applied to 3,529 heating/next-state TARGETS (inputs s_t and the physical trajectory chain remain clean)
+[dataset_v2] Bootstrap masks: (3529, 5), resample_frac=0.25, ~77.8% of (sample, member) pairs unseen (expected ≈ 77.9%)
+[TwoStageLatentSurrogateDataset] 3,529 transitions, state_dim=1053, layers 0–11, bootstrap K=5 (transition-level resampling)
+[train] TwoStageEnsembleGaussianLatentDynamicsModel(state=1053, latent=64, lp_dim=1, cool_dim=1, K=5, n_layers=12, embed=16 | enc=684,608  heat×5=640,960  cool×5=640,960  dec=685,597 | total=2,652,125)
+
+[train] Starting training for up to 500 epochs (patience=30)
+[train] Loss mode : single-step only
+[train] Weights   → recon_s=1.0  recon_heat=1.0  nll_heat=0.1  recon_cool=1.0  nll_cool=0.1  rollout=0.1
+[train] Ensemble  → K=5 members, bootstrap_seed=42
+--------------------------------------------------------------------------------
+Epoch    1/500 | train 0.53754 [rs=0.1352 rh=0.2131 nh=-1.2570 rc=0.2014 nc=-1.0381 ro=0.0000] | val 0.18994 | lr 1.00e-03 |   14.8s ✓ best
+Epoch    2/500 | train 0.13015 [rs=0.0590 rh=0.1272 nh=-1.7989 rc=0.1258 nc=-1.3621 ro=0.0000] | val 0.25380 | lr 1.00e-03 |   29.4s (no improvement 1/30)
+Epoch    3/500 | train 0.00074 [rs=0.0452 rh=0.1163 nh=-2.1818 rc=0.1149 nc=-1.7858 ro=0.0000] | val -0.10352 | lr 1.00e-03 |   43.3s ✓ best
+Epoch    4/500 | train -0.10165 [rs=0.0330 rh=0.1049 nh=-2.4247 rc=0.1028 nc=-2.0840 ro=0.0000] | val -0.13611 | lr 1.00e-03 |   57.6s ✓ best
+Epoch    5/500 | train -0.14785 [rs=0.0309 rh=0.1031 nh=-2.5981 rc=0.0994 nc=-2.2906 ro=0.0000] | val -0.09887 | lr 1.00e-03 |   72.4s (no improvement 1/30)
+Epoch    6/500 | train -0.16393 [rs=0.0296 rh=0.1014 nh=-2.6466 rc=0.0994 nc=-2.3714 ro=0.0000] | val -0.19749 | lr 1.00e-03 |   88.2s ✓ best
+Epoch    7/500 | train -0.17332 [rs=0.0262 rh=0.0978 nh=-2.5848 rc=0.0946 nc=-2.3655 ro=0.0000] | val -0.20419 | lr 1.00e-03 |  104.2s ✓ best
+Epoch    8/500 | train -0.18090 [rs=0.0277 rh=0.0993 nh=-2.6531 rc=0.0964 nc=-2.4585 ro=0.0000] | val -0.17667 | lr 9.99e-04 |  119.3s (no improvement 1/30)
+Epoch    9/500 | train -0.31133 [rs=0.0168 rh=0.0842 nh=-3.0284 rc=0.0836 nc=-2.8456 ro=0.0000] | val -0.22795 | lr 9.99e-04 |  134.5s ✓ best
+Epoch   10/500 | train -0.18623 [rs=0.0274 rh=0.0973 nh=-2.6599 rc=0.0959 nc=-2.4569 ro=0.0000] | val -0.31340 | lr 9.99e-04 |  149.7s ✓ best
+Epoch   11/500 | train -0.13384 [rs=0.0321 rh=0.1017 nh=-2.4968 rc=0.1000 nc=-2.2986 ro=0.0000] | val -0.21964 | lr 9.99e-04 |  165.6s (no improvement 1/30)
+Epoch   12/500 | train -0.28510 [rs=0.0197 rh=0.0860 nh=-2.9489 rc=0.0858 nc=-2.7535 ro=0.0000] | val -0.29339 | lr 9.99e-04 |  180.6s (no improvement 2/30)
+Epoch   13/500 | train -0.30794 [rs=0.0181 rh=0.0847 nh=-3.0217 rc=0.0844 nc=-2.8453 ro=0.0000] | val -0.34365 | lr 9.98e-04 |  195.8s ✓ best
+Epoch   14/500 | train -0.32664 [rs=0.0165 rh=0.0819 nh=-3.0966 rc=0.0820 nc=-2.8624 ro=0.0000] | val -0.37679 | lr 9.98e-04 |  211.5s ✓ best
+Epoch   15/500 | train -0.33163 [rs=0.0176 rh=0.0833 nh=-3.1587 rc=0.0829 nc=-2.8957 ro=0.0000] | val -0.33438 | lr 9.98e-04 |  227.4s (no improvement 1/30)
+Epoch   16/500 | train -0.15036 [rs=0.0251 rh=0.0951 nh=-2.4265 rc=0.0927 nc=-2.2046 ro=0.0000] | val -0.14931 | lr 9.98e-04 |  243.4s (no improvement 2/30)
+Epoch   17/500 | train -0.29072 [rs=0.0162 rh=0.0817 nh=-2.8805 rc=0.0829 nc=-2.7177 ro=0.0000] | val -0.27815 | lr 9.97e-04 |  258.5s (no improvement 3/30)
+Epoch   18/500 | train -0.34063 [rs=0.0178 rh=0.0830 nh=-3.2283 rc=0.0849 nc=-2.9301 ro=0.0000] | val -0.39342 | lr 9.97e-04 |  273.9s ✓ best
+Epoch   19/500 | train -0.31467 [rs=0.0187 rh=0.0844 nh=-3.1307 rc=0.0859 nc=-2.8121 ro=0.0000] | val -0.40724 | lr 9.96e-04 |  289.2s ✓ best
+Epoch   20/500 | train -0.45262 [rs=0.0114 rh=0.0771 nh=-3.6098 rc=0.0776 nc=-3.3882 ro=0.0000] | val -0.44928 | lr 9.96e-04 |  304.7s ✓ best
+Epoch   21/500 | train -0.37548 [rs=0.0173 rh=0.0840 nh=-3.3402 rc=0.0842 nc=-3.1615 ro=0.0000] | val -0.48831 | lr 9.96e-04 |  320.5s ✓ best
+Epoch   22/500 | train -0.42526 [rs=0.0149 rh=0.0820 nh=-3.5248 rc=0.0817 nc=-3.3701 ro=0.0000] | val -0.23694 | lr 9.95e-04 |  336.5s (no improvement 1/30)
+Epoch   23/500 | train -0.33124 [rs=0.0196 rh=0.0869 nh=-3.2326 rc=0.0869 nc=-2.9377 ro=0.0000] | val -0.33137 | lr 9.95e-04 |  351.2s (no improvement 2/30)
+Epoch   24/500 | train -0.22993 [rs=0.0277 rh=0.0963 nh=-2.9138 rc=0.0971 nc=-2.6033 ro=0.0000] | val -0.40228 | lr 9.94e-04 |  366.7s (no improvement 3/30)
+Epoch   25/500 | train -0.27614 [rs=0.0333 rh=0.1041 nh=-3.2538 rc=0.1042 nc=-2.9933 ro=0.0000] | val 0.76615 | lr 9.94e-04 |  382.3s (no improvement 4/30)
+Epoch   26/500 | train -0.22152 [rs=0.0267 rh=0.0962 nh=-2.7970 rc=0.0957 nc=-2.6171 ro=0.0000] | val -0.35296 | lr 9.93e-04 |  397.6s (no improvement 5/30)
+Epoch   27/500 | train -0.46874 [rs=0.0129 rh=0.0780 nh=-3.7183 rc=0.0789 nc=-3.4905 ro=0.0000] | val -0.51057 | lr 9.93e-04 |  412.7s ✓ best
+Epoch   28/500 | train -0.45340 [rs=0.0140 rh=0.0795 nh=-3.6645 rc=0.0799 nc=-3.4396 ro=0.0000] | val -0.49622 | lr 9.92e-04 |  425.8s (no improvement 1/30)
+Epoch   29/500 | train -0.43574 [rs=0.0153 rh=0.0800 nh=-3.5989 rc=0.0808 nc=-3.3705 ro=0.0000] | val -0.26413 | lr 9.92e-04 |  441.1s (no improvement 2/30)
+Epoch   30/500 | train -0.50556 [rs=0.0107 rh=0.0757 nh=-3.8685 rc=0.0768 nc=-3.6189 ro=0.0000] | val -0.48973 | lr 9.91e-04 |  456.2s (no improvement 3/30)
+Epoch   31/500 | train -0.53269 [rs=0.0097 rh=0.0745 nh=-3.9597 rc=0.0751 nc=-3.7420 ro=0.0000] | val -0.38009 | lr 9.91e-04 |  469.5s (no improvement 4/30)
+Epoch   32/500 | train -0.34103 [rs=0.0199 rh=0.0874 nh=-3.3054 rc=0.0883 nc=-2.9859 ro=0.0000] | val -0.44297 | lr 9.90e-04 |  482.9s (no improvement 5/30)
+Epoch   33/500 | train -0.45992 [rs=0.0139 rh=0.0799 nh=-3.7388 rc=0.0797 nc=-3.4391 ro=0.0000] | val -0.51437 | lr 9.89e-04 |  496.7s ✓ best
+Epoch   34/500 | train -0.34895 [rs=0.0215 rh=0.0897 nh=-3.4201 rc=0.0901 nc=-3.0341 ro=0.0000] | val -0.47668 | lr 9.89e-04 |  510.9s (no improvement 1/30)
+Epoch   35/500 | train -0.49224 [rs=0.0142 rh=0.0806 nh=-3.8680 rc=0.0816 nc=-3.6695 ro=0.0000] | val -0.30934 | lr 9.88e-04 |  525.9s (no improvement 2/30)
+Epoch   36/500 | train -0.44045 [rs=0.0155 rh=0.0840 nh=-3.6710 rc=0.0832 nc=-3.4274 ro=0.0000] | val -0.43943 | lr 9.87e-04 |  541.7s (no improvement 3/30)
+Epoch   37/500 | train -0.50661 [rs=0.0129 rh=0.0785 nh=-3.9085 rc=0.0790 nc=-3.6844 ro=0.0000] | val -0.36526 | lr 9.87e-04 |  557.3s (no improvement 4/30)
+Epoch   38/500 | train -0.54059 [rs=0.0111 rh=0.0769 nh=-4.0266 rc=0.0771 nc=-3.8338 ro=0.0000] | val -0.55093 | lr 9.86e-04 |  573.5s ✓ best
+Epoch   39/500 | train -0.38433 [rs=0.0222 rh=0.0919 nh=-3.5310 rc=0.0912 nc=-3.3221 ro=0.0000] | val -0.40372 | lr 9.85e-04 |  588.3s (no improvement 1/30)
+Epoch   40/500 | train -0.41612 [rs=0.0187 rh=0.0862 nh=-3.5373 rc=0.0868 nc=-3.4510 ro=0.0000] | val -0.42120 | lr 9.84e-04 |  603.3s (no improvement 2/30)
+Epoch   41/500 | train -0.53907 [rs=0.0120 rh=0.0780 nh=-4.0006 rc=0.0786 nc=-3.8960 ro=0.0000] | val -0.52600 | lr 9.84e-04 |  617.7s (no improvement 3/30)
+Epoch   42/500 | train -0.51594 [rs=0.0156 rh=0.0827 nh=-3.9867 rc=0.0824 nc=-3.8479 ro=0.0000] | val -0.38598 | lr 9.83e-04 |  632.6s (no improvement 4/30)
+Epoch   43/500 | train -0.50476 [rs=0.0145 rh=0.0803 nh=-3.8811 rc=0.0804 nc=-3.7604 ro=0.0000] | val -0.29010 | lr 9.82e-04 |  646.1s (no improvement 5/30)
+Epoch   44/500 | train -0.47429 [rs=0.0184 rh=0.0860 nh=-3.8073 rc=0.0848 nc=-3.7299 ro=0.0000] | val -0.51473 | lr 9.81e-04 |  659.6s (no improvement 6/30)
+Epoch   45/500 | train -0.58264 [rs=0.0094 rh=0.0758 nh=-4.1405 rc=0.0755 nc=-4.0721 ro=0.0000] | val -0.62697 | lr 9.80e-04 |  674.9s ✓ best
+Epoch   46/500 | train -0.52049 [rs=0.0149 rh=0.0821 nh=-3.9901 rc=0.0821 nc=-3.8657 ro=0.0000] | val -0.55625 | lr 9.79e-04 |  690.1s (no improvement 1/30)
+Epoch   47/500 | train -0.60742 [rs=0.0098 rh=0.0754 nh=-4.2906 rc=0.0756 nc=-4.1749 ro=0.0000] | val -0.62248 | lr 9.79e-04 |  705.7s (no improvement 2/30)
+Epoch   48/500 | train -0.62076 [rs=0.0091 rh=0.0743 nh=-4.3486 rc=0.0745 nc=-4.2115 ro=0.0000] | val -0.63212 | lr 9.78e-04 |  722.1s ✓ best
+Epoch   49/500 | train -0.60962 [rs=0.0108 rh=0.0758 nh=-4.3253 rc=0.0763 nc=-4.1914 ro=0.0000] | val -0.50516 | lr 9.77e-04 |  738.4s (no improvement 1/30)
+Epoch   50/500 | train -0.45609 [rs=0.0235 rh=0.0919 nh=-3.8599 rc=0.0912 nc=-3.7270 ro=0.0000] | val -0.55549 | lr 9.76e-04 |  754.2s (no improvement 2/30)
+Epoch   51/500 | train 0.32038 [rs=0.0771 rh=0.1541 nh=-1.5982 rc=0.1437 nc=-0.5974 ro=0.0000] | val 0.82225 | lr 9.75e-04 |  769.6s (no improvement 3/30)
+Epoch   52/500 | train 0.49621 [rs=0.0679 rh=0.1558 nh=-0.0339 rc=0.1356 nc=-0.1203 ro=0.0000] | val 0.15380 | lr 9.74e-04 |  785.5s (no improvement 4/30)
+Epoch   53/500 | train 0.07824 [rs=0.0278 rh=0.0984 nh=-1.3529 rc=0.1000 nc=-1.1680 ro=0.0000] | val -0.07243 | lr 9.73e-04 |  801.5s (no improvement 5/30)
+Epoch   54/500 | train -0.04714 [rs=0.0273 rh=0.0968 nh=-1.9585 rc=0.0964 nc=-1.7327 ro=0.0000] | val -0.10351 | lr 9.72e-04 |  816.2s (no improvement 6/30)
+Epoch   55/500 | train -0.11476 [rs=0.0264 rh=0.0957 nh=-2.2673 rc=0.0936 nc=-2.0234 ro=0.0000] | val -0.15650 | lr 9.71e-04 |  832.6s (no improvement 7/30)
+Epoch   56/500 | train 0.08138 [rs=0.0436 rh=0.1164 nh=-1.9121 rc=0.1133 nc=-1.2005 ro=0.0000] | val 0.23645 | lr 9.70e-04 |  848.6s (no improvement 8/30)
+Epoch   57/500 | train 0.15823 [rs=0.0337 rh=0.1024 nh=-1.3157 rc=0.1030 nc=-0.5730 ro=0.0000] | val 0.06328 | lr 9.69e-04 |  863.7s (no improvement 9/30)
+Epoch   58/500 | train 0.02792 [rs=0.0312 rh=0.0982 nh=-1.7988 rc=0.0971 nc=-1.2147 ro=0.0000] | val -0.10713 | lr 9.67e-04 |  878.8s (no improvement 10/30)
+Epoch   59/500 | train -0.03900 [rs=0.0341 rh=0.1036 nh=-2.1663 rc=0.1028 nc=-1.7223 ro=0.0000] | val 0.11706 | lr 9.66e-04 |  893.4s (no improvement 11/30)
+Epoch   60/500 | train -0.09097 [rs=0.0148 rh=0.0823 nh=-2.0193 rc=0.0822 nc=-1.5434 ro=0.0000] | val -0.22458 | lr 9.65e-04 |  908.6s (no improvement 12/30)
+Epoch   61/500 | train -0.29175 [rs=0.0149 rh=0.0804 nh=-2.9117 rc=0.0802 nc=-2.6158 ro=0.0000] | val -0.30661 | lr 9.64e-04 |  923.9s (no improvement 13/30)
+Epoch   62/500 | train -0.28972 [rs=0.0214 rh=0.0883 nh=-3.0385 rc=0.0875 nc=-2.7628 ro=0.0000] | val -0.31431 | lr 9.63e-04 |  939.1s (no improvement 14/30)
+Epoch   63/500 | train -0.32510 [rs=0.0202 rh=0.0888 nh=-3.2164 rc=0.0869 nc=-2.9242 ro=0.0000] | val -0.26932 | lr 9.62e-04 |  954.6s (no improvement 15/30)
+Epoch   64/500 | train -0.36124 [rs=0.0166 rh=0.0835 nh=-3.3479 rc=0.0827 nc=-2.9747 ro=0.0000] | val -0.40738 | lr 9.61e-04 |  969.3s (no improvement 16/30)
+Epoch   65/500 | train -0.40421 [rs=0.0173 rh=0.0842 nh=-3.5326 rc=0.0831 nc=-3.2480 ro=0.0000] | val -0.41687 | lr 9.59e-04 |  984.6s (no improvement 17/30)
+Epoch   66/500 | train -0.47605 [rs=0.0115 rh=0.0770 nh=-3.7569 rc=0.0769 nc=-3.4623 ro=0.0000] | val -0.43415 | lr 9.58e-04 |  999.5s (no improvement 18/30)
+Epoch   67/500 | train -0.48338 [rs=0.0111 rh=0.0767 nh=-3.7673 rc=0.0761 nc=-3.5067 ro=0.0000] | val -0.53707 | lr 9.57e-04 | 1012.7s (no improvement 19/30)
+Epoch   68/500 | train -0.49899 [rs=0.0106 rh=0.0762 nh=-3.8499 rc=0.0756 nc=-3.5641 ro=0.0000] | val -0.46530 | lr 9.56e-04 | 1028.4s (no improvement 20/30)
+Epoch   69/500 | train -0.51212 [rs=0.0104 rh=0.0756 nh=-3.9149 rc=0.0755 nc=-3.6121 ro=0.0000] | val -0.53684 | lr 9.54e-04 | 1044.4s (no improvement 21/30)
+Epoch   70/500 | train -0.52927 [rs=0.0101 rh=0.0753 nh=-3.9723 rc=0.0748 nc=-3.7041 ro=0.0000] | val -0.53776 | lr 9.53e-04 | 1059.9s (no improvement 22/30)
+Epoch   71/500 | train -0.50684 [rs=0.0121 rh=0.0773 nh=-3.9236 rc=0.0772 nc=-3.6187 ro=0.0000] | val -0.55814 | lr 9.52e-04 | 1075.2s (no improvement 23/30)
+Epoch   72/500 | train -0.46528 [rs=0.0131 rh=0.0789 nh=-3.7269 rc=0.0794 nc=-3.4596 ro=0.0000] | val -0.42100 | lr 9.50e-04 | 1088.9s (no improvement 24/30)
+Epoch   73/500 | train -0.47358 [rs=0.0117 rh=0.0769 nh=-3.7687 rc=0.0772 nc=-3.4205 ro=0.0000] | val -0.58346 | lr 9.49e-04 | 1102.3s (no improvement 25/30)
+Epoch   74/500 | train -0.57059 [rs=0.0107 rh=0.0760 nh=-4.2041 rc=0.0764 nc=-3.9228 ro=0.0000] | val -0.41890 | lr 9.47e-04 | 1115.3s (no improvement 26/30)
+Epoch   75/500 | train -0.46989 [rs=0.0110 rh=0.0763 nh=-3.7111 rc=0.0766 nc=-3.4115 ro=0.0000] | val -0.58736 | lr 9.46e-04 | 1130.0s (no improvement 27/30)
+Epoch   76/500 | train -0.50055 [rs=0.0128 rh=0.0786 nh=-3.8970 rc=0.0787 nc=-3.6152 ro=0.0000] | val -0.55040 | lr 9.45e-04 | 1145.7s (no improvement 28/30)
+Epoch   77/500 | train -0.40556 [rs=0.0104 rh=0.0758 nh=-3.4042 rc=0.0757 nc=-3.0442 ro=0.0000] | val -0.54188 | lr 9.43e-04 | 1161.5s (no improvement 29/30)
+Epoch   78/500 | train -0.48340 [rs=0.0084 rh=0.0733 nh=-3.7614 rc=0.0737 nc=-3.3781 ro=0.0000] | val -0.56784 | lr 9.42e-04 | 1176.9s (no improvement 30/30)
+[train] Early stopping at epoch 78.
+[train] Loss plot → surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/loss_curves.png
+[train] Component loss plot → surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/loss_components.png
+
+[train] Done.  Best val loss : -0.632119
+[train] Best checkpoint  : surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/two_stage_best.pt
+[train] Final checkpoint : surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/two_stage_final.pt
+[oneshot] Stage 1 done. Checkpoint: surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/two_stage_best.pt
+
+############################################################
+# STAGE 2/5: Evaluate surrogate  (Thu Aug 13 03:09:01 EDT 2026)
+############################################################
+[evaluate] Output dir : /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25
+[evaluate] Device     : cuda
+[evaluate] Mesh loaded: 1053 nodes, 488 triangles. X∈[0.00,12.00], Y∈[0.00,3.00]
+[evaluate] TwoStageEnsembleGaussianLatentDynamicsModel(state=1053, latent=64, lp_dim=1, cool_dim=1, K=5, n_layers=12, embed=16 | enc=684,608  heat×5=640,960  cool×5=640,960  dec=685,597 | total=2,652,125)
+[dataset_v2] Loaded 5000 trajectories × 12 layers from DatasetV2_layer_12_samples_5000.pkl
+[dataset_v2] Split → train 4000 | val 500 | test 500
+[dataset_v2] Bootstrap masks: (4000, 5), resample_frac=1.0, ~37.1% of (sample, member) pairs unseen (expected ≈ 36.8%)
+[TwoStageLatentTrajectoryDataset] 4,000 trajectories, T=12, state_dim=1053, bootstrap K=5 (trajectory-level resampling)
+[dataset_v2] Bootstrap masks: (48000, 5), resample_frac=1.0, ~36.8% of (sample, member) pairs unseen (expected ≈ 36.8%)
+[TwoStageLatentSurrogateDataset] 48,000 transitions, state_dim=1053, layers 0–11, bootstrap K=5 (transition-level resampling)
+[dataset_v2] Bootstrap masks: (500, 5), resample_frac=1.0, ~36.7% of (sample, member) pairs unseen (expected ≈ 36.8%)
+[TwoStageLatentTrajectoryDataset] 500 trajectories, T=12, state_dim=1053, bootstrap K=5 (trajectory-level resampling)
+[dataset_v2] Bootstrap masks: (6000, 5), resample_frac=1.0, ~36.6% of (sample, member) pairs unseen (expected ≈ 36.8%)
+[TwoStageLatentSurrogateDataset] 6,000 transitions, state_dim=1053, layers 0–11, bootstrap K=5 (transition-level resampling)
+[dataset_v2] Bootstrap masks: (500, 5), resample_frac=1.0, ~36.7% of (sample, member) pairs unseen (expected ≈ 36.8%)
+[TwoStageLatentTrajectoryDataset] 500 trajectories, T=12, state_dim=1053, bootstrap K=5 (trajectory-level resampling)
+[dataset_v2] Bootstrap masks: (6000, 5), resample_frac=1.0, ~36.6% of (sample, member) pairs unseen (expected ≈ 36.8%)
+[TwoStageLatentSurrogateDataset] 6,000 transitions, state_dim=1053, layers 0–11, bootstrap K=5 (transition-level resampling)
+
+[evaluate] ════════════════════ TRAIN SET ════════════════════
+  recon_s       : 0.005708
+  recon_heat_ae : 0.014474
+  recon_heat    : 0.008392
+  nll_heat      : -4.453221
+  recon_cool    : 0.009102
+  nll_cool      : -4.363478
+  AE RMSE (s_t)      : 33.9750 K
+  AE RMSE (u_heat_t) : 55.4355 K
+
+   Layer   Heat SS RMSE   Heat RO RMSE   Cool SS RMSE   Cool RO RMSE
+       1         25.809         25.809         18.545         16.128
+       2         21.890         23.476         17.986         15.950
+       3         17.782         28.573         16.622         17.972
+       4         22.940         34.252         16.907         21.371
+       5         34.724         40.823         16.229         23.792
+       6         34.077         49.048         16.874         27.393
+       7         25.913         48.033         20.411         35.247
+       8         31.923         59.008         26.796         49.508
+       9         43.110         76.375         33.139         61.691
+      10         35.410         94.122         42.487         75.486
+      11         41.673        106.269         53.049         81.350
+      12         56.198        118.732         63.915         89.079
+
+[evaluate] ════════════════════ VAL SET ════════════════════
+  recon_s       : 0.005705
+  recon_heat_ae : 0.014217
+  recon_heat    : 0.008566
+  nll_heat      : -4.451861
+  recon_cool    : 0.009193
+  nll_cool      : -4.361353
+  AE RMSE (s_t)      : 33.8738 K
+  AE RMSE (u_heat_t) : 54.8986 K
+
+   Layer   Heat SS RMSE   Heat RO RMSE   Cool SS RMSE   Cool RO RMSE
+       1         26.001         26.001         18.719         16.417
+       2         22.157         23.828         17.929         16.367
+       3         17.536         28.740         16.464         18.614
+       4         23.114         34.175         17.425         21.917
+       5         33.847         40.171         15.053         23.761
+       6         34.328         49.228         17.210         27.336
+       7         25.509         47.403         21.229         34.461
+       8         32.476         58.033         26.105         49.423
+       9         43.378         76.716         33.377         61.663
+      10         35.432         94.574         43.231         75.583
+      11         41.881        106.661         52.634         83.624
+      12         55.817        120.690         62.636         91.683
+
+[evaluate] ════════════════════ TEST SET ════════════════════
+  recon_s       : 0.006255
+  recon_heat_ae : 0.015463
+  recon_heat    : 0.008981
+  nll_heat      : -4.451151
+  recon_cool    : 0.010063
+  nll_cool      : -4.374060
+  AE RMSE (s_t)      : 35.7889 K
+  AE RMSE (u_heat_t) : 57.4384 K
+
+   Layer   Heat SS RMSE   Heat RO RMSE   Cool SS RMSE   Cool RO RMSE
+       1         25.309         25.309         18.510         16.180
+       2         21.937         22.857         17.635         15.897
+       3         17.701         27.507         16.674         18.342
+       4         22.466         32.457         17.138         21.464
+       5         33.213         38.520         16.347         23.584
+       6         35.575         49.515         17.312         28.212
+       7         24.840         48.391         21.344         35.155
+       8         32.681         58.591         28.866         51.009
+       9         45.232         78.232         36.903         63.258
+      10         37.397         95.732         45.702         77.162
+      11         43.424        108.172         57.549         82.692
+      12         58.598        118.921         66.887         90.816
+
+[evaluate] ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+[evaluate] SUMMARY
+[evaluate] ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+  Split     ae_rmse_s [K]  ae_rmse_h [K]heat_ss_rmse [K]heat_ro_rmse [K]cool_ss_rmse [K]cool_ro_rmse [K] heat_epist_std cool_epist_std      total_std
+  train           33.9750        55.4355        32.6208        58.7100        28.5800        42.9138         0.0016         0.0015         0.0074
+  val             33.8738        54.8986        32.6230        58.8516        28.5010        43.4040         0.0016         0.0015         0.0074
+  test            35.7889        57.4384        33.1979        58.6836        30.0720        43.6476         0.0016         0.0015         0.0074
+[evaluate] ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/per_layer_rmse.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/per_layer_mae.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/per_layer_uncertainty.png
+[evaluate] Saving field plots for 3 test trajectories ...
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_000/actions.txt
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_000/action_sequence.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_000/sigma_per_layer.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_000/layer_01_LP300W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_000/layer_02_LP370W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_000/layer_03_LP270W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_000/layer_04_LP160W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_000/layer_05_LP120W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_000/layer_06_LP340W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_000/layer_07_LP180W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_000/layer_08_LP210W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_000/layer_09_LP400W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_000/layer_10_LP300W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_000/layer_11_LP190W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_000/layer_12_LP270W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_001/actions.txt
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_001/action_sequence.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_001/sigma_per_layer.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_001/layer_01_LP350W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_001/layer_02_LP400W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_001/layer_03_LP230W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_001/layer_04_LP160W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_001/layer_05_LP390W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_001/layer_06_LP260W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_001/layer_07_LP390W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_001/layer_08_LP190W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_001/layer_09_LP170W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_001/layer_10_LP250W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_001/layer_11_LP310W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_001/layer_12_LP170W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_002/actions.txt
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_002/action_sequence.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_002/sigma_per_layer.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_002/layer_01_LP200W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_002/layer_02_LP100W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_002/layer_03_LP240W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_002/layer_04_LP380W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_002/layer_05_LP330W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_002/layer_06_LP100W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_002/layer_07_LP380W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_002/layer_08_LP390W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_002/layer_09_LP400W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_002/layer_10_LP340W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_002/layer_11_LP320W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/traj_002/layer_12_LP230W.png
+
+[evaluate] Complete. All outputs in: /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25
+[evaluate_ood] Output dir : /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25
+[evaluate_ood] Device     : cuda
+[evaluate_ood] TwoStageEnsembleGaussianLatentDynamicsModel(state=1053, latent=64, lp_dim=1, cool_dim=1, K=5, n_layers=12, embed=16 | enc=684,608  heat×5=640,960  cool×5=640,960  dec=685,597 | total=2,652,125)
+[dataset_v2] Loaded 5000 trajectories × 12 layers from DatasetV2_layer_12_samples_5000.pkl
+[evaluate_ood] Wide dataset laser-power range: [100.0, 400.0] W  (checkpoint trained on [100.0, 150.0], [200.0, 250.0], [300.0, 350.0] W)
+[dataset_v2] Bootstrap masks: (60000, 5), resample_frac=1.0, ~36.8% of (sample, member) pairs unseen (expected ≈ 36.8%)
+[TwoStageLatentSurrogateDataset] 60,000 transitions, state_dim=1053, layers 0–11, bootstrap K=5 (transition-level resampling)
+[evaluate_ood] Running forward pass over all transitions (heating stage) ...
+
+[evaluate_ood] ══════════════════════════════════════════════════════════════════════════════════════════
+[evaluate_ood] SUMMARY  (n, mean epistemic σ, mean aleatoric σ, RMSE, corr(epistemic σ, per-sample squared error))
+[evaluate_ood] ══════════════════════════════════════════════════════════════════════════════════════════
+  ID           n= 34951  epist σ=0.00142  aleat σ=0.00421  RMSE=  32.48 K  corr(epi,err) pearson=0.072 spearman=0.189
+  OOD          n= 25049  epist σ=0.00167  aleat σ=0.00463  RMSE=  36.70 K  corr(epi,err) pearson=0.114 spearman=0.262
+  ALL          n= 60000  epist σ=0.00153  aleat σ=0.00439  RMSE=  34.31 K  corr(epi,err) pearson=0.104 spearman=0.237
+[evaluate_ood] ══════════════════════════════════════════════════════════════════════════════════════════
+
+     Power bin [W]        n     Epist σ     Aleat σ    RMSE [K]
+    100.0-  125.0     5942     0.00116     0.00374       29.28
+    125.0-  150.0     3803     0.00115     0.00370       29.85
+    150.0-  175.0     5694     0.00120     0.00373       29.67
+    175.0-  200.0     3853     0.00124     0.00376       29.80
+    200.0-  225.0     5813     0.00129     0.00390       29.57
+    225.0-  250.0     3925     0.00136     0.00402       30.92
+    250.0-  275.0     5813     0.00148     0.00429       32.43
+    275.0-  300.0     3940     0.00159     0.00451       33.24
+    300.0-  325.0     5749     0.00170     0.00477       35.25
+    325.0-  350.0     3942     0.00180     0.00502       37.42
+    350.0-  375.0     5800     0.00198     0.00533       40.46
+    375.0-  400.0     5726     0.00222     0.00558       46.22
+[evaluate_ood] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ood_uncertainty_vs_action.png
+[evaluate_ood] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ood_epistemic_vs_error.png
+
+[evaluate_ood] Complete. All outputs in: /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25
+[oneshot] Stage 2 done.
+
+############################################################
+# STAGE 3/5: Train UCPG v2  (Thu Aug 13 03:11:01 EDT 2026)
+############################################################
+=================================================================
+[train] Uncertainty-Constrained Policy Gradient v2 — LPBF Controller
+[train] (continuous action, two-stage heating/cooling surrogate)
+[train] Output dir : online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25
+[train] Device     : cuda
+[train] delta (uncertainty budget) : 0.05
+=================================================================
+
+[train] Loading surrogate: surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/two_stage_best.pt
+[train] Surrogate   : TwoStageEnsembleGaussianLatentDynamicsModel(state=1053, latent=64, lp_dim=1, cool_dim=1, K=5, n_layers=12, embed=16 | enc=684,608  heat×5=640,960  cool×5=640,960  dec=685,597 | total=2,652,125)
+[TwoStageLatentLPBFEnv] Mesh loaded: 1053 nodes  X∈[0.00, 12.00]  Y∈[0.00, 3.00]
+[train] Action aim range : [100, 400] W  (continuous, unclipped)
+[train] cool_time range  : [0.050, 0.150] s  (drawn once/episode)
+[train] obs_dim     : 66  (latent_dim=64 + layer token + cool_time token)
+[train] UCPGAgentV2(ContinuousLatentPolicyNet(latent_dim=64, action_range=[100, 400]W, hidden=128, depth=3, n_layers=12, layer_embed_dim=32, params=113,935)  lambda=0.00000)
+
+[train] Starting 3000 iterations (N=32 trajectories/iter, T=12 steps/traj)
+[train] gamma_r=0.99  gamma_u=0.99  lr_theta=0.0003  lr_lambda=0.01
+-----------------------------------------------------------------
+Iter     1/3000 | return -11.1917 (avg1 -11.1917) | J_u 0.10358 (δ=0.05) | λ 0.00054 | loss -452.5603 | entropy 5.286 | action 250.6±47.0W | 5s
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+Iter    20/3000 | return -5.1548 (avg20 -7.2187) | J_u 0.10176 (δ=0.05) | λ 0.01033 | loss -164.3215 | entropy 5.286 | action 189.7±52.0W | 81s
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+Iter    40/3000 | return -4.3734 (avg20 -4.7103) | J_u 0.10794 (δ=0.05) | λ 0.02083 | loss -138.8550 | entropy 5.284 | action 183.7±63.2W | 161s
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+Iter    60/3000 | return -4.0295 (avg20 -4.1409) | J_u 0.11454 (δ=0.05) | λ 0.03300 | loss -120.8660 | entropy 5.282 | action 181.7±83.4W | 241s
+Iter    80/3000 | return -4.1469 (avg20 -4.1319) | J_u 0.11373 (δ=0.05) | λ 0.04591 | loss -124.2924 | entropy 5.280 | action 191.0±76.9W | 320s
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+Iter   100/3000 | return -3.8577 (avg20 -4.0331) | J_u 0.11247 (δ=0.05) | λ 0.05803 | loss -109.8442 | entropy 5.278 | action 174.9±70.1W | 400s
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+Iter   120/3000 | return -3.9264 (avg20 -3.8315) | J_u 0.12405 (δ=0.05) | λ 0.07148 | loss -116.8257 | entropy 5.275 | action 187.8±84.6W | 480s
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+Iter   140/3000 | return -3.8164 (avg20 -3.8881) | J_u 0.11999 (δ=0.05) | λ 0.08597 | loss -107.4571 | entropy 5.272 | action 189.5±82.7W | 560s
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+Iter   160/3000 | return -4.0311 (avg20 -3.7787) | J_u 0.10996 (δ=0.05) | λ 0.09946 | loss -121.1216 | entropy 5.269 | action 171.1±74.1W | 639s
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+Iter   180/3000 | return -3.7008 (avg20 -3.7771) | J_u 0.11272 (δ=0.05) | λ 0.11231 | loss -101.9115 | entropy 5.266 | action 182.8±80.2W | 719s
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+Iter   200/3000 | return -3.7768 (avg20 -3.6302) | J_u 0.12262 (δ=0.05) | λ 0.12646 | loss -105.2794 | entropy 5.264 | action 182.7±90.9W | 799s
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_iter00200.pt
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/return.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/j_u.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/lambda.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/loss.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/entropy.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/action_stats.png
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+Iter   220/3000 | return -3.5861 (avg20 -3.6382) | J_u 0.12185 (δ=0.05) | λ 0.14117 | loss -100.2136 | entropy 5.263 | action 182.2±78.4W | 881s
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+Iter   240/3000 | return -3.4900 (avg20 -3.5712) | J_u 0.11289 (δ=0.05) | λ 0.15429 | loss -98.5592 | entropy 5.262 | action 179.1±76.2W | 961s
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+Iter   260/3000 | return -3.5312 (avg20 -3.5732) | J_u 0.11953 (δ=0.05) | λ 0.16812 | loss -101.1319 | entropy 5.260 | action 177.9±79.8W | 1042s
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+Iter   280/3000 | return -3.4923 (avg20 -3.4646) | J_u 0.11898 (δ=0.05) | λ 0.18218 | loss -99.2758 | entropy 5.258 | action 181.6±81.3W | 1122s
+Iter   300/3000 | return -3.3243 (avg20 -3.4589) | J_u 0.12739 (δ=0.05) | λ 0.19591 | loss -93.1983 | entropy 5.255 | action 177.5±80.3W | 1203s
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+Iter   320/3000 | return -3.6328 (avg20 -3.4534) | J_u 0.12129 (δ=0.05) | λ 0.20988 | loss -106.3547 | entropy 5.253 | action 185.1±86.7W | 1283s
+Iter   340/3000 | return -3.3718 (avg20 -3.4758) | J_u 0.11885 (δ=0.05) | λ 0.22406 | loss -96.2899 | entropy 5.250 | action 181.8±78.4W | 1364s
+Iter   360/3000 | return -3.5744 (avg20 -3.4389) | J_u 0.11333 (δ=0.05) | λ 0.23784 | loss -105.8856 | entropy 5.246 | action 180.1±79.1W | 1444s
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+Iter   380/3000 | return -3.2968 (avg20 -3.4558) | J_u 0.12545 (δ=0.05) | λ 0.25132 | loss -90.3609 | entropy 5.243 | action 176.4±81.2W | 1524s
+Iter   400/3000 | return -3.5804 (avg20 -3.4495) | J_u 0.11309 (δ=0.05) | λ 0.26484 | loss -101.8471 | entropy 5.241 | action 176.0±78.6W | 1605s
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_iter00400.pt
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/return.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/j_u.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/lambda.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/loss.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/entropy.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/action_stats.png
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+Iter   420/3000 | return -3.3600 (avg20 -3.5192) | J_u 0.12073 (δ=0.05) | λ 0.27815 | loss -93.9137 | entropy 5.239 | action 183.8±82.6W | 1707s
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+Iter   440/3000 | return -3.4703 (avg20 -3.4078) | J_u 0.11461 (δ=0.05) | λ 0.29227 | loss -100.0264 | entropy 5.237 | action 182.5±77.1W | 1811s
+Iter   460/3000 | return -3.4127 (avg20 -3.4713) | J_u 0.12326 (δ=0.05) | λ 0.30645 | loss -98.0724 | entropy 5.235 | action 178.3±79.0W | 1914s
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+Iter   480/3000 | return -3.4339 (avg20 -3.4554) | J_u 0.11517 (δ=0.05) | λ 0.31992 | loss -95.9638 | entropy 5.233 | action 177.1±82.1W | 2018s
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+Iter   500/3000 | return -3.4690 (avg20 -3.3618) | J_u 0.11100 (δ=0.05) | λ 0.33388 | loss -98.3090 | entropy 5.231 | action 182.7±83.3W | 2121s
+Iter   520/3000 | return -3.2455 (avg20 -3.4193) | J_u 0.12571 (δ=0.05) | λ 0.34849 | loss -89.6042 | entropy 5.229 | action 178.1±87.1W | 2225s
+Iter   540/3000 | return -3.3642 (avg20 -3.4516) | J_u 0.12331 (δ=0.05) | λ 0.36280 | loss -92.8168 | entropy 5.227 | action 183.6±83.2W | 2328s
+Iter   560/3000 | return -3.3733 (avg20 -3.4217) | J_u 0.11667 (δ=0.05) | λ 0.37688 | loss -93.6422 | entropy 5.224 | action 177.7±85.6W | 2431s
+Iter   580/3000 | return -3.4437 (avg20 -3.4973) | J_u 0.11285 (δ=0.05) | λ 0.38963 | loss -97.6040 | entropy 5.222 | action 184.0±79.2W | 2526s
+Iter   600/3000 | return -3.6443 (avg20 -3.4340) | J_u 0.12443 (δ=0.05) | λ 0.40413 | loss -106.4716 | entropy 5.219 | action 191.3±85.9W | 2606s
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_iter00600.pt
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/return.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/j_u.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/lambda.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/loss.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/entropy.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/action_stats.png
+Iter   620/3000 | return -3.5203 (avg20 -3.4684) | J_u 0.11406 (δ=0.05) | λ 0.41883 | loss -102.2071 | entropy 5.217 | action 176.2±84.3W | 2688s
+Iter   640/3000 | return -3.3470 (avg20 -3.4044) | J_u 0.12517 (δ=0.05) | λ 0.43271 | loss -93.6860 | entropy 5.215 | action 181.0±83.7W | 2768s
+Iter   660/3000 | return -3.3510 (avg20 -3.4292) | J_u 0.12393 (δ=0.05) | λ 0.44631 | loss -95.7673 | entropy 5.214 | action 172.0±85.3W | 2849s
+Iter   680/3000 | return -3.4210 (avg20 -3.4377) | J_u 0.13013 (δ=0.05) | λ 0.46079 | loss -96.5412 | entropy 5.212 | action 180.9±88.0W | 2930s
+Iter   700/3000 | return -3.4107 (avg20 -3.4445) | J_u 0.11880 (δ=0.05) | λ 0.47474 | loss -95.8891 | entropy 5.208 | action 185.1±82.7W | 3010s
+Iter   720/3000 | return -3.2403 (avg20 -3.3984) | J_u 0.11956 (δ=0.05) | λ 0.48844 | loss -89.7911 | entropy 5.206 | action 177.2±76.9W | 3091s
+Iter   740/3000 | return -3.5008 (avg20 -3.4404) | J_u 0.11366 (δ=0.05) | λ 0.50146 | loss -100.8709 | entropy 5.203 | action 179.5±76.3W | 3171s
+Iter   760/3000 | return -3.5336 (avg20 -3.3671) | J_u 0.11546 (δ=0.05) | λ 0.51540 | loss -101.7038 | entropy 5.201 | action 178.6±84.0W | 3252s
+Iter   780/3000 | return -3.3282 (avg20 -3.3355) | J_u 0.12095 (δ=0.05) | λ 0.52970 | loss -94.2905 | entropy 5.198 | action 178.5±85.5W | 3332s
+Iter   800/3000 | return -3.3899 (avg20 -3.3326) | J_u 0.12411 (δ=0.05) | λ 0.54414 | loss -96.1888 | entropy 5.195 | action 182.5±90.7W | 3412s
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_iter00800.pt
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/return.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/j_u.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/lambda.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/loss.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/entropy.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/action_stats.png
+Iter   820/3000 | return -3.2769 (avg20 -3.3497) | J_u 0.11677 (δ=0.05) | λ 0.55865 | loss -90.0409 | entropy 5.192 | action 184.0±86.3W | 3494s
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+Iter   840/3000 | return -3.2811 (avg20 -3.3176) | J_u 0.11546 (δ=0.05) | λ 0.57267 | loss -93.1660 | entropy 5.189 | action 182.8±81.1W | 3575s
+Iter   860/3000 | return -3.2522 (avg20 -3.3597) | J_u 0.12339 (δ=0.05) | λ 0.58704 | loss -89.1922 | entropy 5.187 | action 182.3±86.5W | 3655s
+Iter   880/3000 | return -3.2039 (avg20 -3.3269) | J_u 0.12852 (δ=0.05) | λ 0.60110 | loss -88.6571 | entropy 5.185 | action 176.3±83.3W | 3736s
+Iter   900/3000 | return -3.2814 (avg20 -3.3174) | J_u 0.11889 (δ=0.05) | λ 0.61566 | loss -92.6995 | entropy 5.183 | action 181.1±78.7W | 3816s
+Iter   920/3000 | return -3.4398 (avg20 -3.3450) | J_u 0.12222 (δ=0.05) | λ 0.62973 | loss -101.8213 | entropy 5.180 | action 169.9±85.7W | 3897s
+Iter   940/3000 | return -3.2206 (avg20 -3.3157) | J_u 0.11829 (δ=0.05) | λ 0.64336 | loss -89.6385 | entropy 5.178 | action 176.2±76.8W | 3977s
+Iter   960/3000 | return -3.4122 (avg20 -3.3219) | J_u 0.11693 (δ=0.05) | λ 0.65697 | loss -96.2504 | entropy 5.175 | action 182.3±73.2W | 4058s
+Iter   980/3000 | return -3.2526 (avg20 -3.3384) | J_u 0.11882 (δ=0.05) | λ 0.66987 | loss -90.7157 | entropy 5.173 | action 177.7±77.9W | 4138s
+Iter  1000/3000 | return -3.3459 (avg20 -3.2831) | J_u 0.11365 (δ=0.05) | λ 0.68372 | loss -94.4654 | entropy 5.171 | action 183.9±75.1W | 4219s
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_iter01000.pt
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/return.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/j_u.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/lambda.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/loss.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/entropy.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/action_stats.png
+Iter  1020/3000 | return -3.2921 (avg20 -3.2825) | J_u 0.11710 (δ=0.05) | λ 0.69779 | loss -93.5854 | entropy 5.169 | action 178.4±72.0W | 4301s
+Iter  1040/3000 | return -3.2659 (avg20 -3.3231) | J_u 0.12109 (δ=0.05) | λ 0.71180 | loss -88.9921 | entropy 5.168 | action 182.9±77.5W | 4381s
+Iter  1060/3000 | return -3.3513 (avg20 -3.3868) | J_u 0.11100 (δ=0.05) | λ 0.72600 | loss -93.6132 | entropy 5.166 | action 183.1±70.8W | 4462s
+Iter  1080/3000 | return -3.3003 (avg20 -3.3261) | J_u 0.11824 (δ=0.05) | λ 0.74005 | loss -89.4600 | entropy 5.164 | action 180.6±73.5W | 4542s
+Iter  1100/3000 | return -3.3428 (avg20 -3.3929) | J_u 0.11639 (δ=0.05) | λ 0.75319 | loss -94.0328 | entropy 5.162 | action 174.2±69.9W | 4623s
+Iter  1120/3000 | return -3.3396 (avg20 -3.3376) | J_u 0.11555 (δ=0.05) | λ 0.76601 | loss -95.8500 | entropy 5.159 | action 175.1±75.6W | 4703s
+Iter  1140/3000 | return -3.2888 (avg20 -3.2890) | J_u 0.12185 (δ=0.05) | λ 0.77954 | loss -93.7412 | entropy 5.157 | action 175.3±75.1W | 4783s
+Iter  1160/3000 | return -3.1805 (avg20 -3.2517) | J_u 0.12292 (δ=0.05) | λ 0.79341 | loss -88.4639 | entropy 5.154 | action 174.6±77.5W | 4864s
+Iter  1180/3000 | return -3.3959 (avg20 -3.3778) | J_u 0.12139 (δ=0.05) | λ 0.80675 | loss -98.8213 | entropy 5.152 | action 175.7±80.8W | 4944s
+Iter  1200/3000 | return -3.1763 (avg20 -3.2475) | J_u 0.12552 (δ=0.05) | λ 0.82130 | loss -90.9285 | entropy 5.150 | action 176.0±80.4W | 5025s
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_iter01200.pt
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/return.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/j_u.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/lambda.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/loss.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/entropy.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/action_stats.png
+Iter  1220/3000 | return -3.2470 (avg20 -3.2409) | J_u 0.11992 (δ=0.05) | λ 0.83488 | loss -89.4211 | entropy 5.148 | action 184.7±78.1W | 5107s
+Iter  1240/3000 | return -3.2093 (avg20 -3.2341) | J_u 0.12475 (δ=0.05) | λ 0.84905 | loss -88.7521 | entropy 5.147 | action 184.6±79.1W | 5187s
+Iter  1260/3000 | return -3.2784 (avg20 -3.2545) | J_u 0.11510 (δ=0.05) | λ 0.86310 | loss -92.5834 | entropy 5.145 | action 182.1±72.2W | 5268s
+Iter  1280/3000 | return -3.2238 (avg20 -3.2558) | J_u 0.11699 (δ=0.05) | λ 0.87719 | loss -91.2081 | entropy 5.143 | action 178.7±76.3W | 5349s
+Iter  1300/3000 | return -3.1459 (avg20 -3.2570) | J_u 0.11670 (δ=0.05) | λ 0.89049 | loss -86.5766 | entropy 5.141 | action 183.2±74.2W | 5429s
+Iter  1320/3000 | return -3.2309 (avg20 -3.2989) | J_u 0.12050 (δ=0.05) | λ 0.90442 | loss -91.3589 | entropy 5.138 | action 183.7±77.9W | 5510s
+Iter  1340/3000 | return -3.2309 (avg20 -3.2764) | J_u 0.12081 (δ=0.05) | λ 0.91812 | loss -89.9300 | entropy 5.136 | action 182.0±86.5W | 5612s
+Iter  1360/3000 | return -3.2262 (avg20 -3.2855) | J_u 0.12296 (δ=0.05) | λ 0.93259 | loss -91.4287 | entropy 5.134 | action 178.0±84.4W | 5716s
+Iter  1380/3000 | return -3.3137 (avg20 -3.2308) | J_u 0.12029 (δ=0.05) | λ 0.94667 | loss -95.0392 | entropy 5.131 | action 184.5±77.7W | 5819s
+Iter  1400/3000 | return -3.2201 (avg20 -3.2310) | J_u 0.12216 (δ=0.05) | λ 0.96118 | loss -91.2132 | entropy 5.129 | action 176.3±83.3W | 5923s
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_iter01400.pt
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/return.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/j_u.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/lambda.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/loss.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/entropy.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/action_stats.png
+Iter  1420/3000 | return -3.0370 (avg20 -3.2236) | J_u 0.12308 (δ=0.05) | λ 0.97522 | loss -85.2378 | entropy 5.127 | action 171.2±75.2W | 6028s
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+Iter  1440/3000 | return -3.3693 (avg20 -3.3451) | J_u 0.11222 (δ=0.05) | λ 0.98815 | loss -97.6208 | entropy 5.124 | action 166.0±77.6W | 6132s
+Iter  1460/3000 | return -3.1261 (avg20 -3.2603) | J_u 0.11868 (δ=0.05) | λ 1.00157 | loss -86.4852 | entropy 5.122 | action 180.4±77.4W | 6235s
+Iter  1480/3000 | return -3.2880 (avg20 -3.3649) | J_u 0.11479 (δ=0.05) | λ 1.01523 | loss -91.3765 | entropy 5.121 | action 175.1±78.7W | 6330s
+Iter  1500/3000 | return -3.2842 (avg20 -3.3158) | J_u 0.12210 (δ=0.05) | λ 1.02845 | loss -94.1523 | entropy 5.120 | action 172.4±88.3W | 6411s
+Iter  1520/3000 | return -3.3346 (avg20 -3.2587) | J_u 0.11252 (δ=0.05) | λ 1.04185 | loss -93.3145 | entropy 5.118 | action 188.0±80.0W | 6491s
+Iter  1540/3000 | return -3.1854 (avg20 -3.2506) | J_u 0.12340 (δ=0.05) | λ 1.05598 | loss -88.5720 | entropy 5.116 | action 184.2±84.0W | 6572s
+Iter  1560/3000 | return -3.3238 (avg20 -3.2497) | J_u 0.12382 (δ=0.05) | λ 1.07108 | loss -93.0045 | entropy 5.114 | action 183.5±88.8W | 6652s
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+Iter  1580/3000 | return -3.3494 (avg20 -3.2255) | J_u 0.11502 (δ=0.05) | λ 1.08566 | loss -96.0389 | entropy 5.112 | action 180.9±85.0W | 6732s
+Iter  1600/3000 | return -3.3792 (avg20 -3.2474) | J_u 0.12682 (δ=0.05) | λ 1.10014 | loss -89.7529 | entropy 5.110 | action 187.4±91.3W | 6813s
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_iter01600.pt
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/return.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/j_u.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/lambda.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/loss.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/entropy.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/action_stats.png
+Iter  1620/3000 | return -3.3843 (avg20 -3.3820) | J_u 0.12526 (δ=0.05) | λ 1.11531 | loss -92.2441 | entropy 5.109 | action 188.9±89.7W | 6895s
+Iter  1640/3000 | return -3.2053 (avg20 -3.2590) | J_u 0.11924 (δ=0.05) | λ 1.12950 | loss -91.0822 | entropy 5.107 | action 185.6±80.6W | 6976s
+Iter  1660/3000 | return -3.2951 (avg20 -3.2676) | J_u 0.11666 (δ=0.05) | λ 1.14400 | loss -91.8557 | entropy 5.106 | action 176.9±83.3W | 7056s
+Iter  1680/3000 | return -3.1782 (avg20 -3.3859) | J_u 0.11618 (δ=0.05) | λ 1.15686 | loss -87.0641 | entropy 5.103 | action 181.4±84.9W | 7137s
+Iter  1700/3000 | return -3.3950 (avg20 -3.3024) | J_u 0.12634 (δ=0.05) | λ 1.17169 | loss -92.6868 | entropy 5.101 | action 189.2±93.9W | 7218s
+Iter  1720/3000 | return -3.3246 (avg20 -3.2880) | J_u 0.11480 (δ=0.05) | λ 1.18531 | loss -94.1912 | entropy 5.100 | action 184.2±85.6W | 7299s
+Iter  1740/3000 | return -3.3055 (avg20 -3.2706) | J_u 0.12759 (δ=0.05) | λ 1.19969 | loss -91.8770 | entropy 5.098 | action 179.1±92.8W | 7379s
+Iter  1760/3000 | return -3.4329 (avg20 -3.4027) | J_u 0.12242 (δ=0.05) | λ 1.21487 | loss -95.1356 | entropy 5.096 | action 182.3±96.4W | 7460s
+Iter  1780/3000 | return -3.3018 (avg20 -3.2818) | J_u 0.11260 (δ=0.05) | λ 1.22797 | loss -91.9466 | entropy 5.092 | action 172.0±81.4W | 7541s
+Iter  1800/3000 | return -3.3121 (avg20 -3.3253) | J_u 0.12545 (δ=0.05) | λ 1.24088 | loss -95.7409 | entropy 5.091 | action 175.8±86.1W | 7622s
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_iter01800.pt
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/return.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/j_u.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/lambda.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/loss.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/entropy.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/action_stats.png
+Iter  1820/3000 | return -3.1586 (avg20 -3.2798) | J_u 0.12110 (δ=0.05) | λ 1.25466 | loss -89.2808 | entropy 5.089 | action 180.2±86.0W | 7703s
+Iter  1840/3000 | return -3.2340 (avg20 -3.2797) | J_u 0.11834 (δ=0.05) | λ 1.26783 | loss -90.7988 | entropy 5.087 | action 177.2±86.8W | 7784s
+Iter  1860/3000 | return -3.2434 (avg20 -3.2814) | J_u 0.11965 (δ=0.05) | λ 1.28110 | loss -89.8850 | entropy 5.084 | action 177.7±90.6W | 7865s
+Iter  1880/3000 | return -3.2973 (avg20 -3.2489) | J_u 0.12015 (δ=0.05) | λ 1.29611 | loss -91.2040 | entropy 5.081 | action 186.9±86.2W | 7945s
+Iter  1900/3000 | return -3.1746 (avg20 -3.1957) | J_u 0.12250 (δ=0.05) | λ 1.31052 | loss -89.1386 | entropy 5.079 | action 184.1±82.5W | 8026s
+Iter  1920/3000 | return -3.0829 (avg20 -3.1978) | J_u 0.12714 (δ=0.05) | λ 1.32463 | loss -86.5955 | entropy 5.076 | action 172.7±88.6W | 8106s
+Iter  1940/3000 | return -3.4484 (avg20 -3.2477) | J_u 0.12730 (δ=0.05) | λ 1.33954 | loss -96.3613 | entropy 5.073 | action 194.5±90.4W | 8202s
+Iter  1960/3000 | return -3.3455 (avg20 -3.3129) | J_u 0.12030 (δ=0.05) | λ 1.35467 | loss -95.7363 | entropy 5.071 | action 177.2±89.6W | 8305s
+Iter  1980/3000 | return -3.1223 (avg20 -3.2319) | J_u 0.12078 (δ=0.05) | λ 1.36857 | loss -85.8865 | entropy 5.068 | action 183.5±86.3W | 8409s
+Iter  2000/3000 | return -3.1368 (avg20 -3.1674) | J_u 0.12531 (δ=0.05) | λ 1.38299 | loss -85.2083 | entropy 5.067 | action 181.3±89.8W | 8512s
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_iter02000.pt
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/return.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/j_u.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/lambda.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/loss.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/entropy.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/action_stats.png
+Iter  2020/3000 | return -3.3117 (avg20 -3.2550) | J_u 0.11051 (δ=0.05) | λ 1.39713 | loss -92.2706 | entropy 5.064 | action 187.3±85.9W | 8617s
+Iter  2040/3000 | return -3.1405 (avg20 -3.2225) | J_u 0.11833 (δ=0.05) | λ 1.41047 | loss -87.6943 | entropy 5.061 | action 181.4±82.9W | 8720s
+Iter  2060/3000 | return -3.1287 (avg20 -3.1959) | J_u 0.12080 (δ=0.05) | λ 1.42409 | loss -86.6785 | entropy 5.059 | action 185.5±83.7W | 8824s
+Iter  2080/3000 | return -3.2178 (avg20 -3.2463) | J_u 0.12848 (δ=0.05) | λ 1.43935 | loss -89.7456 | entropy 5.058 | action 183.4±90.6W | 8927s
+Iter  2100/3000 | return -3.1984 (avg20 -3.1847) | J_u 0.11734 (δ=0.05) | λ 1.45381 | loss -88.8329 | entropy 5.056 | action 181.3±87.3W | 9031s
+Iter  2120/3000 | return -3.0619 (avg20 -3.1674) | J_u 0.12660 (δ=0.05) | λ 1.46836 | loss -85.4674 | entropy 5.055 | action 180.3±88.8W | 9134s
+Iter  2140/3000 | return -3.1455 (avg20 -3.2138) | J_u 0.12397 (δ=0.05) | λ 1.48326 | loss -87.7765 | entropy 5.053 | action 182.0±89.8W | 9238s
+Iter  2160/3000 | return -3.3194 (avg20 -3.1865) | J_u 0.11622 (δ=0.05) | λ 1.49807 | loss -92.5581 | entropy 5.050 | action 196.0±86.6W | 9341s
+Iter  2180/3000 | return -3.2257 (avg20 -3.1905) | J_u 0.12344 (δ=0.05) | λ 1.51252 | loss -90.5624 | entropy 5.048 | action 183.4±87.9W | 9445s
+Iter  2200/3000 | return -3.1363 (avg20 -3.1724) | J_u 0.12241 (δ=0.05) | λ 1.52695 | loss -87.1211 | entropy 5.045 | action 186.5±83.4W | 9548s
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_iter02200.pt
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/return.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/j_u.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/lambda.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/loss.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/entropy.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/action_stats.png
+Iter  2220/3000 | return -3.1167 (avg20 -3.1597) | J_u 0.12395 (δ=0.05) | λ 1.54157 | loss -83.7537 | entropy 5.042 | action 181.2±91.8W | 9653s
+Iter  2240/3000 | return -3.2383 (avg20 -3.1535) | J_u 0.11779 (δ=0.05) | λ 1.55612 | loss -92.7830 | entropy 5.041 | action 184.2±82.0W | 9757s
+Iter  2260/3000 | return -3.6610 (avg20 -3.3369) | J_u 0.10665 (δ=0.05) | λ 1.56893 | loss -93.8476 | entropy 5.039 | action 173.1±55.7W | 9860s
+Iter  2280/3000 | return -3.4839 (avg20 -3.5888) | J_u 0.11219 (δ=0.05) | λ 1.58083 | loss -93.3325 | entropy 5.037 | action 181.3±61.7W | 9964s
+Iter  2300/3000 | return -3.2369 (avg20 -3.3605) | J_u 0.11419 (δ=0.05) | λ 1.59391 | loss -92.2026 | entropy 5.036 | action 177.2±68.1W | 10068s
+Iter  2320/3000 | return -3.2660 (avg20 -3.2828) | J_u 0.11130 (δ=0.05) | λ 1.60580 | loss -91.9544 | entropy 5.034 | action 167.8±60.5W | 10171s
+Iter  2340/3000 | return -3.0845 (avg20 -3.2298) | J_u 0.12145 (δ=0.05) | λ 1.61855 | loss -87.5243 | entropy 5.032 | action 174.5±68.7W | 10275s
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+Iter  2360/3000 | return -3.1612 (avg20 -3.1785) | J_u 0.11980 (δ=0.05) | λ 1.63237 | loss -89.9798 | entropy 5.030 | action 174.7±72.0W | 10379s
+Iter  2380/3000 | return -3.2450 (avg20 -3.2523) | J_u 0.11488 (δ=0.05) | λ 1.64490 | loss -89.6901 | entropy 5.028 | action 181.4±70.4W | 10482s
+Iter  2400/3000 | return -3.1761 (avg20 -3.2100) | J_u 0.12427 (δ=0.05) | λ 1.65867 | loss -87.9234 | entropy 5.026 | action 173.7±74.1W | 10586s
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_iter02400.pt
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/return.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/j_u.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/lambda.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/loss.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/entropy.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/action_stats.png
+Iter  2420/3000 | return -3.1248 (avg20 -3.1955) | J_u 0.11393 (δ=0.05) | λ 1.67224 | loss -89.7733 | entropy 5.025 | action 174.8±73.4W | 10691s
+Iter  2440/3000 | return -3.2908 (avg20 -3.1536) | J_u 0.12188 (δ=0.05) | λ 1.68609 | loss -96.3548 | entropy 5.023 | action 181.6±82.3W | 10795s
+Iter  2460/3000 | return -3.0854 (avg20 -3.1610) | J_u 0.11322 (δ=0.05) | λ 1.70033 | loss -87.6766 | entropy 5.021 | action 182.9±71.3W | 10899s
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+Iter  2480/3000 | return -3.1271 (avg20 -3.1276) | J_u 0.11429 (δ=0.05) | λ 1.71335 | loss -91.3216 | entropy 5.020 | action 169.9±71.3W | 11002s
+Iter  2500/3000 | return -3.2505 (avg20 -3.1651) | J_u 0.11361 (δ=0.05) | λ 1.72605 | loss -93.1077 | entropy 5.018 | action 177.9±81.8W | 11106s
+Iter  2520/3000 | return -3.2360 (avg20 -3.1437) | J_u 0.11324 (δ=0.05) | λ 1.74005 | loss -91.8504 | entropy 5.017 | action 184.8±84.5W | 11210s
+Iter  2540/3000 | return -3.1308 (avg20 -3.1411) | J_u 0.12234 (δ=0.05) | λ 1.75409 | loss -87.1659 | entropy 5.015 | action 185.0±86.1W | 11314s
+Iter  2560/3000 | return -3.2717 (avg20 -3.2042) | J_u 0.11593 (δ=0.05) | λ 1.76746 | loss -93.2480 | entropy 5.013 | action 173.3±81.4W | 11418s
+Iter  2580/3000 | return -3.1259 (avg20 -3.1849) | J_u 0.11842 (δ=0.05) | λ 1.78071 | loss -88.1431 | entropy 5.012 | action 177.7±79.8W | 11515s
+Iter  2600/3000 | return -3.2973 (avg20 -3.2518) | J_u 0.10727 (δ=0.05) | λ 1.79310 | loss -92.8819 | entropy 5.010 | action 177.3±71.2W | 11595s
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_iter02600.pt
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/return.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/j_u.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/lambda.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/loss.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/entropy.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/action_stats.png
+Iter  2620/3000 | return -3.1644 (avg20 -3.2154) | J_u 0.10841 (δ=0.05) | λ 1.80535 | loss -89.8134 | entropy 5.009 | action 181.4±71.9W | 11677s
+Iter  2640/3000 | return -3.0864 (avg20 -3.1615) | J_u 0.11617 (δ=0.05) | λ 1.81755 | loss -87.5400 | entropy 5.008 | action 171.1±71.3W | 11758s
+Iter  2660/3000 | return -3.0433 (avg20 -3.1648) | J_u 0.11982 (δ=0.05) | λ 1.82972 | loss -87.4118 | entropy 5.006 | action 171.9±71.0W | 11839s
+Iter  2680/3000 | return -3.1225 (avg20 -3.1059) | J_u 0.11926 (δ=0.05) | λ 1.84374 | loss -89.7706 | entropy 5.005 | action 177.0±71.8W | 11919s
+Iter  2700/3000 | return -3.2178 (avg20 -3.1128) | J_u 0.11375 (δ=0.05) | λ 1.85632 | loss -94.5929 | entropy 5.003 | action 168.4±70.6W | 12000s
+Iter  2720/3000 | return -3.1671 (avg20 -3.1034) | J_u 0.11221 (δ=0.05) | λ 1.86912 | loss -92.8470 | entropy 5.002 | action 172.8±66.6W | 12081s
+Iter  2740/3000 | return -3.2228 (avg20 -3.1020) | J_u 0.11038 (δ=0.05) | λ 1.88180 | loss -93.8584 | entropy 5.001 | action 175.1±65.7W | 12161s
+Iter  2760/3000 | return -3.0689 (avg20 -3.0940) | J_u 0.12002 (δ=0.05) | λ 1.89502 | loss -87.4101 | entropy 4.999 | action 177.8±71.9W | 12242s
+Iter  2780/3000 | return -3.0925 (avg20 -3.1113) | J_u 0.12077 (δ=0.05) | λ 1.90883 | loss -87.9698 | entropy 4.997 | action 179.8±77.4W | 12322s
+Iter  2800/3000 | return -3.1637 (avg20 -3.1092) | J_u 0.11403 (δ=0.05) | λ 1.92208 | loss -91.8677 | entropy 4.994 | action 176.0±76.6W | 12403s
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_iter02800.pt
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/return.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/j_u.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/lambda.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/loss.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/entropy.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/action_stats.png
+Iter  2820/3000 | return -3.1004 (avg20 -3.1029) | J_u 0.11755 (δ=0.05) | λ 1.93531 | loss -88.7950 | entropy 4.992 | action 174.6±77.2W | 12485s
+Iter  2840/3000 | return -3.0839 (avg20 -3.1623) | J_u 0.11932 (δ=0.05) | λ 1.94839 | loss -89.0214 | entropy 4.990 | action 174.7±80.8W | 12566s
+Iter  2860/3000 | return -3.0860 (avg20 -3.0843) | J_u 0.11830 (δ=0.05) | λ 1.96208 | loss -87.6516 | entropy 4.988 | action 183.1±74.9W | 12646s
+Iter  2880/3000 | return -3.0192 (avg20 -3.1174) | J_u 0.11977 (δ=0.05) | λ 1.97579 | loss -84.7791 | entropy 4.987 | action 177.5±72.9W | 12727s
+Iter  2900/3000 | return -3.0539 (avg20 -3.0838) | J_u 0.11463 (δ=0.05) | λ 1.98845 | loss -86.9433 | entropy 4.986 | action 176.1±68.7W | 12808s
+Iter  2920/3000 | return -3.1020 (avg20 -3.0747) | J_u 0.10669 (δ=0.05) | λ 2.00092 | loss -88.6905 | entropy 4.984 | action 175.1±63.8W | 12888s
+Iter  2940/3000 | return -3.1282 (avg20 -3.1185) | J_u 0.10738 (δ=0.05) | λ 2.01303 | loss -87.5317 | entropy 4.983 | action 177.2±61.5W | 12969s
+Iter  2960/3000 | return -3.1367 (avg20 -3.1359) | J_u 0.11207 (δ=0.05) | λ 2.02586 | loss -89.2834 | entropy 4.982 | action 175.7±63.5W | 13050s
+Iter  2980/3000 | return -3.0587 (avg20 -3.1340) | J_u 0.12023 (δ=0.05) | λ 2.03871 | loss -87.6523 | entropy 4.981 | action 173.9±69.6W | 13130s
+Iter  3000/3000 | return -3.1814 (avg20 -3.1256) | J_u 0.11091 (δ=0.05) | λ 2.05157 | loss -90.9276 | entropy 4.979 | action 173.1±62.4W | 13211s
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_iter03000.pt
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/return.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/j_u.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/lambda.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/loss.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/entropy.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/action_stats.png
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_final.pt
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/return.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/j_u.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/lambda.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/loss.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/entropy.png
+[train] Plot saved → online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/action_stats.png
+
+=================================================================
+[train] Training complete in 220.2 min
+[train] Best undiscounted return : -2.9204
+[train] Final J_u_hat / delta     : 0.11091 / 0.05
+[train] Final lambda              : 2.05157
+[train] Final action              : 173.1 ± 62.4 W
+[train] Best checkpoint  : online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+[train] Final checkpoint : online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_final.pt
+=================================================================
+[oneshot] Stage 3 done. Checkpoint: online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+
+############################################################
+# STAGE 4/5: Train naive_pg  (Thu Aug 13 06:51:19 EDT 2026)
+############################################################
+=================================================================
+[naive_pg] Baseline 0 — naive (unconstrained) policy gradient
+[naive_pg] Output dir : baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25
+[naive_pg] Device     : cuda
+=================================================================
+[TwoStageLatentLPBFEnv] Mesh loaded: 1053 nodes  X∈[0.00, 12.00]  Y∈[0.00, 3.00]
+[naive_pg] UCPGAgentV2(ContinuousLatentPolicyNet(latent_dim=64, action_range=[100, 400]W, hidden=128, depth=3, n_layers=12, layer_embed_dim=32, params=113,935)  lambda=0.00000)
+Iter     1/3000 | return -11.1917 (avg1 -11.1917) | loss -452.5603 | entropy 5.286 | 6s
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+Iter    20/3000 | return -5.1548 (avg20 -7.2187) | loss -164.2818 | entropy 5.286 | 105s
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+Iter    40/3000 | return -4.3732 (avg20 -4.7102) | loss -138.7716 | entropy 5.284 | 209s
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+Iter    60/3000 | return -4.0293 (avg20 -4.1408) | loss -120.7273 | entropy 5.282 | 313s
+Iter    80/3000 | return -4.1462 (avg20 -4.1316) | loss -124.0731 | entropy 5.280 | 417s
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+Iter   100/3000 | return -3.8563 (avg20 -4.0321) | loss -109.5662 | entropy 5.278 | 521s
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+Iter   120/3000 | return -3.9258 (avg20 -3.8306) | loss -116.4606 | entropy 5.275 | 626s
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+Iter   140/3000 | return -3.8161 (avg20 -3.8886) | loss -107.0837 | entropy 5.272 | 730s
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+Iter   160/3000 | return -4.0296 (avg20 -3.7781) | loss -120.6670 | entropy 5.269 | 834s
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+Iter   180/3000 | return -3.6997 (avg20 -3.7755) | loss -101.4331 | entropy 5.266 | 939s
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+Iter   200/3000 | return -3.7773 (avg20 -3.6293) | loss -104.7484 | entropy 5.264 | 1043s
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_iter00200.pt
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/return.png
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/loss.png
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/entropy.png
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+Iter   220/3000 | return -3.5866 (avg20 -3.6372) | loss -99.6244 | entropy 5.263 | 1148s
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+Iter   240/3000 | return -3.4879 (avg20 -3.5692) | loss -97.8698 | entropy 5.262 | 1253s
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+Iter   260/3000 | return -3.5289 (avg20 -3.5703) | loss -100.3333 | entropy 5.260 | 1358s
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+Iter   280/3000 | return -3.4925 (avg20 -3.4638) | loss -98.5056 | entropy 5.258 | 1462s
+Iter   300/3000 | return -3.3242 (avg20 -3.4582) | loss -92.3096 | entropy 5.255 | 1567s
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+Iter   320/3000 | return -3.6314 (avg20 -3.4525) | loss -105.3839 | entropy 5.252 | 1672s
+Iter   340/3000 | return -3.3710 (avg20 -3.4751) | loss -95.2939 | entropy 5.250 | 1776s
+Iter   360/3000 | return -3.5714 (avg20 -3.4373) | loss -104.7868 | entropy 5.246 | 1881s
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+Iter   380/3000 | return -3.2946 (avg20 -3.4531) | loss -89.1540 | entropy 5.243 | 1985s
+Iter   400/3000 | return -3.5755 (avg20 -3.4470) | loss -100.6222 | entropy 5.241 | 2090s
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_iter00400.pt
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/return.png
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/loss.png
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/entropy.png
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+Iter   420/3000 | return -3.3583 (avg20 -3.5147) | loss -92.6591 | entropy 5.239 | 2195s
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+Iter   440/3000 | return -3.4684 (avg20 -3.4063) | loss -98.7364 | entropy 5.237 | 2300s
+Iter   460/3000 | return -3.4101 (avg20 -3.4699) | loss -96.6099 | entropy 5.235 | 2404s
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+Iter   480/3000 | return -3.4310 (avg20 -3.4527) | loss -94.5544 | entropy 5.232 | 2508s
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+Iter   500/3000 | return -3.4681 (avg20 -3.3603) | loss -96.9678 | entropy 5.231 | 2613s
+Iter   520/3000 | return -3.2460 (avg20 -3.4200) | loss -88.0932 | entropy 5.228 | 2718s
+Iter   540/3000 | return -3.3638 (avg20 -3.4515) | loss -91.2210 | entropy 5.226 | 2822s
+Iter   560/3000 | return -3.3714 (avg20 -3.4203) | loss -92.0240 | entropy 5.224 | 2927s
+Iter   580/3000 | return -3.4405 (avg20 -3.4926) | loss -95.9293 | entropy 5.221 | 3031s
+Iter   600/3000 | return -3.6447 (avg20 -3.4336) | loss -104.6578 | entropy 5.219 | 3136s
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_iter00600.pt
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/return.png
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/loss.png
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/entropy.png
+Iter   620/3000 | return -3.5206 (avg20 -3.4689) | loss -100.5637 | entropy 5.217 | 3241s
+Iter   640/3000 | return -3.3483 (avg20 -3.4029) | loss -91.7953 | entropy 5.215 | 3346s
+Iter   660/3000 | return -3.3496 (avg20 -3.4280) | loss -93.7264 | entropy 5.214 | 3451s
+Iter   680/3000 | return -3.4199 (avg20 -3.4369) | loss -94.4233 | entropy 5.211 | 3555s
+Iter   700/3000 | return -3.4096 (avg20 -3.4438) | loss -93.7961 | entropy 5.208 | 3660s
+Iter   720/3000 | return -3.2384 (avg20 -3.3960) | loss -87.6625 | entropy 5.205 | 3765s
+Iter   740/3000 | return -3.4948 (avg20 -3.4354) | loss -98.5816 | entropy 5.202 | 3870s
+Iter   760/3000 | return -3.5295 (avg20 -3.3651) | loss -99.4569 | entropy 5.200 | 3974s
+Iter   780/3000 | return -3.3256 (avg20 -3.3346) | loss -91.8657 | entropy 5.198 | 4079s
+Iter   800/3000 | return -3.3879 (avg20 -3.3318) | loss -93.7130 | entropy 5.195 | 4184s
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_iter00800.pt
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/return.png
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/loss.png
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/entropy.png
+Iter   820/3000 | return -3.2752 (avg20 -3.3478) | loss -87.6595 | entropy 5.191 | 4289s
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+Iter   840/3000 | return -3.2776 (avg20 -3.3148) | loss -90.6610 | entropy 5.188 | 4394s
+Iter   860/3000 | return -3.2495 (avg20 -3.3562) | loss -86.5621 | entropy 5.186 | 4499s
+Iter   880/3000 | return -3.2049 (avg20 -3.3255) | loss -85.9067 | entropy 5.184 | 4603s
+Iter   900/3000 | return -3.2793 (avg20 -3.3160) | loss -90.0431 | entropy 5.182 | 4708s
+Iter   920/3000 | return -3.4315 (avg20 -3.3417) | loss -98.6960 | entropy 5.179 | 4813s
+Iter   940/3000 | return -3.2160 (avg20 -3.3116) | loss -86.7799 | entropy 5.177 | 4918s
+Iter   960/3000 | return -3.4083 (avg20 -3.3176) | loss -93.3026 | entropy 5.174 | 5023s
+Iter   980/3000 | return -3.2515 (avg20 -3.3327) | loss -87.8520 | entropy 5.172 | 5128s
+Iter  1000/3000 | return -3.3433 (avg20 -3.2813) | loss -91.5834 | entropy 5.170 | 5233s
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_iter01000.pt
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/return.png
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/loss.png
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/entropy.png
+Iter  1020/3000 | return -3.2875 (avg20 -3.2800) | loss -90.5228 | entropy 5.168 | 5339s
+Iter  1040/3000 | return -3.2636 (avg20 -3.3202) | loss -85.8698 | entropy 5.167 | 5445s
+Iter  1060/3000 | return -3.3458 (avg20 -3.3826) | loss -90.6122 | entropy 5.165 | 5551s
+Iter  1080/3000 | return -3.2918 (avg20 -3.3207) | loss -86.2668 | entropy 5.163 | 5657s
+Iter  1100/3000 | return -3.3327 (avg20 -3.3846) | loss -90.6238 | entropy 5.160 | 5763s
+Iter  1120/3000 | return -3.3284 (avg20 -3.3268) | loss -92.2990 | entropy 5.158 | 5869s
+Iter  1140/3000 | return -3.2850 (avg20 -3.2844) | loss -90.2565 | entropy 5.156 | 5975s
+Iter  1160/3000 | return -3.1769 (avg20 -3.2483) | loss -84.9547 | entropy 5.153 | 6081s
+Iter  1180/3000 | return -3.3886 (avg20 -3.3721) | loss -95.0335 | entropy 5.150 | 6186s
+Iter  1200/3000 | return -3.1728 (avg20 -3.2467) | loss -87.0372 | entropy 5.148 | 6291s
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_iter01200.pt
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/return.png
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/loss.png
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/entropy.png
+Iter  1220/3000 | return -3.2459 (avg20 -3.2379) | loss -85.8501 | entropy 5.147 | 6396s
+Iter  1240/3000 | return -3.2105 (avg20 -3.2322) | loss -85.0084 | entropy 5.145 | 6501s
+Iter  1260/3000 | return -3.2765 (avg20 -3.2520) | loss -88.9055 | entropy 5.143 | 6606s
+Iter  1280/3000 | return -3.2202 (avg20 -3.2525) | loss -87.4560 | entropy 5.141 | 6711s
+Iter  1300/3000 | return -3.1472 (avg20 -3.2524) | loss -82.8784 | entropy 5.139 | 6816s
+Iter  1320/3000 | return -3.2316 (avg20 -3.2945) | loss -87.4029 | entropy 5.136 | 6920s
+Iter  1340/3000 | return -3.2296 (avg20 -3.2731) | loss -85.8515 | entropy 5.134 | 7025s
+Iter  1360/3000 | return -3.2224 (avg20 -3.2825) | loss -87.1244 | entropy 5.132 | 7130s
+Iter  1380/3000 | return -3.3161 (avg20 -3.2266) | loss -90.9689 | entropy 5.129 | 7235s
+Iter  1400/3000 | return -3.2169 (avg20 -3.2310) | loss -86.8592 | entropy 5.127 | 7339s
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_iter01400.pt
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/return.png
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/loss.png
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/entropy.png
+Iter  1420/3000 | return -3.0330 (avg20 -3.2203) | loss -80.8358 | entropy 5.124 | 7445s
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+Iter  1440/3000 | return -3.3427 (avg20 -3.3319) | loss -92.7800 | entropy 5.122 | 7550s
+Iter  1460/3000 | return -3.1206 (avg20 -3.2520) | loss -82.0928 | entropy 5.120 | 7654s
+Iter  1480/3000 | return -3.2767 (avg20 -3.3539) | loss -87.0218 | entropy 5.118 | 7759s
+Iter  1500/3000 | return -3.2704 (avg20 -3.3053) | loss -89.1912 | entropy 5.118 | 7864s
+Iter  1520/3000 | return -3.3272 (avg20 -3.2460) | loss -88.9234 | entropy 5.116 | 7969s
+Iter  1540/3000 | return -3.1845 (avg20 -3.2457) | loss -83.8854 | entropy 5.113 | 8073s
+Iter  1560/3000 | return -3.3222 (avg20 -3.2501) | loss -88.2211 | entropy 5.111 | 8178s
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+Iter  1580/3000 | return -3.3382 (avg20 -3.2227) | loss -91.1610 | entropy 5.109 | 8283s
+Iter  1600/3000 | return -3.3843 (avg20 -3.2477) | loss -85.0320 | entropy 5.107 | 8388s
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_iter01600.pt
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/return.png
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/loss.png
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/entropy.png
+Iter  1620/3000 | return -3.3772 (avg20 -3.3814) | loss -87.3189 | entropy 5.106 | 8493s
+Iter  1640/3000 | return -3.2012 (avg20 -3.2532) | loss -86.1404 | entropy 5.104 | 8598s
+Iter  1660/3000 | return -3.2856 (avg20 -3.2616) | loss -86.8420 | entropy 5.103 | 8703s
+Iter  1680/3000 | return -3.1659 (avg20 -3.3659) | loss -81.9598 | entropy 5.100 | 8808s
+Iter  1700/3000 | return -3.3849 (avg20 -3.2942) | loss -87.3090 | entropy 5.098 | 8913s
+Iter  1720/3000 | return -3.3124 (avg20 -3.2750) | loss -88.9151 | entropy 5.096 | 9017s
+Iter  1740/3000 | return -3.2950 (avg20 -3.2626) | loss -86.2586 | entropy 5.094 | 9122s
+Iter  1760/3000 | return -3.4234 (avg20 -3.3989) | loss -89.5192 | entropy 5.092 | 9227s
+Iter  1780/3000 | return -3.2810 (avg20 -3.2670) | loss -86.5122 | entropy 5.089 | 9332s
+Iter  1800/3000 | return -3.2938 (avg20 -3.3042) | loss -89.6673 | entropy 5.087 | 9437s
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_iter01800.pt
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/return.png
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/loss.png
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/entropy.png
+Iter  1820/3000 | return -3.1500 (avg20 -3.2628) | loss -83.6856 | entropy 5.086 | 9542s
+Iter  1840/3000 | return -3.2162 (avg20 -3.2602) | loss -84.9404 | entropy 5.083 | 9647s
+Iter  1860/3000 | return -3.2289 (avg20 -3.2611) | loss -84.0149 | entropy 5.080 | 9752s
+Iter  1880/3000 | return -3.2847 (avg20 -3.2413) | loss -85.3358 | entropy 5.077 | 9856s
+Iter  1900/3000 | return -3.1664 (avg20 -3.1861) | loss -83.2160 | entropy 5.075 | 9961s
+Iter  1920/3000 | return -3.0710 (avg20 -3.1892) | loss -80.2876 | entropy 5.072 | 10065s
+Iter  1940/3000 | return -3.4400 (avg20 -3.2429) | loss -90.1771 | entropy 5.069 | 10170s
+Iter  1960/3000 | return -3.3298 (avg20 -3.2978) | loss -89.6338 | entropy 5.067 | 10274s
+Iter  1980/3000 | return -3.1146 (avg20 -3.2190) | loss -79.9577 | entropy 5.064 | 10379s
+Iter  2000/3000 | return -3.1343 (avg20 -3.1606) | loss -79.3054 | entropy 5.062 | 10483s
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_iter02000.pt
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/return.png
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/loss.png
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/entropy.png
+Iter  2020/3000 | return -3.2995 (avg20 -3.2443) | loss -86.4782 | entropy 5.060 | 10589s
+Iter  2040/3000 | return -3.1293 (avg20 -3.2084) | loss -81.4771 | entropy 5.056 | 10693s
+Iter  2060/3000 | return -3.1209 (avg20 -3.1806) | loss -80.3557 | entropy 5.054 | 10798s
+Iter  2080/3000 | return -3.2207 (avg20 -3.2415) | loss -83.2327 | entropy 5.053 | 10903s
+Iter  2100/3000 | return -3.1876 (avg20 -3.1811) | loss -82.4689 | entropy 5.051 | 11007s
+Iter  2120/3000 | return -3.0632 (avg20 -3.1638) | loss -78.9219 | entropy 5.049 | 11112s
+Iter  2140/3000 | return -3.1437 (avg20 -3.2140) | loss -81.2713 | entropy 5.047 | 11217s
+Iter  2160/3000 | return -3.3156 (avg20 -3.1846) | loss -86.3047 | entropy 5.045 | 11321s
+Iter  2180/3000 | return -3.2219 (avg20 -3.1873) | loss -83.9682 | entropy 5.043 | 11426s
+Iter  2200/3000 | return -3.1332 (avg20 -3.1645) | loss -80.5739 | entropy 5.039 | 11530s
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_iter02200.pt
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/return.png
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/loss.png
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/entropy.png
+Iter  2220/3000 | return -3.1108 (avg20 -3.1561) | loss -77.1908 | entropy 5.036 | 11636s
+Iter  2240/3000 | return -3.2256 (avg20 -3.1469) | loss -85.9060 | entropy 5.035 | 11740s
+Iter  2260/3000 | return -3.6598 (avg20 -3.3306) | loss -87.4847 | entropy 5.033 | 11845s
+Iter  2280/3000 | return -3.4688 (avg20 -3.5737) | loss -86.7398 | entropy 5.031 | 11950s
+Iter  2300/3000 | return -3.2164 (avg20 -3.3442) | loss -85.2787 | entropy 5.030 | 12055s
+Iter  2320/3000 | return -3.2311 (avg20 -3.2534) | loss -84.7370 | entropy 5.028 | 12159s
+Iter  2340/3000 | return -3.0711 (avg20 -3.2094) | loss -80.2789 | entropy 5.026 | 12264s
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+Iter  2360/3000 | return -3.1512 (avg20 -3.1689) | loss -82.8375 | entropy 5.024 | 12369s
+Iter  2380/3000 | return -3.2339 (avg20 -3.2330) | loss -82.6585 | entropy 5.022 | 12473s
+Iter  2400/3000 | return -3.1606 (avg20 -3.1985) | loss -80.2951 | entropy 5.020 | 12578s
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_iter02400.pt
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/return.png
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/loss.png
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/entropy.png
+Iter  2420/3000 | return -3.1064 (avg20 -3.1820) | loss -82.5066 | entropy 5.019 | 12684s
+Iter  2440/3000 | return -3.2817 (avg20 -3.1435) | loss -88.6695 | entropy 5.017 | 12788s
+Iter  2460/3000 | return -3.0817 (avg20 -3.1540) | loss -80.9360 | entropy 5.014 | 12893s
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+Iter  2480/3000 | return -3.1052 (avg20 -3.1155) | loss -83.5555 | entropy 5.013 | 12998s
+Iter  2500/3000 | return -3.2379 (avg20 -3.1458) | loss -85.7401 | entropy 5.011 | 13103s
+Iter  2520/3000 | return -3.2285 (avg20 -3.1364) | loss -84.5216 | entropy 5.010 | 13208s
+Iter  2540/3000 | return -3.1288 (avg20 -3.1334) | loss -79.6269 | entropy 5.008 | 13312s
+Iter  2560/3000 | return -3.2526 (avg20 -3.1960) | loss -85.5388 | entropy 5.006 | 13417s
+Iter  2580/3000 | return -3.1149 (avg20 -3.1669) | loss -80.3821 | entropy 5.005 | 13522s
+Iter  2600/3000 | return -3.2622 (avg20 -3.2196) | loss -85.0960 | entropy 5.003 | 13627s
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_iter02600.pt
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/return.png
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/loss.png
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/entropy.png
+Iter  2620/3000 | return -3.1398 (avg20 -3.1812) | loss -82.2001 | entropy 5.002 | 13732s
+Iter  2640/3000 | return -3.0635 (avg20 -3.1315) | loss -79.4301 | entropy 5.001 | 13837s
+Iter  2660/3000 | return -3.0248 (avg20 -3.1389) | loss -79.0844 | entropy 4.999 | 13942s
+Iter  2680/3000 | return -3.1112 (avg20 -3.0955) | loss -81.5444 | entropy 4.997 | 14046s
+Iter  2700/3000 | return -3.1855 (avg20 -3.0973) | loss -85.9414 | entropy 4.996 | 14151s
+Iter  2720/3000 | return -3.1463 (avg20 -3.0865) | loss -84.7558 | entropy 4.995 | 14256s
+Iter  2740/3000 | return -3.2031 (avg20 -3.0841) | loss -85.8429 | entropy 4.993 | 14360s
+Iter  2760/3000 | return -3.0625 (avg20 -3.0839) | loss -79.0903 | entropy 4.991 | 14465s
+Iter  2780/3000 | return -3.0880 (avg20 -3.1032) | loss -79.5846 | entropy 4.989 | 14570s
+Iter  2800/3000 | return -3.1526 (avg20 -3.0999) | loss -83.6919 | entropy 4.987 | 14675s
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_iter02800.pt
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/return.png
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/loss.png
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/entropy.png
+Iter  2820/3000 | return -3.0887 (avg20 -3.0880) | loss -80.4145 | entropy 4.984 | 14780s
+Iter  2840/3000 | return -3.0627 (avg20 -3.1404) | loss -80.0581 | entropy 4.982 | 14885s
+Iter  2860/3000 | return -3.0834 (avg20 -3.0732) | loss -79.1298 | entropy 4.980 | 14990s
+Iter  2880/3000 | return -3.0098 (avg20 -3.1103) | loss -76.2246 | entropy 4.979 | 15095s
+Iter  2900/3000 | return -3.0396 (avg20 -3.0684) | loss -78.5535 | entropy 4.977 | 15200s
+Iter  2920/3000 | return -3.0748 (avg20 -3.0549) | loss -80.4672 | entropy 4.976 | 15305s
+Iter  2940/3000 | return -3.0998 (avg20 -3.0863) | loss -79.2755 | entropy 4.975 | 15409s
+Iter  2960/3000 | return -3.1041 (avg20 -3.1088) | loss -80.3591 | entropy 4.973 | 15514s
+Iter  2980/3000 | return -3.0330 (avg20 -3.1044) | loss -78.2660 | entropy 4.972 | 15619s
+Iter  3000/3000 | return -3.1420 (avg20 -3.0969) | loss -81.9272 | entropy 4.970 | 15724s
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_iter03000.pt
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/return.png
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/loss.png
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/entropy.png
+[agent] Checkpoint saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_final.pt
+[train] Plot saved → baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/return.png
+
+[naive_pg] Done. Best return: -2.9062
+[naive_pg] Best checkpoint: baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+[oneshot] Stage 4 done. Checkpoint: baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+
+############################################################
+# STAGE 5/5: Real-simulator evaluation + comparison  (Thu Aug 13 11:13:31 EDT 2026)
+############################################################
+[oneshot] === Naive PG vs. real physics ===
+=================================================================
+  UCPG v2 — REAL PHYSICS Evaluation (simulateHeatingCooling_v2.m)
+=================================================================
+  Checkpoint  : baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt
+  Surrogate   : surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/two_stage_best.pt  (encoder + norm stats only)
+  Episodes    : 5 greedy
+=================================================================
+[agent] Loaded checkpoint from baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/naive_pg_best.pt  (lambda=0.00000)
+  UCPGAgentV2(ContinuousLatentPolicyNet(latent_dim=64, action_range=[100, 400]W, hidden=128, depth=3, n_layers=12, layer_embed_dim=32, params=113,935)  lambda=0.00000)
+
+  Scratch dir : /tmp/ucpg_v2_real_eval_mwrwmm9p
+
+  [GREEDY] Episode 1/5  (cool_time=0.100s)
+[evaluate_real] Mesh consistency check passed (matches surrogate_model/mesh.mat).
+    layer  1/12  LP= 326.63W  reward=-1.3626  (21s)
+    layer  2/12  LP= 233.32W  reward=-1.1828  (14s)
+    layer  3/12  LP= 180.95W  reward=-0.8717  (14s)
+    layer  4/12  LP= 170.76W  reward=-0.8213  (14s)
+    layer  5/12  LP= 168.27W  reward=-0.8386  (13s)
+    layer  6/12  LP= 102.91W  reward=-0.2772  (14s)
+    layer  7/12  LP= 100.27W  reward=-0.1970  (14s)
+    layer  8/12  LP= 100.27W  reward=-0.1676  (14s)
+    layer  9/12  LP= 100.25W  reward=-0.1453  (14s)
+    layer 10/12  LP= 100.38W  reward=-0.1897  (14s)
+    layer 11/12  LP= 100.27W  reward=-0.2108  (14s)
+    layer 12/12  LP= 100.28W  reward=-0.2235  (14s)
+    → episode return: -6.4881
+
+  [GREEDY] Episode 2/5  (cool_time=0.100s)
+    layer  1/12  LP= 326.63W  reward=-1.3626  (14s)
+    layer  2/12  LP= 233.32W  reward=-1.1828  (13s)
+    layer  3/12  LP= 180.95W  reward=-0.8717  (14s)
+    layer  4/12  LP= 170.76W  reward=-0.8213  (13s)
+    layer  5/12  LP= 168.27W  reward=-0.8386  (13s)
+    layer  6/12  LP= 102.91W  reward=-0.2772  (14s)
+    layer  7/12  LP= 100.27W  reward=-0.1970  (14s)
+    layer  8/12  LP= 100.27W  reward=-0.1676  (14s)
+    layer  9/12  LP= 100.25W  reward=-0.1453  (13s)
+    layer 10/12  LP= 100.38W  reward=-0.1897  (13s)
+    layer 11/12  LP= 100.27W  reward=-0.2108  (14s)
+    layer 12/12  LP= 100.28W  reward=-0.2235  (14s)
+    → episode return: -6.4881
+
+  [GREEDY] Episode 3/5  (cool_time=0.100s)
+    layer  1/12  LP= 326.63W  reward=-1.3626  (14s)
+    layer  2/12  LP= 233.32W  reward=-1.1828  (14s)
+    layer  3/12  LP= 180.95W  reward=-0.8717  (13s)
+    layer  4/12  LP= 170.76W  reward=-0.8213  (14s)
+    layer  5/12  LP= 168.27W  reward=-0.8386  (14s)
+    layer  6/12  LP= 102.91W  reward=-0.2772  (14s)
+    layer  7/12  LP= 100.27W  reward=-0.1970  (13s)
+    layer  8/12  LP= 100.27W  reward=-0.1676  (13s)
+    layer  9/12  LP= 100.25W  reward=-0.1453  (14s)
+    layer 10/12  LP= 100.38W  reward=-0.1897  (14s)
+    layer 11/12  LP= 100.27W  reward=-0.2108  (14s)
+    layer 12/12  LP= 100.28W  reward=-0.2235  (13s)
+    → episode return: -6.4881
+
+  [GREEDY] Episode 4/5  (cool_time=0.100s)
+    layer  1/12  LP= 326.63W  reward=-1.3626  (14s)
+    layer  2/12  LP= 233.32W  reward=-1.1828  (14s)
+    layer  3/12  LP= 180.95W  reward=-0.8717  (14s)
+    layer  4/12  LP= 170.76W  reward=-0.8213  (14s)
+    layer  5/12  LP= 168.27W  reward=-0.8386  (14s)
+    layer  6/12  LP= 102.91W  reward=-0.2772  (13s)
+    layer  7/12  LP= 100.27W  reward=-0.1970  (13s)
+    layer  8/12  LP= 100.27W  reward=-0.1676  (13s)
+    layer  9/12  LP= 100.25W  reward=-0.1453  (14s)
+    layer 10/12  LP= 100.38W  reward=-0.1897  (13s)
+    layer 11/12  LP= 100.27W  reward=-0.2108  (14s)
+    layer 12/12  LP= 100.28W  reward=-0.2235  (13s)
+    → episode return: -6.4881
+
+  [GREEDY] Episode 5/5  (cool_time=0.100s)
+    layer  1/12  LP= 326.63W  reward=-1.3626  (14s)
+    layer  2/12  LP= 233.32W  reward=-1.1828  (14s)
+    layer  3/12  LP= 180.95W  reward=-0.8717  (14s)
+    layer  4/12  LP= 170.76W  reward=-0.8213  (13s)
+    layer  5/12  LP= 168.27W  reward=-0.8386  (13s)
+    layer  6/12  LP= 102.91W  reward=-0.2772  (13s)
+    layer  7/12  LP= 100.27W  reward=-0.1970  (14s)
+    layer  8/12  LP= 100.27W  reward=-0.1676  (13s)
+    layer  9/12  LP= 100.25W  reward=-0.1453  (13s)
+    layer 10/12  LP= 100.38W  reward=-0.1897  (14s)
+    layer 11/12  LP= 100.27W  reward=-0.2108  (13s)
+    layer 12/12  LP= 100.28W  reward=-0.2235  (14s)
+    → episode return: -6.4881
+
+=================================================================
+  GREEDY return     : mean=-6.4881  std=0.0000
+  GREEDY action     : mean=148.7W  std=68.9W
+  Total wall time   : 13.8 min
+=================================================================
+[evaluate_real] Results saved → jobs/results_gap_experiment/eval_real_naive_pg.json
+[eval_harness] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/baselines/naive_pg/runs/patchy_100-150_200-250_300-350_perturb0.25/eval_real_reward_and_action.png
+[oneshot] === UCPG v2 vs. real physics ===
+=================================================================
+  UCPG v2 — REAL PHYSICS Evaluation (simulateHeatingCooling_v2.m)
+=================================================================
+  Checkpoint  : online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt
+  Surrogate   : surrogate_model_latent_uncertainty_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/two_stage_best.pt  (encoder + norm stats only)
+  Episodes    : 5 greedy
+=================================================================
+[agent] Loaded checkpoint from online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/ucpg_best.pt  (lambda=1.71270)
+  UCPGAgentV2(ContinuousLatentPolicyNet(latent_dim=64, action_range=[100, 400]W, hidden=128, depth=3, n_layers=12, layer_embed_dim=32, params=113,935)  lambda=1.71270)
+
+  Scratch dir : /tmp/ucpg_v2_real_eval_f3qidp1i
+
+  [GREEDY] Episode 1/5  (cool_time=0.100s)
+[evaluate_real] Mesh consistency check passed (matches surrogate_model/mesh.mat).
+    layer  1/12  LP= 320.74W  reward=-1.3012  (14s)
+    layer  2/12  LP= 231.40W  reward=-1.1452  (14s)
+    layer  3/12  LP= 179.05W  reward=-0.8352  (13s)
+    layer  4/12  LP= 170.83W  reward=-0.8067  (14s)
+    layer  5/12  LP= 170.00W  reward=-0.8480  (13s)
+    layer  6/12  LP= 102.86W  reward=-0.2751  (14s)
+    layer  7/12  LP= 100.32W  reward=-0.1957  (14s)
+    layer  8/12  LP= 100.25W  reward=-0.1660  (14s)
+    layer  9/12  LP= 100.26W  reward=-0.1446  (14s)
+    layer 10/12  LP= 100.44W  reward=-0.1894  (14s)
+    layer 11/12  LP= 100.31W  reward=-0.2105  (14s)
+    layer 12/12  LP= 100.30W  reward=-0.2233  (13s)
+    → episode return: -6.3410
+
+  [GREEDY] Episode 2/5  (cool_time=0.100s)
+    layer  1/12  LP= 320.74W  reward=-1.3012  (14s)
+    layer  2/12  LP= 231.40W  reward=-1.1452  (14s)
+    layer  3/12  LP= 179.05W  reward=-0.8352  (14s)
+    layer  4/12  LP= 170.83W  reward=-0.8067  (13s)
+    layer  5/12  LP= 170.00W  reward=-0.8480  (13s)
+    layer  6/12  LP= 102.86W  reward=-0.2751  (13s)
+    layer  7/12  LP= 100.32W  reward=-0.1957  (14s)
+    layer  8/12  LP= 100.25W  reward=-0.1660  (13s)
+    layer  9/12  LP= 100.26W  reward=-0.1446  (14s)
+    layer 10/12  LP= 100.44W  reward=-0.1894  (14s)
+    layer 11/12  LP= 100.31W  reward=-0.2105  (14s)
+    layer 12/12  LP= 100.30W  reward=-0.2233  (14s)
+    → episode return: -6.3410
+
+  [GREEDY] Episode 3/5  (cool_time=0.100s)
+    layer  1/12  LP= 320.74W  reward=-1.3012  (14s)
+    layer  2/12  LP= 231.40W  reward=-1.1452  (14s)
+    layer  3/12  LP= 179.05W  reward=-0.8352  (14s)
+    layer  4/12  LP= 170.83W  reward=-0.8067  (14s)
+    layer  5/12  LP= 170.00W  reward=-0.8480  (14s)
+    layer  6/12  LP= 102.86W  reward=-0.2751  (13s)
+    layer  7/12  LP= 100.32W  reward=-0.1957  (14s)
+    layer  8/12  LP= 100.25W  reward=-0.1660  (14s)
+    layer  9/12  LP= 100.26W  reward=-0.1446  (14s)
+    layer 10/12  LP= 100.44W  reward=-0.1894  (13s)
+    layer 11/12  LP= 100.31W  reward=-0.2105  (13s)
+    layer 12/12  LP= 100.30W  reward=-0.2233  (14s)
+    → episode return: -6.3410
+
+  [GREEDY] Episode 4/5  (cool_time=0.100s)
+    layer  1/12  LP= 320.74W  reward=-1.3012  (14s)
+    layer  2/12  LP= 231.40W  reward=-1.1452  (13s)
+    layer  3/12  LP= 179.05W  reward=-0.8352  (14s)
+    layer  4/12  LP= 170.83W  reward=-0.8067  (13s)
+    layer  5/12  LP= 170.00W  reward=-0.8480  (14s)
+    layer  6/12  LP= 102.86W  reward=-0.2751  (13s)
+    layer  7/12  LP= 100.32W  reward=-0.1957  (13s)
+    layer  8/12  LP= 100.25W  reward=-0.1660  (14s)
+    layer  9/12  LP= 100.26W  reward=-0.1446  (13s)
+    layer 10/12  LP= 100.44W  reward=-0.1894  (14s)
+    layer 11/12  LP= 100.31W  reward=-0.2105  (14s)
+    layer 12/12  LP= 100.30W  reward=-0.2233  (14s)
+    → episode return: -6.3410
+
+  [GREEDY] Episode 5/5  (cool_time=0.100s)
+    layer  1/12  LP= 320.74W  reward=-1.3012  (14s)
+    layer  2/12  LP= 231.40W  reward=-1.1452  (14s)
+    layer  3/12  LP= 179.05W  reward=-0.8352  (14s)
+    layer  4/12  LP= 170.83W  reward=-0.8067  (14s)
+    layer  5/12  LP= 170.00W  reward=-0.8480  (14s)
+    layer  6/12  LP= 102.86W  reward=-0.2751  (14s)
+    layer  7/12  LP= 100.32W  reward=-0.1957  (13s)
+    layer  8/12  LP= 100.25W  reward=-0.1660  (14s)
+    layer  9/12  LP= 100.26W  reward=-0.1446  (14s)
+    layer 10/12  LP= 100.44W  reward=-0.1894  (14s)
+    layer 11/12  LP= 100.31W  reward=-0.2105  (13s)
+    layer 12/12  LP= 100.30W  reward=-0.2233  (14s)
+    → episode return: -6.3410
+
+=================================================================
+  GREEDY return     : mean=-6.3410  std=0.0000
+  GREEDY action     : mean=148.1W  std=67.4W
+  Total wall time   : 13.7 min
+=================================================================
+[evaluate_real] Results saved → jobs/results_gap_experiment/eval_real_ucpg_v2.json
+[eval_harness] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/online_RL_ucpg_v2/runs/patchy_100-150_200-250_300-350_perturb0.25/eval_real_reward_and_action.png
+[oneshot] === Comparison ===
+==============================================================================
+[compare_policies] Real-simulator policy comparison
+==============================================================================
+  naive_pg       return=-6.4881 ± 0.0000             action mean=  148.7W std=  68.9W  frac. outside training coverage=25.0%
+  ucpg_v2        return=-6.3410 ± 0.0000             action mean=  148.1W std=  67.4W  frac. outside training coverage=25.0%
+==============================================================================
+[compare_policies] Saved → online_RL_ucpg_v2/runs/compare_gap/compare_returns_actions.png
+[compare_policies] Summary → online_RL_ucpg_v2/runs/compare_gap/compare_summary.json
+
+============================================================
+[oneshot] Full pipeline finished: Thu Aug 13 11:41:11 EDT 2026
+  1. surrogate train    : exit 0
+  2. surrogate eval     : exit evaluate=0 evaluate_ood=0 (diagnostic only)
+  3. UCPG v2 train      : exit 0
+  4. naive_pg train     : exit 0
+  5. real eval+compare  : exit naive_pg=0 ucpg_v2=0 compare=0
+
+  Summary: online_RL_ucpg_v2/runs/compare_gap/compare_summary.json
+  Plot:    online_RL_ucpg_v2/runs/compare_gap/compare_returns_actions.png
+============================================================
