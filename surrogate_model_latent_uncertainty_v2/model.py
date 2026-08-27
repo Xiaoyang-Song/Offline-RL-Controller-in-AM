@@ -140,6 +140,7 @@ class GaussianTransitionMLP(nn.Module):
         dropout:         float = 0.0,
         n_layers:        int   = 12,
         layer_embed_dim: int   = 8,
+        mu_init_scale:   float = 1e-3,
     ):
         super().__init__()
         self.latent_dim = latent_dim
@@ -156,8 +157,20 @@ class GaussianTransitionMLP(nn.Module):
         self.mu_head         = nn.Linear(hidden, latent_dim)
         self.log_sigma_head  = nn.Linear(hidden, latent_dim)
 
-        # Near-zero init so early predictions start near Δz = 0, σ ≈ near-bound
-        nn.init.uniform_(self.mu_head.weight, -1e-3, 1e-3)
+        # mu_head init: near-zero (default 1e-3) so early predictions start
+        # near Δz = 0 for training stability. NOTE: this range is identical
+        # across ensemble members by default, so at init every member's
+        # FUNCTION (not just its exact weights) is near-indistinguishable
+        # from every other member's -- any inter-member disagreement then has
+        # to be earned via gradient descent, which only happens where there's
+        # training data. In a training-data gap, no member gets a gradient to
+        # pull it away from this shared near-zero start, so they stay close
+        # together there too (epistemic collapse in OOD/gap regions). Raising
+        # --mu_init_scale (esp. combined with per-member seeding, see
+        # TwoStageEnsembleGaussianLatentDynamicsModel's member_init_seed)
+        # gives members genuinely different starting functions instead, at
+        # the cost of some of that early-training stability.
+        nn.init.uniform_(self.mu_head.weight, -mu_init_scale, mu_init_scale)
         nn.init.zeros_(self.mu_head.bias)
         nn.init.uniform_(self.log_sigma_head.weight, -1e-3, 1e-3)
         nn.init.zeros_(self.log_sigma_head.bias)
@@ -310,6 +323,8 @@ class TwoStageEnsembleGaussianLatentDynamicsModel(nn.Module):
         dec_hidden:      int   = 256,
         dec_depth:       int   = 3,
         dropout:         float = 0.0,
+        mu_init_scale:   float = 1e-3,
+        member_init_seed: Optional[int] = None,
     ):
         super().__init__()
         self.state_dim       = state_dim
@@ -323,20 +338,34 @@ class TwoStageEnsembleGaussianLatentDynamicsModel(nn.Module):
         self.encoder = Encoder(state_dim, latent_dim, enc_hidden, enc_depth, dropout)
         self.decoder = Decoder(latent_dim, state_dim, dec_hidden, dec_depth, dropout)
 
-        self.heating_transitions = nn.ModuleList([
-            GaussianTransitionMLP(
-                latent_dim, lp_dim, trans_hidden, trans_depth, dropout,
-                n_layers, layer_embed_dim,
-            )
-            for _ in range(n_ensemble)
-        ])
-        self.cooling_transitions = nn.ModuleList([
-            GaussianTransitionMLP(
-                latent_dim, cool_dim, trans_hidden, trans_depth, dropout,
-                n_layers, layer_embed_dim,
-            )
-            for _ in range(n_ensemble)
-        ])
+        # member_init_seed (optional): give each of the K members its OWN
+        # seed (base + offset) for weight init, instead of letting every
+        # member draw from the same global RNG stream in sequence. Combined
+        # with mu_init_scale > 1e-3, this makes members start from genuinely
+        # different functions rather than K near-identical near-zero ones —
+        # see GaussianTransitionMLP's mu_init_scale docstring for why that
+        # matters for OOD/gap epistemic disagreement. Saves/restores the
+        # global RNG state around member construction so this doesn't change
+        # any other randomness (data shuffling, bootstrap masks, etc.) in the
+        # training run when set.
+        rng_state = torch.get_rng_state() if member_init_seed is not None else None
+
+        def _build_members(cond_dim: int, seed_offset: int) -> nn.ModuleList:
+            members = []
+            for k in range(n_ensemble):
+                if member_init_seed is not None:
+                    torch.manual_seed(member_init_seed + seed_offset + k)
+                members.append(GaussianTransitionMLP(
+                    latent_dim, cond_dim, trans_hidden, trans_depth, dropout,
+                    n_layers, layer_embed_dim, mu_init_scale=mu_init_scale,
+                ))
+            return nn.ModuleList(members)
+
+        self.heating_transitions = _build_members(lp_dim, seed_offset=0)
+        self.cooling_transitions = _build_members(cool_dim, seed_offset=n_ensemble)
+
+        if rng_state is not None:
+            torch.set_rng_state(rng_state)
 
     # ------------------------------------------------------------------
     def encode(self, s: torch.Tensor) -> torch.Tensor:

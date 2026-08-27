@@ -136,6 +136,23 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--dec_hidden",    type=int,   default=256)
     p.add_argument("--dec_depth",     type=int,   default=3)
     p.add_argument("--dropout",       type=float, default=0.0)
+    p.add_argument("--mu_init_scale", type=float, default=1e-3,
+                   help="Uniform init range for each ensemble member's mu_head weights "
+                        "(GaussianTransitionMLP). Default 1e-3 (near-zero, matches the "
+                        "original stability-motivated init) makes every member start from "
+                        "a near-identical near-zero function, which caps how much they can "
+                        "disagree in training-data gaps (disagreement then only comes from "
+                        "gradient-earned divergence, which needs data to happen at all). "
+                        "Raising this (e.g. 0.05-0.2), ideally with --member_init_seed set "
+                        "too, gives members genuinely different starting functions at the "
+                        "cost of some early-training stability.")
+    p.add_argument("--member_init_seed", type=int, default=None,
+                   help="Optional: seed each of the K ensemble members' weight init "
+                        "independently (base seed + per-member offset) instead of letting "
+                        "them draw sequentially from one global RNG stream. Restores the "
+                        "global RNG state afterward, so this only affects member init, not "
+                        "data shuffling/bootstrap masks/etc. Default None = old behaviour "
+                        "(bit-identical to omitting this flag).")
 
     # ── bootstrap ensemble ────────────────────────────────────────────────────
     p.add_argument("--bootstrap_seed", type=int, default=-1,
@@ -520,6 +537,8 @@ def _save_checkpoint(
                 "dec_hidden":      args.dec_hidden,
                 "dec_depth":       args.dec_depth,
                 "dropout":         args.dropout,
+                "mu_init_scale":   args.mu_init_scale,
+                "member_init_seed": args.member_init_seed,
             },
             "train_args": vars(args),
         },
@@ -696,6 +715,8 @@ def main() -> None:
         dec_hidden=args.dec_hidden,
         dec_depth=args.dec_depth,
         dropout=args.dropout,
+        mu_init_scale=args.mu_init_scale,
+        member_init_seed=args.member_init_seed,
     ).to(device)
     print(f"[train] {model}")
 
