@@ -1,0 +1,8 @@
+method,next_mae_mean_K,next_rmse_mean_K,heat_mae_mean_K,n_params
+surrogate (main),18.9460,37.4685,24.3252,2652125
+mlp,1.9440,6.0266,NA,1877117
+lstm,1.2641,4.2204,NA,3769981
+kalman_filter,7.3853,18.6545,NA,72384
+vanilla_ensemble,1.4869,4.8523,NA,1964285
+ablation_no_two_stage,28.9564,64.7657,NA,2006205
+ablation_no_latent,0.9966,3.9188,0.5428,5108040
