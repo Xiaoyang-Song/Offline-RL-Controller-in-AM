@@ -85,6 +85,20 @@ class NoLatentTwoStageSurrogate(nn.Module):
             log_sigmas.append(log_sigma)
         return torch.stack(mus, dim=0), torch.stack(log_sigmas, dim=0)
 
+    def predict_heating_ensemble(self, z_t, a_t, layer_idx):
+        """(z_t, laser_power) -> moment-matched (mu_mean, epistemic_std,
+        aleatoric_std, total_std) for Delta_heat. Mirrors the main model's
+        method of the same name so this ablation is a drop-in for
+        evaluate_ood.py/evaluate_ood_ratio.py's collect_ood_samples."""
+        mu_deltas, log_sigma_deltas = self._run(self.heating_transitions, z_t, a_t, layer_idx)
+        return _moment_match(mu_deltas, log_sigma_deltas)
+
+    def predict_cooling_ensemble(self, z_heat, cool_t, layer_idx):
+        """(z_heat, cool_time) -> moment-matched (mu_mean, epistemic_std,
+        aleatoric_std, total_std) for Delta_cool. Mirrors the main model."""
+        mu_deltas, log_sigma_deltas = self._run(self.cooling_transitions, z_heat, cool_t, layer_idx)
+        return _moment_match(mu_deltas, log_sigma_deltas)
+
     def forward(self, s_t, a_t, cool_t, u_heat_t, layer_idx):
         """Mirrors TwoStageEnsembleGaussianLatentDynamicsModel.forward, minus
         the (here-trivial) AE reconstruction terms."""
@@ -111,3 +125,21 @@ class NoLatentTwoStageSurrogate(nn.Module):
 
     def count_parameters(self) -> int:
         return sum(p.numel() for p in self.parameters() if p.requires_grad)
+
+
+def load_no_latent_surrogate(checkpoint_path: str, device: str = "cpu"):
+    """Load a saved NoLatentTwoStageSurrogate checkpoint. Mirrors
+    surrogate_model_latent_uncertainty_v2.train.load_two_stage_surrogate so
+    evaluate_ood_ratio.py's _run_one can stay generic across both.
+
+    Returns: model (eval mode), state_mean, state_std, lp_mean, lp_std, cool_mean, cool_std.
+    """
+    ckpt  = torch.load(checkpoint_path, map_location=device, weights_only=False)
+    model = NoLatentTwoStageSurrogate(**ckpt["model_config"]).to(device)
+    model.load_state_dict(ckpt["model_state_dict"])
+    model.eval()
+    return (
+        model,
+        ckpt["state_mean"].to(device), ckpt["state_std"].to(device),
+        ckpt["lp_mean"], ckpt["lp_std"], ckpt["cool_mean"], ckpt["cool_std"],
+    )

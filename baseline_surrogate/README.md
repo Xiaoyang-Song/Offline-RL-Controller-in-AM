@@ -8,6 +8,28 @@ epistemic/aleatoric decomposition is the main surrogate's contribution, not
 something these baselines need to also provide; every method below is
 compared purely on next-state prediction accuracy (per-layer MAE/RMSE).
 
+## Result: the latent encoder/decoder underperforms — reverted to no-latent
+
+`results_latent256/leaderboard[_autoregressive].csv` shows the main
+surrogate's learned latent bottleneck (`surrogate (main, two-stage+latent+
+ensemble)`) losing badly to every other method, including its own
+`ablation_no_latent` ablation (same two-stage + bootstrap + Gaussian-NLL
+machinery, identity encoder/decoder instead):
+
+| Regime | `surrogate (main)` next-MAE / RMSE [K] | `ablation_no_latent` next-MAE / RMSE [K] |
+|---|---|---|
+| Teacher-forced | 13.68 / 26.87 | **0.997 / 3.92** |
+| Auto-regressive | 23.93 / 43.48 | **2.08 / 5.80** |
+
+Given this, the project has reverted to **not** using a learned latent
+encoder/decoder for the main surrogate — `ablation_no_latent`'s design
+(two-stage heating→cooling, bootstrap ensemble, Gaussian NLL, but
+transitions act directly on the raw 1053-dim state) is the current primary
+comparison point going forward, not just an ablation. Regenerate the
+comparison plots/leaderboard without the latent-encoder main surrogate by
+omitting `--surrogate_checkpoint` from the `summarize_results.py` call (see
+"Summarizing" below) — every other flag is unchanged.
+
 ## Design: single-stage, except the two ablations
 
 The main surrogate's two big architectural bets are (1) splitting each
@@ -66,6 +88,208 @@ bootstrap resampling and the calibrated σ head.
 **5/6. Ablations** — see the table above; `ablation_no_two_stage/` and
 `ablation_no_latent/` each remove exactly one piece of the main model.
 
+## Mathematical formulation
+
+Notation matches [`surrogate_model_latent_uncertainty_v2/README.md`](../surrogate_model_latent_uncertainty_v2/README.md):
+`s_t` = pre-heat state (raw Kelvin, `state_dim = 1053`), `a_t` = laser power [W],
+`c_t` = cool time [s], `l_t` = 0-indexed layer, `u_h` = end-of-heating field,
+`s_{t+1}` = end-of-cooling field (next state). A tilde denotes z-scored
+(normalised) values, e.g. `s̃_t = (s_t − μ_s)/σ_s`. `e(l_t) ∈ R^{d_e}` is a
+learned per-layer embedding (a small `nn.Embedding`, independent per
+method). Every method's `μ_s, σ_s, μ_a, σ_a, μ_c, σ_c` are fit ONCE from
+the training split's `{s_t, s_{t+1}}` (pooled — no `u_h` view, since only
+`ablation_no_latent` ever sees one) via
+`common/data.py:build_single_stage_normalizers`, mirroring the main
+package's `build_normalizers` but two views instead of three.
+
+### 1. Plain MLP (`mlp/`)
+
+Raw 1053-dim space, no latent, no ensemble, single-stage. One block is
+`Linear → LayerNorm → SiLU → Dropout`; `depth` blocks are stacked:
+
+```
+h_0 = block_0([s̃_t, ã_t, c̃_t, e(l_t)])
+h_i = block_i(h_{i-1})                    i = 1 .. depth-1
+Δs̃_t = Linear_head(h_{depth-1})
+ŝ̃_{t+1} = s̃_t + Δs̃_t
+```
+
+(predicting the residual `Δs̃_t`, not `s̃_{t+1}` directly, mirrors the main
+model's `Δz` convention — `Linear_head` is near-zero initialised so
+training starts near the identity map.) Loss: plain MSE,
+`L = E[(1/D) ‖ŝ̃_{t+1} − s̃_{t+1}‖²]`, `D = state_dim`.
+
+### 2. LSTM (`lstm/`)
+
+Same per-step inputs as the MLP, but a hidden state carries information
+across the 12-layer build instead of each step being independent:
+
+```
+(h_t, c^{cell}_t) = LSTMCell([s̃_t, ã_t, c̃_t, e(l_t)],  (h_{t-1}, c^{cell}_{t-1}))
+Δs̃_t   = Linear_head(Dropout(h_t))
+ŝ̃_{t+1} = s̃_t + Δs̃_t
+```
+
+with `(h_{-1}, c^{cell}_{-1}) = (0, 0)` at the start of every trajectory.
+`s̃_t` fed in at each step is the TRUE previous state during training
+(teacher-forced) — only `h_t` is recurrent, not the state input itself.
+Loss is masked MSE, counting only layers whose action falls in the
+training LP range (see `lstm/train.py`'s docstring for why the trajectory
+still isn't truncated):
+
+```
+L = ( Σ_t Σ_b m_{t,b} · (1/D)‖ŝ̃_{t+1,b} − s̃_{t+1,b}‖² )  /  ( Σ_t Σ_b m_{t,b} )
+m_{t,b} = 1[ a_{t,b} ∈ [LP_min, LP_max] ]
+```
+
+### 3. Kalman filter (`kalman_filter/`)
+
+A fixed (non-learned) PCA basis stands in for the main model's learned
+encoder/decoder, and the transition is a single global linear map instead
+of a neural network:
+
+```
+PCA (fit once, pooled {s_t, s_{t+1}} raw states):
+    z_t = W(s_t − μ_PCA)                      W ∈ R^{n_c × 1053}, rows orthonormal
+    ŝ_{t+1} = Wᵀ ẑ_{t+1} + μ_PCA
+
+Design vector:
+    x_t = [ z_t ; a_t ; c_t ; onehot(l_t) ] ∈ R^{n_c + 2 + n_layers}
+
+Linear-Gaussian process model, fit by ordinary least squares (closed form,
+no gradient descent):
+    Θ* = argmin_Θ Σ_i ‖x_iᵀ Θ − z_{i,next}‖²  =  (XᵀX)⁻¹ Xᵀ Z     (via np.linalg.lstsq)
+
+Prediction (the KF PREDICT equation; no UPDATE step — see
+kalman_filter/model.py's docstring for why: the true s_t is always known
+exactly at query time, so there is no observation to fuse against):
+    ẑ_{t+1} = x_tᵀ Θ*
+```
+
+`n_c = 64` by default (`--n_components`, matching the main model's default
+`--latent_dim`). Note `Θ` folds what the main model would call `A` (the
+`z_t` block of rows), `B` (the `a_t` row), `C` (the `c_t` row), and
+`b_layer` (the one-hot rows) into one matrix fit jointly.
+
+### 4. Vanilla deep ensemble (`vanilla_ensemble/`)
+
+Same learned `Encoder`/`Decoder` as the main model (imported directly, not
+reimplemented — see `surrogate_model_latent_uncertainty_v2/model.py`), but
+`K = 5` independently-initialised POINT-ESTIMATE transition heads
+(`DeterministicTransitionMLP` — the `GaussianTransitionMLP` trunk with only
+a `μ` head, no `log σ` head, no PETS soft clamp) trained on the SAME full
+dataset (no bootstrap resampling):
+
+```
+z_t = Encoder(s̃_t)
+cond_t = [ã_t; c̃_t]
+Δz_t^{(k)} = f_k(z_t, cond_t, e(l_t))                         k = 1 .. K
+ŝ̃_{t+1}^{(k)} = Decoder(z_t + Δz_t^{(k)})
+
+ŝ̃_{t+1} = (1/K) Σ_k ŝ̃_{t+1}^{(k)}          ← ensemble MEAN of DECODED predictions
+```
+
+Loss (plain MSE, no NLL, no bootstrap weighting — every member sees every
+sample with weight 1):
+
+```
+L_trans = (1/K) Σ_k E[(1/D) ‖ŝ̃_{t+1}^{(k)} − s̃_{t+1}‖²]
+L_AE    = E[(1/D) ‖Decoder(z_t) − s̃_t‖²]
+L = L_trans + L_AE
+```
+
+### 5. Ablation: no two-stage (`ablation_no_two_stage/`)
+
+Identical machinery to the main model — `Encoder`/`Decoder`,
+`GaussianTransitionMLP` (PETS-clamped `log σ`), moment-matched `K`-member
+mixture, bootstrap-resampled training (all imported directly from
+`surrogate_model_latent_uncertainty_v2.model`/`.train`, not reimplemented)
+— but ONE ensemble instead of two, conditioned on `a_t` and `c_t` TOGETHER
+(`cond_dim = 2`) instead of splitting them across a heating and a cooling
+stage:
+
+```
+z_t = Encoder(s̃_t),   cond_t = [ã_t; c̃_t]
+(μ_k, log σ_k) = g_k(z_t, cond_t, e(l_t))                     k = 1 .. K
+
+Moment matching (Lakshminarayanan et al., 2017 — identical to the main
+model's _moment_match, reused unchanged):
+    μ̄ = (1/K) Σ_k μ_k
+    epistemic_var = Var_k[μ_k]              (population variance, ÷K)
+    aleatoric_var = (1/K) Σ_k σ_k²
+
+Point estimate (what's evaluated — uncertainty is computed but not
+reported, same as everywhere else in this package):
+    ẑ_{t+1} = z_t + μ̄,   ŝ̃_{t+1} = Decoder(ẑ_{t+1})
+```
+
+Loss (`bw_{k,b}` = sample b's bootstrap multiplicity for member k, from
+`make_bootstrap_masks`; `sg(·)` = stop-gradient):
+
+```
+L_recon_s = E[(1/D)‖Decoder(z_t) − s̃_t‖²]
+
+L_recon = ( Σ_k Σ_b bw_{k,b} · (1/D)‖Decoder(z_t+μ_k) − s̃_{t+1,b}‖² )  /  ( Σ_k Σ_b bw_{k,b} )
+
+Δz_target = sg(Encoder(s̃_{t+1})) − z_t
+L_NLL = ( Σ_k Σ_b bw_{k,b} · (1/D) Σ_d [ 0.5log(2π) + log σ_{k,d} + 0.5(Δz_{target,d} − μ_{k,d})²/σ_{k,d}² ] )  /  ( Σ_k Σ_b bw_{k,b} )
+
+L = w_s·L_recon_s + w_r·L_recon + w_n·L_NLL          (defaults: w_s=w_r=1.0, w_n=0.1)
+```
+
+### 6. Ablation: no latent space (`ablation_no_latent/`)
+
+Also identical `GaussianTransitionMLP`/moment-matching/bootstrap machinery,
+and KEEPS the two-stage heating→cooling split — but `Encoder`/`Decoder`
+are the IDENTITY, so `GaussianTransitionMLP` acts directly on the raw
+1053-dim (normalised) field (`latent_dim := state_dim`) instead of a
+learned bottleneck. Since `Decoder(Encoder(x)) ≡ x` exactly, the main
+model's two autoencoder reconstruction terms (`L_recon_s`, `L_recon_heat_ae`)
+are trivially zero here and are dropped from the loss entirely (not just
+computed-and-ignored):
+
+```
+z_t := s̃_t                                    (identity — no encoder)
+
+Heating stage:
+    (μ_heat,k, log σ_heat,k) = g_heat,k(z_t, ã_t, e(l_t))       k = 1..K
+    μ̄_heat = (1/K) Σ_k μ_heat,k
+    ũ_h    = z_t + μ̄_heat                       (point-estimate heat prediction)
+
+Cooling stage — teacher-forced on the GROUND-TRUTH ũ_h during training
+(never the heating stage's own prediction — matches the main model's
+single-step training regime exactly):
+    (μ_cool,k, log σ_cool,k) = g_cool,k(ũ_h, c̃_t, e(l_t))       k = 1..K
+    μ̄_cool = (1/K) Σ_k μ_cool,k
+    ŝ̃_{t+1} = ũ_h + μ̄_cool
+```
+
+Loss (same bootstrap-weighted reconstruction + NLL pattern as ablation 5,
+applied to both stages, target deltas computed directly against the raw
+identity `z_t`/`ũ_h` — no `sg(Encoder(·))` needed since there's no encoder
+to protect from collapsing):
+
+```
+L_recon_heat = ( Σ_k Σ_b bw_{k,b} · (1/D)‖z_t+μ_heat,k − u_{h,b}‖² ) / ( Σ_k Σ_b bw_{k,b} )
+L_NLL_heat   = bootstrap-weighted Gaussian NLL,  target = u_h − z_t
+
+L_recon_cool = ( Σ_k Σ_b bw_{k,b} · (1/D)‖ũ_h+μ_cool,k − s̃_{t+1,b}‖² ) / ( Σ_k Σ_b bw_{k,b} )
+L_NLL_cool   = bootstrap-weighted Gaussian NLL,  target = s̃_{t+1} − ũ_h
+
+L = w_rh·L_recon_heat + w_nh·L_NLL_heat + w_rc·L_recon_cool + w_nc·L_NLL_cool
+    (defaults: w_rh=w_rc=1.0, w_nh=w_nc=0.1 — identical defaults to the main model)
+```
+
+At AUTO-REGRESSIVE evaluation time (`summarize_results.py`, not training),
+the cooling stage instead consumes the heating stage's OWN prediction
+`ũ_h` chained forward — never ground truth — exactly matching how
+`evaluate_autoregressive_with_heat` and the main model's own
+`model.rollout(...)` behave. This is precisely why teacher-forced and
+auto-regressive numbers can diverge sharply for any two-stage method: the
+cooling stage's `g_cool,k` was only ever trained on inputs of the form
+`Encoder(true u_h)` (or, here, `true u_h` directly), never on its own
+upstream stage's error.
+
 ## Training (same data/split convention throughout)
 
 ```bash
@@ -84,20 +308,76 @@ in one job (~8h budgeted, GPU partition) — reuses the existing
 `surrogate_model_latent_uncertainty_v2/runs/narrow_200_300W/two_stage_best.pt`
 checkpoint rather than retraining the main model.
 
+## Epistemic-uncertainty / patchy-coverage stress test (no-latent main surrogate)
+
+Since `ablation_no_latent` is now the primary (no-latent) surrogate design,
+it needs the same epistemic-uncertainty validation the encoder/decoder main
+model has via `surrogate_model_latent_uncertainty_v2/evaluate_ood.py` /
+`evaluate_ood_ratio.py`. `ablation_no_latent/train.py` now also accepts
+`--lp_filter_ranges` (gapped/patchy, comma-separated `lo-hi` ranges),
+`--perturb_frac` (target-noise), and `--bootstrap_frac` (decorrelated
+bootstrap) — the same three flags `surrogate_model_latent_uncertainty_v2/
+train.py` documents under "Harder / gapped-surrogate experiments" — passed
+straight through to the same `TwoStageLatentSurrogateDataset` that package
+uses, so the semantics are identical.
+
+`ablation_no_latent/evaluate_ood_ratio.py` is the no-latent counterpart of
+`surrogate_model_latent_uncertainty_v2/evaluate_ood_ratio.py`: same
+`ood_uncertainty_summary_2x2.png` (raw epistemic σ | raw aleatoric σ on top,
+epistemic ratio | RMSE on bottom, patchy vs. full-range overlaid) and
+`ood_epistemic_ratio_vs_action.png`, reusing that package's
+`collect_ood_samples`/`bin_by_action`/plotting code unchanged — only the
+checkpoint loader differs.
+
+```bash
+DATA=Data/DatasetV2_layer_12_samples_5000.pkl
+
+# 1. Full-range checkpoint (no lp_filter) — the "intrinsic difficulty" baseline
+python -m baseline_surrogate.ablation_no_latent.train \
+    --data_path $DATA \
+    --out_dir baseline_surrogate/ablation_no_latent/runs/full_range
+
+# 2. Patchy/gapped checkpoint — deliberately sparse laser-power coverage
+python -m baseline_surrogate.ablation_no_latent.train \
+    --data_path $DATA \
+    --lp_filter_ranges "100-150,200-250,300-350" \
+    --perturb_frac 0.1 --bootstrap_frac 0.5 \
+    --out_dir baseline_surrogate/ablation_no_latent/runs/patchy_100-150_200-250_300-350_perturb0.1
+
+# 3. 2x2 uncertainty summary: patchy vs. full-range, same wide dataset
+python -m baseline_surrogate.ablation_no_latent.evaluate_ood_ratio \
+    --checkpoint_patchy baseline_surrogate/ablation_no_latent/runs/patchy_100-150_200-250_300-350_perturb0.1/ablation_no_latent_best.pt \
+    --checkpoint_full   baseline_surrogate/ablation_no_latent/runs/full_range/ablation_no_latent_best.pt \
+    --data_path $DATA \
+    --id_ranges "100-150,200-250,300-350"
+```
+
+A working epistemic channel shows `ood_uncertainty_summary_2x2.png`'s
+epistemic-ratio panel sitting near 1 across the patchy model's ID ranges and
+rising well above 1 in the interior gaps `(150,200)`/`(250,300)` and past
+the top edge `(350,400)` — see the main package's `evaluate_ood_ratio.py`
+docstring for the full rationale (identical here, model swapped).
+
 ## Summarizing
+
+**Current (no latent encoder/decoder)** — omits `--surrogate_checkpoint`
+(see "Result" section above for why):
 
 ```bash
 python -m baseline_surrogate.summarize_results \
     --data_path Data/DatasetV2_layer_12_samples_5000.pkl \
-    --surrogate_checkpoint             surrogate_model_latent_uncertainty_v2/runs/narrow_200_300W/two_stage_best.pt \
     --mlp_checkpoint                   baseline_surrogate/mlp/runs/narrow_200_300W/mlp_best.pt \
     --lstm_checkpoint                  baseline_surrogate/lstm/runs/narrow_200_300W/lstm_best.pt \
     --kalman_checkpoint                baseline_surrogate/kalman_filter/runs/narrow_200_300W/kalman_filter_fitted.pt \
     --vanilla_ensemble_checkpoint      baseline_surrogate/vanilla_ensemble/runs/narrow_200_300W/vanilla_ensemble_best.pt \
     --ablation_no_two_stage_checkpoint baseline_surrogate/ablation_no_two_stage/runs/narrow_200_300W/ablation_no_two_stage_best.pt \
     --ablation_no_latent_checkpoint    baseline_surrogate/ablation_no_latent/runs/narrow_200_300W/ablation_no_latent_best.pt \
-    --out_dir baseline_surrogate/results
+    --out_dir baseline_surrogate/results_no_latent
 ```
+
+Legacy (includes the latent-encoder main surrogate, for reference — this is
+what produced `results_latent256/`): add back
+`--surrogate_checkpoint surrogate_model_latent_uncertainty_v2/runs/narrow_200_300W/two_stage_best.pt`.
 
 Every `--*_checkpoint` flag is optional — pass only what you have. Evaluates
 every method on the SAME held-out test split (re-derived from
@@ -152,8 +432,9 @@ baseline_surrogate/
   kalman_filter/{model,train}.py
   vanilla_ensemble/{model,train}.py
   ablation_no_two_stage/{model,train}.py
-  ablation_no_latent/{model,train}.py
+  ablation_no_latent/{model,train,evaluate_ood_ratio}.py
   summarize_results.py
   jobs/train_all_baselines.sh
-  results/          ← leaderboard.csv/.png, per_layer_{mae,rmse}.png
+  results_no_latent/  ← leaderboard.csv/.png, per_layer_{mae,rmse}.png — current (no latent encoder/decoder)
+  results_latent256/  ← same, WITH the latent-encoder main surrogate — legacy, see "Result" section above
 ```

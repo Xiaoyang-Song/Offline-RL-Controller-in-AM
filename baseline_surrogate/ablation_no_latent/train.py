@@ -13,6 +13,17 @@ Usage:
         --data_path Data/DatasetV2_layer_12_samples_5000.pkl \\
         --lp_filter_min 200 --lp_filter_max 300 \\
         --out_dir baseline_surrogate/ablation_no_latent/runs/narrow_200_300W
+
+Gapped/patchy + perturbation + decorrelated-bootstrap variant (for an
+epistemic-uncertainty stress test via evaluate_ood_ratio.py -- matches
+surrogate_model_latent_uncertainty_v2/train.py's --lp_filter_ranges/
+--perturb_frac/--bootstrap_frac exactly, see that package's README for the
+full rationale):
+    python -m baseline_surrogate.ablation_no_latent.train \\
+        --data_path Data/DatasetV2_layer_12_samples_5000.pkl \\
+        --lp_filter_ranges "100-150,200-250,300-350" \\
+        --perturb_frac 0.1 --bootstrap_frac 0.5 \\
+        --out_dir baseline_surrogate/ablation_no_latent/runs/patchy_100-150_200-250_300-350_perturb0.1
 """
 
 import argparse
@@ -27,7 +38,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspa
 from surrogate_model_latent_uncertainty_v2.dataset_v2 import (
     load_trajectories, split_trajectories, build_normalizers, TwoStageLatentSurrogateDataset,
 )
-from surrogate_model_latent_uncertainty_v2.train import weighted_mse, gaussian_nll
+from surrogate_model_latent_uncertainty_v2.train import weighted_mse, gaussian_nll, _parse_lp_filter_ranges
 from baseline_surrogate.common.train_loop import run_training
 from baseline_surrogate.ablation_no_latent.model import NoLatentTwoStageSurrogate
 
@@ -39,8 +50,31 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--test_fraction", type=float, default=0.10)
     p.add_argument("--initial_temp",  type=float, default=300.0)
     p.add_argument("--seed",          type=int,   default=42)
-    p.add_argument("--lp_filter_min", type=float, default=None)
+    p.add_argument("--lp_filter_min", type=float, default=None,
+                   help="Narrow-surrogate experiment: restrict training transitions to "
+                        "laser power in [min, max]. Requires --lp_filter_max too; "
+                        "mutually exclusive with --lp_filter_ranges.")
     p.add_argument("--lp_filter_max", type=float, default=None)
+    p.add_argument("--lp_filter_ranges", type=str, default=None,
+                   help="Gapped/patchy-surrogate experiment: comma-separated 'lo-hi' laser-power "
+                        "ranges, e.g. '100-150,200-250,300-350' -- a transition is kept if its "
+                        "power falls in the UNION of these ranges, leaving interior gaps bracketed "
+                        "by training data on both sides. Mutually exclusive with "
+                        "--lp_filter_min/--lp_filter_max (pick one). See "
+                        "surrogate_model_latent_uncertainty_v2/README.md's 'Harder / gapped-surrogate "
+                        "experiments' section for the full rationale.")
+    p.add_argument("--perturb_frac", type=float, default=0.0,
+                   help="Additive Gaussian noise on the u_heat_t/s_{t+1} TARGET fields only, scaled "
+                        "per-node as perturb_frac * that node's own state_std (e.g. 0.1 = 10%% of each "
+                        "node's natural variation). 0.0 (default) is a no-op. See "
+                        "TwoStageLatentSurrogateDataset's perturb_frac docstring for the full rationale.")
+    p.add_argument("--perturb_seed", type=int, default=0,
+                   help="RNG seed for --perturb_frac noise (independent of --bootstrap_seed).")
+    p.add_argument("--bootstrap_frac", type=float, default=1.0,
+                   help="Each of the K ensemble members draws round(frac * N) bootstrap samples "
+                        "instead of the standard N-out-of-N (frac=1.0, default). Lowering this "
+                        "decorrelates the K members further, raising epistemic sigma -- especially "
+                        "in sparse regions -- at the cost of each member seeing less data.")
 
     p.add_argument("--n_ensemble",      type=int, default=5)
     p.add_argument("--layer_embed_dim", type=int, default=8)
@@ -114,8 +148,18 @@ def main() -> None:
     state_dim = state_mean.shape[0]
     n_layers  = len(train_trajs[0])
 
+    have_lp_minmax = args.lp_filter_min is not None or args.lp_filter_max is not None
+    have_lp_ranges = args.lp_filter_ranges is not None
+    assert not (have_lp_minmax and have_lp_ranges), \
+        "--lp_filter_min/--lp_filter_max and --lp_filter_ranges are mutually exclusive -- use " \
+        "--lp_filter_ranges 'lo-hi' for a single contiguous range instead of the min/max flags."
+
     lp_filter = None
-    if args.lp_filter_min is not None or args.lp_filter_max is not None:
+    if have_lp_ranges:
+        lp_filter = _parse_lp_filter_ranges(args.lp_filter_ranges)
+        range_str = ", ".join(f"[{lo}, {hi}]" for lo, hi in lp_filter)
+        print(f"[ablation_no_latent.train] LP filter (gapped) active: {range_str} W")
+    elif have_lp_minmax:
         assert args.lp_filter_min is not None and args.lp_filter_max is not None, \
             "--lp_filter_min and --lp_filter_max must be given together."
         lp_filter = (args.lp_filter_min, args.lp_filter_max)
@@ -125,6 +169,8 @@ def main() -> None:
         state_mean=state_mean, state_std=state_std, lp_mean=lp_mean, lp_std=lp_std,
         cool_mean=cool_mean, cool_std=cool_std, initial_temp=args.initial_temp, lp_filter=lp_filter,
         n_ensemble=args.n_ensemble, bootstrap_seed=bootstrap_seed,
+        bootstrap_resample_frac=args.bootstrap_frac,
+        perturb_frac=args.perturb_frac, perturb_seed=args.perturb_seed,
     )
     train_ds = TwoStageLatentSurrogateDataset(train_trajs, **ds_kwargs)
     val_ds   = TwoStageLatentSurrogateDataset(val_trajs,   **ds_kwargs)
