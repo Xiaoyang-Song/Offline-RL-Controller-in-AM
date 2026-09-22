@@ -38,6 +38,24 @@ independently of each other's prediction error — matching the physical
 fact that "no matter what laser power you applied previously, the cooling
 mechanism is the same."
 
+Diagonal vs. low-rank covariance (--rank)
+------------------------------------------
+--rank 0 (default): every member's covariance is diag(exp(2·logσ)), exactly
+the original design — L_nll_heat/L_nll_cool use the plain elementwise
+`gaussian_nll`, byte-for-byte unchanged.
+
+--rank R > 0: every member ALSO outputs a low-rank factor U ∈ R^{D×R}, so
+its covariance is diag(exp(2·logσ)) + U·Uᵀ (see model.py's module docstring
+for the physical motivation — spatially correlated field errors a diagonal
+can't represent). L_nll_heat/L_nll_cool switch to `low_rank_gaussian_nll`,
+a Woodbury-identity Gaussian NLL that only inverts an (R×R) matrix per
+sample instead of the full (D×D) covariance. This ONLY changes the NLL term
+— L_recon_heat/L_recon_cool (plain MSE on the mean) are unaffected either way.
+
+    python -m surrogate_model_v3.train \\
+        --data_path Data/DatasetV2_layer_12_samples_5000.pkl \\
+        --rank 8 --out_dir surrogate_model_v3/runs/full_range_rank8
+
 All outputs are written under --out_dir (default:
 surrogate_model_v3/runs/<timestamp>/).
 """
@@ -120,6 +138,12 @@ def parse_args() -> argparse.Namespace:
                    help="Optional: seed each of the K ensemble members' weight init independently "
                         "(base seed + per-member offset). Default None = every member draws "
                         "sequentially from one global RNG stream.")
+    p.add_argument("--rank", type=int, default=0,
+                   help="Low-rank aleatoric covariance factor dimension (default 0 = pure diagonal, "
+                        "the original design). rank>0 additionally learns a per-member U in R^(D x "
+                        "rank) so each member's covariance is diag(exp(2 logsigma)) + U U^T instead "
+                        "of just diagonal -- see model.py's module docstring. Switches the NLL loss "
+                        "to the Woodbury-identity low_rank_gaussian_nll; L_recon_* is unaffected.")
 
     # ── bootstrap ensemble ────────────────────────────────────────────────────
     p.add_argument("--bootstrap_seed", type=int, default=-1,
@@ -192,9 +216,63 @@ def gaussian_nll(
     target:         torch.Tensor,   # (K, B, D)
     sample_weights: Optional[torch.Tensor] = None,  # (K, B) or None
 ) -> torch.Tensor:
+    """UNCHANGED — diagonal-covariance Gaussian NLL, used whenever
+    model.rank == 0. See `low_rank_gaussian_nll` for the rank>0 version."""
     var = (2.0 * log_sigma).exp()
     nll = 0.5 * (LOG_2PI + 2.0 * log_sigma + (target - mu).pow(2) / var)
     per_sample = nll.mean(dim=-1)
+    if sample_weights is not None:
+        denom = sample_weights.sum().clamp_min(1e-8)
+        return (per_sample * sample_weights).sum() / denom
+    return per_sample.mean()
+
+
+def low_rank_gaussian_nll(
+    mu:             torch.Tensor,   # (K, B, D)
+    log_sigma:      torch.Tensor,   # (K, B, D)
+    u:              torch.Tensor,   # (K, B, D, rank)
+    target:         torch.Tensor,   # (K, B, D)
+    sample_weights: Optional[torch.Tensor] = None,  # (K, B) or None
+    jitter:         float = 1e-6,
+) -> torch.Tensor:
+    """
+    Gaussian NLL under Sigma = diag(exp(2*log_sigma)) + u @ u^T (see
+    model.py's module docstring for why: low-rank + diagonal captures
+    spatially-correlated field errors a pure diagonal can't). Naively this
+    needs a (D x D) inverse/determinant per sample -- D=1053 makes that
+    infeasible in a training loop. The Woodbury identity + matrix
+    determinant lemma reduce it to only inverting/det'ing the (rank x rank)
+    matrix M = I_r + U^T D^-1 U:
+
+        Sigma^-1 x = D^-1 x - D^-1 U M^-1 U^T D^-1 x
+        log|Sigma| = log|D| + log|M|
+
+    Returns the SAME "mean negative log density per dimension" convention
+    as `gaussian_nll` (divided by D) so --nll_heat_weight/--nll_cool_weight
+    keep the same scale regardless of --rank; reduces to `gaussian_nll`
+    exactly as rank -> 0 (U -> the empty matrix, M -> I_r trivially).
+    """
+    K, B, D = mu.shape
+    r = u.shape[-1]
+    d    = (2.0 * log_sigma).exp().reshape(K * B, D)     # (KB, D)
+    U    = u.reshape(K * B, D, r)                          # (KB, D, r)
+    diff = (target - mu).reshape(K * B, D)                 # (KB, D)
+
+    d_inv    = 1.0 / d
+    Ud       = U * d_inv.unsqueeze(-1)                                          # D^-1 U, (KB, D, r)
+    eye_r    = torch.eye(r, device=u.device, dtype=u.dtype).unsqueeze(0)
+    M        = eye_r * (1.0 + jitter) + torch.einsum("ndr,nds->nrs", U, Ud)     # I_r + U^T D^-1 U, (KB, r, r)
+
+    Dinv_diff    = d_inv * diff                                                  # (KB, D)
+    UtDinv_diff  = torch.einsum("ndr,nd->nr", U, Dinv_diff)                     # U^T D^-1 diff, (KB, r)
+    M_solve      = torch.linalg.solve(M, UtDinv_diff.unsqueeze(-1)).squeeze(-1)  # M^-1 (...), (KB, r)
+    quad         = (Dinv_diff * diff).sum(-1) - (UtDinv_diff * M_solve).sum(-1)  # x^T Sigma^-1 x, (KB,)
+
+    logdet_sigma = torch.log(d).sum(-1) + torch.linalg.slogdet(M).logabsdet     # (KB,)
+
+    nll_total   = 0.5 * (D * LOG_2PI + logdet_sigma + quad)   # joint NLL, (KB,)
+    per_sample  = (nll_total / D).reshape(K, B)                # per-dim convention, matches gaussian_nll
+
     if sample_weights is not None:
         denom = sample_weights.sum().clamp_min(1e-8)
         return (per_sample * sample_weights).sum() / denom
@@ -211,10 +289,13 @@ def compute_losses(
     layer_indices:    torch.Tensor,              # (B,)
     bootstrap_masks:  torch.Tensor,              # (B, K)
 ) -> Dict[str, torch.Tensor]:
-    """Returns dict with L_recon_heat, L_nll_heat, L_recon_cool, L_nll_cool."""
+    """Returns dict with L_recon_heat, L_nll_heat, L_recon_cool, L_nll_cool.
+    NLL uses `low_rank_gaussian_nll` when the model has a low-rank factor
+    (model.rank>0, i.e. out["u_heat"]/out["u_cool"] are not None) and the
+    original `gaussian_nll` otherwise — UNCHANGED for rank=0 models."""
     out = model(s, a, c, h, layer_indices)
-    mu_heat, log_sigma_heat = out["mu_heat"], out["log_sigma_heat"]
-    mu_cool, log_sigma_cool = out["mu_cool"], out["log_sigma_cool"]
+    mu_heat, log_sigma_heat, u_heat = out["mu_heat"], out["log_sigma_heat"], out.get("u_heat")
+    mu_cool, log_sigma_cool, u_cool = out["mu_cool"], out["log_sigma_cool"], out.get("u_cool")
 
     K, B, D = mu_heat.shape
     bw = bootstrap_masks.t()  # (K, B)
@@ -225,7 +306,10 @@ def compute_losses(
     L_recon_heat = weighted_mse(heat_preds, h_exp, sample_weights=bw)
 
     delta_heat_target = (h - s).unsqueeze(0).expand(K, -1, -1)
-    L_nll_heat = gaussian_nll(mu_heat, log_sigma_heat, delta_heat_target, sample_weights=bw)
+    if u_heat is not None:
+        L_nll_heat = low_rank_gaussian_nll(mu_heat, log_sigma_heat, u_heat, delta_heat_target, sample_weights=bw)
+    else:
+        L_nll_heat = gaussian_nll(mu_heat, log_sigma_heat, delta_heat_target, sample_weights=bw)
 
     # ── cooling stage (teacher-forced on ground-truth u_heat) ────────────────
     next_preds   = h.unsqueeze(0) + mu_cool                            # (K, B, D)
@@ -233,7 +317,10 @@ def compute_losses(
     L_recon_cool = weighted_mse(next_preds, s2_exp, sample_weights=bw)
 
     delta_cool_target = (s2 - h).unsqueeze(0).expand(K, -1, -1)
-    L_nll_cool = gaussian_nll(mu_cool, log_sigma_cool, delta_cool_target, sample_weights=bw)
+    if u_cool is not None:
+        L_nll_cool = low_rank_gaussian_nll(mu_cool, log_sigma_cool, u_cool, delta_cool_target, sample_weights=bw)
+    else:
+        L_nll_cool = gaussian_nll(mu_cool, log_sigma_cool, delta_cool_target, sample_weights=bw)
 
     return dict(
         recon_heat=L_recon_heat, nll_heat=L_nll_heat,
@@ -366,6 +453,7 @@ def _save_checkpoint(
                 "dropout":         args.dropout,
                 "mu_init_scale":   args.mu_init_scale,
                 "member_init_seed": args.member_init_seed,
+                "rank":            model.rank,
             },
             "train_args": vars(args),
         },
@@ -441,6 +529,7 @@ def main() -> None:
         state_dim=state_dim, lp_dim=1, cool_dim=1, n_ensemble=args.n_ensemble, n_layers=n_layers,
         layer_embed_dim=args.layer_embed_dim, trans_hidden=args.trans_hidden, trans_depth=args.trans_depth,
         dropout=args.dropout, mu_init_scale=args.mu_init_scale, member_init_seed=args.member_init_seed,
+        rank=args.rank,
     )
     model = TwoStageSurrogate(**model_kwargs).to(device)
     print(f"[train] {model}")

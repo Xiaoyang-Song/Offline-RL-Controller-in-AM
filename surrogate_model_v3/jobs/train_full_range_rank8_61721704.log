@@ -1,0 +1,46 @@
+============================================================
+Job ID   : 61721704
+Node     : gl1023
+Started  : Tue Sep 22 12:41:23 EDT 2026
+============================================================
+Python : /home/xysong/.conda/envs/RL/bin/python
+Torch  : 2.5.1+cu121
+CUDA   : True
+============================================================
+/home/xysong/.conda/envs/RL/lib/python3.10/site-packages/torch/utils/data/dataloader.py:617: UserWarning: This DataLoader will create 4 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+/home/xysong/.conda/envs/RL/lib/python3.10/site-packages/torch/utils/data/dataloader.py:617: UserWarning: This DataLoader will create 4 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+[train] Output dir : surrogate_model_v3/runs/full_range_rank8
+[train] Device     : cuda
+[dataset] Loaded 5000 trajectories × 12 layers from DatasetV2_layer_12_samples_5000.pkl
+[dataset] Split → train 4000 | val 500 | test 500
+[dataset] State mean ∈ [164.2, 2761.5], std ∈ [31.5926, 1672.6]
+[dataset] Laser power mean = 249.87 W, std = 89.44 W
+[dataset] Cool time    mean = 0.1005 s, std = 0.0314 s
+[dataset] Bootstrap masks: (48000, 5), resample_frac=1.0, ~36.8% of (sample, member) pairs unseen (expected ≈ 36.8%)
+[TwoStageSurrogateDataset] 48,000 transitions, state_dim=1053, layers 0–11, bootstrap K=5 (transition-level resampling)
+[dataset] Bootstrap masks: (6000, 5), resample_frac=1.0, ~36.6% of (sample, member) pairs unseen (expected ≈ 36.8%)
+[TwoStageSurrogateDataset] 6,000 transitions, state_dim=1053, layers 0–11, bootstrap K=5 (transition-level resampling)
+[train] TwoStageSurrogate(state=1053, lp_dim=1, cool_dim=1, K=5, n_layers=12, embed=8, rank=8 | heat×5=7,987,500  cool×5=7,987,500 | total=15,975,000)
+
+[train] Starting training for up to 500 epochs (patience=30)
+[train] Weights   → recon_heat=1.0  nll_heat=0.1  recon_cool=1.0  nll_cool=0.1
+[train] Ensemble  → K=5 members, bootstrap_seed=42, bootstrap_frac=1.0
+--------------------------------------------------------------------------------
+Epoch    1/500 | train -0.56668 [rh=0.0176 nh=-3.0354 rc=0.0145 nc=-2.9517] | val -0.72172 | lr 1.00e-03 |   20.7s ✓ best
+Epoch    2/500 | train -0.75741 [rh=0.0034 nh=-3.8867 rc=0.0061 nc=-3.7821] | val -0.78755 | lr 1.00e-03 |   39.3s ✓ best
+Epoch    3/500 | train -0.80063 [rh=0.0019 nh=-4.0901 rc=0.0044 nc=-3.9796] | val -0.80888 | lr 1.00e-03 |   59.2s ✓ best
+Epoch    4/500 | train -0.83880 [rh=0.0017 nh=-4.2904 rc=0.0031 nc=-4.1449] | val -0.86901 | lr 1.00e-03 |   77.8s ✓ best
+Epoch    5/500 | train -0.86195 [rh=0.0011 nh=-4.4379 rc=0.0042 nc=-4.2346] | val -0.86519 | lr 1.00e-03 |   95.9s (no improvement 1/30)
+Epoch    6/500 | train -0.89604 [rh=0.0010 nh=-4.5884 rc=0.0029 nc=-4.4110] | val -0.91801 | lr 1.00e-03 |  114.5s ✓ best
+Epoch    7/500 | train -0.91787 [rh=0.0013 nh=-4.6994 rc=0.0023 nc=-4.5156] | val -0.91764 | lr 1.00e-03 |  132.6s (no improvement 1/30)
+Epoch    8/500 | train -0.93554 [rh=0.0010 nh=-4.8556 rc=0.0042 nc=-4.5515] | val -0.95549 | lr 9.99e-04 |  152.4s ✓ best
+Epoch    9/500 | train -0.95475 [rh=0.0013 nh=-4.9324 rc=0.0035 nc=-4.6627] | val -0.98767 | lr 9.99e-04 |  171.0s ✓ best
+Epoch   10/500 | train -0.97267 [rh=0.0017 nh=-5.0224 rc=0.0024 nc=-4.7445] | val -0.96822 | lr 9.99e-04 |  189.2s (no improvement 1/30)
+Epoch   11/500 | train -0.99206 [rh=0.0031 nh=-5.1155 rc=0.0020 nc=-4.8562] | val -0.98618 | lr 9.99e-04 |  207.3s (no improvement 2/30)
+Epoch   12/500 | train -1.01481 [rh=0.0014 nh=-5.2539 rc=0.0019 nc=-4.9271] | val -0.96894 | lr 9.99e-04 |  225.5s (no improvement 3/30)
+Epoch   13/500 | train -1.02367 [rh=0.0012 nh=-5.3019 rc=0.0019 nc=-4.9664] | val -1.03793 | lr 9.98e-04 |  245.2s ✓ best
+Epoch   14/500 | train -1.02351 [rh=0.0012 nh=-5.3279 rc=0.0021 nc=-4.9393] | val -1.02025 | lr 9.98e-04 |  263.4s (no improvement 1/30)
+Epoch   15/500 | train -1.04387 [rh=0.0010 nh=-5.4390 rc=0.0021 nc=-5.0314] | val -1.05535 | lr 9.98e-04 |  281.9s ✓ best
+Epoch   16/500 | train -1.04508 [rh=0.0020 nh=-5.3881 rc=0.0018 nc=-5.1004] | val -1.05557 | lr 9.98e-04 |  300.5s ✓ best

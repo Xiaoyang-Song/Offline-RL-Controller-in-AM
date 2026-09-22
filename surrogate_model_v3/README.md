@@ -68,8 +68,70 @@ evaluate_ood.py        ID-vs-OOD epistemic-uncertainty stress test (narrow or
                       gapped checkpoint vs. the wider dataset it was filtered from)
 evaluate_ood_ratio.py  coverage-normalized OOD check: epistemic-σ ratio of a
                       patchy checkpoint vs. a matched full-range checkpoint
+compare_uncertainty_methods.py   diagonal-vs-low-rank, naive-vs-propagated
+                      uncertainty comparison — see "Uncertainty
+                      representation" below
 jobs/                 SLURM submission scripts for all of the above
 ```
+
+## Uncertainty representation: diagonal vs. low-rank, naive-sum vs. propagated
+
+Two independent, opt-in knobs on top of the base design (both default to
+the original behavior — nothing changes unless you ask):
+
+**`--rank` (train.py, default 0)** — each ensemble member's own covariance
+is `diag(σ²)` by default (matches the original design exactly). `--rank R`
+(e.g. 8) additionally learns a low-rank factor `U ∈ R^{D×R}` per member, so
+`Σ = diag(σ²) + UUᵀ` instead. Motivation: the 1053-dim field is a
+heat-diffusion result over a mesh, so neighbouring-node errors are
+spatially correlated, not independent — a pure diagonal covariance
+understates the uncertainty of anything spatially aggregated (e.g. the
+ROI-averaged reward, `Var(mean)` under independence shrinks like `1/N`, it
+does not under correlation). Trained via a Woodbury-identity Gaussian NLL
+(`train.py`'s `low_rank_gaussian_nll`) so only an `(R×R)` matrix needs
+inverting per sample, not the full `(D×D)` `Σ`.
+
+Independently of `--rank`, the K ensemble members' own means already give
+an EXACT rank-(K−1) covariance factor for the epistemic term — `(μ_k−μ̄)/√K`
+stacked over `k` — at zero extra cost, regardless of `--rank`. Only the
+ALEATORIC side needs `rank>0` to get a matching low-rank factor.
+
+**`propagate_uncertainty` (a call argument on `rollout`/`predict_unnorm`,
+default `False`)** — the naive combination `Var_total = Var_heat + Var_cool`
+assumes the cooling stage passes heating-stage error through unchanged.
+`propagate_uncertainty=True` instead propagates heating's uncertainty
+through the cooling mean function's local Jacobian (EKF-style moment
+propagation) before combining, since `μ_cool` is a nonlinear function of
+its input and can amplify or damp upstream error. The structured (exact
+epistemic, and low-rank aleatoric when `rank>0`) directions are propagated
+EXACTLY via Jacobian-vector products (batched into one extra
+forward+backward pass, not one per direction); the residual pure diagonal
+is propagated via a cheap Hutchinson stochastic diagonal estimate of the
+same Jacobian.
+
+```bash
+# train the low-rank variant (rank=8), matched otherwise to the full_range run:
+python -m surrogate_model_v3.train \
+    --data_path Data/DatasetV2_layer_12_samples_5000.pkl --rank 8 \
+    --out_dir surrogate_model_v3/runs/full_range_rank8
+# or: sbatch surrogate_model_v3/jobs/train_full_range_rank8.sh
+
+# compare diagonal vs. low-rank, naive-sum vs. propagated (up to 4 configs):
+python -m surrogate_model_v3.compare_uncertainty_methods \
+    --data_path Data/DatasetV2_layer_12_samples_5000.pkl \
+    --checkpoint_diag    surrogate_model_v3/runs/full_range/surrogate_best.pt \
+    --checkpoint_lowrank surrogate_model_v3/runs/full_range_rank8/surrogate_best.pt \
+    --out_dir surrogate_model_v3/results_uncertainty_comparison
+# or: sbatch surrogate_model_v3/jobs/compare_uncertainty.sh
+```
+
+Outputs: `per_layer_uncertainty_comparison.png` (does uncertainty compound
+more realistically over the 12-layer rollout), `uncertainty_vs_laser_power.png`
+(point `--checkpoint_diag`/`--checkpoint_lowrank` at a narrow-trained
+checkpoint to see whether propagation/low-rank sharpens the OOD signal —
+pairs naturally with `narrow_200_300W`), and `jacobian_amplification_map.png`
+(a novel diagnostic: mean `1 + ∂μ_cool/∂s_heat` per layer — >1 means cooling
+on average amplifies upstream heating error, <1 means it damps it).
 
 ## Usage
 
