@@ -394,6 +394,24 @@ def main() -> None:
     results,    binned    = {}, {}   # teacher-forced
     results_ar, binned_ar = {}, {}   # auto-regressive
 
+    # ── proposed method: surrogate_model_v3 (two-stage, no latent space) ────
+    if args.surrogate_v3_checkpoint:
+        model, sm, ss, lm, ls, cm, cs = load_surrogate_v3(args.surrogate_v3_checkpoint, device)
+        name = "surrogate_v3 (proposed)"
+
+        def _predict_fn_v3(s, a, c, layer_idx, model=model):
+            return model.predict_mean(s, a, c, layer_idx)
+
+        mae, rmse, act, sq = _eval_teacher_forced(name, _predict_fn_v3, sm, ss, lm, ls, cm, cs,
+                                                  test_trajs, device, traj_len)
+        results[name] = (mae, rmse, None, model.count_parameters())
+        binned[name] = (act, sq)
+
+        mae_ar, rmse_ar, act_ar, sq_ar = _eval_autoregressive(name, _predict_fn_v3, sm, ss, lm, ls, cm, cs,
+                                                              test_trajs, device, traj_len)
+        results_ar[name] = (mae_ar, rmse_ar, None, model.count_parameters())
+        binned_ar[name] = (act_ar, sq_ar)
+
     # ── main surrogate (two-stage) ───────────────────────────────────────────
     if args.surrogate_checkpoint:
         (model, sm, ss, lm, ls, cm, cs, _roi) = load_two_stage_surrogate(args.surrogate_checkpoint, device)

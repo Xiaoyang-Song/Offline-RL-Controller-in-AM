@@ -1,0 +1,772 @@
+============================================================
+Job ID   : 61716836
+Node     : gl1017
+Started  : Tue Sep 22 12:02:36 EDT 2026
+============================================================
+Python : /home/xysong/.conda/envs/RL/bin/python
+Torch  : 2.5.1+cu121
+CUDA   : True
+============================================================
+=== [1/6] surrogate_v3 (proposed) ===
+/home/xysong/.conda/envs/RL/lib/python3.10/site-packages/torch/utils/data/dataloader.py:617: UserWarning: This DataLoader will create 2 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+/home/xysong/.conda/envs/RL/lib/python3.10/site-packages/torch/utils/data/dataloader.py:617: UserWarning: This DataLoader will create 2 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+[train] Output dir : surrogate_model_v3/runs/narrow_200_300W
+[train] Device     : cuda
+[dataset] Loaded 5000 trajectories × 12 layers from DatasetV2_layer_12_samples_5000.pkl
+[dataset] Split → train 4000 | val 500 | test 500
+[dataset] State mean ∈ [164.2, 2761.5], std ∈ [31.5926, 1672.6]
+[dataset] Laser power mean = 249.87 W, std = 89.44 W
+[dataset] Cool time    mean = 0.1005 s, std = 0.0314 s
+[train] LP filter active: [200.0, 300.0] W
+[TwoStageSurrogateDataset] lp_filter=[200.0, 300.0]W kept 17,094/48,000 transitions
+[dataset] Bootstrap masks: (17094, 5), resample_frac=1.0, ~36.7% of (sample, member) pairs unseen (expected ≈ 36.8%)
+[TwoStageSurrogateDataset] 17,094 transitions, state_dim=1053, layers 0–11, bootstrap K=5 (transition-level resampling)
+[TwoStageSurrogateDataset] lp_filter=[200.0, 300.0]W kept 2,168/6,000 transitions
+[dataset] Bootstrap masks: (2168, 5), resample_frac=1.0, ~36.7% of (sample, member) pairs unseen (expected ≈ 36.8%)
+[TwoStageSurrogateDataset] 2,168 transitions, state_dim=1053, layers 0–11, bootstrap K=5 (transition-level resampling)
+[train] TwoStageSurrogate(state=1053, lp_dim=1, cool_dim=1, K=5, n_layers=12, embed=8 | heat×5=2,554,020  cool×5=2,554,020 | total=5,108,040)
+
+[train] Starting training for up to 150 epochs (patience=15)
+[train] Weights   → recon_heat=1.0  nll_heat=0.1  recon_cool=1.0  nll_cool=0.1
+[train] Ensemble  → K=5 members, bootstrap_seed=42, bootstrap_frac=1.0
+--------------------------------------------------------------------------------
+Epoch    1/150 | train -0.23142 [rh=0.0118 nh=-1.6746 rc=0.0182 nc=-0.9402] | val -0.36651 | lr 1.00e-03 |    5.3s ✓ best
+Epoch    2/150 | train -0.38066 [rh=0.0033 nh=-2.4364 rc=0.0062 nc=-1.4654] | val -0.39828 | lr 1.00e-03 |    9.0s ✓ best
+Epoch    3/150 | train -0.38684 [rh=0.0032 nh=-2.4650 rc=0.0057 nc=-1.4923] | val -0.28794 | lr 9.99e-04 |   12.6s (no improvement 1/15)
+Epoch    4/150 | train -0.42707 [rh=0.0028 nh=-2.6847 rc=0.0043 nc=-1.6578] | val -0.45004 | lr 9.98e-04 |   16.3s ✓ best
+Epoch    5/150 | train -0.45781 [rh=0.0021 nh=-2.9787 rc=0.0041 nc=-1.6615] | val -0.41333 | lr 9.97e-04 |   19.9s (no improvement 1/15)
+Epoch    6/150 | train -0.45711 [rh=0.0017 nh=-3.0391 rc=0.0047 nc=-1.5960] | val -0.45569 | lr 9.96e-04 |   23.6s ✓ best
+Epoch    7/150 | train -0.50215 [rh=0.0012 nh=-3.1864 rc=0.0033 nc=-1.8806] | val -0.51850 | lr 9.95e-04 |   27.3s ✓ best
+Epoch    8/150 | train -0.50818 [rh=0.0009 nh=-3.2807 rc=0.0033 nc=-1.8431] | val -0.52520 | lr 9.93e-04 |   31.1s ✓ best
+Epoch    9/150 | train -0.54816 [rh=0.0006 nh=-3.3469 rc=0.0018 nc=-2.1592] | val -0.47763 | lr 9.91e-04 |   34.7s (no improvement 1/15)
+Epoch   10/150 | train -0.50405 [rh=0.0005 nh=-3.4100 rc=0.0039 nc=-1.6744] | val -0.38963 | lr 9.89e-04 |   38.2s (no improvement 2/15)
+Epoch   11/150 | train -0.51632 [rh=0.0008 nh=-3.2422 rc=0.0030 nc=-1.9591] | val -0.55176 | lr 9.87e-04 |   42.0s ✓ best
+Epoch   12/150 | train -0.56113 [rh=0.0011 nh=-3.4025 rc=0.0013 nc=-2.2328] | val -0.59431 | lr 9.84e-04 |   46.6s ✓ best
+Epoch   13/150 | train -0.57919 [rh=0.0006 nh=-3.4835 rc=0.0013 nc=-2.3275] | val -0.47664 | lr 9.82e-04 |   51.0s (no improvement 1/15)
+Epoch   14/150 | train -0.56200 [rh=0.0005 nh=-3.6161 rc=0.0020 nc=-2.0283] | val -0.59042 | lr 9.79e-04 |   54.5s (no improvement 2/15)
+Epoch   15/150 | train -0.60192 [rh=0.0006 nh=-3.5004 rc=0.0007 nc=-2.5320] | val -0.62901 | lr 9.76e-04 |   58.2s ✓ best
+Epoch   16/150 | train -0.61581 [rh=0.0003 nh=-3.6163 rc=0.0006 nc=-2.5515] | val -0.59830 | lr 9.72e-04 |   61.8s (no improvement 1/15)
+Epoch   17/150 | train -0.61638 [rh=0.0003 nh=-3.6319 rc=0.0007 nc=-2.5419] | val -0.59596 | lr 9.69e-04 |   65.3s (no improvement 2/15)
+Epoch   18/150 | train -0.63548 [rh=0.0002 nh=-3.7040 rc=0.0005 nc=-2.6580] | val -0.65776 | lr 9.65e-04 |   69.0s ✓ best
+Epoch   19/150 | train -0.63528 [rh=0.0001 nh=-3.7508 rc=0.0006 nc=-2.6097] | val -0.64303 | lr 9.61e-04 |   72.6s (no improvement 1/15)
+Epoch   20/150 | train -0.63925 [rh=0.0002 nh=-3.6368 rc=0.0004 nc=-2.7622] | val -0.65473 | lr 9.57e-04 |   76.2s (no improvement 2/15)
+Epoch   21/150 | train -0.65165 [rh=0.0003 nh=-3.8068 rc=0.0004 nc=-2.7168] | val -0.64053 | lr 9.53e-04 |   79.7s (no improvement 3/15)
+Epoch   22/150 | train -0.66346 [rh=0.0002 nh=-3.8017 rc=0.0004 nc=-2.8384] | val -0.67904 | lr 9.48e-04 |   83.5s ✓ best
+Epoch   23/150 | train -0.66485 [rh=0.0002 nh=-3.7984 rc=0.0004 nc=-2.8555] | val -0.66170 | lr 9.44e-04 |   87.1s (no improvement 1/15)
+Epoch   24/150 | train -0.67777 [rh=0.0001 nh=-3.8559 rc=0.0004 nc=-2.9270] | val -0.70193 | lr 9.39e-04 |   90.8s ✓ best
+Epoch   25/150 | train -0.68258 [rh=0.0001 nh=-3.9347 rc=0.0003 nc=-2.8954] | val -0.68527 | lr 9.34e-04 |   94.4s (no improvement 1/15)
+Epoch   26/150 | train -0.67439 [rh=0.0001 nh=-3.9802 rc=0.0005 nc=-2.7692] | val -0.70381 | lr 9.28e-04 |   98.1s ✓ best
+Epoch   27/150 | train -0.68750 [rh=0.0001 nh=-3.8908 rc=0.0003 nc=-2.9878] | val -0.70540 | lr 9.23e-04 |  101.8s ✓ best
+Epoch   28/150 | train -0.69734 [rh=0.0001 nh=-3.8965 rc=0.0002 nc=-3.0799] | val -0.71846 | lr 9.17e-04 |  105.5s ✓ best
+Epoch   29/150 | train -0.71581 [rh=0.0000 nh=-4.0630 rc=0.0002 nc=-3.0977] | val -0.69959 | lr 9.11e-04 |  109.1s (no improvement 1/15)
+Epoch   30/150 | train -0.70706 [rh=0.0001 nh=-4.0045 rc=0.0002 nc=-3.0691] | val -0.70885 | lr 9.05e-04 |  112.6s (no improvement 2/15)
+Epoch   31/150 | train -0.71569 [rh=0.0000 nh=-4.0840 rc=0.0002 nc=-3.0755] | val -0.70165 | lr 8.99e-04 |  116.2s (no improvement 3/15)
+Epoch   32/150 | train -0.72565 [rh=0.0000 nh=-4.0698 rc=0.0002 nc=-3.1889] | val -0.69631 | lr 8.93e-04 |  119.7s (no improvement 4/15)
+Epoch   33/150 | train -0.71405 [rh=0.0000 nh=-4.1287 rc=0.0002 nc=-3.0148] | val -0.67716 | lr 8.86e-04 |  123.3s (no improvement 5/15)
+Epoch   34/150 | train -0.71216 [rh=0.0000 nh=-4.1322 rc=0.0003 nc=-2.9932] | val -0.73807 | lr 8.80e-04 |  127.0s ✓ best
+Epoch   35/150 | train -0.72245 [rh=0.0000 nh=-4.0790 rc=0.0002 nc=-3.1477] | val -0.72215 | lr 8.73e-04 |  130.6s (no improvement 1/15)
+Epoch   36/150 | train -0.74438 [rh=0.0000 nh=-4.1509 rc=0.0001 nc=-3.2947] | val -0.70939 | lr 8.66e-04 |  134.1s (no improvement 2/15)
+Epoch   37/150 | train -0.73256 [rh=0.0000 nh=-4.1927 rc=0.0002 nc=-3.1351] | val -0.77038 | lr 8.59e-04 |  137.8s ✓ best
+Epoch   38/150 | train -0.74711 [rh=0.0000 nh=-4.1919 rc=0.0001 nc=-3.2810] | val -0.73119 | lr 8.51e-04 |  141.4s (no improvement 1/15)
+Epoch   39/150 | train -0.74367 [rh=0.0000 nh=-4.2135 rc=0.0002 nc=-3.2251] | val -0.72221 | lr 8.44e-04 |  145.7s (no improvement 2/15)
+Epoch   40/150 | train -0.74154 [rh=0.0000 nh=-4.1739 rc=0.0001 nc=-3.2432] | val -0.73456 | lr 8.36e-04 |  150.0s (no improvement 3/15)
+Epoch   41/150 | train -0.76345 [rh=0.0000 nh=-4.3132 rc=0.0001 nc=-3.3229] | val -0.75618 | lr 8.28e-04 |  153.6s (no improvement 4/15)
+Epoch   42/150 | train -0.75117 [rh=0.0000 nh=-4.2957 rc=0.0002 nc=-3.2179] | val -0.76540 | lr 8.21e-04 |  157.1s (no improvement 5/15)
+Epoch   43/150 | train -0.76146 [rh=0.0000 nh=-4.3199 rc=0.0001 nc=-3.2965] | val -0.72763 | lr 8.12e-04 |  160.6s (no improvement 6/15)
+Epoch   44/150 | train -0.77021 [rh=0.0000 nh=-4.3500 rc=0.0001 nc=-3.3535] | val -0.78092 | lr 8.04e-04 |  164.4s ✓ best
+Epoch   45/150 | train -0.76782 [rh=0.0000 nh=-4.3087 rc=0.0001 nc=-3.3709] | val -0.76644 | lr 7.96e-04 |  167.9s (no improvement 1/15)
+Epoch   46/150 | train -0.78112 [rh=0.0000 nh=-4.4056 rc=0.0001 nc=-3.4070] | val -0.78592 | lr 7.88e-04 |  171.6s ✓ best
+Epoch   47/150 | train -0.77343 [rh=0.0000 nh=-4.3807 rc=0.0001 nc=-3.3551] | val -0.77611 | lr 7.79e-04 |  175.2s (no improvement 1/15)
+Epoch   48/150 | train -0.79231 [rh=0.0000 nh=-4.4538 rc=0.0001 nc=-3.4705] | val -0.77264 | lr 7.70e-04 |  178.7s (no improvement 2/15)
+Epoch   49/150 | train -0.78145 [rh=0.0000 nh=-4.4113 rc=0.0001 nc=-3.4044] | val -0.78416 | lr 7.61e-04 |  182.2s (no improvement 3/15)
+Epoch   50/150 | train -0.79069 [rh=0.0000 nh=-4.4539 rc=0.0001 nc=-3.4542] | val -0.79321 | lr 7.52e-04 |  185.9s ✓ best
+Epoch   51/150 | train -0.78793 [rh=0.0000 nh=-4.3970 rc=0.0001 nc=-3.4835] | val -0.79225 | lr 7.43e-04 |  189.5s (no improvement 1/15)
+Epoch   52/150 | train -0.79554 [rh=0.0000 nh=-4.5587 rc=0.0001 nc=-3.3980] | val -0.77144 | lr 7.34e-04 |  193.0s (no improvement 2/15)
+Epoch   53/150 | train -0.80316 [rh=0.0000 nh=-4.5118 rc=0.0001 nc=-3.5208] | val -0.80810 | lr 7.25e-04 |  196.7s ✓ best
+Epoch   54/150 | train -0.79740 [rh=0.0000 nh=-4.5045 rc=0.0001 nc=-3.4707] | val -0.82680 | lr 7.16e-04 |  200.5s ✓ best
+Epoch   55/150 | train -0.81161 [rh=0.0000 nh=-4.5572 rc=0.0001 nc=-3.5599] | val -0.79847 | lr 7.06e-04 |  204.0s (no improvement 1/15)
+Epoch   56/150 | train -0.79700 [rh=0.0000 nh=-4.5776 rc=0.0001 nc=-3.3936] | val -0.80704 | lr 6.97e-04 |  207.6s (no improvement 2/15)
+Epoch   57/150 | train -0.81958 [rh=0.0000 nh=-4.6333 rc=0.0001 nc=-3.5634] | val -0.80230 | lr 6.87e-04 |  211.1s (no improvement 3/15)
+Epoch   58/150 | train -0.79978 [rh=0.0000 nh=-4.5490 rc=0.0001 nc=-3.4500] | val -0.80077 | lr 6.78e-04 |  214.6s (no improvement 4/15)
+Epoch   59/150 | train -0.82164 [rh=0.0000 nh=-4.6314 rc=0.0001 nc=-3.5860] | val -0.83061 | lr 6.68e-04 |  218.3s ✓ best
+Epoch   60/150 | train -0.82582 [rh=0.0000 nh=-4.6802 rc=0.0001 nc=-3.5789] | val -0.82027 | lr 6.58e-04 |  221.9s (no improvement 1/15)
+Epoch   61/150 | train -0.82289 [rh=0.0000 nh=-4.6231 rc=0.0001 nc=-3.6066] | val -0.83119 | lr 6.48e-04 |  225.6s ✓ best
+Epoch   62/150 | train -0.82215 [rh=0.0000 nh=-4.6333 rc=0.0001 nc=-3.5891] | val -0.83383 | lr 6.38e-04 |  229.3s ✓ best
+Epoch   63/150 | train -0.82849 [rh=0.0000 nh=-4.6600 rc=0.0001 nc=-3.6257] | val -0.82698 | lr 6.28e-04 |  232.8s (no improvement 1/15)
+Epoch   64/150 | train -0.83703 [rh=0.0000 nh=-4.7011 rc=0.0001 nc=-3.6700] | val -0.85658 | lr 6.18e-04 |  236.6s ✓ best
+Epoch   65/150 | train -0.84403 [rh=0.0000 nh=-4.7634 rc=0.0001 nc=-3.6777] | val -0.83872 | lr 6.08e-04 |  240.1s (no improvement 1/15)
+Epoch   66/150 | train -0.84979 [rh=0.0000 nh=-4.7907 rc=0.0001 nc=-3.7079] | val -0.81558 | lr 5.98e-04 |  243.6s (no improvement 2/15)
+Epoch   67/150 | train -0.83660 [rh=0.0000 nh=-4.7142 rc=0.0001 nc=-3.6526] | val -0.87181 | lr 5.88e-04 |  248.1s ✓ best
+Epoch   68/150 | train -0.85232 [rh=0.0000 nh=-4.8246 rc=0.0001 nc=-3.6994] | val -0.82947 | lr 5.77e-04 |  251.7s (no improvement 1/15)
+Epoch   69/150 | train -0.85371 [rh=0.0000 nh=-4.8003 rc=0.0001 nc=-3.7375] | val -0.79136 | lr 5.67e-04 |  255.2s (no improvement 2/15)
+Epoch   70/150 | train -0.85666 [rh=0.0000 nh=-4.8173 rc=0.0001 nc=-3.7500] | val -0.88482 | lr 5.57e-04 |  258.9s ✓ best
+Epoch   71/150 | train -0.85464 [rh=0.0000 nh=-4.8441 rc=0.0001 nc=-3.7031] | val -0.86027 | lr 5.46e-04 |  262.5s (no improvement 1/15)
+Epoch   72/150 | train -0.85329 [rh=0.0000 nh=-4.8586 rc=0.0001 nc=-3.6751] | val -0.86171 | lr 5.36e-04 |  266.0s (no improvement 2/15)
+Epoch   73/150 | train -0.86798 [rh=0.0000 nh=-4.8823 rc=0.0000 nc=-3.7980] | val -0.85707 | lr 5.26e-04 |  269.6s (no improvement 3/15)
+Epoch   74/150 | train -0.87753 [rh=0.0000 nh=-4.9251 rc=0.0000 nc=-3.8506] | val -0.85898 | lr 5.15e-04 |  273.1s (no improvement 4/15)
+Epoch   75/150 | train -0.85720 [rh=0.0000 nh=-4.8631 rc=0.0001 nc=-3.7096] | val -0.84921 | lr 5.05e-04 |  276.6s (no improvement 5/15)
+Epoch   76/150 | train -0.87590 [rh=0.0000 nh=-4.8923 rc=0.0000 nc=-3.8672] | val -0.88142 | lr 4.95e-04 |  280.2s (no improvement 6/15)
+Epoch   77/150 | train -0.88296 [rh=0.0000 nh=-4.9421 rc=0.0000 nc=-3.8880] | val -0.86924 | lr 4.84e-04 |  283.7s (no improvement 7/15)
+Epoch   78/150 | train -0.88708 [rh=0.0000 nh=-4.9783 rc=0.0000 nc=-3.8930] | val -0.90024 | lr 4.74e-04 |  287.4s ✓ best
+Epoch   79/150 | train -0.88630 [rh=0.0000 nh=-4.9606 rc=0.0000 nc=-3.9028] | val -0.86467 | lr 4.64e-04 |  291.0s (no improvement 1/15)
+Epoch   80/150 | train -0.89015 [rh=0.0000 nh=-5.0297 rc=0.0000 nc=-3.8722] | val -0.88258 | lr 4.53e-04 |  294.5s (no improvement 2/15)
+Epoch   81/150 | train -0.90047 [rh=0.0000 nh=-5.0659 rc=0.0000 nc=-3.9392] | val -0.89733 | lr 4.43e-04 |  298.0s (no improvement 3/15)
+Epoch   82/150 | train -0.88702 [rh=0.0000 nh=-5.0054 rc=0.0000 nc=-3.8653] | val -0.85088 | lr 4.33e-04 |  301.6s (no improvement 4/15)
+Epoch   83/150 | train -0.90124 [rh=0.0000 nh=-5.1090 rc=0.0000 nc=-3.9039] | val -0.92305 | lr 4.22e-04 |  305.3s ✓ best
+Epoch   84/150 | train -0.90798 [rh=0.0000 nh=-5.1180 rc=0.0000 nc=-3.9622] | val -0.91562 | lr 4.12e-04 |  308.8s (no improvement 1/15)
+Epoch   85/150 | train -0.89530 [rh=0.0000 nh=-4.9491 rc=0.0000 nc=-4.0043] | val -0.90430 | lr 4.02e-04 |  312.4s (no improvement 2/15)
+Epoch   86/150 | train -0.91539 [rh=0.0000 nh=-5.1871 rc=0.0000 nc=-3.9672] | val -0.93192 | lr 3.92e-04 |  316.1s ✓ best
+Epoch   87/150 | train -0.92002 [rh=0.0000 nh=-5.1622 rc=0.0000 nc=-4.0383] | val -0.91412 | lr 3.82e-04 |  319.7s (no improvement 1/15)
+Epoch   88/150 | train -0.90913 [rh=0.0000 nh=-5.0922 rc=0.0000 nc=-3.9995] | val -0.91835 | lr 3.72e-04 |  323.2s (no improvement 2/15)
+Epoch   89/150 | train -0.89299 [rh=0.0000 nh=-4.9911 rc=0.0000 nc=-3.9393] | val -0.90358 | lr 3.62e-04 |  326.7s (no improvement 3/15)
+Epoch   90/150 | train -0.92440 [rh=0.0000 nh=-5.2260 rc=0.0000 nc=-4.0184] | val -0.91519 | lr 3.52e-04 |  330.3s (no improvement 4/15)
+Epoch   91/150 | train -0.93539 [rh=0.0000 nh=-5.2368 rc=0.0000 nc=-4.1173] | val -0.94646 | lr 3.42e-04 |  334.0s ✓ best
+Epoch   92/150 | train -0.94039 [rh=0.0000 nh=-5.2920 rc=0.0000 nc=-4.1121] | val -0.92507 | lr 3.32e-04 |  337.6s (no improvement 1/15)
+Epoch   93/150 | train -0.93592 [rh=0.0000 nh=-5.2544 rc=0.0000 nc=-4.1052] | val -0.93684 | lr 3.23e-04 |  341.1s (no improvement 2/15)
+Epoch   94/150 | train -0.94424 [rh=0.0000 nh=-5.2762 rc=0.0000 nc=-4.1665] | val -0.93438 | lr 3.13e-04 |  345.2s (no improvement 3/15)
+Epoch   95/150 | train -0.94442 [rh=0.0000 nh=-5.2931 rc=0.0000 nc=-4.1514] | val -0.95459 | lr 3.04e-04 |  349.7s ✓ best
+Epoch   96/150 | train -0.95095 [rh=0.0000 nh=-5.3479 rc=0.0000 nc=-4.1618] | val -0.94700 | lr 2.94e-04 |  353.3s (no improvement 1/15)
+Epoch   97/150 | train -0.94480 [rh=0.0000 nh=-5.3541 rc=0.0000 nc=-4.0942] | val -0.95316 | lr 2.85e-04 |  356.8s (no improvement 2/15)
+Epoch   98/150 | train -0.95748 [rh=0.0000 nh=-5.3371 rc=0.0000 nc=-4.2380] | val -0.95614 | lr 2.76e-04 |  360.5s ✓ best
+Epoch   99/150 | train -0.95108 [rh=0.0000 nh=-5.3482 rc=0.0000 nc=-4.1629] | val -0.96515 | lr 2.67e-04 |  364.2s ✓ best
+Epoch  100/150 | train -0.96820 [rh=0.0000 nh=-5.3986 rc=0.0000 nc=-4.2836] | val -0.96481 | lr 2.57e-04 |  367.7s (no improvement 1/15)
+Epoch  101/150 | train -0.97163 [rh=0.0000 nh=-5.3964 rc=0.0000 nc=-4.3201] | val -0.97646 | lr 2.49e-04 |  371.4s ✓ best
+Epoch  102/150 | train -0.97117 [rh=0.0000 nh=-5.4184 rc=0.0000 nc=-4.2935] | val -0.95742 | lr 2.40e-04 |  375.0s (no improvement 1/15)
+Epoch  103/150 | train -0.97262 [rh=0.0000 nh=-5.4123 rc=0.0000 nc=-4.3141] | val -0.97081 | lr 2.31e-04 |  378.5s (no improvement 2/15)
+Epoch  104/150 | train -0.98135 [rh=0.0000 nh=-5.4910 rc=0.0000 nc=-4.3227] | val -0.98573 | lr 2.22e-04 |  382.2s ✓ best
+Epoch  105/150 | train -0.98278 [rh=0.0000 nh=-5.4718 rc=0.0000 nc=-4.3562] | val -0.97773 | lr 2.14e-04 |  385.8s (no improvement 1/15)
+Epoch  106/150 | train -0.98363 [rh=0.0000 nh=-5.5020 rc=0.0000 nc=-4.3344] | val -0.98924 | lr 2.06e-04 |  389.5s ✓ best
+Epoch  107/150 | train -0.99237 [rh=0.0000 nh=-5.5228 rc=0.0000 nc=-4.4010] | val -0.96659 | lr 1.98e-04 |  393.0s (no improvement 1/15)
+Epoch  108/150 | train -0.99294 [rh=0.0000 nh=-5.5427 rc=0.0000 nc=-4.3868] | val -0.99377 | lr 1.89e-04 |  396.7s ✓ best
+Epoch  109/150 | train -1.00069 [rh=0.0000 nh=-5.5471 rc=0.0000 nc=-4.4600] | val -0.99028 | lr 1.82e-04 |  400.3s (no improvement 1/15)
+Epoch  110/150 | train -1.00052 [rh=0.0000 nh=-5.5733 rc=0.0000 nc=-4.4321] | val -0.98251 | lr 1.74e-04 |  403.8s (no improvement 2/15)
+Epoch  111/150 | train -0.98293 [rh=0.0000 nh=-5.4702 rc=0.0000 nc=-4.3592] | val -0.99748 | lr 1.66e-04 |  407.6s ✓ best
+Epoch  112/150 | train -1.00377 [rh=0.0000 nh=-5.5783 rc=0.0000 nc=-4.4595] | val -1.00273 | lr 1.59e-04 |  411.3s ✓ best
+Epoch  113/150 | train -1.00583 [rh=0.0000 nh=-5.5934 rc=0.0000 nc=-4.4651] | val -1.00921 | lr 1.51e-04 |  415.0s ✓ best
+Epoch  114/150 | train -1.01181 [rh=0.0000 nh=-5.6204 rc=0.0000 nc=-4.4979] | val -1.00923 | lr 1.44e-04 |  418.7s ✓ best
+Epoch  115/150 | train -1.01277 [rh=0.0000 nh=-5.6417 rc=0.0000 nc=-4.4861] | val -1.01247 | lr 1.37e-04 |  422.4s ✓ best
+Epoch  116/150 | train -1.01700 [rh=0.0000 nh=-5.6411 rc=0.0000 nc=-4.5290] | val -1.01371 | lr 1.30e-04 |  426.2s ✓ best
+Epoch  117/150 | train -1.01784 [rh=0.0000 nh=-5.6540 rc=0.0000 nc=-4.5246] | val -1.01345 | lr 1.24e-04 |  429.7s (no improvement 1/15)
+Epoch  118/150 | train -1.02456 [rh=0.0000 nh=-5.6748 rc=0.0000 nc=-4.5709] | val -1.02193 | lr 1.17e-04 |  433.4s ✓ best
+Epoch  119/150 | train -1.02662 [rh=0.0000 nh=-5.6760 rc=0.0000 nc=-4.5902] | val -1.02336 | lr 1.11e-04 |  437.2s ✓ best
+Epoch  120/150 | train -1.02604 [rh=0.0000 nh=-5.6836 rc=0.0000 nc=-4.5769] | val -1.02185 | lr 1.05e-04 |  440.7s (no improvement 1/15)
+Epoch  121/150 | train -1.02948 [rh=0.0000 nh=-5.6969 rc=0.0000 nc=-4.5980] | val -1.02304 | lr 9.85e-05 |  444.2s (no improvement 2/15)
+Epoch  122/150 | train -1.03063 [rh=0.0000 nh=-5.7107 rc=0.0000 nc=-4.5957] | val -1.02868 | lr 9.27e-05 |  448.7s ✓ best
+Epoch  123/150 | train -1.03359 [rh=0.0000 nh=-5.7117 rc=0.0000 nc=-4.6243] | val -1.03002 | lr 8.71e-05 |  452.4s ✓ best
+Epoch  124/150 | train -1.03564 [rh=0.0000 nh=-5.7217 rc=0.0000 nc=-4.6348] | val -1.03251 | lr 8.16e-05 |  456.1s ✓ best
+Epoch  125/150 | train -1.03754 [rh=0.0000 nh=-5.7300 rc=0.0000 nc=-4.6455] | val -1.03277 | lr 7.63e-05 |  459.9s ✓ best
+Epoch  126/150 | train -1.03936 [rh=0.0000 nh=-5.7390 rc=0.0000 nc=-4.6548] | val -1.03577 | lr 7.12e-05 |  463.6s ✓ best
+Epoch  127/150 | train -1.04127 [rh=0.0000 nh=-5.7471 rc=0.0000 nc=-4.6657] | val -1.03705 | lr 6.63e-05 |  467.3s ✓ best
+Epoch  128/150 | train -1.04241 [rh=0.0000 nh=-5.7539 rc=0.0000 nc=-4.6703] | val -1.03659 | lr 6.16e-05 |  470.8s (no improvement 1/15)
+Epoch  129/150 | train -1.04261 [rh=0.0000 nh=-5.7613 rc=0.0000 nc=-4.6649] | val -1.04234 | lr 5.71e-05 |  474.6s ✓ best
+Epoch  130/150 | train -1.04519 [rh=0.0000 nh=-5.7699 rc=0.0000 nc=-4.6821] | val -1.04091 | lr 5.28e-05 |  478.1s (no improvement 1/15)
+Epoch  131/150 | train -1.04685 [rh=0.0000 nh=-5.7760 rc=0.0000 nc=-4.6925] | val -1.04259 | lr 4.87e-05 |  481.8s ✓ best
+Epoch  132/150 | train -1.04753 [rh=0.0000 nh=-5.7782 rc=0.0000 nc=-4.6971] | val -1.04374 | lr 4.48e-05 |  485.5s ✓ best
+Epoch  133/150 | train -1.04926 [rh=0.0000 nh=-5.7862 rc=0.0000 nc=-4.7065] | val -1.04545 | lr 4.10e-05 |  489.2s ✓ best
+Epoch  134/150 | train -1.05012 [rh=0.0000 nh=-5.7908 rc=0.0000 nc=-4.7105] | val -1.04627 | lr 3.75e-05 |  493.0s ✓ best
+Epoch  135/150 | train -1.05087 [rh=0.0000 nh=-5.7956 rc=0.0000 nc=-4.7132] | val -1.04691 | lr 3.42e-05 |  496.9s ✓ best
+Epoch  136/150 | train -1.05189 [rh=0.0000 nh=-5.7967 rc=0.0000 nc=-4.7223] | val -1.04785 | lr 3.11e-05 |  500.6s ✓ best
+Epoch  137/150 | train -1.05295 [rh=0.0000 nh=-5.8021 rc=0.0000 nc=-4.7275] | val -1.04862 | lr 2.82e-05 |  504.3s ✓ best
+Epoch  138/150 | train -1.05354 [rh=0.0000 nh=-5.8032 rc=0.0000 nc=-4.7322] | val -1.04939 | lr 2.56e-05 |  508.1s ✓ best
+Epoch  139/150 | train -1.05413 [rh=0.0000 nh=-5.8060 rc=0.0000 nc=-4.7354] | val -1.05018 | lr 2.31e-05 |  511.8s ✓ best
+Epoch  140/150 | train -1.05441 [rh=0.0000 nh=-5.8093 rc=0.0000 nc=-4.7348] | val -1.05121 | lr 2.08e-05 |  515.5s ✓ best
+Epoch  141/150 | train -1.05503 [rh=0.0000 nh=-5.8111 rc=0.0000 nc=-4.7392] | val -1.05125 | lr 1.88e-05 |  519.2s ✓ best
+Epoch  142/150 | train -1.05605 [rh=0.0000 nh=-5.8142 rc=0.0000 nc=-4.7464] | val -1.05161 | lr 1.69e-05 |  523.0s ✓ best
+Epoch  143/150 | train -1.05636 [rh=0.0000 nh=-5.8162 rc=0.0000 nc=-4.7474] | val -1.05232 | lr 1.53e-05 |  526.7s ✓ best
+Epoch  144/150 | train -1.05672 [rh=0.0000 nh=-5.8180 rc=0.0000 nc=-4.7493] | val -1.05272 | lr 1.39e-05 |  530.4s ✓ best
+Epoch  145/150 | train -1.05713 [rh=0.0000 nh=-5.8196 rc=0.0000 nc=-4.7518] | val -1.05311 | lr 1.27e-05 |  534.1s ✓ best
+Epoch  146/150 | train -1.05746 [rh=0.0000 nh=-5.8207 rc=0.0000 nc=-4.7540] | val -1.05307 | lr 1.17e-05 |  537.7s (no improvement 1/15)
+Epoch  147/150 | train -1.05778 [rh=0.0000 nh=-5.8222 rc=0.0000 nc=-4.7556] | val -1.05331 | lr 1.10e-05 |  541.4s ✓ best
+Epoch  148/150 | train -1.05795 [rh=0.0000 nh=-5.8234 rc=0.0000 nc=-4.7561] | val -1.05366 | lr 1.04e-05 |  545.9s ✓ best
+Epoch  149/150 | train -1.05805 [rh=0.0000 nh=-5.8238 rc=0.0000 nc=-4.7568] | val -1.05398 | lr 1.01e-05 |  549.6s ✓ best
+Epoch  150/150 | train -1.05847 [rh=0.0000 nh=-5.8256 rc=0.0000 nc=-4.7592] | val -1.05392 | lr 1.00e-05 |  553.1s (no improvement 1/15)
+[train] Loss plot → surrogate_model_v3/runs/narrow_200_300W/loss_curves.png
+[train] Component loss plot → surrogate_model_v3/runs/narrow_200_300W/loss_components.png
+
+[train] Done.  Best val loss : -1.053979
+[train] Best checkpoint  : surrogate_model_v3/runs/narrow_200_300W/surrogate_best.pt
+[train] Final checkpoint : surrogate_model_v3/runs/narrow_200_300W/surrogate_final.pt
+=== [2/6] mlp ===
+/home/xysong/.conda/envs/RL/lib/python3.10/site-packages/torch/utils/data/dataloader.py:617: UserWarning: This DataLoader will create 2 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+/home/xysong/.conda/envs/RL/lib/python3.10/site-packages/torch/utils/data/dataloader.py:617: UserWarning: This DataLoader will create 2 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+[mlp.train] Output dir : baseline_surrogate/mlp/runs/narrow_200_300W
+[mlp.train] Device     : cuda
+[dataset_v2] Loaded 5000 trajectories × 12 layers from DatasetV2_layer_12_samples_5000.pkl
+[dataset_v2] Split → train 4000 | val 500 | test 500
+[baseline_surrogate.data] State mean ∈ [162.8, 1853.1], std ∈ [31.4412, 893.7]
+[baseline_surrogate.data] Laser power mean = 249.87 W, std = 89.44 W
+[baseline_surrogate.data] Cool time    mean = 0.1005 s, std = 0.0314 s
+[mlp.train] LP filter active: [200.0, 300.0] W
+[SingleStageFlatDataset] lp_filter=[200.0, 300.0]W kept 17,094/48,000 transitions
+[SingleStageFlatDataset] 17,094 transitions, state_dim=1053, layers 0–11
+[SingleStageFlatDataset] lp_filter=[200.0, 300.0]W kept 2,168/6,000 transitions
+[SingleStageFlatDataset] 2,168 transitions, state_dim=1053, layers 0–11
+[mlp.train] PlainMLPSurrogate params=1,872,925
+[mlp.train] Epoch    1/150 | train 0.10367 | val 0.03126 |    2.4s ✓ best
+[mlp.train] Epoch    2/150 | train 0.03101 | val 0.02828 |    3.8s ✓ best
+[mlp.train] Epoch    3/150 | train 0.02518 | val 0.02221 |    5.1s ✓ best
+[mlp.train] Epoch    4/150 | train 0.01962 | val 0.01524 |    6.4s ✓ best
+[mlp.train] Epoch    5/150 | train 0.01446 | val 0.02163 |    7.7s (no improvement 1/15)
+[mlp.train] Epoch    6/150 | train 0.01254 | val 0.00770 |    9.0s ✓ best
+[mlp.train] Epoch    7/150 | train 0.00966 | val 0.01005 |   10.2s (no improvement 1/15)
+[mlp.train] Epoch    8/150 | train 0.00735 | val 0.00815 |   11.5s (no improvement 2/15)
+[mlp.train] Epoch    9/150 | train 0.00628 | val 0.00460 |   12.9s ✓ best
+[mlp.train] Epoch   10/150 | train 0.00716 | val 0.00631 |   14.2s (no improvement 1/15)
+[mlp.train] Epoch   11/150 | train 0.00549 | val 0.00449 |   15.5s ✓ best
+[mlp.train] Epoch   12/150 | train 0.00529 | val 0.00548 |   16.8s (no improvement 1/15)
+[mlp.train] Epoch   13/150 | train 0.00385 | val 0.00254 |   18.1s ✓ best
+[mlp.train] Epoch   14/150 | train 0.00441 | val 0.00284 |   19.4s (no improvement 1/15)
+[mlp.train] Epoch   15/150 | train 0.00339 | val 0.00278 |   20.7s (no improvement 2/15)
+[mlp.train] Epoch   16/150 | train 0.00624 | val 0.00313 |   22.0s (no improvement 3/15)
+[mlp.train] Epoch   17/150 | train 0.00361 | val 0.00317 |   23.3s (no improvement 4/15)
+[mlp.train] Epoch   18/150 | train 0.00313 | val 0.00459 |   24.5s (no improvement 5/15)
+[mlp.train] Epoch   19/150 | train 0.00302 | val 0.00287 |   25.8s (no improvement 6/15)
+[mlp.train] Epoch   20/150 | train 0.00267 | val 0.00193 |   27.2s ✓ best
+[mlp.train] Epoch   21/150 | train 0.00269 | val 0.00250 |   28.5s (no improvement 1/15)
+[mlp.train] Epoch   22/150 | train 0.00225 | val 0.00868 |   29.7s (no improvement 2/15)
+[mlp.train] Epoch   23/150 | train 0.00362 | val 0.00416 |   31.0s (no improvement 3/15)
+[mlp.train] Epoch   24/150 | train 0.00326 | val 0.00246 |   32.3s (no improvement 4/15)
+[mlp.train] Epoch   25/150 | train 0.00253 | val 0.00210 |   33.6s (no improvement 5/15)
+[mlp.train] Epoch   26/150 | train 0.00270 | val 0.00227 |   34.9s (no improvement 6/15)
+[mlp.train] Epoch   27/150 | train 0.00177 | val 0.00168 |   36.2s ✓ best
+[mlp.train] Epoch   28/150 | train 0.00231 | val 0.00194 |   37.5s (no improvement 1/15)
+[mlp.train] Epoch   29/150 | train 0.00181 | val 0.00208 |   38.8s (no improvement 2/15)
+[mlp.train] Epoch   30/150 | train 0.00231 | val 0.00119 |   40.2s ✓ best
+[mlp.train] Epoch   31/150 | train 0.00162 | val 0.00148 |   41.3s (no improvement 1/15)
+[mlp.train] Epoch   32/150 | train 0.00213 | val 0.00345 |   42.6s (no improvement 2/15)
+[mlp.train] Epoch   33/150 | train 0.00237 | val 0.00197 |   43.9s (no improvement 3/15)
+[mlp.train] Epoch   34/150 | train 0.00252 | val 0.00244 |   45.2s (no improvement 4/15)
+[mlp.train] Epoch   35/150 | train 0.00178 | val 0.00146 |   46.5s (no improvement 5/15)
+[mlp.train] Epoch   36/150 | train 0.00153 | val 0.00169 |   47.7s (no improvement 6/15)
+[mlp.train] Epoch   37/150 | train 0.00149 | val 0.00097 |   49.1s ✓ best
+[mlp.train] Epoch   38/150 | train 0.00133 | val 0.00121 |   50.4s (no improvement 1/15)
+[mlp.train] Epoch   39/150 | train 0.00125 | val 0.00108 |   51.7s (no improvement 2/15)
+[mlp.train] Epoch   40/150 | train 0.00206 | val 0.00161 |   52.9s (no improvement 3/15)
+[mlp.train] Epoch   41/150 | train 0.00202 | val 0.00203 |   54.2s (no improvement 4/15)
+[mlp.train] Epoch   42/150 | train 0.00164 | val 0.00143 |   55.5s (no improvement 5/15)
+[mlp.train] Epoch   43/150 | train 0.00212 | val 0.00172 |   56.8s (no improvement 6/15)
+[mlp.train] Epoch   44/150 | train 0.00124 | val 0.00116 |   58.1s (no improvement 7/15)
+[mlp.train] Epoch   45/150 | train 0.00121 | val 0.00078 |   59.4s ✓ best
+[mlp.train] Epoch   46/150 | train 0.00150 | val 0.00161 |   60.7s (no improvement 1/15)
+[mlp.train] Epoch   47/150 | train 0.00178 | val 0.00208 |   62.0s (no improvement 2/15)
+[mlp.train] Epoch   48/150 | train 0.00155 | val 0.00098 |   63.3s (no improvement 3/15)
+[mlp.train] Epoch   49/150 | train 0.00104 | val 0.00096 |   64.6s (no improvement 4/15)
+[mlp.train] Epoch   50/150 | train 0.00101 | val 0.00132 |   65.9s (no improvement 5/15)
+[mlp.train] Epoch   51/150 | train 0.00195 | val 0.00120 |   67.2s (no improvement 6/15)
+[mlp.train] Epoch   52/150 | train 0.00139 | val 0.00075 |   68.5s ✓ best
+[mlp.train] Epoch   53/150 | train 0.00132 | val 0.00112 |   69.7s (no improvement 1/15)
+[mlp.train] Epoch   54/150 | train 0.00138 | val 0.00091 |   71.0s (no improvement 2/15)
+[mlp.train] Epoch   55/150 | train 0.00124 | val 0.00216 |   72.3s (no improvement 3/15)
+[mlp.train] Epoch   56/150 | train 0.00127 | val 0.00081 |   73.5s (no improvement 4/15)
+[mlp.train] Epoch   57/150 | train 0.00112 | val 0.00070 |   74.9s ✓ best
+[mlp.train] Epoch   58/150 | train 0.00096 | val 0.00115 |   76.2s (no improvement 1/15)
+[mlp.train] Epoch   59/150 | train 0.00107 | val 0.00070 |   77.5s ✓ best
+[mlp.train] Epoch   60/150 | train 0.00121 | val 0.00070 |   78.7s (no improvement 1/15)
+[mlp.train] Epoch   61/150 | train 0.00097 | val 0.00070 |   80.0s (no improvement 2/15)
+[mlp.train] Epoch   62/150 | train 0.00086 | val 0.00113 |   81.3s (no improvement 3/15)
+[mlp.train] Epoch   63/150 | train 0.00093 | val 0.00171 |   82.6s (no improvement 4/15)
+[mlp.train] Epoch   64/150 | train 0.00095 | val 0.00055 |   83.9s ✓ best
+[mlp.train] Epoch   65/150 | train 0.00072 | val 0.00048 |   85.3s ✓ best
+[mlp.train] Epoch   66/150 | train 0.00072 | val 0.00173 |   86.6s (no improvement 1/15)
+[mlp.train] Epoch   67/150 | train 0.00140 | val 0.00078 |   87.9s (no improvement 2/15)
+[mlp.train] Epoch   68/150 | train 0.00127 | val 0.00086 |   89.1s (no improvement 3/15)
+[mlp.train] Epoch   69/150 | train 0.00067 | val 0.00050 |   90.4s (no improvement 4/15)
+[mlp.train] Epoch   70/150 | train 0.00065 | val 0.00055 |   91.7s (no improvement 5/15)
+[mlp.train] Epoch   71/150 | train 0.00096 | val 0.00066 |   93.0s (no improvement 6/15)
+[mlp.train] Epoch   72/150 | train 0.00070 | val 0.00127 |   94.3s (no improvement 7/15)
+[mlp.train] Epoch   73/150 | train 0.00113 | val 0.00124 |   95.7s (no improvement 8/15)
+[mlp.train] Epoch   74/150 | train 0.00068 | val 0.00050 |   97.0s (no improvement 9/15)
+[mlp.train] Epoch   75/150 | train 0.00051 | val 0.00073 |   98.4s (no improvement 10/15)
+[mlp.train] Epoch   76/150 | train 0.00067 | val 0.00041 |   99.8s ✓ best
+[mlp.train] Epoch   77/150 | train 0.00052 | val 0.00048 |  101.2s (no improvement 1/15)
+[mlp.train] Epoch   78/150 | train 0.00054 | val 0.00120 |  102.5s (no improvement 2/15)
+[mlp.train] Epoch   79/150 | train 0.00083 | val 0.00046 |  103.9s (no improvement 3/15)
+[mlp.train] Epoch   80/150 | train 0.00041 | val 0.00047 |  105.1s (no improvement 4/15)
+[mlp.train] Epoch   81/150 | train 0.00084 | val 0.00042 |  106.5s (no improvement 5/15)
+[mlp.train] Epoch   82/150 | train 0.00039 | val 0.00101 |  107.8s (no improvement 6/15)
+[mlp.train] Epoch   83/150 | train 0.00045 | val 0.00037 |  109.3s ✓ best
+[mlp.train] Epoch   84/150 | train 0.00056 | val 0.00243 |  110.6s (no improvement 1/15)
+[mlp.train] Epoch   85/150 | train 0.00070 | val 0.00038 |  112.0s (no improvement 2/15)
+[mlp.train] Epoch   86/150 | train 0.00048 | val 0.00063 |  113.3s (no improvement 3/15)
+[mlp.train] Epoch   87/150 | train 0.00049 | val 0.00041 |  114.7s (no improvement 4/15)
+[mlp.train] Epoch   88/150 | train 0.00041 | val 0.00038 |  116.0s (no improvement 5/15)
+[mlp.train] Epoch   89/150 | train 0.00039 | val 0.00047 |  117.4s (no improvement 6/15)
+[mlp.train] Epoch   90/150 | train 0.00042 | val 0.00083 |  118.8s (no improvement 7/15)
+[mlp.train] Epoch   91/150 | train 0.00053 | val 0.00032 |  120.2s ✓ best
+[mlp.train] Epoch   92/150 | train 0.00054 | val 0.00031 |  121.6s ✓ best
+[mlp.train] Epoch   93/150 | train 0.00031 | val 0.00028 |  123.0s ✓ best
+[mlp.train] Epoch   94/150 | train 0.00037 | val 0.00046 |  124.4s (no improvement 1/15)
+[mlp.train] Epoch   95/150 | train 0.00038 | val 0.00030 |  125.7s (no improvement 2/15)
+[mlp.train] Epoch   96/150 | train 0.00030 | val 0.00029 |  127.1s (no improvement 3/15)
+[mlp.train] Epoch   97/150 | train 0.00039 | val 0.00050 |  128.4s (no improvement 4/15)
+[mlp.train] Epoch   98/150 | train 0.00038 | val 0.00033 |  129.8s (no improvement 5/15)
+[mlp.train] Epoch   99/150 | train 0.00040 | val 0.00027 |  131.2s ✓ best
+[mlp.train] Epoch  100/150 | train 0.00065 | val 0.00038 |  132.5s (no improvement 1/15)
+[mlp.train] Epoch  101/150 | train 0.00031 | val 0.00026 |  133.9s ✓ best
+[mlp.train] Epoch  102/150 | train 0.00025 | val 0.00032 |  135.3s (no improvement 1/15)
+[mlp.train] Epoch  103/150 | train 0.00027 | val 0.00026 |  136.7s ✓ best
+[mlp.train] Epoch  104/150 | train 0.00029 | val 0.00041 |  138.1s (no improvement 1/15)
+[mlp.train] Epoch  105/150 | train 0.00027 | val 0.00028 |  139.4s (no improvement 2/15)
+[mlp.train] Epoch  106/150 | train 0.00023 | val 0.00032 |  140.8s (no improvement 3/15)
+[mlp.train] Epoch  107/150 | train 0.00025 | val 0.00020 |  142.2s ✓ best
+[mlp.train] Epoch  108/150 | train 0.00024 | val 0.00035 |  143.5s (no improvement 1/15)
+[mlp.train] Epoch  109/150 | train 0.00024 | val 0.00058 |  144.9s (no improvement 2/15)
+[mlp.train] Epoch  110/150 | train 0.00027 | val 0.00025 |  146.2s (no improvement 3/15)
+[mlp.train] Epoch  111/150 | train 0.00021 | val 0.00024 |  147.6s (no improvement 4/15)
+[mlp.train] Epoch  112/150 | train 0.00019 | val 0.00020 |  149.0s ✓ best
+[mlp.train] Epoch  113/150 | train 0.00021 | val 0.00020 |  150.4s ✓ best
+[mlp.train] Epoch  114/150 | train 0.00020 | val 0.00017 |  151.8s ✓ best
+[mlp.train] Epoch  115/150 | train 0.00021 | val 0.00030 |  153.2s (no improvement 1/15)
+[mlp.train] Epoch  116/150 | train 0.00021 | val 0.00022 |  154.6s (no improvement 2/15)
+[mlp.train] Epoch  117/150 | train 0.00021 | val 0.00018 |  155.9s (no improvement 3/15)
+[mlp.train] Epoch  118/150 | train 0.00024 | val 0.00021 |  157.2s (no improvement 4/15)
+[mlp.train] Epoch  119/150 | train 0.00019 | val 0.00021 |  158.6s (no improvement 5/15)
+[mlp.train] Epoch  120/150 | train 0.00017 | val 0.00028 |  160.0s (no improvement 6/15)
+[mlp.train] Epoch  121/150 | train 0.00018 | val 0.00017 |  161.4s ✓ best
+[mlp.train] Epoch  122/150 | train 0.00018 | val 0.00019 |  162.7s (no improvement 1/15)
+[mlp.train] Epoch  123/150 | train 0.00016 | val 0.00018 |  164.1s (no improvement 2/15)
+[mlp.train] Epoch  124/150 | train 0.00016 | val 0.00018 |  165.4s (no improvement 3/15)
+[mlp.train] Epoch  125/150 | train 0.00016 | val 0.00017 |  166.9s ✓ best
+[mlp.train] Epoch  126/150 | train 0.00018 | val 0.00016 |  168.3s ✓ best
+[mlp.train] Epoch  127/150 | train 0.00015 | val 0.00016 |  169.6s (no improvement 1/15)
+[mlp.train] Epoch  128/150 | train 0.00016 | val 0.00015 |  171.1s ✓ best
+[mlp.train] Epoch  129/150 | train 0.00014 | val 0.00017 |  172.4s (no improvement 1/15)
+[mlp.train] Epoch  130/150 | train 0.00015 | val 0.00015 |  173.8s ✓ best
+[mlp.train] Epoch  131/150 | train 0.00015 | val 0.00015 |  175.3s ✓ best
+[mlp.train] Epoch  132/150 | train 0.00014 | val 0.00015 |  176.7s ✓ best
+[mlp.train] Epoch  133/150 | train 0.00014 | val 0.00014 |  178.1s ✓ best
+[mlp.train] Epoch  134/150 | train 0.00013 | val 0.00015 |  179.5s (no improvement 1/15)
+[mlp.train] Epoch  135/150 | train 0.00013 | val 0.00014 |  180.8s (no improvement 2/15)
+[mlp.train] Epoch  136/150 | train 0.00013 | val 0.00014 |  182.2s ✓ best
+[mlp.train] Epoch  137/150 | train 0.00012 | val 0.00014 |  183.6s ✓ best
+[mlp.train] Epoch  138/150 | train 0.00013 | val 0.00015 |  185.0s (no improvement 1/15)
+[mlp.train] Epoch  139/150 | train 0.00012 | val 0.00014 |  186.4s (no improvement 2/15)
+[mlp.train] Epoch  140/150 | train 0.00012 | val 0.00015 |  187.7s (no improvement 3/15)
+[mlp.train] Epoch  141/150 | train 0.00012 | val 0.00014 |  189.1s (no improvement 4/15)
+[mlp.train] Epoch  142/150 | train 0.00012 | val 0.00013 |  190.5s ✓ best
+[mlp.train] Epoch  143/150 | train 0.00012 | val 0.00013 |  191.8s (no improvement 1/15)
+[mlp.train] Epoch  144/150 | train 0.00012 | val 0.00013 |  193.3s ✓ best
+[mlp.train] Epoch  145/150 | train 0.00012 | val 0.00013 |  194.6s (no improvement 1/15)
+[mlp.train] Epoch  146/150 | train 0.00012 | val 0.00013 |  196.0s ✓ best
+[mlp.train] Epoch  147/150 | train 0.00012 | val 0.00014 |  197.4s (no improvement 1/15)
+[mlp.train] Epoch  148/150 | train 0.00012 | val 0.00013 |  198.7s (no improvement 2/15)
+[mlp.train] Epoch  149/150 | train 0.00012 | val 0.00013 |  200.1s (no improvement 3/15)
+[mlp.train] Epoch  150/150 | train 0.00011 | val 0.00013 |  201.5s (no improvement 4/15)
+[mlp.train] Done. Best checkpoint: baseline_surrogate/mlp/runs/narrow_200_300W/mlp_best.pt
+=== [3/6] lstm ===
+/home/xysong/.conda/envs/RL/lib/python3.10/site-packages/torch/utils/data/dataloader.py:617: UserWarning: This DataLoader will create 2 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+/home/xysong/.conda/envs/RL/lib/python3.10/site-packages/torch/utils/data/dataloader.py:617: UserWarning: This DataLoader will create 2 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+[lstm.train] Output dir : baseline_surrogate/lstm/runs/narrow_200_300W
+[lstm.train] Device     : cuda
+[dataset_v2] Loaded 5000 trajectories × 12 layers from DatasetV2_layer_12_samples_5000.pkl
+[dataset_v2] Split → train 4000 | val 500 | test 500
+[baseline_surrogate.data] State mean ∈ [162.8, 1853.1], std ∈ [31.4412, 893.7]
+[baseline_surrogate.data] Laser power mean = 249.87 W, std = 89.44 W
+[baseline_surrogate.data] Cool time    mean = 0.1005 s, std = 0.0314 s
+[lstm.train] LP filter active (masked loss): [200.0, 300.0] W
+[SingleStageTrajectoryDataset] lp_filter=[200.0, 300.0]W marks 17,094/48,000 steps loss-eligible (full trajectories still walked in full)
+[SingleStageTrajectoryDataset] 4,000 trajectories, state_dim=1053
+[SingleStageTrajectoryDataset] lp_filter=[200.0, 300.0]W marks 2,168/6,000 steps loss-eligible (full trajectories still walked in full)
+[SingleStageTrajectoryDataset] 500 trajectories, state_dim=1053
+[lstm.train] LSTMSurrogate params=3,753,501
+[lstm.train] Epoch    1/150 | train 0.15774 | val 0.02066 |    2.4s ✓ best
+[lstm.train] Epoch    2/150 | train 0.01362 | val 0.00898 |    3.6s ✓ best
+[lstm.train] Epoch    3/150 | train 0.00725 | val 0.00603 |    4.8s ✓ best
+[lstm.train] Epoch    4/150 | train 0.00514 | val 0.00436 |    6.1s ✓ best
+[lstm.train] Epoch    5/150 | train 0.00425 | val 0.00446 |    7.2s (no improvement 1/15)
+[lstm.train] Epoch    6/150 | train 0.00351 | val 0.00327 |    8.4s ✓ best
+[lstm.train] Epoch    7/150 | train 0.00267 | val 0.00234 |    9.6s ✓ best
+[lstm.train] Epoch    8/150 | train 0.00206 | val 0.00224 |   10.8s ✓ best
+[lstm.train] Epoch    9/150 | train 0.00204 | val 0.00235 |   12.0s (no improvement 1/15)
+[lstm.train] Epoch   10/150 | train 0.00157 | val 0.00263 |   13.0s (no improvement 2/15)
+[lstm.train] Epoch   11/150 | train 0.00132 | val 0.00111 |   14.3s ✓ best
+[lstm.train] Epoch   12/150 | train 0.00085 | val 0.00077 |   15.5s ✓ best
+[lstm.train] Epoch   13/150 | train 0.00069 | val 0.00076 |   16.7s ✓ best
+[lstm.train] Epoch   14/150 | train 0.00069 | val 0.00084 |   17.8s (no improvement 1/15)
+[lstm.train] Epoch   15/150 | train 0.00053 | val 0.00046 |   19.1s ✓ best
+[lstm.train] Epoch   16/150 | train 0.00055 | val 0.00055 |   20.2s (no improvement 1/15)
+[lstm.train] Epoch   17/150 | train 0.00046 | val 0.00049 |   21.3s (no improvement 2/15)
+[lstm.train] Epoch   18/150 | train 0.00034 | val 0.00031 |   22.5s ✓ best
+[lstm.train] Epoch   19/150 | train 0.00044 | val 0.00114 |   23.7s (no improvement 1/15)
+[lstm.train] Epoch   20/150 | train 0.00094 | val 0.00071 |   24.8s (no improvement 2/15)
+[lstm.train] Epoch   21/150 | train 0.00039 | val 0.00031 |   25.9s (no improvement 3/15)
+[lstm.train] Epoch   22/150 | train 0.00026 | val 0.00026 |   27.1s ✓ best
+[lstm.train] Epoch   23/150 | train 0.00026 | val 0.00030 |   28.2s (no improvement 1/15)
+[lstm.train] Epoch   24/150 | train 0.00033 | val 0.00042 |   29.3s (no improvement 2/15)
+[lstm.train] Epoch   25/150 | train 0.00043 | val 0.00041 |   30.5s (no improvement 3/15)
+[lstm.train] Epoch   26/150 | train 0.00028 | val 0.00024 |   31.7s ✓ best
+[lstm.train] Epoch   27/150 | train 0.00022 | val 0.00021 |   33.1s ✓ best
+[lstm.train] Epoch   28/150 | train 0.00024 | val 0.00022 |   34.2s (no improvement 1/15)
+[lstm.train] Epoch   29/150 | train 0.00020 | val 0.00019 |   35.4s ✓ best
+[lstm.train] Epoch   30/150 | train 0.00024 | val 0.00037 |   36.6s (no improvement 1/15)
+[lstm.train] Epoch   31/150 | train 0.00025 | val 0.00027 |   37.7s (no improvement 2/15)
+[lstm.train] Epoch   32/150 | train 0.00035 | val 0.00101 |   38.8s (no improvement 3/15)
+[lstm.train] Epoch   33/150 | train 0.00073 | val 0.00038 |   39.9s (no improvement 4/15)
+[lstm.train] Epoch   34/150 | train 0.00033 | val 0.00040 |   41.0s (no improvement 5/15)
+[lstm.train] Epoch   35/150 | train 0.00023 | val 0.00018 |   42.2s ✓ best
+[lstm.train] Epoch   36/150 | train 0.00014 | val 0.00013 |   43.4s ✓ best
+[lstm.train] Epoch   37/150 | train 0.00014 | val 0.00013 |   44.7s ✓ best
+[lstm.train] Epoch   38/150 | train 0.00012 | val 0.00014 |   45.8s (no improvement 1/15)
+[lstm.train] Epoch   39/150 | train 0.00012 | val 0.00014 |   46.9s (no improvement 2/15)
+[lstm.train] Epoch   40/150 | train 0.00011 | val 0.00011 |   48.1s ✓ best
+[lstm.train] Epoch   41/150 | train 0.00012 | val 0.00012 |   49.3s (no improvement 1/15)
+[lstm.train] Epoch   42/150 | train 0.00018 | val 0.00026 |   50.4s (no improvement 2/15)
+[lstm.train] Epoch   43/150 | train 0.00028 | val 0.00019 |   51.5s (no improvement 3/15)
+[lstm.train] Epoch   44/150 | train 0.00020 | val 0.00016 |   52.6s (no improvement 4/15)
+[lstm.train] Epoch   45/150 | train 0.00013 | val 0.00012 |   53.7s (no improvement 5/15)
+[lstm.train] Epoch   46/150 | train 0.00011 | val 0.00011 |   55.0s ✓ best
+[lstm.train] Epoch   47/150 | train 0.00010 | val 0.00012 |   56.1s (no improvement 1/15)
+[lstm.train] Epoch   48/150 | train 0.00016 | val 0.00017 |   57.2s (no improvement 2/15)
+[lstm.train] Epoch   49/150 | train 0.00012 | val 0.00011 |   58.4s ✓ best
+[lstm.train] Epoch   50/150 | train 0.00013 | val 0.00012 |   59.5s (no improvement 1/15)
+[lstm.train] Epoch   51/150 | train 0.00011 | val 0.00014 |   60.7s (no improvement 2/15)
+[lstm.train] Epoch   52/150 | train 0.00010 | val 0.00012 |   61.8s (no improvement 3/15)
+[lstm.train] Epoch   53/150 | train 0.00010 | val 0.00009 |   63.0s ✓ best
+[lstm.train] Epoch   54/150 | train 0.00012 | val 0.00016 |   64.1s (no improvement 1/15)
+[lstm.train] Epoch   55/150 | train 0.00014 | val 0.00018 |   65.3s (no improvement 2/15)
+[lstm.train] Epoch   56/150 | train 0.00012 | val 0.00010 |   66.4s (no improvement 3/15)
+[lstm.train] Epoch   57/150 | train 0.00009 | val 0.00009 |   67.6s ✓ best
+[lstm.train] Epoch   58/150 | train 0.00009 | val 0.00015 |   68.7s (no improvement 1/15)
+[lstm.train] Epoch   59/150 | train 0.00018 | val 0.00038 |   69.9s (no improvement 2/15)
+[lstm.train] Epoch   60/150 | train 0.00031 | val 0.00012 |   71.0s (no improvement 3/15)
+[lstm.train] Epoch   61/150 | train 0.00010 | val 0.00007 |   72.2s ✓ best
+[lstm.train] Epoch   62/150 | train 0.00007 | val 0.00007 |   73.3s (no improvement 1/15)
+[lstm.train] Epoch   63/150 | train 0.00006 | val 0.00006 |   74.6s ✓ best
+[lstm.train] Epoch   64/150 | train 0.00006 | val 0.00007 |   75.7s (no improvement 1/15)
+[lstm.train] Epoch   65/150 | train 0.00006 | val 0.00006 |   76.9s (no improvement 2/15)
+[lstm.train] Epoch   66/150 | train 0.00006 | val 0.00006 |   78.0s (no improvement 3/15)
+[lstm.train] Epoch   67/150 | train 0.00008 | val 0.00011 |   79.1s (no improvement 4/15)
+[lstm.train] Epoch   68/150 | train 0.00007 | val 0.00006 |   80.3s ✓ best
+[lstm.train] Epoch   69/150 | train 0.00005 | val 0.00008 |   81.5s (no improvement 1/15)
+[lstm.train] Epoch   70/150 | train 0.00006 | val 0.00006 |   82.6s (no improvement 2/15)
+[lstm.train] Epoch   71/150 | train 0.00005 | val 0.00006 |   83.7s (no improvement 3/15)
+[lstm.train] Epoch   72/150 | train 0.00005 | val 0.00005 |   85.0s ✓ best
+[lstm.train] Epoch   73/150 | train 0.00005 | val 0.00006 |   86.1s (no improvement 1/15)
+[lstm.train] Epoch   74/150 | train 0.00005 | val 0.00009 |   87.3s (no improvement 2/15)
+[lstm.train] Epoch   75/150 | train 0.00011 | val 0.00010 |   88.4s (no improvement 3/15)
+[lstm.train] Epoch   76/150 | train 0.00008 | val 0.00008 |   89.5s (no improvement 4/15)
+[lstm.train] Epoch   77/150 | train 0.00005 | val 0.00005 |   90.8s ✓ best
+[lstm.train] Epoch   78/150 | train 0.00005 | val 0.00005 |   91.9s (no improvement 1/15)
+[lstm.train] Epoch   79/150 | train 0.00004 | val 0.00004 |   93.1s ✓ best
+[lstm.train] Epoch   80/150 | train 0.00004 | val 0.00005 |   94.3s (no improvement 1/15)
+[lstm.train] Epoch   81/150 | train 0.00004 | val 0.00004 |   95.5s ✓ best
+[lstm.train] Epoch   82/150 | train 0.00004 | val 0.00004 |   96.7s (no improvement 1/15)
+[lstm.train] Epoch   83/150 | train 0.00004 | val 0.00004 |   97.8s (no improvement 2/15)
+[lstm.train] Epoch   84/150 | train 0.00004 | val 0.00004 |   99.0s ✓ best
+[lstm.train] Epoch   85/150 | train 0.00004 | val 0.00004 |  100.2s (no improvement 1/15)
+[lstm.train] Epoch   86/150 | train 0.00004 | val 0.00004 |  101.4s ✓ best
+[lstm.train] Epoch   87/150 | train 0.00003 | val 0.00003 |  102.7s ✓ best
+[lstm.train] Epoch   88/150 | train 0.00003 | val 0.00004 |  103.8s (no improvement 1/15)
+[lstm.train] Epoch   89/150 | train 0.00003 | val 0.00003 |  105.1s ✓ best
+[lstm.train] Epoch   90/150 | train 0.00003 | val 0.00004 |  106.2s (no improvement 1/15)
+[lstm.train] Epoch   91/150 | train 0.00003 | val 0.00003 |  107.3s (no improvement 2/15)
+[lstm.train] Epoch   92/150 | train 0.00003 | val 0.00004 |  108.4s (no improvement 3/15)
+[lstm.train] Epoch   93/150 | train 0.00003 | val 0.00003 |  109.6s (no improvement 4/15)
+[lstm.train] Epoch   94/150 | train 0.00003 | val 0.00003 |  110.7s (no improvement 5/15)
+[lstm.train] Epoch   95/150 | train 0.00003 | val 0.00003 |  112.0s ✓ best
+[lstm.train] Epoch   96/150 | train 0.00003 | val 0.00003 |  113.2s ✓ best
+[lstm.train] Epoch   97/150 | train 0.00003 | val 0.00003 |  114.5s ✓ best
+[lstm.train] Epoch   98/150 | train 0.00003 | val 0.00003 |  115.6s (no improvement 1/15)
+[lstm.train] Epoch   99/150 | train 0.00003 | val 0.00003 |  116.8s (no improvement 2/15)
+[lstm.train] Epoch  100/150 | train 0.00003 | val 0.00003 |  117.9s (no improvement 3/15)
+[lstm.train] Epoch  101/150 | train 0.00003 | val 0.00003 |  119.1s ✓ best
+[lstm.train] Epoch  102/150 | train 0.00003 | val 0.00003 |  120.3s (no improvement 1/15)
+[lstm.train] Epoch  103/150 | train 0.00003 | val 0.00003 |  121.5s ✓ best
+[lstm.train] Epoch  104/150 | train 0.00003 | val 0.00003 |  122.7s ✓ best
+[lstm.train] Epoch  105/150 | train 0.00002 | val 0.00003 |  124.0s ✓ best
+[lstm.train] Epoch  106/150 | train 0.00002 | val 0.00002 |  125.2s ✓ best
+[lstm.train] Epoch  107/150 | train 0.00002 | val 0.00003 |  126.4s (no improvement 1/15)
+[lstm.train] Epoch  108/150 | train 0.00002 | val 0.00003 |  127.5s (no improvement 2/15)
+[lstm.train] Epoch  109/150 | train 0.00002 | val 0.00003 |  128.6s (no improvement 3/15)
+[lstm.train] Epoch  110/150 | train 0.00002 | val 0.00002 |  129.9s ✓ best
+[lstm.train] Epoch  111/150 | train 0.00002 | val 0.00002 |  131.0s (no improvement 1/15)
+[lstm.train] Epoch  112/150 | train 0.00002 | val 0.00002 |  132.3s ✓ best
+[lstm.train] Epoch  113/150 | train 0.00002 | val 0.00002 |  133.4s (no improvement 1/15)
+[lstm.train] Epoch  114/150 | train 0.00002 | val 0.00002 |  134.6s ✓ best
+[lstm.train] Epoch  115/150 | train 0.00002 | val 0.00002 |  135.9s ✓ best
+[lstm.train] Epoch  116/150 | train 0.00002 | val 0.00002 |  137.1s ✓ best
+[lstm.train] Epoch  117/150 | train 0.00002 | val 0.00002 |  138.2s (no improvement 1/15)
+[lstm.train] Epoch  118/150 | train 0.00002 | val 0.00002 |  139.5s ✓ best
+[lstm.train] Epoch  119/150 | train 0.00002 | val 0.00002 |  140.7s ✓ best
+[lstm.train] Epoch  120/150 | train 0.00002 | val 0.00002 |  141.9s ✓ best
+[lstm.train] Epoch  121/150 | train 0.00002 | val 0.00002 |  143.2s ✓ best
+[lstm.train] Epoch  122/150 | train 0.00002 | val 0.00002 |  144.3s (no improvement 1/15)
+[lstm.train] Epoch  123/150 | train 0.00002 | val 0.00002 |  145.4s (no improvement 2/15)
+[lstm.train] Epoch  124/150 | train 0.00002 | val 0.00002 |  146.7s ✓ best
+[lstm.train] Epoch  125/150 | train 0.00002 | val 0.00002 |  147.8s (no improvement 1/15)
+[lstm.train] Epoch  126/150 | train 0.00002 | val 0.00002 |  149.0s ✓ best
+[lstm.train] Epoch  127/150 | train 0.00002 | val 0.00002 |  150.2s (no improvement 1/15)
+[lstm.train] Epoch  128/150 | train 0.00002 | val 0.00002 |  151.4s ✓ best
+[lstm.train] Epoch  129/150 | train 0.00002 | val 0.00002 |  152.5s (no improvement 1/15)
+[lstm.train] Epoch  130/150 | train 0.00002 | val 0.00002 |  153.6s (no improvement 2/15)
+[lstm.train] Epoch  131/150 | train 0.00002 | val 0.00002 |  154.9s ✓ best
+[lstm.train] Epoch  132/150 | train 0.00002 | val 0.00002 |  156.2s ✓ best
+[lstm.train] Epoch  133/150 | train 0.00002 | val 0.00002 |  157.4s ✓ best
+[lstm.train] Epoch  134/150 | train 0.00002 | val 0.00002 |  158.6s (no improvement 1/15)
+[lstm.train] Epoch  135/150 | train 0.00002 | val 0.00002 |  159.9s ✓ best
+[lstm.train] Epoch  136/150 | train 0.00002 | val 0.00002 |  161.0s (no improvement 1/15)
+[lstm.train] Epoch  137/150 | train 0.00002 | val 0.00002 |  162.1s (no improvement 2/15)
+[lstm.train] Epoch  138/150 | train 0.00002 | val 0.00002 |  163.4s ✓ best
+[lstm.train] Epoch  139/150 | train 0.00002 | val 0.00002 |  164.5s (no improvement 1/15)
+[lstm.train] Epoch  140/150 | train 0.00002 | val 0.00002 |  165.7s ✓ best
+[lstm.train] Epoch  141/150 | train 0.00002 | val 0.00002 |  167.0s ✓ best
+[lstm.train] Epoch  142/150 | train 0.00002 | val 0.00002 |  168.1s (no improvement 1/15)
+[lstm.train] Epoch  143/150 | train 0.00002 | val 0.00002 |  169.3s ✓ best
+[lstm.train] Epoch  144/150 | train 0.00002 | val 0.00002 |  170.6s ✓ best
+[lstm.train] Epoch  145/150 | train 0.00002 | val 0.00002 |  171.7s (no improvement 1/15)
+[lstm.train] Epoch  146/150 | train 0.00002 | val 0.00002 |  172.8s (no improvement 2/15)
+[lstm.train] Epoch  147/150 | train 0.00002 | val 0.00002 |  174.1s ✓ best
+[lstm.train] Epoch  148/150 | train 0.00002 | val 0.00002 |  175.2s (no improvement 1/15)
+[lstm.train] Epoch  149/150 | train 0.00002 | val 0.00002 |  176.5s ✓ best
+[lstm.train] Epoch  150/150 | train 0.00002 | val 0.00002 |  177.6s (no improvement 1/15)
+[lstm.train] Done. Best checkpoint: baseline_surrogate/lstm/runs/narrow_200_300W/lstm_best.pt
+=== [4/6] vanilla_ensemble ===
+/home/xysong/.conda/envs/RL/lib/python3.10/site-packages/torch/utils/data/dataloader.py:617: UserWarning: This DataLoader will create 2 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+/home/xysong/.conda/envs/RL/lib/python3.10/site-packages/torch/utils/data/dataloader.py:617: UserWarning: This DataLoader will create 2 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+[vanilla_ensemble.train] Output dir : baseline_surrogate/vanilla_ensemble/runs/narrow_200_300W
+[vanilla_ensemble.train] Device     : cuda
+[dataset_v2] Loaded 5000 trajectories × 12 layers from DatasetV2_layer_12_samples_5000.pkl
+[dataset_v2] Split → train 4000 | val 500 | test 500
+[baseline_surrogate.data] State mean ∈ [162.8, 1853.1], std ∈ [31.4412, 893.7]
+[baseline_surrogate.data] Laser power mean = 249.87 W, std = 89.44 W
+[baseline_surrogate.data] Cool time    mean = 0.1005 s, std = 0.0314 s
+[vanilla_ensemble.train] LP filter active: [200.0, 300.0] W
+[SingleStageFlatDataset] lp_filter=[200.0, 300.0]W kept 17,094/48,000 transitions
+[SingleStageFlatDataset] 17,094 transitions, state_dim=1053, layers 0–11
+[SingleStageFlatDataset] lp_filter=[200.0, 300.0]W kept 2,168/6,000 transitions
+[SingleStageFlatDataset] 2,168 transitions, state_dim=1053, layers 0–11
+[vanilla_ensemble.train] VanillaDeepEnsembleSurrogate params=9,364,625
+[vanilla_ensemble.train] Epoch    1/150 | train 0.10384 | val 0.03291 |    2.9s ✓ best
+[vanilla_ensemble.train] Epoch    2/150 | train 0.03007 | val 0.02741 |    4.9s ✓ best
+[vanilla_ensemble.train] Epoch    3/150 | train 0.02488 | val 0.01995 |    6.9s ✓ best
+[vanilla_ensemble.train] Epoch    4/150 | train 0.01847 | val 0.01689 |    8.9s ✓ best
+[vanilla_ensemble.train] Epoch    5/150 | train 0.01379 | val 0.01340 |   10.9s ✓ best
+[vanilla_ensemble.train] Epoch    6/150 | train 0.01094 | val 0.01440 |   12.7s (no improvement 1/15)
+[vanilla_ensemble.train] Epoch    7/150 | train 0.00857 | val 0.00669 |   14.7s ✓ best
+[vanilla_ensemble.train] Epoch    8/150 | train 0.00900 | val 0.01251 |   16.4s (no improvement 1/15)
+[vanilla_ensemble.train] Epoch    9/150 | train 0.00632 | val 0.00519 |   18.5s ✓ best
+[vanilla_ensemble.train] Epoch   10/150 | train 0.00603 | val 0.02154 |   20.2s (no improvement 1/15)
+[vanilla_ensemble.train] Epoch   11/150 | train 0.00722 | val 0.00336 |   22.2s ✓ best
+[vanilla_ensemble.train] Epoch   12/150 | train 0.00525 | val 0.00406 |   24.0s (no improvement 1/15)
+[vanilla_ensemble.train] Epoch   13/150 | train 0.00403 | val 0.00345 |   25.7s (no improvement 2/15)
+[vanilla_ensemble.train] Epoch   14/150 | train 0.00435 | val 0.00452 |   27.5s (no improvement 3/15)
+[vanilla_ensemble.train] Epoch   15/150 | train 0.00408 | val 0.00503 |   29.2s (no improvement 4/15)
+[vanilla_ensemble.train] Epoch   16/150 | train 0.00372 | val 0.00274 |   31.2s ✓ best
+[vanilla_ensemble.train] Epoch   17/150 | train 0.00381 | val 0.00260 |   33.3s ✓ best
+[vanilla_ensemble.train] Epoch   18/150 | train 0.00344 | val 0.00315 |   35.0s (no improvement 1/15)
+[vanilla_ensemble.train] Epoch   19/150 | train 0.00292 | val 0.00256 |   37.0s ✓ best
+[vanilla_ensemble.train] Epoch   20/150 | train 0.00240 | val 0.00264 |   38.7s (no improvement 1/15)
+[vanilla_ensemble.train] Epoch   21/150 | train 0.00259 | val 0.00274 |   40.4s (no improvement 2/15)
+[vanilla_ensemble.train] Epoch   22/150 | train 0.00228 | val 0.00313 |   42.2s (no improvement 3/15)
+[vanilla_ensemble.train] Epoch   23/150 | train 0.00266 | val 0.00171 |   44.2s ✓ best
+[vanilla_ensemble.train] Epoch   24/150 | train 0.00251 | val 0.00341 |   45.9s (no improvement 1/15)
+[vanilla_ensemble.train] Epoch   25/150 | train 0.00283 | val 0.00325 |   47.6s (no improvement 2/15)
+[vanilla_ensemble.train] Epoch   26/150 | train 0.00246 | val 0.00208 |   49.4s (no improvement 3/15)
+[vanilla_ensemble.train] Epoch   27/150 | train 0.00307 | val 0.00192 |   51.1s (no improvement 4/15)
+[vanilla_ensemble.train] Epoch   28/150 | train 0.00232 | val 0.00180 |   52.8s (no improvement 5/15)
+[vanilla_ensemble.train] Epoch   29/150 | train 0.00275 | val 0.00167 |   54.8s ✓ best
+[vanilla_ensemble.train] Epoch   30/150 | train 0.00203 | val 0.00173 |   56.5s (no improvement 1/15)
+[vanilla_ensemble.train] Epoch   31/150 | train 0.00215 | val 0.00373 |   58.3s (no improvement 2/15)
+[vanilla_ensemble.train] Epoch   32/150 | train 0.00337 | val 0.00221 |   60.0s (no improvement 3/15)
+[vanilla_ensemble.train] Epoch   33/150 | train 0.00162 | val 0.00147 |   62.0s ✓ best
+[vanilla_ensemble.train] Epoch   34/150 | train 0.00144 | val 0.00179 |   63.7s (no improvement 1/15)
+[vanilla_ensemble.train] Epoch   35/150 | train 0.00218 | val 0.00337 |   65.5s (no improvement 2/15)
+[vanilla_ensemble.train] Epoch   36/150 | train 0.00200 | val 0.00220 |   67.2s (no improvement 3/15)
+[vanilla_ensemble.train] Epoch   37/150 | train 0.00248 | val 0.00204 |   68.9s (no improvement 4/15)
+[vanilla_ensemble.train] Epoch   38/150 | train 0.00180 | val 0.00168 |   70.6s (no improvement 5/15)
+[vanilla_ensemble.train] Epoch   39/150 | train 0.00137 | val 0.00127 |   72.6s ✓ best
+[vanilla_ensemble.train] Epoch   40/150 | train 0.00147 | val 0.00131 |   74.4s (no improvement 1/15)
+[vanilla_ensemble.train] Epoch   41/150 | train 0.00145 | val 0.00116 |   76.4s ✓ best
+[vanilla_ensemble.train] Epoch   42/150 | train 0.00148 | val 0.00389 |   78.1s (no improvement 1/15)
+[vanilla_ensemble.train] Epoch   43/150 | train 0.00203 | val 0.00157 |   79.9s (no improvement 2/15)
+[vanilla_ensemble.train] Epoch   44/150 | train 0.00186 | val 0.00116 |   81.6s (no improvement 3/15)
+[vanilla_ensemble.train] Epoch   45/150 | train 0.00142 | val 0.00106 |   83.5s ✓ best
+[vanilla_ensemble.train] Epoch   46/150 | train 0.00160 | val 0.00115 |   85.2s (no improvement 1/15)
+[vanilla_ensemble.train] Epoch   47/150 | train 0.00161 | val 0.00604 |   86.9s (no improvement 2/15)
+[vanilla_ensemble.train] Epoch   48/150 | train 0.00229 | val 0.00142 |   88.7s (no improvement 3/15)
+[vanilla_ensemble.train] Epoch   49/150 | train 0.00125 | val 0.00068 |   90.7s ✓ best
+[vanilla_ensemble.train] Epoch   50/150 | train 0.00095 | val 0.00175 |   92.4s (no improvement 1/15)
+[vanilla_ensemble.train] Epoch   51/150 | train 0.00150 | val 0.00119 |   94.1s (no improvement 2/15)
+[vanilla_ensemble.train] Epoch   52/150 | train 0.00127 | val 0.00086 |   95.9s (no improvement 3/15)
+[vanilla_ensemble.train] Epoch   53/150 | train 0.00128 | val 0.00163 |   97.6s (no improvement 4/15)
+[vanilla_ensemble.train] Epoch   54/150 | train 0.00143 | val 0.00107 |   99.2s (no improvement 5/15)
+[vanilla_ensemble.train] Epoch   55/150 | train 0.00165 | val 0.00139 |  101.0s (no improvement 6/15)
+[vanilla_ensemble.train] Epoch   56/150 | train 0.00140 | val 0.00121 |  102.7s (no improvement 7/15)
+[vanilla_ensemble.train] Epoch   57/150 | train 0.00087 | val 0.00086 |  104.5s (no improvement 8/15)
+[vanilla_ensemble.train] Epoch   58/150 | train 0.00090 | val 0.00128 |  106.2s (no improvement 9/15)
+[vanilla_ensemble.train] Epoch   59/150 | train 0.00131 | val 0.00192 |  107.9s (no improvement 10/15)
+[vanilla_ensemble.train] Epoch   60/150 | train 0.00110 | val 0.00061 |  109.9s ✓ best
+[vanilla_ensemble.train] Epoch   61/150 | train 0.00095 | val 0.00093 |  111.5s (no improvement 1/15)
+[vanilla_ensemble.train] Epoch   62/150 | train 0.00090 | val 0.00136 |  113.2s (no improvement 2/15)
+[vanilla_ensemble.train] Epoch   63/150 | train 0.00125 | val 0.00132 |  114.9s (no improvement 3/15)
+[vanilla_ensemble.train] Epoch   64/150 | train 0.00082 | val 0.00063 |  116.7s (no improvement 4/15)
+[vanilla_ensemble.train] Epoch   65/150 | train 0.00070 | val 0.00069 |  118.4s (no improvement 5/15)
+[vanilla_ensemble.train] Epoch   66/150 | train 0.00087 | val 0.00064 |  120.1s (no improvement 6/15)
+[vanilla_ensemble.train] Epoch   67/150 | train 0.00067 | val 0.00067 |  121.8s (no improvement 7/15)
+[vanilla_ensemble.train] Epoch   68/150 | train 0.00105 | val 0.00139 |  123.5s (no improvement 8/15)
+[vanilla_ensemble.train] Epoch   69/150 | train 0.00079 | val 0.00049 |  125.6s ✓ best
+[vanilla_ensemble.train] Epoch   70/150 | train 0.00097 | val 0.00079 |  127.3s (no improvement 1/15)
+[vanilla_ensemble.train] Epoch   71/150 | train 0.00106 | val 0.00055 |  129.0s (no improvement 2/15)
+[vanilla_ensemble.train] Epoch   72/150 | train 0.00075 | val 0.00070 |  130.8s (no improvement 3/15)
+[vanilla_ensemble.train] Epoch   73/150 | train 0.00071 | val 0.00072 |  132.5s (no improvement 4/15)
+[vanilla_ensemble.train] Epoch   74/150 | train 0.00063 | val 0.00086 |  134.2s (no improvement 5/15)
+[vanilla_ensemble.train] Epoch   75/150 | train 0.00065 | val 0.00052 |  136.0s (no improvement 6/15)
+[vanilla_ensemble.train] Epoch   76/150 | train 0.00072 | val 0.00157 |  137.7s (no improvement 7/15)
+[vanilla_ensemble.train] Epoch   77/150 | train 0.00080 | val 0.00075 |  139.4s (no improvement 8/15)
+[vanilla_ensemble.train] Epoch   78/150 | train 0.00068 | val 0.00064 |  141.1s (no improvement 9/15)
+[vanilla_ensemble.train] Epoch   79/150 | train 0.00054 | val 0.00041 |  143.1s ✓ best
+[vanilla_ensemble.train] Epoch   80/150 | train 0.00060 | val 0.00052 |  144.8s (no improvement 1/15)
+[vanilla_ensemble.train] Epoch   81/150 | train 0.00057 | val 0.00113 |  146.6s (no improvement 2/15)
+[vanilla_ensemble.train] Epoch   82/150 | train 0.00064 | val 0.00037 |  148.6s ✓ best
+[vanilla_ensemble.train] Epoch   83/150 | train 0.00057 | val 0.00043 |  150.3s (no improvement 1/15)
+[vanilla_ensemble.train] Epoch   84/150 | train 0.00042 | val 0.00045 |  152.1s (no improvement 2/15)
+[vanilla_ensemble.train] Epoch   85/150 | train 0.00040 | val 0.00048 |  153.8s (no improvement 3/15)
+[vanilla_ensemble.train] Epoch   86/150 | train 0.00054 | val 0.00063 |  155.5s (no improvement 4/15)
+[vanilla_ensemble.train] Epoch   87/150 | train 0.00053 | val 0.00049 |  157.3s (no improvement 5/15)
+[vanilla_ensemble.train] Epoch   88/150 | train 0.00081 | val 0.00039 |  159.0s (no improvement 6/15)
+[vanilla_ensemble.train] Epoch   89/150 | train 0.00047 | val 0.00082 |  160.7s (no improvement 7/15)
+[vanilla_ensemble.train] Epoch   90/150 | train 0.00045 | val 0.00029 |  162.7s ✓ best
+[vanilla_ensemble.train] Epoch   91/150 | train 0.00046 | val 0.00050 |  164.5s (no improvement 1/15)
+[vanilla_ensemble.train] Epoch   92/150 | train 0.00033 | val 0.00031 |  166.2s (no improvement 2/15)
+[vanilla_ensemble.train] Epoch   93/150 | train 0.00060 | val 0.00087 |  167.9s (no improvement 3/15)
+[vanilla_ensemble.train] Epoch   94/150 | train 0.00050 | val 0.00039 |  169.7s (no improvement 4/15)
+[vanilla_ensemble.train] Epoch   95/150 | train 0.00039 | val 0.00050 |  171.4s (no improvement 5/15)
+[vanilla_ensemble.train] Epoch   96/150 | train 0.00038 | val 0.00033 |  173.1s (no improvement 6/15)
+[vanilla_ensemble.train] Epoch   97/150 | train 0.00036 | val 0.00035 |  174.9s (no improvement 7/15)
+[vanilla_ensemble.train] Epoch   98/150 | train 0.00033 | val 0.00035 |  176.6s (no improvement 8/15)
+[vanilla_ensemble.train] Epoch   99/150 | train 0.00028 | val 0.00023 |  178.6s ✓ best
+[vanilla_ensemble.train] Epoch  100/150 | train 0.00027 | val 0.00026 |  180.4s (no improvement 1/15)
+[vanilla_ensemble.train] Epoch  101/150 | train 0.00027 | val 0.00028 |  182.1s (no improvement 2/15)
+[vanilla_ensemble.train] Epoch  102/150 | train 0.00026 | val 0.00028 |  183.8s (no improvement 3/15)
+[vanilla_ensemble.train] Epoch  103/150 | train 0.00029 | val 0.00027 |  185.6s (no improvement 4/15)
+[vanilla_ensemble.train] Epoch  104/150 | train 0.00024 | val 0.00051 |  187.3s (no improvement 5/15)
+[vanilla_ensemble.train] Epoch  105/150 | train 0.00032 | val 0.00031 |  189.0s (no improvement 6/15)
+[vanilla_ensemble.train] Epoch  106/150 | train 0.00026 | val 0.00024 |  190.8s (no improvement 7/15)
+[vanilla_ensemble.train] Epoch  107/150 | train 0.00024 | val 0.00026 |  192.5s (no improvement 8/15)
+[vanilla_ensemble.train] Epoch  108/150 | train 0.00025 | val 0.00022 |  194.5s ✓ best
+[vanilla_ensemble.train] Epoch  109/150 | train 0.00025 | val 0.00034 |  196.3s (no improvement 1/15)
+[vanilla_ensemble.train] Epoch  110/150 | train 0.00025 | val 0.00023 |  198.0s (no improvement 2/15)
+[vanilla_ensemble.train] Epoch  111/150 | train 0.00033 | val 0.00044 |  199.7s (no improvement 3/15)
+[vanilla_ensemble.train] Epoch  112/150 | train 0.00025 | val 0.00019 |  201.7s ✓ best
+[vanilla_ensemble.train] Epoch  113/150 | train 0.00019 | val 0.00022 |  203.5s (no improvement 1/15)
+[vanilla_ensemble.train] Epoch  114/150 | train 0.00027 | val 0.00047 |  205.2s (no improvement 2/15)
+[vanilla_ensemble.train] Epoch  115/150 | train 0.00021 | val 0.00018 |  207.2s ✓ best
+[vanilla_ensemble.train] Epoch  116/150 | train 0.00019 | val 0.00020 |  209.0s (no improvement 1/15)
+[vanilla_ensemble.train] Epoch  117/150 | train 0.00022 | val 0.00026 |  210.7s (no improvement 2/15)
+[vanilla_ensemble.train] Epoch  118/150 | train 0.00021 | val 0.00018 |  212.4s (no improvement 3/15)
+[vanilla_ensemble.train] Epoch  119/150 | train 0.00021 | val 0.00017 |  214.4s ✓ best
+[vanilla_ensemble.train] Epoch  120/150 | train 0.00017 | val 0.00017 |  216.2s (no improvement 1/15)
+[vanilla_ensemble.train] Epoch  121/150 | train 0.00017 | val 0.00018 |  217.9s (no improvement 2/15)
+[vanilla_ensemble.train] Epoch  122/150 | train 0.00016 | val 0.00017 |  219.9s ✓ best
+[vanilla_ensemble.train] Epoch  123/150 | train 0.00017 | val 0.00020 |  221.7s (no improvement 1/15)
+[vanilla_ensemble.train] Epoch  124/150 | train 0.00016 | val 0.00022 |  223.4s (no improvement 2/15)
+[vanilla_ensemble.train] Epoch  125/150 | train 0.00016 | val 0.00015 |  225.4s ✓ best
+[vanilla_ensemble.train] Epoch  126/150 | train 0.00016 | val 0.00017 |  227.1s (no improvement 1/15)
+[vanilla_ensemble.train] Epoch  127/150 | train 0.00016 | val 0.00015 |  229.1s ✓ best
+[vanilla_ensemble.train] Epoch  128/150 | train 0.00016 | val 0.00016 |  230.9s (no improvement 1/15)
+[vanilla_ensemble.train] Epoch  129/150 | train 0.00015 | val 0.00015 |  232.6s (no improvement 2/15)
+[vanilla_ensemble.train] Epoch  130/150 | train 0.00014 | val 0.00014 |  234.6s ✓ best
+[vanilla_ensemble.train] Epoch  131/150 | train 0.00013 | val 0.00015 |  236.3s (no improvement 1/15)
+[vanilla_ensemble.train] Epoch  132/150 | train 0.00013 | val 0.00015 |  238.0s (no improvement 2/15)
+[vanilla_ensemble.train] Epoch  133/150 | train 0.00014 | val 0.00016 |  239.7s (no improvement 3/15)
+[vanilla_ensemble.train] Epoch  134/150 | train 0.00015 | val 0.00014 |  241.7s ✓ best
+[vanilla_ensemble.train] Epoch  135/150 | train 0.00013 | val 0.00014 |  243.5s (no improvement 1/15)
+[vanilla_ensemble.train] Epoch  136/150 | train 0.00013 | val 0.00015 |  245.2s (no improvement 2/15)
+[vanilla_ensemble.train] Epoch  137/150 | train 0.00013 | val 0.00014 |  247.2s ✓ best
+[vanilla_ensemble.train] Epoch  138/150 | train 0.00013 | val 0.00021 |  249.0s (no improvement 1/15)
+[vanilla_ensemble.train] Epoch  139/150 | train 0.00013 | val 0.00014 |  250.7s (no improvement 2/15)
+[vanilla_ensemble.train] Epoch  140/150 | train 0.00012 | val 0.00013 |  252.7s ✓ best
+[vanilla_ensemble.train] Epoch  141/150 | train 0.00012 | val 0.00014 |  254.4s (no improvement 1/15)
+[vanilla_ensemble.train] Epoch  142/150 | train 0.00013 | val 0.00015 |  256.2s (no improvement 2/15)
+[vanilla_ensemble.train] Epoch  143/150 | train 0.00012 | val 0.00013 |  257.9s (no improvement 3/15)
+[vanilla_ensemble.train] Epoch  144/150 | train 0.00012 | val 0.00013 |  259.9s ✓ best
+[vanilla_ensemble.train] Epoch  145/150 | train 0.00012 | val 0.00013 |  261.5s (no improvement 1/15)
+[vanilla_ensemble.train] Epoch  146/150 | train 0.00012 | val 0.00013 |  263.5s ✓ best
+[vanilla_ensemble.train] Epoch  147/150 | train 0.00012 | val 0.00013 |  265.2s (no improvement 1/15)
+[vanilla_ensemble.train] Epoch  148/150 | train 0.00012 | val 0.00013 |  267.0s (no improvement 2/15)
+[vanilla_ensemble.train] Epoch  149/150 | train 0.00012 | val 0.00013 |  269.0s ✓ best
+[vanilla_ensemble.train] Epoch  150/150 | train 0.00012 | val 0.00013 |  271.0s ✓ best
+[vanilla_ensemble.train] Done. Best checkpoint: baseline_surrogate/vanilla_ensemble/runs/narrow_200_300W/vanilla_ensemble_best.pt
+=== [5/6] kalman_filter ===
+[kalman_filter.train] Output dir : baseline_surrogate/kalman_filter/runs/narrow_200_300W
+[dataset_v2] Loaded 5000 trajectories × 12 layers from DatasetV2_layer_12_samples_5000.pkl
+[dataset_v2] Split → train 4000 | val 500 | test 500
+[baseline_surrogate.data] State mean ∈ [162.8, 1853.1], std ∈ [31.4412, 893.7]
+[baseline_surrogate.data] Laser power mean = 249.87 W, std = 89.44 W
+[baseline_surrogate.data] Cool time    mean = 0.1005 s, std = 0.0314 s
+[kalman_filter.train] LP filter active: [200.0, 300.0] W
+[extract_single_stage_raw_arrays] lp_filter=[200.0, 300.0]W kept 17,094/48,000 transitions
+[kalman_filter] PCA(64) explained variance ratio sum = 1.0000
+[kalman_filter] Fit on 17,094 transitions. Latent-space residual RMSE = 34.2232
+[kalman_filter.train] Saved → baseline_surrogate/kalman_filter/runs/narrow_200_300W/kalman_filter_fitted.pt
+=== [6/6] summarize_results (comparison plots, evaluated on FULL-range test set) ===
+[summarize_results] Output dir : baseline_surrogate/results_v3_narrow
+[summarize_results] Device     : cuda
+[dataset_v2] Loaded 5000 trajectories × 12 layers from DatasetV2_layer_12_samples_5000.pkl
+[dataset_v2] Split → train 4000 | val 500 | test 500
+[SingleStageTrajectoryDataset] 500 trajectories, state_dim=1053
+[summarize_results] [teacher-forced ] surrogate_v3 (proposed): MAE(mean)=1.693 K, RMSE(mean)=5.912 K
+[SingleStageTrajectoryDataset] 500 trajectories, state_dim=1053
+[summarize_results] [auto-regressive] surrogate_v3 (proposed): MAE(mean)=3.256 K, RMSE(mean)=9.887 K
+[SingleStageTrajectoryDataset] 500 trajectories, state_dim=1053
+[summarize_results] [teacher-forced ] mlp: MAE(mean)=2.764 K, RMSE(mean)=6.605 K
+[SingleStageTrajectoryDataset] 500 trajectories, state_dim=1053
+[summarize_results] [auto-regressive] mlp: MAE(mean)=4.074 K, RMSE(mean)=8.767 K
+[SingleStageTrajectoryDataset] 500 trajectories, state_dim=1053
+[summarize_results] [teacher-forced ] lstm: MAE(mean)=2.408 K, RMSE(mean)=6.976 K
+[SingleStageTrajectoryDataset] 500 trajectories, state_dim=1053
+[summarize_results] [auto-regressive] lstm: MAE(mean)=6.717 K, RMSE(mean)=15.169 K
+[SingleStageTrajectoryDataset] 500 trajectories, state_dim=1053
+[summarize_results] [teacher-forced ] kalman_filter: MAE(mean)=7.360 K, RMSE(mean)=18.625 K
+[SingleStageTrajectoryDataset] 500 trajectories, state_dim=1053
+[summarize_results] [auto-regressive] kalman_filter: MAE(mean)=17.088 K, RMSE(mean)=36.801 K
+[SingleStageTrajectoryDataset] 500 trajectories, state_dim=1053
+[summarize_results] [teacher-forced ] vanilla_ensemble: MAE(mean)=2.600 K, RMSE(mean)=6.241 K
+[SingleStageTrajectoryDataset] 500 trajectories, state_dim=1053
+[summarize_results] [auto-regressive] vanilla_ensemble: MAE(mean)=3.935 K, RMSE(mean)=8.374 K
+
+[summarize_results] ==========================================================================================
+  [Teacher-Forced] Method                                       next_MAE[K]  next_RMSE[K]  heat_MAE[K]       #params
+[summarize_results] ==========================================================================================
+  surrogate_v3 (proposed)                                     1.693         5.912          N/A     5,108,040
+  mlp                                                         2.764         6.605          N/A     1,872,925
+  lstm                                                        2.408         6.976          N/A     3,753,501
+  kalman_filter                                               7.360        18.625          N/A        72,384
+  vanilla_ensemble                                            2.600         6.241          N/A     9,364,625
+[summarize_results] ==========================================================================================
+
+[summarize_results] Saved → baseline_surrogate/results_v3_narrow/rmse_vs_action.png
+[summarize_results] Saved → baseline_surrogate/results_v3_narrow/per_layer_mae.png
+[summarize_results] Saved → baseline_surrogate/results_v3_narrow/per_layer_rmse.png
+[summarize_results] Saved → baseline_surrogate/results_v3_narrow/leaderboard.png
+[summarize_results] Saved → baseline_surrogate/results_v3_narrow/leaderboard.csv
+
+[summarize_results] ==========================================================================================
+  [Auto-Regressive] Method                                       next_MAE[K]  next_RMSE[K]  heat_MAE[K]       #params
+[summarize_results] ==========================================================================================
+  surrogate_v3 (proposed)                                     3.256         9.887          N/A     5,108,040
+  mlp                                                         4.074         8.767          N/A     1,872,925
+  lstm                                                        6.717        15.169          N/A     3,753,501
+  kalman_filter                                              17.088        36.801          N/A        72,384
+  vanilla_ensemble                                            3.935         8.374          N/A     9,364,625
+[summarize_results] ==========================================================================================
+
+[summarize_results] Saved → baseline_surrogate/results_v3_narrow/rmse_vs_action_autoregressive.png
+[summarize_results] Saved → baseline_surrogate/results_v3_narrow/per_layer_mae_autoregressive.png
+[summarize_results] Saved → baseline_surrogate/results_v3_narrow/per_layer_rmse_autoregressive.png
+[summarize_results] Saved → baseline_surrogate/results_v3_narrow/leaderboard_autoregressive.png
+[summarize_results] Saved → baseline_surrogate/results_v3_narrow/leaderboard_autoregressive.csv
+
+[summarize_results] Complete. All outputs in: baseline_surrogate/results_v3_narrow
+============================================================
+Finished : Tue Sep 22 12:23:47 EDT 2026  (exit code: 0)
+Plots    : baseline_surrogate/results_v3_narrow/
+============================================================
