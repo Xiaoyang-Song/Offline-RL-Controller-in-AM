@@ -1,0 +1,467 @@
+"""
+surrogate_model_v3/dataset.py
+------------------------------------
+Data extraction + loading for the two-stage (heating / cooling) LPBF
+surrogate, built on the v2 simulation dataset at
+../LPBF-Simulation/simulation_v2/RL_Dataset_v2/.
+
+This is the primary surrogate design going forward (see ../README.md and
+../../baseline_surrogate/README.md's "Result: the latent encoder/decoder
+underperforms" section): two-stage heating/cooling decomposition, but NO
+learned latent bottleneck — transitions act directly on the raw
+(normalised) 1053-dim state. Consequently there is no encoder/decoder and
+no "field view" indirection here; this file is a straight port of
+surrogate_model_latent_uncertainty_v2/dataset_v2.py's consumer utilities
+(trajectory loading/splitting, normalizers, bootstrap masks, the two
+Dataset classes) with the encoder/decoder-era naming ("Latent") dropped.
+
+MDP convention
+--------------
+  state (s_t)      = temperature field BEFORE the laser pass on layer t
+                      (layer 0 -> all-300 K initial field)
+  laser_power (a_t) = laser power applied during layer t [W]
+  u_heat_t         = temperature field AFTER heating, BEFORE cooling (reward input)
+  cool_time_t      = cooling duration used for layer t [s]
+  next_state(s_t+1)= temperature field AFTER cooling -> becomes s_{t+1}
+
+Loading OLDER pickles (e.g. Data/DatasetV2_layer_12_samples_5000.pkl,
+extracted via surrogate_model_latent_uncertainty_v2/extract_dataset_v2.py)
+works fine through this module's load_trajectories: pickle resolves each
+stored object's class by the MODULE RECORDED AT PICKLE TIME
+(surrogate_model_latent_uncertainty_v2.dataset_v2.StepV2), not by whichever
+module happens to call pickle.load — so those files keep loading correctly
+as long as that sibling package's source stays in the repo. Only pickles
+extracted fresh via THIS package's extract_dataset.py will contain the
+Step/Trajectory names defined below.
+"""
+
+import os
+import pickle
+from typing import List, NamedTuple, Optional, Tuple, Union
+
+import numpy as np
+import torch
+from scipy.io import loadmat
+from torch.utils.data import Dataset
+from tqdm import tqdm
+
+RL_DATASET_V2_DIR = os.path.join("..", "LPBF-Simulation", "simulation_v2", "RL_Dataset_v2")
+
+
+class Step(NamedTuple):
+    u_final:      np.ndarray  # (1053, 1) end-of-cooling field  = s_{t+1}
+    u_heat_final: np.ndarray  # (1053, 1) end-of-heating field  (reward input, stage-1 target)
+    lp_action:    float       # laser power [W]                (stage-1 input)
+    ss_action:    float       # scan speed [mm/s]               (recorded, unused by the model)
+    cool_time:    float       # cooling duration [s]            (stage-2 input)
+    reward:       float       # -meanDeviation, computed from u_heat_final
+
+
+Trajectory = List[Step]
+
+
+# =============================================================================
+# Extraction / pickling
+# =============================================================================
+
+def extract_single_trajectory(trajectory_id: int, trajectory_length: int = 12) -> Trajectory:
+    trajectory = []
+    for j in range(trajectory_length):
+        filename = os.path.join(
+            RL_DATASET_V2_DIR, f"trajectory_{trajectory_id:03d}", f"layer_{j + 1}_data.mat"
+        )
+        data = loadmat(filename)
+        trajectory.append(Step(
+            u_final=np.asarray(data["uFinal"], dtype=np.float32),
+            u_heat_final=np.asarray(data["uHeatFinal"], dtype=np.float32),
+            lp_action=float(data["LP_action"][0][0]),
+            ss_action=float(data["SS_action"][0][0]),
+            cool_time=float(data["coolTime_step"][0][0]),
+            reward=-float(data["meanDeviation"][0][0]),
+        ))
+    return trajectory
+
+
+def gather_dataset(id_list, trajectory_length: int = 12) -> List[Trajectory]:
+    dataset = []
+    for trajectory_id in tqdm(id_list):
+        dataset.append(extract_single_trajectory(trajectory_id, trajectory_length))
+    return dataset
+
+
+# =============================================================================
+# I/O helpers
+# =============================================================================
+
+def load_trajectories(pkl_path: str) -> List[Trajectory]:
+    with open(pkl_path, "rb") as f:
+        dataset = pickle.load(f)
+    print(f"[dataset] Loaded {len(dataset)} trajectories "
+          f"× {len(dataset[0])} layers from {os.path.basename(pkl_path)}")
+    return dataset
+
+
+def split_trajectories(
+    trajectories:  List[Trajectory],
+    val_fraction:  float = 0.10,
+    test_fraction: float = 0.10,
+    seed:          int   = 42,
+) -> Tuple[List[Trajectory], List[Trajectory], List[Trajectory]]:
+    """Trajectory-level split (no data leakage between sets)."""
+    rng  = np.random.default_rng(seed)
+    idx  = rng.permutation(len(trajectories))
+    n    = len(trajectories)
+    n_te = max(1, int(n * test_fraction))
+    n_va = max(1, int(n * val_fraction))
+
+    test_idx  = idx[:n_te]
+    val_idx   = idx[n_te : n_te + n_va]
+    train_idx = idx[n_te + n_va :]
+
+    train = [trajectories[i] for i in train_idx]
+    val   = [trajectories[i] for i in val_idx]
+    test  = [trajectories[i] for i in test_idx]
+
+    print(f"[dataset] Split → train {len(train)} | val {len(val)} | test {len(test)}")
+    return train, val, test
+
+
+def build_normalizers(
+    trajectories: List[Trajectory],
+    initial_temp: float = 300.0,
+) -> Tuple[torch.Tensor, torch.Tensor, float, float, float, float]:
+    """
+    Compute z-score stats from training trajectories only.
+
+    State stats are pooled across all three field "views" (pre-heat s_t,
+    end-of-heat u_heat_t, end-of-cool s_{t+1}) since the heating/cooling
+    transition heads act on all three the same way (no separate
+    encoder/decoder to normalise for).
+
+    Returns
+    -------
+    state_mean, state_std : (state_dim,) float32
+    lp_mean,   lp_std      : laser power stats [W]
+    cool_mean, cool_std    : cool time stats [s]
+    """
+    all_states, all_lp, all_cool = [], [], []
+
+    sample_u  = np.asarray(trajectories[0][0].u_final, dtype=np.float32).reshape(-1)
+    state_dim = sample_u.shape[0]
+    init_s    = np.full(state_dim, initial_temp, dtype=np.float32)
+
+    for traj in trajectories:
+        prev = init_s.copy()
+        for step in traj:
+            heat = np.asarray(step.u_heat_final, dtype=np.float32).reshape(-1)
+            nxt  = np.asarray(step.u_final,      dtype=np.float32).reshape(-1)
+            all_states.extend([prev, heat, nxt])
+            all_lp.append(step.lp_action)
+            all_cool.append(step.cool_time)
+            prev = nxt
+
+    states_arr = np.stack(all_states, axis=0)
+    lp_arr     = np.array(all_lp,   dtype=np.float32)
+    cool_arr   = np.array(all_cool, dtype=np.float32)
+
+    state_mean = torch.tensor(states_arr.mean(axis=0), dtype=torch.float32)
+    state_std  = torch.tensor(states_arr.std(axis=0),  dtype=torch.float32).clamp_min(1e-6)
+    lp_mean    = float(lp_arr.mean())
+    lp_std     = float(lp_arr.std()) if lp_arr.std() > 1e-6 else 1.0
+    cool_mean  = float(cool_arr.mean())
+    cool_std   = float(cool_arr.std()) if cool_arr.std() > 1e-6 else 1.0
+
+    print(f"[dataset] State mean ∈ [{state_mean.min():.1f}, {state_mean.max():.1f}], "
+          f"std ∈ [{state_std.min():.4f}, {state_std.max():.1f}]")
+    print(f"[dataset] Laser power mean = {lp_mean:.2f} W, std = {lp_std:.2f} W")
+    print(f"[dataset] Cool time    mean = {cool_mean:.4f} s, std = {cool_std:.4f} s")
+    return state_mean, state_std, lp_mean, lp_std, cool_mean, cool_std
+
+
+# =============================================================================
+# Bootstrap resampling
+# =============================================================================
+
+def make_bootstrap_masks(
+    n_samples:      int,
+    n_ensemble:     int,
+    seed:           int   = 0,
+    resample_frac:  float = 1.0,
+) -> np.ndarray:
+    """Per-member bootstrap multiplicity masks.
+
+    resample_frac (default 1.0, i.e. the original N-out-of-N bootstrap):
+    each member draws round(resample_frac * n_samples) indices with
+    replacement from {0, ..., n_samples-1} instead of n_samples. Standard
+    N-out-of-N bootstrap members overlap heavily (~2/3 of samples shared
+    between any two members for large N), which keeps the default epistemic
+    (ensemble-disagreement) signal small in practice. Lowering resample_frac
+    below 1.0 shrinks each member's effective sample and increases the
+    fraction of samples any given member never sees (expected unseen
+    fraction ≈ exp(-resample_frac)), decorrelating the K members further and
+    making their disagreement (epistemic_std) larger and more informative,
+    especially in sparse regions of the training distribution — at the cost
+    of each member seeing less data individually.
+    """
+    rng   = np.random.default_rng(seed)
+    n_draws = max(1, int(round(n_samples * resample_frac)))
+    masks = np.zeros((n_samples, n_ensemble), dtype=np.float32)
+    for k in range(n_ensemble):
+        draws  = rng.integers(0, n_samples, size=n_draws)
+        counts = np.bincount(draws, minlength=n_samples)
+        masks[:, k] = counts.astype(np.float32)
+
+    frac_unseen = (masks == 0).mean()
+    print(f"[dataset] Bootstrap masks: {masks.shape}, resample_frac={resample_frac}, "
+          f"~{frac_unseen*100:.1f}% of (sample, member) pairs unseen "
+          f"(expected ≈ {np.exp(-resample_frac)*100:.1f}%)")
+    return masks
+
+
+# =============================================================================
+# Flat single-step dataset with layer indices (+ per-transition bootstrap masks)
+# =============================================================================
+
+class TwoStageSurrogateDataset(Dataset):
+    """
+    Flat (s_t, lp_t, cool_t, u_heat_t, s_{t+1}, layer_idx, bootstrap_mask) transitions.
+
+    All state-like tensors (s_t, u_heat_t, s_{t+1}) are z-score normalised
+    with the SAME (shared) state_mean/state_std, since the heating/cooling
+    transition heads act on all three directly (no learned latent space).
+
+    lp_filter (optional): restrict the TRANSITIONS the heating/cooling
+    networks actually train on to those whose laser power falls in
+    [lo, hi] — e.g. for deliberately training a "narrow" surrogate. Also
+    accepts a LIST of (lo, hi) ranges, e.g. [(150, 200), (300, 350)], in
+    which case a transition is kept if its laser power falls in ANY of the
+    ranges — the union — leaving a genuine INTERIOR gap (e.g. (200, 300))
+    bracketed by training data on both sides (an interpolation-uncertainty
+    test) as well as the usual edge/extrapolation gaps outside the
+    outermost range. A single (lo, hi) tuple is still accepted unchanged
+    (equivalent to a one-range list). State-chaining above still walks
+    every original trajectory in full (so s_t is always the true,
+    physically-correct predecessor state, regardless of what LP produced
+    it) — filtering only drops which resulting transitions are kept for
+    training, it never fabricates or skips over states. Only usable with
+    this flat dataset (single-step training): TwoStageTrajectoryDataset
+    needs unbroken 12-layer trajectories, which this filter would leave
+    with gaps in — it deliberately has no equivalent parameter.
+
+    perturb_frac / perturb_seed (optional): additive independent Gaussian
+    noise applied ONLY to the stored copies of the two supervised TARGET
+    fields (u_heat_t, s_{t+1}) used for the reconstruction/NLL losses —
+    never to s_t (the input) and never to the clean values used to chain
+    prev -> next state across layers while building this dataset. Scaled
+    PER NODE as perturb_frac * state_std[node] (state_std is the same
+    per-node std build_normalizers computed for z-scoring) rather than a
+    fixed Kelvin value, since state_std varies enormously across the mesh
+    (observed ~30-1700 K depending on node) — a flat Kelvin noise level
+    would be imperceptible on high-variance nodes and destructive on
+    low-variance ones. perturb_frac=0.1 means "add noise equal to 10% of
+    this node's own natural variation across the dataset" — reasonable
+    starting range is roughly 0.05-0.2; much above that and the
+    reconstruction loss stops converging, much below and there's no real
+    aleatoric signal for the Gaussian NLL to calibrate against. This models
+    realistic measurement/process noise on the observed data without
+    altering the underlying physical trajectory. Default perturb_frac=0.0
+    is a no-op (bit-identical to omitting the argument). Combined with a
+    restricted/gapped lp_filter, this also tends to sharpen epistemic
+    disagreement in sparse regions, since bootstrap members fit their own
+    noise draws differently there.
+    """
+
+    def __init__(
+        self,
+        trajectories:    List[Trajectory],
+        state_mean:      torch.Tensor,
+        state_std:       torch.Tensor,
+        lp_mean:         float,
+        lp_std:          float,
+        cool_mean:       float,
+        cool_std:        float,
+        initial_temp:    float = 300.0,
+        n_ensemble:      int   = 5,
+        bootstrap_seed:  int   = 0,
+        bootstrap_resample_frac: float = 1.0,
+        lp_filter:       Optional[Union[Tuple[float, float], List[Tuple[float, float]]]] = None,
+        perturb_frac:    float = 0.0,
+        perturb_seed:    int   = 0,
+    ):
+        super().__init__()
+        state_mean = state_mean.cpu()
+        state_std  = state_std.cpu()
+
+        sample_u  = np.asarray(trajectories[0][0].u_final, dtype=np.float32).reshape(-1)
+        state_dim = sample_u.shape[0]
+        init_s    = np.full(state_dim, initial_temp, dtype=np.float32)
+
+        states, lp_actions, cool_times, heat_states, next_states, layer_indices = (
+            [], [], [], [], [], []
+        )
+
+        for traj in trajectories:
+            prev = init_s.copy()
+            for layer_idx, step in enumerate(traj):
+                heat = np.asarray(step.u_heat_final, dtype=np.float32).reshape(-1)
+                nxt  = np.asarray(step.u_final,      dtype=np.float32).reshape(-1)
+                states.append(prev.copy())
+                lp_actions.append(step.lp_action)
+                cool_times.append(step.cool_time)
+                heat_states.append(heat)
+                next_states.append(nxt)
+                layer_indices.append(layer_idx)
+                prev = nxt
+
+        if lp_filter is not None:
+            # Normalise to a list of (lo, hi) ranges — a bare (lo, hi) tuple
+            # (lp_filter[0] is a number, not itself a range) is wrapped into
+            # a one-range list so the single-range call sites are unchanged.
+            ranges = [lp_filter] if isinstance(lp_filter[0], (int, float)) else list(lp_filter)
+            keep = [i for i, lp in enumerate(lp_actions)
+                    if any(lo <= lp <= hi for lo, hi in ranges)]
+            n_total = len(lp_actions)
+            states        = [states[i]        for i in keep]
+            lp_actions    = [lp_actions[i]     for i in keep]
+            cool_times    = [cool_times[i]     for i in keep]
+            heat_states   = [heat_states[i]    for i in keep]
+            next_states   = [next_states[i]    for i in keep]
+            layer_indices = [layer_indices[i]  for i in keep]
+            range_str = ", ".join(f"[{lo}, {hi}]" for lo, hi in ranges)
+            print(f"[TwoStageSurrogateDataset] lp_filter={range_str}W kept "
+                  f"{len(keep):,}/{n_total:,} transitions")
+
+        if perturb_frac > 0.0:
+            rng = np.random.default_rng(perturb_seed)
+            noise_std = (perturb_frac * state_std).numpy()  # (state_dim,) raw K, per node
+            heat_states = [h + rng.normal(0.0, noise_std).astype(np.float32) for h in heat_states]
+            next_states = [s + rng.normal(0.0, noise_std).astype(np.float32) for s in next_states]
+            print(f"[TwoStageSurrogateDataset] perturb_frac={perturb_frac:.1%} of per-node "
+                  f"state_std → noise std {noise_std.min():.2f}-{noise_std.max():.2f}K "
+                  f"(mean {noise_std.mean():.2f}K) applied to {len(heat_states):,} "
+                  f"heating/next-state TARGETS (inputs s_t and the physical trajectory chain "
+                  f"remain clean)")
+
+        S  = torch.tensor(np.stack(states),      dtype=torch.float32)
+        A  = torch.tensor(lp_actions,             dtype=torch.float32).unsqueeze(-1)
+        C  = torch.tensor(cool_times,             dtype=torch.float32).unsqueeze(-1)
+        H  = torch.tensor(np.stack(heat_states),  dtype=torch.float32)
+        S2 = torch.tensor(np.stack(next_states),  dtype=torch.float32)
+
+        self.states       = (S  - state_mean) / state_std
+        self.lp_actions   = (A  - lp_mean)    / lp_std
+        self.cool_times   = (C  - cool_mean)  / cool_std
+        self.heat_states  = (H  - state_mean) / state_std
+        self.next_states  = (S2 - state_mean) / state_std
+        self.layer_indices = torch.tensor(layer_indices, dtype=torch.long)
+
+        self.n_ensemble = n_ensemble
+        masks = make_bootstrap_masks(len(self.states), n_ensemble, seed=bootstrap_seed,
+                                      resample_frac=bootstrap_resample_frac)
+        self.bootstrap_masks = torch.tensor(masks, dtype=torch.float32)  # (N, K)
+
+        print(f"[TwoStageSurrogateDataset] {len(self.states):,} transitions, "
+              f"state_dim={state_dim}, layers 0–{max(layer_indices)}, "
+              f"bootstrap K={n_ensemble} (transition-level resampling)")
+
+    def __len__(self) -> int:
+        return len(self.states)
+
+    def __getitem__(self, idx: int):
+        return (
+            self.states[idx],
+            self.lp_actions[idx],
+            self.cool_times[idx],
+            self.heat_states[idx],
+            self.next_states[idx],
+            self.layer_indices[idx],
+            self.bootstrap_masks[idx],
+        )
+
+
+# =============================================================================
+# Full-trajectory dataset (for rollout / autoregressive evaluation; + per-trajectory bootstrap masks)
+# =============================================================================
+
+class TwoStageTrajectoryDataset(Dataset):
+    """
+    Each sample is one full trajectory.
+
+    Returns
+    -------
+    states         : (T+1, state_dim) normalised  — s_0 … s_T
+    heat_states    : (T,   state_dim) normalised  — u_heat_0 … u_heat_{T-1}
+    lp_actions     : (T,   1)         normalised  — a_0 … a_{T-1}
+    cool_times     : (T,   1)         normalised  — cool_time_0 … cool_time_{T-1}
+    bootstrap_mask : (n_ensemble,)
+    """
+
+    def __init__(
+        self,
+        trajectories:    List[Trajectory],
+        state_mean:      torch.Tensor,
+        state_std:       torch.Tensor,
+        lp_mean:         float,
+        lp_std:          float,
+        cool_mean:       float,
+        cool_std:        float,
+        initial_temp:    float = 300.0,
+        n_ensemble:      int   = 5,
+        bootstrap_seed:  int   = 0,
+        bootstrap_resample_frac: float = 1.0,
+    ):
+        super().__init__()
+        state_mean = state_mean.cpu()
+        state_std  = state_std.cpu()
+        self.samples: List[Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]] = []
+
+        sample_u  = np.asarray(trajectories[0][0].u_final, dtype=np.float32).reshape(-1)
+        state_dim = sample_u.shape[0]
+        init_raw  = np.full(state_dim, initial_temp, dtype=np.float32)
+
+        T_last = 0
+        for traj in trajectories:
+            T      = len(traj)
+            T_last = T
+            s_list, h_list, a_list, c_list = [init_raw.copy()], [], [], []
+            for step in traj:
+                h_list.append(np.asarray(step.u_heat_final, dtype=np.float32).reshape(-1))
+                s_list.append(np.asarray(step.u_final,      dtype=np.float32).reshape(-1))
+                a_list.append(step.lp_action)
+                c_list.append(step.cool_time)
+
+            S_raw = torch.tensor(np.stack(s_list), dtype=torch.float32)   # (T+1, D)
+            H_raw = torch.tensor(np.stack(h_list), dtype=torch.float32)   # (T,   D)
+            A_raw = torch.tensor(a_list, dtype=torch.float32).unsqueeze(-1)  # (T, 1)
+            C_raw = torch.tensor(c_list, dtype=torch.float32).unsqueeze(-1)  # (T, 1)
+            self.samples.append((
+                (S_raw - state_mean) / state_std,
+                (H_raw - state_mean) / state_std,
+                (A_raw - lp_mean)   / lp_std,
+                (C_raw - cool_mean) / cool_std,
+            ))
+
+        self.n_ensemble = n_ensemble
+        masks = make_bootstrap_masks(len(self.samples), n_ensemble, seed=bootstrap_seed,
+                                      resample_frac=bootstrap_resample_frac)
+        self.bootstrap_masks = torch.tensor(masks, dtype=torch.float32)  # (N_traj, K)
+
+        print(f"[TwoStageTrajectoryDataset] {len(self.samples):,} trajectories, "
+              f"T={T_last}, state_dim={state_dim}, "
+              f"bootstrap K={n_ensemble} (trajectory-level resampling)")
+
+    def __len__(self) -> int:
+        return len(self.samples)
+
+    def __getitem__(self, idx: int):
+        s, h, a, c = self.samples[idx]
+        return s, h, a, c, self.bootstrap_masks[idx]
+
+
+# NOTE: no `if __name__ == "__main__":` CLI block here on purpose. `python -m
+# surrogate_model_v3.dataset` re-executes this file as `__main__`, which
+# rebinds Step.__module__ to "__main__" — pickles written under that run
+# then fail to unpickle from train.py/evaluate.py (which import this module
+# normally, so they look for Step in surrogate_model_v3.dataset, not
+# __main__). The CLI entry point lives in extract_dataset.py instead, which
+# only *imports* Step from here — see that file for the "python -m ..." usage.

@@ -37,10 +37,9 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--lp_filter_min", type=float, default=None)
     p.add_argument("--lp_filter_max", type=float, default=None)
 
-    p.add_argument("--hidden",          type=int, default=512)
-    p.add_argument("--depth",           type=int, default=4)
-    p.add_argument("--layer_embed_dim", type=int, default=8)
-    p.add_argument("--dropout",         type=float, default=0.0)
+    p.add_argument("--hidden",  type=int, default=512)
+    p.add_argument("--depth",   type=int, default=4)
+    p.add_argument("--dropout", type=float, default=0.0)
 
     p.add_argument("--epochs",       type=int,   default=300)
     p.add_argument("--batch_size",   type=int,   default=128)
@@ -55,8 +54,8 @@ def parse_args() -> argparse.Namespace:
 
 
 def mse_loss_fn(model, batch, device):
-    s, a, c, s2, layer_idx, _bmask = (t.to(device) for t in batch)
-    pred = model(s, a, c, layer_idx)
+    s, a, c, s2, _layer_idx, _bmask = (t.to(device) for t in batch)
+    pred = model(s, a, c)
     return (pred - s2).pow(2).mean()
 
 
@@ -76,7 +75,6 @@ def main() -> None:
         train_trajs, initial_temp=args.initial_temp
     )
     state_dim = state_mean.shape[0]
-    n_layers  = len(train_trajs[0])
 
     lp_filter = None
     if args.lp_filter_min is not None or args.lp_filter_max is not None:
@@ -98,8 +96,7 @@ def main() -> None:
     val_loader   = DataLoader(val_ds,   shuffle=False, **loader_kw)
 
     model = PlainMLPSurrogate(
-        state_dim=state_dim, hidden=args.hidden, depth=args.depth,
-        n_layers=n_layers, layer_embed_dim=args.layer_embed_dim, dropout=args.dropout,
+        state_dim=state_dim, hidden=args.hidden, depth=args.depth, dropout=args.dropout,
     ).to(device)
     print(f"[mlp.train] PlainMLPSurrogate params={model.count_parameters():,}")
 
@@ -115,7 +112,6 @@ def main() -> None:
             "lp_mean": lp_mean, "lp_std": lp_std, "cool_mean": cool_mean, "cool_std": cool_std,
             "epoch": epoch, "val_loss": val_loss,
             "model_config": dict(state_dim=state_dim, hidden=args.hidden, depth=args.depth,
-                                 n_layers=n_layers, layer_embed_dim=args.layer_embed_dim,
                                  dropout=args.dropout),
             "train_args": vars(args),
         }, ckpt_best)

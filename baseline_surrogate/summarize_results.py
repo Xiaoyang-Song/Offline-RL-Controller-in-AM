@@ -29,14 +29,17 @@ with no u_heat_t target is exactly what makes them single-stage.
 Usage — pass any subset of the checkpoint flags:
     python -m baseline_surrogate.summarize_results \\
         --data_path Data/DatasetV2_layer_12_samples_5000.pkl \\
-        --surrogate_checkpoint             surrogate_model_latent_uncertainty_v2/runs/narrow_200_300W/two_stage_best.pt \\
-        --mlp_checkpoint                   baseline_surrogate/mlp/runs/narrow_200_300W/mlp_best.pt \\
-        --lstm_checkpoint                  baseline_surrogate/lstm/runs/narrow_200_300W/lstm_best.pt \\
-        --kalman_checkpoint                baseline_surrogate/kalman_filter/runs/narrow_200_300W/kalman_filter_fitted.pt \\
-        --vanilla_ensemble_checkpoint      baseline_surrogate/vanilla_ensemble/runs/narrow_200_300W/vanilla_ensemble_best.pt \\
-        --ablation_no_two_stage_checkpoint baseline_surrogate/ablation_no_two_stage/runs/narrow_200_300W/ablation_no_two_stage_best.pt \\
-        --ablation_no_latent_checkpoint    baseline_surrogate/ablation_no_latent/runs/narrow_200_300W/ablation_no_latent_best.pt \\
-        --out_dir baseline_surrogate/results
+        --surrogate_v3_checkpoint          surrogate_model_v3/runs/full_range/surrogate_best.pt \\
+        --mlp_checkpoint                   baseline_surrogate/mlp/runs/full_range/mlp_best.pt \\
+        --lstm_checkpoint                  baseline_surrogate/lstm/runs/full_range/lstm_best.pt \\
+        --kalman_checkpoint                baseline_surrogate/kalman_filter/runs/full_range/kalman_filter_fitted.pt \\
+        --vanilla_ensemble_checkpoint      baseline_surrogate/vanilla_ensemble/runs/full_range/vanilla_ensemble_best.pt \\
+        --out_dir baseline_surrogate/results_v3_full
+
+--surrogate_checkpoint / --ablation_no_two_stage_checkpoint /
+--ablation_no_latent_checkpoint remain for backward compatibility with the
+retired learned-latent main model and its ablations; --surrogate_v3_checkpoint
+is the current proposed method (surrogate_model_v3/, no latent space).
 """
 
 import argparse
@@ -70,6 +73,50 @@ from baseline_surrogate.vanilla_ensemble.model import VanillaDeepEnsembleSurroga
 from baseline_surrogate.ablation_no_two_stage.model import NoTwoStageSurrogate
 from baseline_surrogate.ablation_no_latent.model import NoLatentTwoStageSurrogate
 from surrogate_model_latent_uncertainty_v2.model import _moment_match
+from surrogate_model_v3.model import load_surrogate as load_surrogate_v3
+
+
+# =============================================================================
+# Professional plot styling — a fixed, high-contrast palette so each method
+# keeps the SAME color across every plot/regime, plus consistent typography.
+# The proposed method (surrogate_v3) is always solid black with a thicker
+# line so it visually anchors every comparison.
+# =============================================================================
+
+plt.rcParams.update({
+    "font.size":        11,
+    "font.family":      "sans-serif",
+    "axes.titlesize":   12,
+    "axes.titleweight": "bold",
+    "axes.labelsize":   11,
+    "axes.edgecolor":   "#333333",
+    "axes.linewidth":   0.8,
+    "legend.fontsize":  9,
+    "legend.frameon":   True,
+    "legend.framealpha": 0.9,
+    "figure.dpi":       150,
+    "savefig.dpi":      200,
+    "savefig.bbox":     "tight",
+})
+
+METHOD_STYLE = {
+    "surrogate_v3 (proposed)":            dict(color="#111111", linewidth=2.6, marker="o", zorder=10),
+    "surrogate (main)":                   dict(color="#7f7f7f", linewidth=1.6, marker="D", zorder=5),
+    "mlp":                                dict(color="#1f77b4", linewidth=1.6, marker="s", zorder=4),
+    "lstm":                               dict(color="#ff7f0e", linewidth=1.6, marker="^", zorder=4),
+    "kalman_filter":                      dict(color="#2ca02c", linewidth=1.6, marker="v", zorder=4),
+    "vanilla_ensemble":                   dict(color="#9467bd", linewidth=1.6, marker="P", zorder=4),
+    "ablation_no_two_stage":              dict(color="#8c564b", linewidth=1.4, marker="X", zorder=3),
+    "ablation_no_latent":                 dict(color="#17becf", linewidth=1.4, marker="*", zorder=3),
+}
+_FALLBACK_COLORS = ["#e377c2", "#bcbd22", "#7f7f7f"]
+
+
+def _style_for(name: str) -> dict:
+    if name in METHOD_STYLE:
+        return METHOD_STYLE[name]
+    idx = abs(hash(name)) % len(_FALLBACK_COLORS)
+    return dict(color=_FALLBACK_COLORS[idx], linewidth=1.4, marker="o", zorder=3)
 
 
 # =============================================================================
@@ -191,9 +238,11 @@ def plot_rmse_vs_action(binned_results, out_path, title, id_range=(200.0, 300.0)
                       np.ceil(hi / bin_width) * bin_width + bin_width, bin_width)
     centers = (edges[:-1] + edges[1:]) / 2
 
-    fig, ax = plt.subplots(figsize=(11, 6))
-    ax.axvspan(id_range[0], id_range[1], color="tab:green", alpha=0.12,
-              label=f"Training range [{id_range[0]:.0f}, {id_range[1]:.0f}]W")
+    fig, ax = plt.subplots(figsize=(11, 6.2))
+    ax.axvspan(id_range[0], id_range[1], color="#2ca02c", alpha=0.10, zorder=0,
+              label=f"Training range [{id_range[0]:.0f}, {id_range[1]:.0f}] W (ID)")
+    ax.axvline(id_range[0], color="#2ca02c", linestyle="--", linewidth=1, alpha=0.6, zorder=0)
+    ax.axvline(id_range[1], color="#2ca02c", linestyle="--", linewidth=1, alpha=0.6, zorder=0)
 
     for name, (actions, sq) in binned_results.items():
         bin_idx = np.digitize(actions, edges) - 1
@@ -205,15 +254,17 @@ def plot_rmse_vs_action(binned_results, out_path, title, id_range=(200.0, 300.0)
             if n_per_bin[b] > 0:
                 rmse_per_bin[b] = np.sqrt(np.mean(sq[mask]))
         valid = n_per_bin >= 5
-        ax.plot(centers[valid], rmse_per_bin[valid], marker="o", linewidth=1.5, label=name)
+        style = _style_for(name)
+        ax.plot(centers[valid], rmse_per_bin[valid], markersize=6.5, label=name, **style)
 
     ax.set_xlabel("Laser power [W]")
     ax.set_ylabel("Next-state RMSE [K]")
     ax.set_title(title)
-    ax.legend(fontsize=8)
-    ax.grid(True, alpha=0.3)
+    ax.legend(loc="upper left", ncols=1)
+    ax.grid(True, alpha=0.25, linewidth=0.6)
+    ax.spines[["top", "right"]].set_visible(False)
     fig.tight_layout()
-    fig.savefig(out_path, dpi=150)
+    fig.savefig(out_path)
     plt.close(fig)
     print(f"[summarize_results] Saved → {out_path}")
 
@@ -242,36 +293,46 @@ def _report(results, binned, out_dir, tag, traj_len, id_range, bin_width):
     layers = np.arange(1, traj_len + 1)
     fig, ax = plt.subplots(figsize=(10, 6))
     for name, (mae, _rmse, _heat, _n) in results.items():
-        ax.plot(layers, mae, marker="o", linewidth=1.5, label=name)
+        style = _style_for(name)
+        ax.plot(layers, mae, markersize=6, label=name, **style)
     ax.set_xlabel("Layer index"); ax.set_ylabel("Next-state MAE [K]")
-    ax.set_title(f"baseline_surrogate — Per-Layer Next-State MAE ({label}, test set)")
-    ax.legend(fontsize=8); ax.grid(True, alpha=0.3); ax.set_xticks(layers)
+    ax.set_title(f"Per-Layer Next-State MAE — {label} (test set)")
+    ax.legend(loc="upper left"); ax.grid(True, alpha=0.25, linewidth=0.6); ax.set_xticks(layers)
+    ax.spines[["top", "right"]].set_visible(False)
     fig.tight_layout()
     out_path = os.path.join(out_dir, f"per_layer_mae{tag}.png")
-    fig.savefig(out_path, dpi=150); plt.close(fig)
+    fig.savefig(out_path); plt.close(fig)
     print(f"[summarize_results] Saved → {out_path}")
 
     fig, ax = plt.subplots(figsize=(10, 6))
     for name, (_mae, rmse, _heat, _n) in results.items():
-        ax.plot(layers, rmse, marker="s", linewidth=1.5, label=name)
+        style = _style_for(name)
+        ax.plot(layers, rmse, markersize=6, label=name, **style)
     ax.set_xlabel("Layer index"); ax.set_ylabel("Next-state RMSE [K]")
-    ax.set_title(f"baseline_surrogate — Per-Layer Next-State RMSE ({label}, test set)")
-    ax.legend(fontsize=8); ax.grid(True, alpha=0.3); ax.set_xticks(layers)
+    ax.set_title(f"Per-Layer Next-State RMSE — {label} (test set)")
+    ax.legend(loc="upper left"); ax.grid(True, alpha=0.25, linewidth=0.6); ax.set_xticks(layers)
+    ax.spines[["top", "right"]].set_visible(False)
     fig.tight_layout()
     out_path = os.path.join(out_dir, f"per_layer_rmse{tag}.png")
-    fig.savefig(out_path, dpi=150); plt.close(fig)
+    fig.savefig(out_path); plt.close(fig)
     print(f"[summarize_results] Saved → {out_path}")
 
     names_sorted = sorted(results.keys(), key=lambda n: results[n][0].mean())
     means = [results[n][0].mean() for n in names_sorted]
-    fig, ax = plt.subplots(figsize=(9, 0.6 * len(names_sorted) + 1.5))
-    ax.barh(names_sorted, means, color="steelblue")
-    ax.set_xlabel("Mean next-state MAE [K] (lower is better)")
-    ax.set_title(f"baseline_surrogate — Leaderboard ({label}, test set)")
-    ax.grid(True, alpha=0.3, axis="x")
+    colors = [_style_for(n)["color"] for n in names_sorted]
+    fig, ax = plt.subplots(figsize=(9.5, 0.6 * len(names_sorted) + 1.5))
+    bars = ax.barh(names_sorted, means, color=colors, zorder=3)
+    for bar, m in zip(bars, means):
+        ax.text(bar.get_width() * 1.01 + max(means) * 0.005, bar.get_y() + bar.get_height() / 2,
+                f"{m:.2f} K", va="center", fontsize=9)
+    ax.set_xlabel("Mean next-state MAE [K] — lower is better")
+    ax.set_title(f"Leaderboard — {label} (test set)")
+    ax.grid(True, alpha=0.25, axis="x", linewidth=0.6, zorder=0)
+    ax.spines[["top", "right"]].set_visible(False)
+    ax.set_xlim(0, max(means) * 1.18)
     fig.tight_layout()
     out_path = os.path.join(out_dir, f"leaderboard{tag}.png")
-    fig.savefig(out_path, dpi=150); plt.close(fig)
+    fig.savefig(out_path); plt.close(fig)
     print(f"[summarize_results] Saved → {out_path}")
 
     csv_path = os.path.join(out_dir, f"leaderboard{tag}.csv")
@@ -295,7 +356,10 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--seed",          type=int,   default=42)
     p.add_argument("--device",        type=str,   default="")
 
-    p.add_argument("--surrogate_checkpoint",             type=str, default=None)
+    p.add_argument("--surrogate_v3_checkpoint",          type=str, default=None,
+                   help="The proposed method: surrogate_model_v3/ (two-stage, no latent space).")
+    p.add_argument("--surrogate_checkpoint",             type=str, default=None,
+                   help="Retired learned-latent main model (surrogate_model_latent_uncertainty_v2/).")
     p.add_argument("--mlp_checkpoint",                   type=str, default=None)
     p.add_argument("--lstm_checkpoint",                  type=str, default=None)
     p.add_argument("--kalman_checkpoint",                type=str, default=None)
@@ -368,7 +432,7 @@ def main() -> None:
 
         def _predict_fn_mlp(s, a, c, layer_idx, model=model):
             with torch.no_grad():
-                return model(s, a, c, layer_idx)
+                return model(s, a, c)
 
         mae, rmse, act, sq = _eval_teacher_forced("mlp", _predict_fn_mlp, sm, ss, lm, ls, cm, cs,
                                                   test_trajs, device, traj_len)
@@ -427,7 +491,7 @@ def main() -> None:
         lm, ls, cm, cs = ckpt["lp_mean"], ckpt["lp_std"], ckpt["cool_mean"], ckpt["cool_std"]
 
         def _predict_fn_ve(s, a, c, layer_idx, model=model):
-            return model.predict_mean(s, a, c, layer_idx)
+            return model.predict_mean(s, a, c)
 
         mae, rmse, act, sq = _eval_teacher_forced("vanilla_ensemble", _predict_fn_ve, sm, ss, lm, ls, cm, cs,
                                                   test_trajs, device, traj_len)

@@ -35,16 +35,10 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--lp_filter_min", type=float, default=None)
     p.add_argument("--lp_filter_max", type=float, default=None)
 
-    p.add_argument("--latent_dim",      type=int, default=64)
-    p.add_argument("--n_ensemble",      type=int, default=5)
-    p.add_argument("--layer_embed_dim", type=int, default=8)
-    p.add_argument("--enc_hidden",      type=int, default=256)
-    p.add_argument("--enc_depth",       type=int, default=3)
-    p.add_argument("--trans_hidden",    type=int, default=128)
-    p.add_argument("--trans_depth",     type=int, default=3)
-    p.add_argument("--dec_hidden",      type=int, default=256)
-    p.add_argument("--dec_depth",       type=int, default=3)
-    p.add_argument("--dropout",         type=float, default=0.0)
+    p.add_argument("--n_ensemble", type=int, default=5)
+    p.add_argument("--hidden",     type=int, default=512)
+    p.add_argument("--depth",      type=int, default=4)
+    p.add_argument("--dropout",    type=float, default=0.0)
     p.add_argument("--member_init_seed", type=int, default=None)
 
     p.add_argument("--epochs",       type=int,   default=300)
@@ -60,12 +54,10 @@ def parse_args() -> argparse.Namespace:
 
 
 def loss_fn(model, batch, device):
-    s, a, c, s2, layer_idx, _bmask = (t.to(device) for t in batch)
-    preds, z_t = model.forward_all_members(s, a, c, layer_idx)   # (K, B, D)
+    s, a, c, s2, _layer_idx, _bmask = (t.to(device) for t in batch)
+    preds = model.forward_all_members(s, a, c)   # (K, B, D)
     s2_exp = s2.unsqueeze(0).expand_as(preds)
-    trans_loss = (preds - s2_exp).pow(2).mean()
-    ae_loss = (model.decoder(z_t) - s).pow(2).mean()
-    return trans_loss + ae_loss
+    return (preds - s2_exp).pow(2).mean()
 
 
 def main() -> None:
@@ -84,7 +76,6 @@ def main() -> None:
         train_trajs, initial_temp=args.initial_temp
     )
     state_dim = state_mean.shape[0]
-    n_layers  = len(train_trajs[0])
 
     lp_filter = None
     if args.lp_filter_min is not None or args.lp_filter_max is not None:
@@ -106,11 +97,8 @@ def main() -> None:
     val_loader   = DataLoader(val_ds,   shuffle=False, **loader_kw)
 
     model_kwargs = dict(
-        state_dim=state_dim, latent_dim=args.latent_dim, n_ensemble=args.n_ensemble,
-        n_layers=n_layers, layer_embed_dim=args.layer_embed_dim,
-        enc_hidden=args.enc_hidden, enc_depth=args.enc_depth,
-        trans_hidden=args.trans_hidden, trans_depth=args.trans_depth,
-        dec_hidden=args.dec_hidden, dec_depth=args.dec_depth,
+        state_dim=state_dim, n_ensemble=args.n_ensemble,
+        hidden=args.hidden, depth=args.depth,
         dropout=args.dropout, member_init_seed=args.member_init_seed,
     )
     model = VanillaDeepEnsembleSurrogate(**model_kwargs).to(device)

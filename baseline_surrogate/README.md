@@ -46,7 +46,7 @@ except where noted:
 | 1 | `mlp/` | No | No (raw 1053-dim) | No |
 | 2 | `lstm/` | No (recurrent over the build instead) | No (raw hidden state) | No |
 | 3 | `kalman_filter/` | No | Yes — PCA (fixed, not learned) | No |
-| 4 | `vanilla_ensemble/` | No | Yes — learned (same Encoder/Decoder as the main model) | Yes, K=5, plain MSE, no bootstrap/NLL |
+| 4 | `vanilla_ensemble/` | No | No (raw 1053-dim) | Yes, K=5, plain MSE, no bootstrap/NLL |
 | 5 | `ablation_no_two_stage/` | No | Yes — learned | Yes, K=5, full bootstrap + Gaussian NLL (same as main model) |
 | 6 | `ablation_no_latent/` | Yes | No (raw 1053-dim) | Yes, K=5, full bootstrap + Gaussian NLL (same as main model) |
 
@@ -58,10 +58,22 @@ not reimplemented) since removing *that* isn't the point of these two
 ablations; only the point-estimate (ensemble-mean) prediction is compared,
 same as everywhere else in this package.
 
+**No borrowed tricks.** Methods 1/2/4 (`mlp/`, `lstm/`, `vanilla_ensemble/`)
+additionally do NOT use a learned per-layer embedding or predict a
+residual/delta (`s_t + Δ`) — both are techniques `surrogate_model_v3/` (the
+proposed no-latent two-stage surrogate) itself relies on. A baseline that
+borrows the proposed method's own tricks isn't a fair floor to beat, so
+these three regress `s_{t+1}` directly from `(s_t, a_t, cool_t)` with no
+layer conditioning at all. `kalman_filter/` needed no change — its
+per-layer `b_layer` term is the classical linear model's own natural
+formulation (an intercept per layer in an OLS fit), not a borrowed neural
+trick, and it never predicted a residual to begin with.
+
 ## Method summaries
 
-**1. Plain MLP** (`mlp/`) — `s_{t+1} = s_t + MLP([s_t, a_t, cool_t, layer_embed])`,
-raw 1053-dim space, no ensemble. The floor.
+**1. Plain MLP** (`mlp/`) — `s_{t+1} = MLP([s_t, a_t, cool_t])`, raw
+1053-dim space, no ensemble, no layer conditioning, no residual prediction.
+The floor.
 
 **2. LSTM** (`lstm/`) — `LSTMCell` carries hidden state across the 12-layer
 build; teacher-forced on the true `s_t` at every step (so predictions are
@@ -80,10 +92,11 @@ exercised (see `kalman_filter/model.py`'s docstring for why that's still
 fairly called "a Kalman filter's dynamics model").
 
 **4. Vanilla deep ensemble** (`vanilla_ensemble/`) — K=5 independently
-initialised (not bootstrap-resampled) point-estimate transition heads
-sharing one learned Encoder/Decoder; MSE-only, no Gaussian NLL. The most
-direct comparison point: same latent architecture as the main model, minus
-bootstrap resampling and the calibrated σ head.
+initialised copies of the plain-MLP architecture (raw 1053-dim, no layer
+embedding, no residual prediction — same as `mlp/`), not bootstrap-resampled,
+MSE-only, no Gaussian NLL. Isolates exactly one variable against the main
+surrogate: does bootstrap resampling + a Gaussian-NLL-calibrated σ head buy
+anything over plain ensembling (independent init + MSE)?
 
 **5/6. Ablations** — see the table above; `ablation_no_two_stage/` and
 `ablation_no_latent/` each remove exactly one piece of the main model.
@@ -95,8 +108,10 @@ Notation matches [`surrogate_model_latent_uncertainty_v2/README.md`](../surrogat
 `c_t` = cool time [s], `l_t` = 0-indexed layer, `u_h` = end-of-heating field,
 `s_{t+1}` = end-of-cooling field (next state). A tilde denotes z-scored
 (normalised) values, e.g. `s̃_t = (s_t − μ_s)/σ_s`. `e(l_t) ∈ R^{d_e}` is a
-learned per-layer embedding (a small `nn.Embedding`, independent per
-method). Every method's `μ_s, σ_s, μ_a, σ_a, μ_c, σ_c` are fit ONCE from
+learned per-layer embedding (a small `nn.Embedding`) — used only by methods
+5/6 below (the main model's own ablations); methods 1/2/4 deliberately have
+no layer conditioning at all (see "No borrowed tricks" above). Every
+method's `μ_s, σ_s, μ_a, σ_a, μ_c, σ_c` are fit ONCE from
 the training split's `{s_t, s_{t+1}}` (pooled — no `u_h` view, since only
 `ablation_no_latent` ever sees one) via
 `common/data.py:build_single_stage_normalizers`, mirroring the main
@@ -104,30 +119,28 @@ package's `build_normalizers` but two views instead of three.
 
 ### 1. Plain MLP (`mlp/`)
 
-Raw 1053-dim space, no latent, no ensemble, single-stage. One block is
-`Linear → LayerNorm → SiLU → Dropout`; `depth` blocks are stacked:
+Raw 1053-dim space, no latent, no ensemble, single-stage, no layer
+conditioning, no residual prediction — `s̃_{t+1}` is regressed directly. One
+block is `Linear → LayerNorm → SiLU → Dropout`; `depth` blocks are stacked:
 
 ```
-h_0 = block_0([s̃_t, ã_t, c̃_t, e(l_t)])
+h_0 = block_0([s̃_t, ã_t, c̃_t])
 h_i = block_i(h_{i-1})                    i = 1 .. depth-1
-Δs̃_t = Linear_head(h_{depth-1})
-ŝ̃_{t+1} = s̃_t + Δs̃_t
+ŝ̃_{t+1} = Linear_head(h_{depth-1})
 ```
 
-(predicting the residual `Δs̃_t`, not `s̃_{t+1}` directly, mirrors the main
-model's `Δz` convention — `Linear_head` is near-zero initialised so
-training starts near the identity map.) Loss: plain MSE,
-`L = E[(1/D) ‖ŝ̃_{t+1} − s̃_{t+1}‖²]`, `D = state_dim`.
+Loss: plain MSE, `L = E[(1/D) ‖ŝ̃_{t+1} − s̃_{t+1}‖²]`, `D = state_dim`.
 
 ### 2. LSTM (`lstm/`)
 
-Same per-step inputs as the MLP, but a hidden state carries information
-across the 12-layer build instead of each step being independent:
+Same per-step inputs as the MLP (no layer embedding — the recurrent hidden
+state is this baseline's own way of knowing "where" it is in the build), a
+hidden state carries information across the 12-layer build instead of each
+step being independent, and `s̃_{t+1}` is regressed directly (no residual):
 
 ```
-(h_t, c^{cell}_t) = LSTMCell([s̃_t, ã_t, c̃_t, e(l_t)],  (h_{t-1}, c^{cell}_{t-1}))
-Δs̃_t   = Linear_head(Dropout(h_t))
-ŝ̃_{t+1} = s̃_t + Δs̃_t
+(h_t, c^{cell}_t) = LSTMCell([s̃_t, ã_t, c̃_t],  (h_{t-1}, c^{cell}_{t-1}))
+ŝ̃_{t+1} = Linear_head(Dropout(h_t))
 ```
 
 with `(h_{-1}, c^{cell}_{-1}) = (0, 0)` at the start of every trajectory.
@@ -173,29 +186,21 @@ exactly at query time, so there is no observation to fuse against):
 
 ### 4. Vanilla deep ensemble (`vanilla_ensemble/`)
 
-Same learned `Encoder`/`Decoder` as the main model (imported directly, not
-reimplemented — see `surrogate_model_latent_uncertainty_v2/model.py`), but
-`K = 5` independently-initialised POINT-ESTIMATE transition heads
-(`DeterministicTransitionMLP` — the `GaussianTransitionMLP` trunk with only
-a `μ` head, no `log σ` head, no PETS soft clamp) trained on the SAME full
-dataset (no bootstrap resampling):
+`K = 5` independently-initialised copies of the SAME plain-MLP architecture
+as `mlp/` (no latent space, no layer embedding, no residual prediction),
+trained on the SAME full dataset (no bootstrap resampling):
 
 ```
-z_t = Encoder(s̃_t)
-cond_t = [ã_t; c̃_t]
-Δz_t^{(k)} = f_k(z_t, cond_t, e(l_t))                         k = 1 .. K
-ŝ̃_{t+1}^{(k)} = Decoder(z_t + Δz_t^{(k)})
+ŝ̃_{t+1}^{(k)} = MLP_k([s̃_t; ã_t; c̃_t])                      k = 1 .. K
 
-ŝ̃_{t+1} = (1/K) Σ_k ŝ̃_{t+1}^{(k)}          ← ensemble MEAN of DECODED predictions
+ŝ̃_{t+1} = (1/K) Σ_k ŝ̃_{t+1}^{(k)}          ← ensemble MEAN of direct predictions
 ```
 
 Loss (plain MSE, no NLL, no bootstrap weighting — every member sees every
 sample with weight 1):
 
 ```
-L_trans = (1/K) Σ_k E[(1/D) ‖ŝ̃_{t+1}^{(k)} − s̃_{t+1}‖²]
-L_AE    = E[(1/D) ‖Decoder(z_t) − s̃_t‖²]
-L = L_trans + L_AE
+L = (1/K) Σ_k E[(1/D) ‖ŝ̃_{t+1}^{(k)} − s̃_{t+1}‖²]
 ```
 
 ### 5. Ablation: no two-stage (`ablation_no_two_stage/`)

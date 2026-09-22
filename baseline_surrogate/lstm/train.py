@@ -45,9 +45,8 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--lp_filter_min", type=float, default=None)
     p.add_argument("--lp_filter_max", type=float, default=None)
 
-    p.add_argument("--hidden",          type=int, default=512)
-    p.add_argument("--layer_embed_dim", type=int, default=8)
-    p.add_argument("--dropout",         type=float, default=0.0)
+    p.add_argument("--hidden",  type=int, default=512)
+    p.add_argument("--dropout", type=float, default=0.0)
 
     p.add_argument("--epochs",       type=int,   default=300)
     p.add_argument("--batch_size",   type=int,   default=64)
@@ -75,9 +74,8 @@ def masked_mse_loss_fn(model, batch, device):
         a_in = traj_a[:, t, :]
         c_in = traj_c[:, t, :]
         s_gt = traj_s[:, t + 1, :]
-        layer_idx = torch.full((B,), t, dtype=torch.long, device=device)
 
-        s2_pred, hc = model.step(s_in, a_in, c_in, layer_idx, hc)
+        s2_pred, hc = model.step(s_in, a_in, c_in, hc)
         mask_t = lp_mask[:, t].float()
         per_sample_mse = (s2_pred - s_gt).pow(2).mean(dim=-1)
         weighted_sum = weighted_sum + (per_sample_mse * mask_t).sum()
@@ -102,7 +100,6 @@ def main() -> None:
         train_trajs, initial_temp=args.initial_temp
     )
     state_dim = state_mean.shape[0]
-    n_layers  = len(train_trajs[0])
 
     lp_filter = None
     if args.lp_filter_min is not None or args.lp_filter_max is not None:
@@ -124,8 +121,7 @@ def main() -> None:
     val_loader   = DataLoader(val_ds,   shuffle=False, **loader_kw)
 
     model = LSTMSurrogate(
-        state_dim=state_dim, hidden=args.hidden, n_layers=n_layers,
-        layer_embed_dim=args.layer_embed_dim, dropout=args.dropout,
+        state_dim=state_dim, hidden=args.hidden, dropout=args.dropout,
     ).to(device)
     print(f"[lstm.train] LSTMSurrogate params={model.count_parameters():,}")
 
@@ -140,8 +136,7 @@ def main() -> None:
             "state_mean": state_mean, "state_std": state_std,
             "lp_mean": lp_mean, "lp_std": lp_std, "cool_mean": cool_mean, "cool_std": cool_std,
             "epoch": epoch, "val_loss": val_loss,
-            "model_config": dict(state_dim=state_dim, hidden=args.hidden, n_layers=n_layers,
-                                 layer_embed_dim=args.layer_embed_dim, dropout=args.dropout),
+            "model_config": dict(state_dim=state_dim, hidden=args.hidden, dropout=args.dropout),
             "train_args": vars(args),
         }, ckpt_best)
 
