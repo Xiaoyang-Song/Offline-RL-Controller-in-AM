@@ -17,6 +17,13 @@ Usage
     python -m baselines.proportional.controller \\
         --data_path Data/DatasetV2_layer_12_samples_5000.pkl \\
         --out baselines/proportional/fitted.pt
+
+Restricting the fit to a laser-power range (e.g. to match a narrow-trained
+surrogate for a fair comparison):
+    python -m baselines.proportional.controller \\
+        --data_path Data/DatasetV2_layer_12_samples_5000.pkl \\
+        --lp_filter_min 200 --lp_filter_max 300 \\
+        --out baselines/proportional/fitted_narrow_200_300W.pt
 """
 
 import argparse
@@ -28,7 +35,7 @@ import torch
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from surrogate_model_latent_uncertainty_v2.dataset_v2 import load_trajectories, split_trajectories
+from surrogate_model_v3.dataset import load_trajectories, split_trajectories
 from baselines.common.data_utils import (
     build_offline_transitions, load_mesh_nodes, roi_masks_per_layer, roi_mean, fit_linear,
 )
@@ -50,10 +57,11 @@ class ProportionalController:
 def fit_proportional_controller(
     trajectories, mesh_path: str, T_l: float, T_h: float,
     width: float, height: float, sq_frac_start: float, sq_frac_end: float,
-    n_layers: int = 12, initial_temp: float = 300.0,
+    n_layers: int = 12, initial_temp: float = 300.0, lp_filter=None,
 ) -> tuple:
-    """Returns (ProportionalController, fit_info dict)."""
-    data = build_offline_transitions(trajectories, initial_temp=initial_temp)
+    """Returns (ProportionalController, fit_info dict). lp_filter: see
+    baselines.common.data_utils.build_offline_transitions."""
+    data = build_offline_transitions(trajectories, initial_temp=initial_temp, lp_filter=lp_filter)
     nodes_xy = load_mesh_nodes(mesh_path)
     masks = roi_masks_per_layer(nodes_xy, width, height, sq_frac_start, sq_frac_end, n_layers)
     T_mid = (T_l + T_h) / 2.0
@@ -97,19 +105,29 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--sq_frac_start", type=float, default=0.4)
     p.add_argument("--sq_frac_end",   type=float, default=0.5)
     p.add_argument("--n_layers", type=int, default=12)
+    p.add_argument("--lp_filter_min", type=float, default=None,
+                   help="Optional: restrict the OLS fit to transitions with laser power in "
+                        "[lp_filter_min, lp_filter_max]. Requires --lp_filter_max too.")
+    p.add_argument("--lp_filter_max", type=float, default=None)
     p.add_argument("--out", type=str, default="baselines/proportional/fitted.pt")
     return p.parse_args()
 
 
 def main() -> None:
     args = parse_args()
+    if (args.lp_filter_min is None) != (args.lp_filter_max is None):
+        raise ValueError("--lp_filter_min and --lp_filter_max must be given together.")
+    lp_filter = (args.lp_filter_min, args.lp_filter_max) if args.lp_filter_min is not None else None
+    if lp_filter is not None:
+        print(f"[proportional] LP filter active: [{lp_filter[0]}, {lp_filter[1]}] W")
+
     all_trajs = load_trajectories(args.data_path)
     train_trajs, _val, _test = split_trajectories(
         all_trajs, val_fraction=args.val_fraction, test_fraction=args.test_fraction, seed=args.seed,
     )
     _controller, info = fit_proportional_controller(
         train_trajs, args.mesh_path, args.T_l, args.T_h, args.width, args.height,
-        args.sq_frac_start, args.sq_frac_end, args.n_layers, args.initial_temp,
+        args.sq_frac_start, args.sq_frac_end, args.n_layers, args.initial_temp, lp_filter=lp_filter,
     )
     print(f"[proportional] Fit on {len(train_trajs)} trajectories: "
           f"K_p={info['K_p']:.4f}  bias={info['bias']:.2f}  T_mid={info['T_mid']:.1f}  "

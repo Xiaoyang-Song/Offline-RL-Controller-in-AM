@@ -18,7 +18,7 @@ term is present in the advantage at all.
 Usage
 -----
     python -m baselines.naive_pg.train \\
-        --surrogate surrogate_model_latent_uncertainty_v2/runs/<ts>/two_stage_best.pt \\
+        --surrogate surrogate_model_v3/runs/<ts>/surrogate_best.pt \\
         --action_min 100 --action_max 400 \\
         --n_iterations 2000
 """
@@ -37,7 +37,7 @@ import torch
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from surrogate_model_latent_uncertainty_v2.train import load_two_stage_surrogate
+from surrogate_model_v3.model import load_surrogate
 from online_RL_ucpg_v2.env   import TwoStageLatentLPBFEnv
 from online_RL_ucpg_v2.agent import UCPGAgentV2
 from online_RL_ucpg_v2.train import collect_batch, discounted_returns, _plot_series
@@ -114,7 +114,7 @@ def main() -> None:
     print("=" * 65)
 
     (surrogate, state_mean, state_std, lp_mean, lp_std,
-     cool_mean, cool_std, _roi) = load_two_stage_surrogate(args.surrogate, device=device)
+     cool_mean, cool_std) = load_surrogate(args.surrogate, device=device)
     surrogate.eval()
 
     env = TwoStageLatentLPBFEnv(

@@ -51,7 +51,7 @@ Identical mechanics to online_RL_ucpg/train.py — see that file's docstring.
 Usage
 -----
     python -m online_RL_ucpg_v2.train \\
-        --surrogate surrogate_model_latent_uncertainty_v2/runs/<ts>/two_stage_best.pt \\
+        --surrogate surrogate_model_v3/runs/<ts>/surrogate_best.pt \\
         --action_min 100 --action_max 400 \\
         --delta 0.05
 """
@@ -70,7 +70,7 @@ import torch
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from surrogate_model_latent_uncertainty_v2.train import load_two_stage_surrogate
+from surrogate_model_v3.model import load_surrogate
 from online_RL_ucpg_v2.env   import TwoStageLatentLPBFEnv
 from online_RL_ucpg_v2.agent import UCPGAgentV2
 
@@ -88,8 +88,7 @@ def parse_args() -> argparse.Namespace:
 
     # ── surrogate model ───────────────────────────────────────────────────────
     p.add_argument("--surrogate", type=str, required=True,
-                   help="Path to a trained surrogate_model_latent_uncertainty_v2 checkpoint "
-                        "(TwoStageEnsembleGaussianLatentDynamicsModel).")
+                   help="Path to a trained surrogate_model_v3 checkpoint (TwoStageSurrogate).")
 
     # ── environment ───────────────────────────────────────────────────────────
     p.add_argument("--T_l",          type=float, default=2000.0)
@@ -293,7 +292,7 @@ def main() -> None:
     # ── load surrogate ────────────────────────────────────────────────────────
     print(f"\n[train] Loading surrogate: {args.surrogate}")
     (surrogate, state_mean, state_std, lp_mean, lp_std,
-     cool_mean, cool_std, _roi_table) = load_two_stage_surrogate(args.surrogate, device=device)
+     cool_mean, cool_std) = load_surrogate(args.surrogate, device=device)
     surrogate.eval()
     print(f"[train] Surrogate   : {surrogate}")
 

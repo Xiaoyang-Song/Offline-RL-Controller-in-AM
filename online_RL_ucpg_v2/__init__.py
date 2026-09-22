@@ -3,8 +3,9 @@ online_RL_ucpg_v2
 --------------------
 Monte Carlo Uncertainty-Constrained Policy Gradient (UCPG) controller for
 the LPBF process — continuous laser-power action, trained by interacting
-with the two-stage (heating/cooling) Gaussian ensemble latent surrogate
-(surrogate_model_latent_uncertainty_v2).
+with the two-stage (heating/cooling) Gaussian ensemble surrogate
+(surrogate_model_v3 — no learned latent bottleneck; see env.py's module
+docstring for the historical "latent" naming still used internally).
 
 Sibling to online_RL_ucpg/ (categorical action, one-stage surrogate); see
 this package's README.md for the full method and everything that changed.

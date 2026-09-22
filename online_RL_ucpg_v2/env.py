@@ -1,9 +1,14 @@
 """
 online_RL_ucpg_v2/env.py
 ----------------------------
-Latent-space, two-stage (heating/cooling) LPBF environment for Uncertainty-
-Constrained Policy Gradient (UCPG), driven by the
-surrogate_model_latent_uncertainty_v2 two-stage Gaussian ensemble surrogate.
+Two-stage (heating/cooling) LPBF environment for Uncertainty-Constrained
+Policy Gradient (UCPG), driven by the surrogate_model_v3 two-stage Gaussian
+ensemble surrogate (no learned latent bottleneck — see
+surrogate_model_v3/README.md for why. The class/observation-field names
+below still say "latent"/`z_t`/`_z` for historical reasons and to keep this
+port's diff small against the file's git history; semantically `z_t` here
+IS just the raw (normalised) 1053-dim temperature field now, not a learned
+embedding — there is no encoder/decoder anywhere in this file anymore).
 
 Differs from online_RL_ucpg/env.py in three ways
 ---------------------------------------------------
@@ -12,9 +17,9 @@ Differs from online_RL_ucpg/env.py in three ways
      The heating stage is action-DEPENDENT (the controller acts here); the
      cooling stage is action-INDEPENDENT (conditioned on cool_time instead —
      "no matter what laser power you applied previously, the cooling
-     mechanism is the same"). Both stages are chained in latent space every
-     step via surrogate.predict_heating_ensemble / predict_cooling_ensemble,
-     exactly mirroring TwoStageEnsembleGaussianLatentDynamicsModel.rollout().
+     mechanism is the same"). Both stages are chained every step via
+     surrogate.predict_heating_ensemble / predict_cooling_ensemble, exactly
+     mirroring TwoStageSurrogate.rollout().
 
   2. Reward is computed from the END-OF-HEATING field, not the post-cooling
      field. This matches the v2 dataset/simulator correction (see
@@ -54,19 +59,19 @@ import numpy as np
 import torch
 from scipy.io import loadmat
 
-from surrogate_model_latent_uncertainty_v2.model import combine_stage_uncertainties
+from surrogate_model_v3.model import combine_stage_uncertainties
 
 
 class TwoStageLatentLPBFEnv:
     """
     LPBF process environment driven by a pre-trained two-stage Gaussian
-    ensemble latent surrogate (surrogate_model_latent_uncertainty_v2),
-    exposing latent observations and separate reward / uncertainty signals
-    for UCPG.
+    ensemble surrogate (surrogate_model_v3 — no latent space; see module
+    docstring), exposing raw-state observations and separate reward /
+    uncertainty signals for UCPG.
 
     Parameters
     ----------
-    surrogate      : TwoStageEnsembleGaussianLatentDynamicsModel — eval mode, on `device`
+    surrogate      : TwoStageSurrogate — eval mode, on `device`
     state_mean, state_std       : (D,) float32 tensors — surrogate state normalisation
     lp_mean, lp_std             : float — surrogate laser-power norm stats [W]
     cool_mean, cool_std         : float — surrogate cool-time norm stats [s]
@@ -131,7 +136,12 @@ class TwoStageLatentLPBFEnv:
         self.sq_fracs = np.linspace(sq_frac_start, sq_frac_end, n_layers)
 
         self.state_dim  = int(state_mean.shape[0])   # raw temperature field dim (1053)
-        self.latent_dim = int(surrogate.latent_dim)
+        # NOTE: "latent_dim" is a historical name (see module docstring) —
+        # surrogate_model_v3 has no latent space, so this now just equals
+        # state_dim. Kept as `latent_dim` (not renamed to state_dim) so
+        # every downstream reader (agent.py, model.py, baselines/common/
+        # eval_harness.py) keeps working unchanged.
+        self.latent_dim = int(surrogate.state_dim)
         self.obs_dim    = self.latent_dim + 2          # +1 layer index, +1 cool_time token
 
         # ── try to load mesh for exact node-mask computation ──────────────
@@ -168,21 +178,20 @@ class TwoStageLatentLPBFEnv:
 
     def reset(self) -> np.ndarray:
         """
-        Reset environment to the initial all-300 K state, encoded to latent,
-        and draw a fresh per-episode cool_time (held fixed for all layers,
-        matching how the training data was generated).
+        Reset environment to the initial all-300 K state (normalised — no
+        encoder, see module docstring), and draw a fresh per-episode
+        cool_time (held fixed for all layers, matching how the training
+        data was generated).
 
         Returns
         -------
         obs : (obs_dim = latent_dim+2,) float32 numpy array
-              Latent state concatenated with normalised layer index and
+              Normalised state concatenated with normalised layer index and
               normalised cool_time (this episode's fixed value).
         """
         s0_raw = np.full(self.state_dim, self.initial_temp, dtype=np.float32)
         s0_t   = torch.tensor(s0_raw, dtype=torch.float32, device=self.device).unsqueeze(0)
-        s0_norm = (s0_t - self.state_mean) / self.state_std
-        with torch.no_grad():
-            self._z = self.surrogate.encode(s0_norm)   # (1, latent_dim)
+        self._z = (s0_t - self.state_mean) / self.state_std   # (1, state_dim), no encoder
         self._layer     = 0
         self._cool_time = float(np.random.uniform(self.cool_time_min, self.cool_time_max))
         return self._make_obs(self._z, self._layer)
@@ -207,7 +216,7 @@ class TwoStageLatentLPBFEnv:
                             'epistemic_std', 'aleatoric_std', 'uncertainty'}
                    info['uncertainty'] = combined (heating+cooling) epistemic_std
                    + aleatoric_std = u_t (see
-                   surrogate_model_latent_uncertainty_v2.model.combine_stage_uncertainties)
+                   surrogate_model_v3.model.combine_stage_uncertainties)
         """
         if self._z is None:
             raise RuntimeError("Call reset() before step().")
@@ -223,13 +232,13 @@ class TwoStageLatentLPBFEnv:
                 self._z, a_norm, layer_idx_t
             )
             z_heat = self._z + mu_heat
-            heat_pred_n = self.surrogate.decode(z_heat)          # (1, D) normalised
+            heat_pred_n = z_heat          # (1, D) normalised — no decoder, see module docstring
 
             mu_cool, cool_epi, cool_ale, _ = self.surrogate.predict_cooling_ensemble(
                 z_heat, c_norm, layer_idx_t
             )
             z_next = z_heat + mu_cool
-            next_pred_n = self.surrogate.decode(z_next)          # (1, D) normalised
+            next_pred_n = z_next          # (1, D) normalised — no decoder
 
         heat_pred_raw = (heat_pred_n * self.state_std + self.state_mean).squeeze(0).cpu().numpy()
         next_pred_raw = (next_pred_n * self.state_std + self.state_mean).squeeze(0).cpu().numpy()

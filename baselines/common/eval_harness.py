@@ -4,8 +4,8 @@ baselines/common/eval_harness.py
 Common surrogate-environment evaluation harness — every baseline (and,
 optionally, the real online_RL_ucpg_v2 policy) is rolled out through the
 SAME TwoStageLatentLPBFEnv instance so their reported returns are directly
-comparable. This module only ever imports from surrogate_model_latent_uncertainty_v2
-/ online_RL_ucpg_v2; it does not modify either.
+comparable. This module only ever imports from surrogate_model_v3 /
+online_RL_ucpg_v2; it does not modify either.
 
 A "controller" here is any object exposing:
     act(ctx: StepContext) -> float          # laser power [W]
@@ -16,14 +16,16 @@ StepContext gives every controller everything it might plausibly need, so
 each one only reads the fields relevant to its own design:
     obs        : (obs_dim,) float32 — full online_RL_ucpg_v2 observation
                  [z_t ‖ layer_token ‖ cool_time_token] (only meaningful to
-                 latent-space policies, e.g. naive_pg / UCPG v2 checkpoints)
-    z          : (latent_dim,) float32 — obs's latent slice alone
-    raw_state  : (state_dim,) float32 — DECODED, denormalised s_t (the
-                 pre-heat field) — this is what a real deployed controller
-                 would plausibly have access to (e.g. from a thermal
-                 camera), and is what the offline-Q / proportional /
-                 Kalman-particle baselines are trained/fit against, since
-                 none of them use the surrogate's latent space.
+                 the RL policies, e.g. naive_pg / UCPG v2 checkpoints —
+                 `z_t` is the raw normalised field, surrogate_model_v3 has
+                 no latent space; see online_RL_ucpg_v2/env.py's docstring)
+    z          : (latent_dim,) float32 — obs's z_t slice alone
+    raw_state  : (state_dim,) float32 — DENORMALISED s_t (the pre-heat
+                 field) — this is what a real deployed controller would
+                 plausibly have access to (e.g. from a thermal camera), and
+                 is what the offline-Q / proportional / Kalman-particle
+                 baselines are trained/fit against, since none of them use
+                 the RL policies' raw-field observation directly.
     layer      : int — 0-indexed layer
     cool_time  : float — this episode's (fixed) cooling duration [s]
 """
@@ -42,7 +44,7 @@ import torch
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from surrogate_model_latent_uncertainty_v2.train import load_two_stage_surrogate
+from surrogate_model_v3.model import load_surrogate
 from online_RL_ucpg_v2.env   import TwoStageLatentLPBFEnv
 from online_RL_ucpg_v2.agent import UCPGAgentV2
 
@@ -82,7 +84,7 @@ class Harness:
     ) -> None:
         self.device = device
         (self.surrogate, self.state_mean, self.state_std, self.lp_mean, self.lp_std,
-         self.cool_mean, self.cool_std, _roi) = load_two_stage_surrogate(surrogate_path, device=device)
+         self.cool_mean, self.cool_std) = load_surrogate(surrogate_path, device=device)
         self.surrogate.eval()
 
         self.env = TwoStageLatentLPBFEnv(
@@ -97,17 +99,19 @@ class Harness:
         self.latent_dim = self.env.latent_dim
         self.n_layers   = n_layers
 
-    @torch.no_grad()
-    def _decode(self, z: np.ndarray) -> np.ndarray:
+    def _denorm(self, z: np.ndarray) -> np.ndarray:
+        """z IS the raw normalised field (no decoder — surrogate_model_v3
+        has no latent space), so this is just an affine un-standardisation,
+        not a network call."""
         z_t = torch.tensor(z, dtype=torch.float32, device=self.device).unsqueeze(0)
-        raw = self.surrogate.decode(z_t) * self.state_std + self.state_mean
+        raw = z_t * self.state_std + self.state_mean
         return raw.squeeze(0).cpu().numpy()
 
     def _make_ctx(self, obs: np.ndarray, layer: int) -> StepContext:
         z = obs[: self.latent_dim]
         cool_tok = float(obs[-1])
         cool_time = cool_tok * (self.env.cool_time_max - self.env.cool_time_min) + self.env.cool_time_min
-        return StepContext(obs=obs, z=z, raw_state=self._decode(z), layer=layer, cool_time=cool_time)
+        return StepContext(obs=obs, z=z, raw_state=self._denorm(z), layer=layer, cool_time=cool_time)
 
     def run_episode(self, controller) -> dict:
         if hasattr(controller, "reset"):

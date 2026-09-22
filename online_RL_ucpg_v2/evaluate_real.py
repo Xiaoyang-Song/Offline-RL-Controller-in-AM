@@ -26,25 +26,28 @@ matlab.engine bridge — simpler, and already proven to work in this repo):
      the next IC object back out.
   3. Run it via subprocess, read the results back.
 
-The POLICY only ever needs the surrogate's ENCODER (+ its normalisation
-stats) here — to turn the real MATLAB field into z_t for the latent policy
-input. The surrogate's TRANSITION model is never called; every actual state
-transition is the real PDE solve. Reward is read directly from MATLAB's own
-meanDeviation output, which simulateHeatingCooling_v2.m already computes
-from uHeatFinal internally — no reward recomputation needed here.
+The POLICY only ever needs the surrogate's NORMALISATION STATS here — to
+standardise the real MATLAB field into the policy's observation. surrogate_model_v3
+has no encoder/decoder (see surrogate_model_v3/README.md); the raw
+normalised field IS the observation directly. The surrogate's TRANSITION
+model is never called; every actual state transition is the real PDE solve.
+Reward is read directly from MATLAB's own meanDeviation output, which
+simulateHeatingCooling_v2.m already computes from uHeatFinal internally —
+no reward recomputation needed here.
 
 A one-time sanity check compares the live simulation's mesh node
 coordinates against surrogate_model/mesh.mat's stored ones on the first
-layer, since the surrogate's encoder assumes a specific node ORDER — if
-MATLAB's mesh generation isn't deterministic across runs, the encoding
-would be silently wrong without this check.
+layer, since the policy's observation assumes a specific node ORDER
+(matching the surrogate's own state_mean/state_std, which were fit in that
+order) — if MATLAB's mesh generation isn't deterministic across runs, the
+observation would be silently wrong without this check.
 
 Usage
 -----
     module load matlab   # must be on $PATH before running
     python -m online_RL_ucpg_v2.evaluate_real \\
         --checkpoint online_RL_ucpg_v2/runs/<ts>/ucpg_best.pt \\
-        --surrogate  surrogate_model_latent_uncertainty_v2/runs/<ts>/two_stage_best.pt \\
+        --surrogate  surrogate_model_v3/runs/<ts>/surrogate_best.pt \\
         --n_episodes 1 --cool_time 0.10 --plot
 """
 
@@ -62,7 +65,7 @@ import torch
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from surrogate_model_latent_uncertainty_v2.train import load_two_stage_surrogate
+from surrogate_model_v3.model import load_surrogate
 from online_RL_ucpg_v2.agent import UCPGAgentV2
 
 LPBF_SIM_ROOT = os.path.abspath(
@@ -98,9 +101,9 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--checkpoint", type=str, required=True,
                    help="UCPGAgentV2-format checkpoint — works for naive_pg or real UCPG v2 alike.")
     p.add_argument("--surrogate",  type=str, required=True,
-                   help="surrogate_model_latent_uncertainty_v2 checkpoint — used ONLY for its "
-                        "encoder + normalisation stats (to build the policy's latent observation "
-                        "from the real MATLAB field). Its transition model is never called.")
+                   help="surrogate_model_v3 checkpoint — used ONLY for its normalisation stats "
+                        "(to build the policy's observation from the real MATLAB field). Its "
+                        "transition model is never called.")
 
     # ── environment / reward window (must match training) ────────────────────
     p.add_argument("--T_l",      type=float, default=2000.0)
@@ -294,7 +297,7 @@ def run_episode(
         with torch.no_grad():
             s_t = torch.tensor(raw_state, dtype=torch.float32, device=device).unsqueeze(0)
             s_n = (s_t - state_mean) / state_std
-            z_t = surrogate.encode(s_n).squeeze(0).cpu().numpy()
+            z_t = s_n.squeeze(0).cpu().numpy()   # no encoder — raw normalised field IS the observation
 
         layer_token = t / max(n_layers - 1, 1)
         obs = np.concatenate([z_t, [layer_token, cool_token]]).astype(np.float32)
@@ -348,7 +351,7 @@ def main() -> None:
     print("=" * 65)
 
     (surrogate, state_mean, state_std, _lp_mean, _lp_std,
-     _cool_mean, _cool_std, _roi) = load_two_stage_surrogate(args.surrogate, device=device)
+     _cool_mean, _cool_std) = load_surrogate(args.surrogate, device=device)
     surrogate.eval()
     state_mean = state_mean.to(device)
     state_std  = state_std.to(device)

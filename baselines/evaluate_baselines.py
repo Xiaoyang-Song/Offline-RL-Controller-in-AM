@@ -13,7 +13,7 @@ constant-power sweep has no checkpoint and always runs unless
 Usage
 -----
     python -m baselines.evaluate_baselines \\
-        --surrogate surrogate_model_latent_uncertainty_v2/runs/<ts>/two_stage_best.pt \\
+        --surrogate surrogate_model_v3/runs/<ts>/surrogate_best.pt \\
         --naive_pg_checkpoint     baselines/naive_pg/runs/<ts>/naive_pg_best.pt \\
         --offline_q_checkpoint    baselines/offline_q/runs/<ts>/offline_q_best.pt \\
         --proportional_fitted     baselines/proportional/fitted.pt \\

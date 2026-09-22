@@ -21,6 +21,12 @@ Usage
     python -m baselines.offline_q.train \\
         --data_path Data/DatasetV2_layer_12_samples_5000.pkl \\
         --epochs 50
+
+Restricting the training data to a laser-power range (e.g. to match a
+narrow-trained surrogate for a fair comparison):
+    python -m baselines.offline_q.train \\
+        --data_path Data/DatasetV2_layer_12_samples_5000.pkl \\
+        --lp_filter_min 200 --lp_filter_max 300 --epochs 50
 """
 
 import argparse
@@ -39,7 +45,7 @@ import torch.nn as nn
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from surrogate_model_latent_uncertainty_v2.dataset_v2 import load_trajectories, split_trajectories
+from surrogate_model_v3.dataset import load_trajectories, split_trajectories
 from baselines.common.data_utils import build_offline_transitions
 from baselines.offline_q.model import RawQNet, ACTION_GRID
 
@@ -51,6 +57,11 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--test_fraction", type=float, default=0.10)
     p.add_argument("--initial_temp",  type=float, default=300.0)
     p.add_argument("--n_layers",      type=int,   default=12)
+    p.add_argument("--lp_filter_min", type=float, default=None,
+                   help="Optional: restrict training/val transitions to laser power in "
+                        "[lp_filter_min, lp_filter_max] (e.g. to match a narrow-trained "
+                        "surrogate for a fair comparison). Requires --lp_filter_max too.")
+    p.add_argument("--lp_filter_max", type=float, default=None)
 
     p.add_argument("--hidden",          type=int, default=256)
     p.add_argument("--depth",           type=int, default=3)
@@ -116,13 +127,19 @@ def main() -> None:
     print(f"[offline_q] Device     : {device}")
     print("=" * 65)
 
+    if (args.lp_filter_min is None) != (args.lp_filter_max is None):
+        raise ValueError("--lp_filter_min and --lp_filter_max must be given together.")
+    lp_filter = (args.lp_filter_min, args.lp_filter_max) if args.lp_filter_min is not None else None
+    if lp_filter is not None:
+        print(f"[offline_q] LP filter active: [{lp_filter[0]}, {lp_filter[1]}] W")
+
     all_trajs = load_trajectories(args.data_path)
     train_trajs, val_trajs, _test_trajs = split_trajectories(
         all_trajs, val_fraction=args.val_fraction, test_fraction=args.test_fraction, seed=args.seed,
     )
 
-    tr_data = build_offline_transitions(train_trajs, initial_temp=args.initial_temp)
-    va_data = build_offline_transitions(val_trajs,   initial_temp=args.initial_temp)
+    tr_data = build_offline_transitions(train_trajs, initial_temp=args.initial_temp, lp_filter=lp_filter)
+    va_data = build_offline_transitions(val_trajs,   initial_temp=args.initial_temp, lp_filter=lp_filter)
     print(f"[offline_q] Train transitions: {tr_data['s'].shape[0]}  |  Val transitions: {va_data['s'].shape[0]}")
 
     # Standardisation fit purely on the TRAIN split's raw fields — this

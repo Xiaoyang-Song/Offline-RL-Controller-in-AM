@@ -37,6 +37,15 @@ Usage (fit alpha/beta/gamma_c/Q once, from the offline dataset)
         --data_path Data/DatasetV2_layer_12_samples_5000.pkl \\
         --out baselines/kalman_particle/fitted.pt
 
+Restricting the fit to a laser-power range (e.g. to match a narrow-trained
+surrogate for a fair comparison — restricts BOTH the alpha/beta/gamma_c
+control-model OLS fit and the process-noise Q estimate to transitions in
+that range):
+    python -m baselines.kalman_particle.filters \\
+        --data_path Data/DatasetV2_layer_12_samples_5000.pkl \\
+        --lp_filter_min 200 --lp_filter_max 300 \\
+        --out baselines/kalman_particle/fitted_narrow_200_300W.pt
+
 R (sensor noise) and n_particles are evaluation-time choices, not fit
 parameters — see load_kalman_controller / load_particle_controller.
 """
@@ -50,7 +59,7 @@ import torch
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from surrogate_model_latent_uncertainty_v2.dataset_v2 import load_trajectories, split_trajectories
+from surrogate_model_v3.dataset import load_trajectories, split_trajectories
 from baselines.common.data_utils import (
     build_offline_heat_transitions, load_mesh_nodes, roi_masks_per_layer, roi_mean,
 )
@@ -63,8 +72,16 @@ from baselines.common.data_utils import (
 def fit_process_and_control_model(
     trajectories, mesh_path: str, width: float, height: float,
     sq_frac_start: float, sq_frac_end: float, n_layers: int = 12, initial_temp: float = 300.0,
+    lp_filter=None,
 ) -> dict:
-    data = build_offline_heat_transitions(trajectories, initial_temp=initial_temp)
+    """lp_filter (optional): restricts BOTH the alpha/beta/gamma_c control-
+    model OLS fit AND the process-noise Q estimate to transitions whose
+    laser power falls in this range — see
+    baselines.common.data_utils.build_offline_transitions for the exact
+    semantics. State-chaining for Q's diffs still walks every trajectory in
+    full; only which per-step differences are counted toward Q is filtered,
+    same convention as everywhere else."""
+    data = build_offline_heat_transitions(trajectories, initial_temp=initial_temp, lp_filter=lp_filter)
     nodes_xy = load_mesh_nodes(mesh_path)
     masks = roi_masks_per_layer(nodes_xy, width, height, sq_frac_start, sq_frac_end, n_layers)
 
@@ -79,13 +96,20 @@ def fit_process_and_control_model(
 
     # process noise Q: empirical variance of consecutive per-trajectory ROI-mean
     # differences (x_{t+1} - x_t) — a random-walk process model, deliberately
-    # not the true nonlinear PDE (see module docstring).
+    # not the true nonlinear PDE (see module docstring). lp_filter restricts
+    # which STEPS' differences count, same union-of-ranges semantics as
+    # build_offline_transitions; the chain itself still walks every
+    # trajectory in full (prev_x is always the true predecessor).
+    ranges = None
+    if lp_filter is not None:
+        ranges = [lp_filter] if isinstance(lp_filter[0], (int, float)) else list(lp_filter)
     diffs = []
     for traj in trajectories:
         prev_x = initial_temp
         for t, step in enumerate(traj):
             cur_x = roi_mean(np.asarray(step.u_final, dtype=np.float32).reshape(-1), masks[t])
-            diffs.append(cur_x - prev_x)
+            if ranges is None or any(lo <= step.lp_action <= hi for lo, hi in ranges):
+                diffs.append(cur_x - prev_x)
             prev_x = cur_x
     Q = float(np.var(diffs))
 
@@ -213,19 +237,29 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--sq_frac_start", type=float, default=0.4)
     p.add_argument("--sq_frac_end",   type=float, default=0.5)
     p.add_argument("--n_layers", type=int, default=12)
+    p.add_argument("--lp_filter_min", type=float, default=None,
+                   help="Optional: restrict the fit to transitions with laser power in "
+                        "[lp_filter_min, lp_filter_max]. Requires --lp_filter_max too.")
+    p.add_argument("--lp_filter_max", type=float, default=None)
     p.add_argument("--out", type=str, default="baselines/kalman_particle/fitted.pt")
     return p.parse_args()
 
 
 def main() -> None:
     args = parse_args()
+    if (args.lp_filter_min is None) != (args.lp_filter_max is None):
+        raise ValueError("--lp_filter_min and --lp_filter_max must be given together.")
+    lp_filter = (args.lp_filter_min, args.lp_filter_max) if args.lp_filter_min is not None else None
+    if lp_filter is not None:
+        print(f"[kalman_particle] LP filter active: [{lp_filter[0]}, {lp_filter[1]}] W")
+
     all_trajs = load_trajectories(args.data_path)
     train_trajs, _val, _test = split_trajectories(
         all_trajs, val_fraction=args.val_fraction, test_fraction=args.test_fraction, seed=args.seed,
     )
     fit = fit_process_and_control_model(
         train_trajs, args.mesh_path, args.width, args.height,
-        args.sq_frac_start, args.sq_frac_end, args.n_layers, args.initial_temp,
+        args.sq_frac_start, args.sq_frac_end, args.n_layers, args.initial_temp, lp_filter=lp_filter,
     )
     T_mid = (args.T_l + args.T_h) / 2.0
     print(f"[kalman_particle] Fit on {len(train_trajs)} trajectories: "
