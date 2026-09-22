@@ -139,7 +139,22 @@ class GaussianTransitionMLP(nn.Module):
     design): when > 0, an additional linear head outputs a low-rank factor
     U ∈ R^{D×rank} per sample, so this member's own covariance is
     diag(exp(2·logσ)) + U Uᵀ instead of just diag(exp(2·logσ)) — see this
-    module's docstring for why.
+    module's docstring for why. U's per-node row norm (sqrt of its
+    contribution to that node's variance) gets the SAME kind of PETS-style
+    soft clamp as log σ, via `min_log_u_norm`/`max_log_u_norm` — unlike log
+    σ, U has no other architectural bound (its magnitude is otherwise only
+    discouraged by --weight_decay), and was observed in practice to inflate
+    without limit over training: the Gaussian NLL objective can reduce loss
+    by growing U to "explain away" residual mean-prediction error instead of
+    fitting the mean better, with nothing to stop it — resulting in a
+    combined aleatoric σ ~2 (in z-scored units, i.e. comparable to a node's
+    ENTIRE natural range) despite actual point-prediction RMSE around 0.02-0.03,
+    and — worse — an uncertainty-vs-laser-power curve that no longer
+    distinguished a narrow-trained checkpoint's ID range from its OOD region
+    at all (see surrogate_model_v3/README.md's "Uncertainty representation"
+    section). The clamp caps U's max per-node variance CONTRIBUTION well
+    below log σ's own max variance, since U is layered ON TOP of the
+    diagonal, not instead of it.
     """
     def __init__(
         self,
@@ -152,6 +167,8 @@ class GaussianTransitionMLP(nn.Module):
         layer_embed_dim: int   = 8,
         mu_init_scale:   float = 1e-3,
         rank:            int   = 0,
+        min_log_u_norm:  float = -6.0,
+        max_log_u_norm:  float = -1.0,
     ):
         super().__init__()
         self.state_dim = state_dim
@@ -195,6 +212,16 @@ class GaussianTransitionMLP(nn.Module):
             self.u_head = nn.Linear(hidden, state_dim * rank)
             nn.init.uniform_(self.u_head.weight, -1e-3, 1e-3)
             nn.init.zeros_(self.u_head.bias)
+            # PETS-style learnable soft bounds on U's per-node ROW NORM (not
+            # on U itself — U has `rank` free directions per node, only their
+            # combined magnitude is capped) — see class docstring for why
+            # this exists. Defaults much tighter than log σ's own [-5, 0.5]:
+            # exp(max_log_u_norm)=exp(-1)≈0.37 caps this member's low-rank
+            # variance contribution at ≈0.135 per node, well under log σ's
+            # own ceiling of exp(2·0.5)≈2.72, since U adds to that, not
+            # replaces it.
+            self.max_log_u_norm = nn.Parameter(torch.full((state_dim,), max_log_u_norm))
+            self.min_log_u_norm = nn.Parameter(torch.full((state_dim,), min_log_u_norm))
         else:
             self.u_head = None
 
@@ -218,7 +245,15 @@ class GaussianTransitionMLP(nn.Module):
 
         u = None
         if self.u_head is not None:
-            u = self.u_head(h).view(x.shape[0], self.state_dim, self.rank)
+            raw_u = self.u_head(h).view(x.shape[0], self.state_dim, self.rank)
+
+            row_norm = raw_u.norm(dim=-1).clamp_min(1e-8)                    # (B, D)
+            log_norm = row_norm.log()
+            log_norm = self.max_log_u_norm - F.softplus(self.max_log_u_norm - log_norm)
+            log_norm = self.min_log_u_norm + F.softplus(log_norm - self.min_log_u_norm)
+            capped_norm = log_norm.exp()                                     # (B, D)
+
+            u = raw_u * (capped_norm / row_norm).unsqueeze(-1)               # same direction, capped magnitude
 
         return mu, log_sigma, u
 
@@ -452,6 +487,8 @@ class TwoStageSurrogate(nn.Module):
         mu_init_scale:     float = 1e-3,
         member_init_seed:  Optional[int] = None,
         rank:              int   = 0,
+        min_log_u_norm:    float = -6.0,
+        max_log_u_norm:    float = -1.0,
     ):
         super().__init__()
         self.state_dim       = state_dim
@@ -478,6 +515,7 @@ class TwoStageSurrogate(nn.Module):
                 members.append(GaussianTransitionMLP(
                     state_dim, cond_dim, trans_hidden, trans_depth, dropout,
                     n_layers, layer_embed_dim, mu_init_scale=mu_init_scale, rank=rank,
+                    min_log_u_norm=min_log_u_norm, max_log_u_norm=max_log_u_norm,
                 ))
             return nn.ModuleList(members)
 

@@ -56,6 +56,15 @@ sample instead of the full (D×D) covariance. This ONLY changes the NLL term
         --data_path Data/DatasetV2_layer_12_samples_5000.pkl \\
         --rank 8 --out_dir surrogate_model_v3/runs/full_range_rank8
 
+Physics-aware ROI weights
+--------------------------
+Nodes inside the (per-layer, growing) square scan region get --roi_boost x
+higher weight (default 5.0) in L_recon_heat/L_recon_cool than nodes outside
+it — ON by default whenever surrogate_model/mesh.mat is found (pass
+--no_roi_weights for plain uniform weighting instead, the previous default
+behavior). The NLL terms are intentionally left unweighted. See
+dataset.py's compute_roi_weights_table for the exact math.
+
 All outputs are written under --out_dir (default:
 surrogate_model_v3/runs/<timestamp>/).
 """
@@ -74,12 +83,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch
 import torch.nn as nn
+from scipy.io import loadmat
 from torch.utils.data import DataLoader
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from surrogate_model_v3.dataset import (
     load_trajectories, split_trajectories, build_normalizers, TwoStageSurrogateDataset,
+    compute_roi_weights_table,
 )
 from surrogate_model_v3.model import TwoStageSurrogate
 
@@ -144,6 +155,42 @@ def parse_args() -> argparse.Namespace:
                         "rank) so each member's covariance is diag(exp(2 logsigma)) + U U^T instead "
                         "of just diagonal -- see model.py's module docstring. Switches the NLL loss "
                         "to the Woodbury-identity low_rank_gaussian_nll; L_recon_* is unaffected.")
+    p.add_argument("--min_log_u_norm", type=float, default=-6.0,
+                   help="Only used if --rank>0: lower PETS-style soft bound (log-space) on U's "
+                        "per-node row norm -- see GaussianTransitionMLP's docstring for why U needs "
+                        "this bound (unlike log sigma, its magnitude was otherwise unconstrained and "
+                        "observed to inflate without limit, drowning out the epistemic signal).")
+    p.add_argument("--max_log_u_norm", type=float, default=-1.0,
+                   help="Only used if --rank>0: upper bound for --min_log_u_norm. Default caps this "
+                        "member's low-rank variance contribution at exp(2*-1)~=0.135 per node, well "
+                        "under log sigma's own default ceiling (~2.72), since U adds to the diagonal, "
+                        "not instead of it.")
+
+    # ── physics-aware ROI weights ─────────────────────────────────────────────
+    p.add_argument("--mesh_path", type=str, default="",
+                   help="Path to mesh.mat (nodes + elements from the PDE mesh). Default: "
+                        "surrogate_model/mesh.mat relative to the repo root. If found (and "
+                        "--no_roi_weights isn't given), reconstruction losses (L_recon_heat/"
+                        "L_recon_cool -- NOT the NLL terms) are ROI-weighted: nodes inside the "
+                        "per-layer square scan region get --roi_boost x higher weight, with a "
+                        "smooth falloff at the boundary. If not found, falls back to uniform "
+                        "weights (equivalent to omitting this feature) with a warning.")
+    p.add_argument("--no_roi_weights", action="store_true",
+                   help="Disable ROI weighting even if --mesh_path resolves to a real file -- "
+                        "plain uniform per-node weighting (the prior default behavior).")
+    p.add_argument("--roi_boost",            type=float, default=5.0,
+                   help="Only used if ROI weighting is active: relative weight of nodes INSIDE "
+                        "the scan region vs. outside it.")
+    p.add_argument("--roi_initial_fraction", type=float, default=0.4,
+                   help="Only used if ROI weighting is active: scan-region square's side "
+                        "fraction of the domain's shorter side, at layer 0.")
+    p.add_argument("--roi_final_fraction",   type=float, default=0.5,
+                   help="Only used if ROI weighting is active: scan-region square's side "
+                        "fraction at the last layer (linearly interpolated between the two).")
+    p.add_argument("--roi_edge_sigma_frac",  type=float, default=0.05,
+                   help="Only used if ROI weighting is active: width (as a fraction of the "
+                        "domain's shorter side) of the smooth sigmoid falloff at the scan "
+                        "region's edge, instead of a hard cutoff.")
 
     # ── bootstrap ensemble ────────────────────────────────────────────────────
     p.add_argument("--bootstrap_seed", type=int, default=-1,
@@ -200,9 +247,17 @@ def _parse_lp_filter_ranges(spec: str):
 def weighted_mse(
     pred:           torch.Tensor,
     target:         torch.Tensor,
+    weights:        Optional[torch.Tensor] = None,   # (..., D) per-node ROI weights, or None
     sample_weights: Optional[torch.Tensor] = None,
 ) -> torch.Tensor:
+    """`weights` (new): optional per-node loss weight (e.g. the ROI table —
+    see compute_roi_weights_table), broadcasting against pred/target's last
+    (D) dim. None (default) reproduces the original unweighted behavior
+    exactly. `sample_weights` (unchanged) is the separate bootstrap
+    per-sample weighting, applied after averaging over D."""
     sq = (pred - target).pow(2)
+    if weights is not None:
+        sq = sq * weights
     per_sample = sq.mean(dim=-1)
     if sample_weights is not None:
         denom = sample_weights.sum().clamp_min(1e-8)
@@ -288,22 +343,31 @@ def compute_losses(
     s2:               torch.Tensor,              # (B, D)  ground-truth next state
     layer_indices:    torch.Tensor,              # (B,)
     bootstrap_masks:  torch.Tensor,              # (B, K)
+    roi_table:        Optional[torch.Tensor] = None,   # (n_layers, D) or None
 ) -> Dict[str, torch.Tensor]:
     """Returns dict with L_recon_heat, L_nll_heat, L_recon_cool, L_nll_cool.
     NLL uses `low_rank_gaussian_nll` when the model has a low-rank factor
     (model.rank>0, i.e. out["u_heat"]/out["u_cool"] are not None) and the
-    original `gaussian_nll` otherwise — UNCHANGED for rank=0 models."""
+    original `gaussian_nll` otherwise — UNCHANGED for rank=0 models.
+    `roi_table` (new, default None reproduces the original unweighted
+    behavior exactly): per-layer per-node ROI weight table (see
+    compute_roi_weights_table) applied to BOTH reconstruction losses —
+    the NLL terms are intentionally left unweighted (a node's calibrated
+    uncertainty shouldn't be inflated/deflated just because it's inside or
+    outside the scan region)."""
     out = model(s, a, c, h, layer_indices)
     mu_heat, log_sigma_heat, u_heat = out["mu_heat"], out["log_sigma_heat"], out.get("u_heat")
     mu_cool, log_sigma_cool, u_cool = out["mu_cool"], out["log_sigma_cool"], out.get("u_cool")
 
     K, B, D = mu_heat.shape
     bw = bootstrap_masks.t()  # (K, B)
+    w  = roi_table[layer_indices] if roi_table is not None else None  # (B, D) or None
+    w_exp = w.unsqueeze(0).expand(K, -1, -1) if w is not None else None
 
     # ── heating stage ───────────────────────────────────────────────────────
     heat_preds   = s.unsqueeze(0) + mu_heat                            # (K, B, D)
     h_exp        = h.unsqueeze(0).expand(K, -1, -1)
-    L_recon_heat = weighted_mse(heat_preds, h_exp, sample_weights=bw)
+    L_recon_heat = weighted_mse(heat_preds, h_exp, w_exp, sample_weights=bw)
 
     delta_heat_target = (h - s).unsqueeze(0).expand(K, -1, -1)
     if u_heat is not None:
@@ -314,7 +378,7 @@ def compute_losses(
     # ── cooling stage (teacher-forced on ground-truth u_heat) ────────────────
     next_preds   = h.unsqueeze(0) + mu_cool                            # (K, B, D)
     s2_exp       = s2.unsqueeze(0).expand(K, -1, -1)
-    L_recon_cool = weighted_mse(next_preds, s2_exp, sample_weights=bw)
+    L_recon_cool = weighted_mse(next_preds, s2_exp, w_exp, sample_weights=bw)
 
     delta_cool_target = (s2 - h).unsqueeze(0).expand(K, -1, -1)
     if u_cool is not None:
@@ -341,6 +405,7 @@ def run_epoch(
     nll_heat_w:   float,
     recon_cool_w: float,
     nll_cool_w:   float,
+    roi_table:    Optional[torch.Tensor] = None,
 ) -> Tuple[float, Dict[str, float]]:
     training = optimizer is not None
     model.train(training)
@@ -355,7 +420,7 @@ def run_epoch(
             layer_idx = layer_idx.to(device)
             bmask     = bmask.to(device)
 
-            L = compute_losses(model, s, a, c, h, s2, layer_idx, bmask)
+            L = compute_losses(model, s, a, c, h, s2, layer_idx, bmask, roi_table=roi_table)
             loss = (
                 recon_heat_w * L["recon_heat"] + nll_heat_w * L["nll_heat"]
                 + recon_cool_w * L["recon_cool"] + nll_cool_w * L["nll_cool"]
@@ -429,6 +494,7 @@ def _save_checkpoint(
     epoch:        int,
     val_loss:     float,
     path:         str,
+    roi_table_np: Optional[np.ndarray] = None,
 ) -> None:
     torch.save(
         {
@@ -439,6 +505,7 @@ def _save_checkpoint(
             "lp_std":           lp_std,
             "cool_mean":        cool_mean,
             "cool_std":         cool_std,
+            "roi_table":        roi_table_np,
             "epoch":            epoch,
             "val_loss":         val_loss,
             "model_config": {
@@ -454,6 +521,8 @@ def _save_checkpoint(
                 "mu_init_scale":   args.mu_init_scale,
                 "member_init_seed": args.member_init_seed,
                 "rank":            model.rank,
+                "min_log_u_norm":  args.min_log_u_norm,
+                "max_log_u_norm":  args.max_log_u_norm,
             },
             "train_args": vars(args),
         },
@@ -492,6 +561,28 @@ def main() -> None:
     state_dim = state_mean.shape[0]
     n_layers  = len(train_trajs[0])
 
+    # ── physics-aware ROI weights (opt-out via --no_roi_weights) ─────────────
+    roi_table_np: Optional[np.ndarray] = None
+    if not args.no_roi_weights:
+        mesh_path = args.mesh_path or os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "surrogate_model", "mesh.mat"
+        )
+        if os.path.exists(mesh_path):
+            mesh_data = loadmat(mesh_path)
+            roi_table_np = compute_roi_weights_table(
+                mesh_data["nodes"], n_layers=n_layers,
+                initial_fraction=args.roi_initial_fraction, final_fraction=args.roi_final_fraction,
+                roi_boost=args.roi_boost, edge_sigma_frac=args.roi_edge_sigma_frac,
+            )
+            print(f"[train] ROI weights loaded from mesh: {mesh_path}")
+        else:
+            print(f"[train] mesh.mat not found at {mesh_path} — using uniform weights.")
+    else:
+        print("[train] --no_roi_weights given — using uniform weights.")
+    roi_table_t: Optional[torch.Tensor] = (
+        torch.tensor(roi_table_np, dtype=torch.float32, device=device) if roi_table_np is not None else None
+    )
+
     have_lp_minmax = args.lp_filter_min is not None or args.lp_filter_max is not None
     have_lp_ranges = args.lp_filter_ranges is not None
     if have_lp_minmax and have_lp_ranges:
@@ -529,7 +620,7 @@ def main() -> None:
         state_dim=state_dim, lp_dim=1, cool_dim=1, n_ensemble=args.n_ensemble, n_layers=n_layers,
         layer_embed_dim=args.layer_embed_dim, trans_hidden=args.trans_hidden, trans_depth=args.trans_depth,
         dropout=args.dropout, mu_init_scale=args.mu_init_scale, member_init_seed=args.member_init_seed,
-        rank=args.rank,
+        rank=args.rank, min_log_u_norm=args.min_log_u_norm, max_log_u_norm=args.max_log_u_norm,
     )
     model = TwoStageSurrogate(**model_kwargs).to(device)
     print(f"[train] {model}")
@@ -540,6 +631,7 @@ def main() -> None:
     epoch_kw = dict(
         recon_heat_w=args.recon_heat_weight, nll_heat_w=args.nll_heat_weight,
         recon_cool_w=args.recon_cool_weight, nll_cool_w=args.nll_cool_weight,
+        roi_table=roi_table_t,
     )
 
     ckpt_best  = os.path.join(out_dir, "surrogate_best.pt")
@@ -576,7 +668,7 @@ def main() -> None:
             best_val_loss  = va_loss
             epochs_no_impr = 0
             _save_checkpoint(model, state_mean, state_std, lp_mean, lp_std, cool_mean, cool_std,
-                             args, epoch, best_val_loss, ckpt_best)
+                             args, epoch, best_val_loss, ckpt_best, roi_table_np=roi_table_np)
             marker = " ✓ best"
         else:
             epochs_no_impr += 1
@@ -596,7 +688,7 @@ def main() -> None:
             break
 
     _save_checkpoint(model, state_mean, state_std, lp_mean, lp_std, cool_mean, cool_std,
-                     args, epoch, va_loss, ckpt_final)
+                     args, epoch, va_loss, ckpt_final, roi_table_np=roi_table_np)
     plot_loss_curves(train_losses, val_losses, os.path.join(out_dir, "loss_curves.png"))
     plot_loss_components(train_comps_hist, val_comps_hist, os.path.join(out_dir, "loss_components.png"))
 

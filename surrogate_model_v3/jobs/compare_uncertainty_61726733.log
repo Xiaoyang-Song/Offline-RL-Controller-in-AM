@@ -1,0 +1,41 @@
+============================================================
+Job ID   : 61726733
+Node     : gl1000
+Started  : Tue Sep 22 13:52:33 EDT 2026
+============================================================
+Python : /home/xysong/.conda/envs/RL/bin/python
+============================================================
+/home/xysong/.conda/envs/RL/lib/python3.10/site-packages/torch/utils/data/dataloader.py:617: UserWarning: This DataLoader will create 2 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+[compare_uncertainty] Output dir : surrogate_model_v3/results_uncertainty_comparison
+[compare_uncertainty] Device     : cuda
+[dataset] Loaded 5000 trajectories × 12 layers from DatasetV2_layer_12_samples_5000.pkl
+[dataset] Split → train 4000 | val 500 | test 500
+[compare_uncertainty] Loaded [diag] surrogate_model_v3/runs/full_range/surrogate_best.pt
+[compare_uncertainty]   TwoStageSurrogate(state=1053, lp_dim=1, cool_dim=1, K=5, n_layers=12, embed=8, rank=0 | heat×5=2,554,020  cool×5=2,554,020 | total=5,108,040)
+[dataset] Bootstrap masks: (500, 5), resample_frac=1.0, ~36.7% of (sample, member) pairs unseen (expected ≈ 36.8%)
+[TwoStageTrajectoryDataset] 500 trajectories, T=12, state_dim=1053, bootstrap K=5 (trajectory-level resampling)
+[compare_uncertainty] Running rollout: config=(diag, propagate=False) ...
+[compare_uncertainty]   mean total σ (last layer) = 0.00297
+[compare_uncertainty] Running rollout: config=(diag, propagate=True) ...
+/home/xysong/.conda/envs/RL/lib/python3.10/site-packages/torch/utils/data/dataloader.py:617: UserWarning: This DataLoader will create 2 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+[compare_uncertainty]   mean total σ (last layer) = 0.00298
+[compare_uncertainty] Loaded [lowrank] surrogate_model_v3/runs/full_range_rank8/surrogate_best.pt
+[compare_uncertainty]   TwoStageSurrogate(state=1053, lp_dim=1, cool_dim=1, K=5, n_layers=12, embed=8, rank=8 | heat×5=7,987,500  cool×5=7,987,500 | total=15,975,000)
+[dataset] Bootstrap masks: (500, 5), resample_frac=1.0, ~36.7% of (sample, member) pairs unseen (expected ≈ 36.8%)
+[TwoStageTrajectoryDataset] 500 trajectories, T=12, state_dim=1053, bootstrap K=5 (trajectory-level resampling)
+[compare_uncertainty] Running rollout: config=(lowrank, propagate=False) ...
+[compare_uncertainty]   mean total σ (last layer) = 2.16643
+[compare_uncertainty] Running rollout: config=(lowrank, propagate=True) ...
+[compare_uncertainty]   mean total σ (last layer) = 2.10387
+[compare_uncertainty] Saved → surrogate_model_v3/results_uncertainty_comparison/per_layer_uncertainty_comparison.png
+[compare_uncertainty] Saved → surrogate_model_v3/results_uncertainty_comparison/uncertainty_vs_laser_power.png
+[compare_uncertainty] Saved → surrogate_model_v3/results_uncertainty_comparison/jacobian_amplification_map.png
+[compare_uncertainty] Saved → surrogate_model_v3/results_uncertainty_comparison/uncertainty_summary.csv
+
+[compare_uncertainty] Complete. All outputs in: surrogate_model_v3/results_uncertainty_comparison
+============================================================
+Finished : Tue Sep 22 13:53:59 EDT 2026  (exit code: 0)
+Plots    : surrogate_model_v3/results_uncertainty_comparison/
+============================================================

@@ -96,6 +96,21 @@ an EXACT rank-(K−1) covariance factor for the epistemic term — `(μ_k−μ̄
 stacked over `k` — at zero extra cost, regardless of `--rank`. Only the
 ALEATORIC side needs `rank>0` to get a matching low-rank factor.
 
+**`U` needs its own bound, or it silently blows up.** Unlike `log σ` (which
+gets a PETS soft clamp), `U`'s output had no magnitude bound at all in the
+first implementation — over enough training, the Gaussian NLL objective can
+reduce loss by inflating `U` to absorb residual mean-prediction error
+instead of fitting the mean better, and nothing stopped it. This actually
+happened: a real `--rank 8` run reached combined aleatoric σ ≈ 2.0 (in
+z-scored space, i.e. comparable to a node's *entire* natural range) despite
+~0.02-0.03 actual point-prediction RMSE — and, worse, produced an
+`uncertainty_vs_laser_power.png` that no longer distinguished a
+narrow-trained checkpoint's ID range from OOD at all. `--min_log_u_norm`/
+`--max_log_u_norm` (default `[-6.0, -1.0]`) now give `U`'s per-node row norm
+the same kind of PETS soft clamp `log σ` already has, capping this
+member's low-rank variance contribution at ≈0.135/node (well under `log σ`'s
+own ~2.72 ceiling, since `U` adds to the diagonal, not instead of it).
+
 **`propagate_uncertainty` (a call argument on `rollout`/`predict_unnorm`,
 default `False`)** — the naive combination `Var_total = Var_heat + Var_cool`
 assumes the cooling stage passes heating-stage error through unchanged.

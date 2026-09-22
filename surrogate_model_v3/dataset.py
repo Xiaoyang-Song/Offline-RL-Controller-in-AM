@@ -179,6 +179,62 @@ def build_normalizers(
 
 
 # =============================================================================
+# Physics-aware ROI weight helpers (opt-in via train.py's --mesh_path /
+# --no_roi_weights — ported from surrogate_model_latent_uncertainty_v2/
+# dataset_v2.py, which this design had originally dropped when extracted
+# out of baseline_surrogate/ablation_no_latent/, since that ablation's own
+# train.py never used ROI weighting. Math unchanged.)
+# =============================================================================
+
+def compute_roi_weights_table(
+    nodes:            np.ndarray,   # (2, N_nodes)  X, Y coordinates
+    n_layers:         int   = 12,
+    initial_fraction: float = 0.4,
+    final_fraction:   float = 0.5,
+    roi_boost:        float = 5.0,
+    edge_sigma_frac:  float = 0.05,
+) -> np.ndarray:
+    """Per-layer node weight table: nodes inside the (per-layer, growing)
+    square scan region get roi_boost x higher weight in the reconstruction
+    loss than nodes outside it, with a smooth (sigmoid) falloff at the
+    region's edge (width edge_sigma_frac * the domain's shorter side)
+    instead of a hard cutoff, so the loss landscape stays differentiable
+    across the boundary. The scan-region square grows from layer 0
+    (initial_fraction) to layer n_layers-1 (final_fraction), matching
+    simulateHeatingCooling_v2.m's squareSideFraction schedule."""
+    x = nodes[0]
+    y = nodes[1]
+
+    width   = x.max() - x.min()
+    height  = y.max() - y.min()
+    cx      = x.min() + width  / 2.0
+    cy      = y.min() + height / 2.0
+    min_dim = min(width, height)
+    sigma   = edge_sigma_frac * min_dim
+
+    fractions = np.linspace(initial_fraction, final_fraction, n_layers)
+
+    table = np.zeros((n_layers, len(x)), dtype=np.float32)
+    for l, frac in enumerate(fractions):
+        half_side = min_dim * frac / 2.0
+
+        box_dist = np.maximum(np.abs(x - cx) - half_side,
+                              np.abs(y - cy) - half_side)
+        smooth_inside = 1.0 / (1.0 + np.exp(box_dist / sigma))
+
+        w        = 1.0 + (roi_boost - 1.0) * smooth_inside
+        table[l] = (w / w.mean()).astype(np.float32)
+
+    print(f"[dataset] ROI weight table: {table.shape}, "
+          f"range [{table.min():.3f}, {table.max():.3f}]")
+    return table
+
+
+def uniform_weights_table(n_layers: int, state_dim: int) -> np.ndarray:
+    return np.ones((n_layers, state_dim), dtype=np.float32)
+
+
+# =============================================================================
 # Bootstrap resampling
 # =============================================================================
 
