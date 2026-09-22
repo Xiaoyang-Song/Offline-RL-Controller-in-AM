@@ -70,7 +70,9 @@ from torch.utils.data import DataLoader
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from surrogate_model_v3.dataset import load_trajectories, TwoStageSurrogateDataset
-from surrogate_model_v3.model import load_surrogate
+from surrogate_model_v3.model import (
+    load_surrogate, combine_stage_uncertainties, combine_stage_uncertainties_naive_full,
+)
 from surrogate_model_v3.train import _parse_lp_filter_ranges
 
 
@@ -105,6 +107,79 @@ def collect_ood_samples(model, loader: DataLoader, state_mean, state_std,
 
         diff_k = (heat_pred - h) * ss                         # (B, D) raw Kelvin
         a_raw  = (a.squeeze(-1) * lp_std + lp_mean)            # (B,) raw Watts
+
+        actions.append(a_raw.cpu().numpy())
+        epi.append(epi_std.mean(dim=-1).cpu().numpy())
+        ale.append(ale_std.mean(dim=-1).cpu().numpy())
+        tot.append(tot_std.mean(dim=-1).cpu().numpy())
+        sq_err.append((diff_k ** 2).mean(dim=-1).cpu().numpy())
+        abs_err.append(diff_k.abs().mean(dim=-1).cpu().numpy())
+
+    return {
+        "action":  np.concatenate(actions),
+        "epi":     np.concatenate(epi),
+        "ale":     np.concatenate(ale),
+        "tot":     np.concatenate(tot),
+        "sq_err":  np.concatenate(sq_err),
+        "abs_err": np.concatenate(abs_err),
+    }
+
+
+@torch.no_grad()
+def collect_ood_samples_combined(
+    model, loader: DataLoader, state_mean, state_std, lp_mean, lp_std, device: str,
+    propagate_uncertainty: bool = False, num_probes: int = 4,
+):
+    """
+    Like `collect_ood_samples`, but chains heating THEN cooling and reports
+    the COMBINED post-cooling uncertainty (epistemic/aleatoric/total) and
+    the final next-state RMSE against the ground-truth s_{t+1} — not just
+    the heating stage alone. Laser power only conditions heating directly,
+    but s_heat (cooling's input) depends on it, so the combined uncertainty
+    RL/MPC code actually reads (see model.py's `combine_stage_uncertainties`
+    docstring) still varies with laser power indirectly through the chain —
+    this is the number relevant to "how uncertain is the surrogate about
+    this transition," not just "how uncertain is the heating stage."
+
+    propagate_uncertainty=False (default): naive combination (still uses
+    the `_full` path so a low-rank checkpoint's aleatoric factor is
+    correctly included — see combine_stage_uncertainties_naive_full).
+    propagate_uncertainty=True: EKF-style Jacobian propagation through
+    cooling (see model.py's `combine_stage_uncertainties_propagated`).
+
+    Returns a dict of 1-D numpy arrays, all length N (same keys as
+    `collect_ood_samples`).
+    """
+    model.eval()
+    ss = state_std.to(device)
+    use_full = propagate_uncertainty or (model.rank > 0)
+
+    actions, epi, ale, tot, sq_err, abs_err = [], [], [], [], [], []
+
+    for s, a, c, _h, s2, layer_idx, _bmask in loader:
+        s, a, c, s2 = s.to(device), a.to(device), c.to(device), s2.to(device)
+        layer_idx   = layer_idx.to(device)
+
+        if use_full:
+            heat_full = model.predict_heating_ensemble_full(s, a, layer_idx)
+            s_heat    = s + heat_full["mu_mean"]
+            cool_full = model.predict_cooling_ensemble_full(s_heat, c, layer_idx)
+            mu_cool   = cool_full["mu_mean"]
+            if propagate_uncertainty:
+                combo = model.combine_stage_uncertainties_propagated(
+                    s_heat, c, layer_idx, heat_full, cool_full, num_probes=num_probes)
+            else:
+                combo = combine_stage_uncertainties_naive_full(heat_full, cool_full)
+            epi_std, ale_std, tot_std = combo["epistemic_std"], combo["aleatoric_std"], combo["total_std"]
+        else:
+            mu_heat, heat_epi, heat_ale, _ = model.predict_heating_ensemble(s, a, layer_idx)
+            s_heat = s + mu_heat
+            mu_cool, cool_epi, cool_ale, _ = model.predict_cooling_ensemble(s_heat, c, layer_idx)
+            epi_std, ale_std, tot_std = combine_stage_uncertainties(heat_epi, heat_ale, cool_epi, cool_ale)
+
+        s_next_pred = s_heat + mu_cool
+        diff_k = (s_next_pred - s2) * ss                       # (B, D) raw Kelvin
+        a_raw  = (a.squeeze(-1) * lp_std + lp_mean)             # (B,) raw Watts
 
         actions.append(a_raw.cpu().numpy())
         epi.append(epi_std.mean(dim=-1).cpu().numpy())
@@ -175,17 +250,19 @@ def summarize_region(data: dict, mask: np.ndarray, label: str) -> dict:
 # Plotting
 # =============================================================================
 
-def plot_uncertainty_vs_action(binned: dict, id_ranges, out_path: str) -> None:
+def plot_uncertainty_vs_action(binned: dict, id_ranges, out_path: str, stage_label: str = "Heating") -> None:
     """id_ranges: list of (lo, hi) ID ranges — a single-range checkpoint just
     passes a one-element list; each range gets its own shaded axvspan, so a
     GAPPED checkpoint's interior OOD gap shows up unshaded BETWEEN two shaded
-    ID bands rather than as a single contiguous span."""
+    ID bands rather than as a single contiguous span. `stage_label` (default
+    "Heating", unchanged) is swapped to e.g. "Combined" by the caller that
+    reports the full post-cooling uncertainty instead of heating alone."""
     centers = binned["centers"]
     fig, axes = plt.subplots(1, 3, figsize=(16, 4.5))
     panels = [
-        ("epi", "Heating epistemic σ (ensemble disagreement)", "tab:orange"),
-        ("ale", "Heating aleatoric σ (avg. member noise)",      "tab:purple"),
-        ("rmse", "Single-step heating RMSE [K]",                "tab:red"),
+        ("epi", f"{stage_label} epistemic σ (ensemble disagreement)", "tab:orange"),
+        ("ale", f"{stage_label} aleatoric σ (avg. member noise)",      "tab:purple"),
+        ("rmse", f"Single-step {stage_label.lower()} RMSE [K]",       "tab:red"),
     ]
     for ax, (key, title, color) in zip(axes, panels):
         ax.plot(centers, binned[key], marker="o", color=color, linewidth=1.5)
@@ -199,7 +276,7 @@ def plot_uncertainty_vs_action(binned: dict, id_ranges, out_path: str) -> None:
         ax.grid(True, alpha=0.3)
         ax.legend(fontsize=7, loc="upper left")
     range_str = ", ".join(f"[{lo:.0f}, {hi:.0f}]" for lo, hi in id_ranges)
-    fig.suptitle("OOD Stress Test (heating stage) — Uncertainty & Error vs. Laser Power "
+    fig.suptitle(f"OOD Stress Test ({stage_label.lower()} stage) — Uncertainty & Error vs. Laser Power "
                 f"(shaded = training range(s) {range_str} W)",
                 fontsize=11)
     fig.tight_layout()
@@ -209,7 +286,7 @@ def plot_uncertainty_vs_action(binned: dict, id_ranges, out_path: str) -> None:
 
 
 def plot_epistemic_vs_error_scatter(data: dict, id_mask: np.ndarray, out_path: str,
-                                    max_points: int = 20000) -> None:
+                                    max_points: int = 20000, stage_label: str = "Heating") -> None:
     rng = np.random.default_rng(0)
     n   = len(data["epi"])
     idx = rng.choice(n, size=min(n, max_points), replace=False) if n > max_points else np.arange(n)
@@ -221,9 +298,9 @@ def plot_epistemic_vs_error_scatter(data: dict, id_mask: np.ndarray, out_path: s
     fig, ax = plt.subplots(figsize=(7, 6))
     ax.scatter(epi[id_m],  err[id_m],  s=6, alpha=0.35, color="tab:blue",   label="ID (training range)")
     ax.scatter(epi[~id_m], err[~id_m], s=6, alpha=0.35, color="tab:red",    label="OOD (unseen power)")
-    ax.set_xlabel("Heating epistemic σ (mean over nodes) [K]")
-    ax.set_ylabel("Per-sample heating RMSE [K]")
-    ax.set_title("Epistemic Uncertainty vs. Actual Error (heating stage)")
+    ax.set_xlabel(f"{stage_label} epistemic σ (mean over nodes) [K]")
+    ax.set_ylabel(f"Per-sample {stage_label.lower()} RMSE [K]")
+    ax.set_title(f"Epistemic Uncertainty vs. Actual Error ({stage_label.lower()} stage)")
     ax.legend(fontsize=8)
     ax.grid(True, alpha=0.3)
     fig.tight_layout()
@@ -265,6 +342,13 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--batch_size",  type=int, default=256)
     p.add_argument("--num_workers", type=int, default=4)
     p.add_argument("--initial_temp", type=float, default=300.0)
+    p.add_argument("--propagate_uncertainty", action="store_true",
+                   help="Use EKF-style Jacobian propagation (see model.py's "
+                        "combine_stage_uncertainties_propagated) for the COMBINED "
+                        "(post-cooling) analysis instead of the default naive sum. "
+                        "The heating-only analysis is unaffected by this flag.")
+    p.add_argument("--num_probes", type=int, default=4,
+                   help="Hutchinson probe count for --propagate_uncertainty's residual diagonal.")
     p.add_argument("--out_dir",     type=str, default="",
                    help="Defaults to the checkpoint's directory.")
     p.add_argument("--device",      type=str, default="")
@@ -337,6 +421,36 @@ def main() -> None:
                                os.path.join(out_dir, "ood_uncertainty_vs_action.png"))
     plot_epistemic_vs_error_scatter(data, id_mask,
                                     os.path.join(out_dir, "ood_epistemic_vs_error.png"))
+
+    # ── COMBINED (post-cooling) analysis — what RL/MPC actually reads ───────
+    print(f"\n[evaluate_ood] Running forward pass over all transitions (combined heat+cool, "
+          f"propagate_uncertainty={args.propagate_uncertainty}) ...")
+    data_c = collect_ood_samples_combined(
+        model, loader, state_mean, state_std, lp_mean, lp_std, device,
+        propagate_uncertainty=args.propagate_uncertainty, num_probes=args.num_probes,
+    )
+
+    print(f"\n[evaluate_ood] {'═'*90}")
+    print("[evaluate_ood] SUMMARY — COMBINED (post-cooling)")
+    print(f"[evaluate_ood] {'═'*90}")
+    summarize_region(data_c, id_mask,  "ID")
+    summarize_region(data_c, ~id_mask, "OOD")
+    summarize_region(data_c, np.ones_like(id_mask), "ALL")
+    print(f"[evaluate_ood] {'═'*90}\n")
+
+    binned_c = bin_by_action(data_c, args.n_bins)
+    print(f"  {'Power bin [W]':>16}  {'n':>7}  {'Epist σ':>10}  {'Aleat σ':>10}  {'RMSE [K]':>10}")
+    for i in range(args.n_bins):
+        lo, hi = binned_c["edges"][i], binned_c["edges"][i + 1]
+        print(f"  {lo:7.1f}-{hi:7.1f}  {binned_c['counts'][i]:7d}  "
+              f"{binned_c['epi'][i]:10.5f}  {binned_c['ale'][i]:10.5f}  {binned_c['rmse'][i]:10.2f}")
+
+    plot_uncertainty_vs_action(binned_c, id_ranges,
+                               os.path.join(out_dir, "ood_uncertainty_vs_action_combined.png"),
+                               stage_label="Combined")
+    plot_epistemic_vs_error_scatter(data_c, id_mask,
+                                    os.path.join(out_dir, "ood_epistemic_vs_error_combined.png"),
+                                    stage_label="Combined")
 
     print(f"\n[evaluate_ood] Complete. All outputs in: {out_dir}")
 

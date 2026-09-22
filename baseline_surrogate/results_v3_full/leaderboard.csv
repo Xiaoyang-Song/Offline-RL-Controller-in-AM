@@ -1,0 +1,6 @@
+method,next_mae_mean_K,next_rmse_mean_K,heat_mae_mean_K,n_params
+surrogate_v3 (proposed),0.2739,0.8657,NA,5108040
+mlp,0.7451,1.8706,NA,1872925
+lstm,0.8163,1.8997,NA,3753501
+kalman_filter,7.3572,18.6503,NA,72384
+vanilla_ensemble,1.6892,3.8759,NA,9364625
