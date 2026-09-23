@@ -98,22 +98,24 @@ CONFIG_LABEL = {
 # =============================================================================
 
 @torch.no_grad()
-def collect_rollout_uncertainty(model, traj_loader, device, propagate_uncertainty, num_probes, traj_len):
+def collect_rollout_uncertainty(model, traj_loader, device, propagate_uncertainty, num_probes, traj_len,
+                                state_std):
     """Runs model.rollout over every test trajectory batch with the given
     propagate_uncertainty setting. Returns per-layer mean epistemic/
     aleatoric/total std ((traj_len,) arrays), the amplification map's mean
     Jacobian diagonal per layer (None if propagate_uncertainty=False), and
-    flat per-sample (laser_power_raw, total_std_mean_over_nodes) arrays for
-    the laser-power binning plot.
+    flat per-sample (laser_power_raw, epistemic/aleatoric/total std, squared
+    next-state error in Kelvin) arrays for the laser-power binning plots.
     """
     model.eval()
+    ss = state_std.to(device)
     heat_epi_l = [[] for _ in range(traj_len)]
     heat_ale_l = [[] for _ in range(traj_len)]
     total_epi_l = [[] for _ in range(traj_len)]
     total_ale_l = [[] for _ in range(traj_len)]
     total_std_l = [[] for _ in range(traj_len)]
     jac_l       = [[] for _ in range(traj_len)] if propagate_uncertainty else None
-    actions_flat, total_std_flat = [], []
+    actions_flat, total_std_flat, epi_flat, ale_flat, sqerr_flat = [], [], [], [], []
 
     for traj_s, traj_h, traj_a, traj_c, _bmask in traj_loader:
         traj_s, traj_a, traj_c = traj_s.to(device), traj_a.to(device), traj_c.to(device)
@@ -133,6 +135,11 @@ def collect_rollout_uncertainty(model, traj_loader, device, propagate_uncertaint
             a_raw = traj_a[:, t, 0].cpu().numpy()  # normalised here; caller rescales if needed
             actions_flat.extend(a_raw.tolist())
             total_std_flat.extend(out["total_std"][:, t].cpu().numpy().tolist())
+            epi_flat.extend(out["total_epistemic"][:, t].cpu().numpy().tolist())
+            ale_flat.extend(out["total_aleatoric"][:, t].cpu().numpy().tolist())
+
+            dc = (out["pred_next_states"][:, t, :] - traj_s[:, t + 1, :]) * ss  # Kelvin
+            sqerr_flat.extend(dc.pow(2).mean(dim=-1).cpu().numpy().tolist())
 
         if propagate_uncertainty:
             # Re-derive the mean Jacobian diagonal per layer by re-running the
@@ -160,6 +167,9 @@ def collect_rollout_uncertainty(model, traj_loader, device, propagate_uncertaint
         jacobian_diag=(np.array([np.mean(x) for x in jac_l]) if jac_l is not None else None),
         actions_norm=np.array(actions_flat),
         total_std_flat=np.array(total_std_flat),
+        epi_flat=np.array(epi_flat),
+        ale_flat=np.array(ale_flat),
+        sqerr_flat=np.array(sqerr_flat),
     )
     return result
 
@@ -174,6 +184,20 @@ def bin_by_action(actions_raw: np.ndarray, values: np.ndarray, n_bins: int):
         if mask.sum() > 0:
             means[b] = values[mask].mean()
     return centers, means
+
+
+def bin_by_action_rmse(actions_raw: np.ndarray, sq_values: np.ndarray, n_bins: int):
+    """Like bin_by_action, but aggregates squared errors as sqrt(mean(sq))
+    per bin (true RMSE), not mean(sqrt(sq))."""
+    edges = np.linspace(actions_raw.min(), actions_raw.max(), n_bins + 1)
+    idx = np.clip(np.digitize(actions_raw, edges[1:-1]), 0, n_bins - 1)
+    centers = 0.5 * (edges[:-1] + edges[1:])
+    rmse = np.full(n_bins, np.nan)
+    for b in range(n_bins):
+        mask = idx == b
+        if mask.sum() > 0:
+            rmse[b] = np.sqrt(sq_values[mask].mean())
+    return centers, rmse
 
 
 # =============================================================================
@@ -203,21 +227,39 @@ def plot_per_layer_comparison(results: dict, traj_len: int, out_path: str):
 
 def plot_vs_laser_power(results: dict, lp_mean: float, lp_std: float, out_path: str,
                         id_range=None, n_bins: int = 12):
-    fig, ax = plt.subplots(figsize=(10, 6))
-    if id_range is not None:
-        ax.axvspan(id_range[0], id_range[1], color="#2ca02c", alpha=0.10, zorder=0,
-                  label=f"Training range [{id_range[0]:.0f}, {id_range[1]:.0f}] W")
-    for cfg, res in results.items():
-        actions_raw = res["actions_norm"] * lp_std + lp_mean
-        centers, means = bin_by_action(actions_raw, res["total_std_flat"], n_bins)
-        style = CONFIG_STYLE.get(cfg, dict(color="grey", linestyle="-", marker="o", linewidth=1.4))
-        ax.plot(centers, means, label=CONFIG_LABEL.get(cfg, str(cfg)), markersize=6.5, **style)
-    ax.set_xlabel("Laser power [W]")
-    ax.set_ylabel("Mean combined total σ (normalised space)")
-    ax.set_title("Combined uncertainty vs. laser power — diagonal vs. low-rank, naive vs. propagated")
-    ax.legend(loc="upper left", fontsize=8)
-    ax.grid(True, alpha=0.25, linewidth=0.6)
-    ax.spines[["top", "right"]].set_visible(False)
+    """2x2 grid: epistemic σ, aleatoric σ, combined total σ, and next-state
+    RMSE (Kelvin), each vs. binned laser power. Uncertainty panels use a log
+    y-axis since low-rank aleatoric can be ~1-2 orders of magnitude larger
+    than epistemic, which otherwise gets squashed flat on a shared linear
+    axis."""
+    fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+    panels = [
+        (axes[0, 0], "epi_flat", "Epistemic σ vs. laser power", True),
+        (axes[0, 1], "ale_flat", "Aleatoric σ vs. laser power", True),
+        (axes[1, 0], "total_std_flat", "Combined total σ vs. laser power (read by RL)", True),
+        (axes[1, 1], "sqerr_flat", "Next-state RMSE [K] vs. laser power", False),
+    ]
+    for ax, key, title, is_log in panels:
+        if id_range is not None:
+            ax.axvspan(id_range[0], id_range[1], color="#2ca02c", alpha=0.10, zorder=0,
+                      label=f"Training range [{id_range[0]:.0f}, {id_range[1]:.0f}] W")
+        for cfg, res in results.items():
+            actions_raw = res["actions_norm"] * lp_std + lp_mean
+            if key == "sqerr_flat":
+                centers, vals = bin_by_action_rmse(actions_raw, res[key], n_bins)
+            else:
+                centers, vals = bin_by_action(actions_raw, res[key], n_bins)
+            style = CONFIG_STYLE.get(cfg, dict(color="grey", linestyle="-", marker="o", linewidth=1.4))
+            ax.plot(centers, vals, label=CONFIG_LABEL.get(cfg, str(cfg)), markersize=6, **style)
+        ax.set_xlabel("Laser power [W]")
+        ax.set_ylabel("σ (normalised space, log)" if is_log else "RMSE [K]")
+        if is_log:
+            ax.set_yscale("log")
+        ax.set_title(title)
+        ax.grid(True, alpha=0.25, linewidth=0.6)
+        ax.spines[["top", "right"]].set_visible(False)
+    axes[0, 0].legend(loc="best", fontsize=8)
+    fig.suptitle("Uncertainty and accuracy vs. laser power — diagonal vs. low-rank, naive vs. propagated")
     fig.tight_layout()
     fig.savefig(out_path)
     plt.close(fig)
@@ -321,7 +363,7 @@ def main() -> None:
 
         for propagate in (False, True):
             print(f"[compare_uncertainty] Running rollout: config=({tag}, propagate={propagate}) ...")
-            res = collect_rollout_uncertainty(model, loader, device, propagate, args.num_probes, traj_len)
+            res = collect_rollout_uncertainty(model, loader, device, propagate, args.num_probes, traj_len, ss)
             results[(tag, propagate)] = res
             print(f"[compare_uncertainty]   mean total σ (last layer) = {res['total_std'][-1]:.5f}")
 
