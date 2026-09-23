@@ -1,0 +1,4 @@
+name,return_mean,return_std,deviation_K_mean,deviation_K_std,uncertainty_mean,action_mean,action_std
+UCPG v2 (ours),-3.070277,0.000000,204.6851,0.0000,0.000000,130.5067,49.2644
+4. Kalman filter,-5.410537,0.000000,360.7025,0.0000,0.000000,144.5884,59.6934
+4. Particle filter,-6.653569,0.000000,443.5713,0.0000,0.000000,149.5098,70.1931

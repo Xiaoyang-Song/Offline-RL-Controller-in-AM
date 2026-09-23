@@ -349,6 +349,9 @@ def parse_args() -> argparse.Namespace:
                         "The heating-only analysis is unaffected by this flag.")
     p.add_argument("--num_probes", type=int, default=4,
                    help="Hutchinson probe count for --propagate_uncertainty's residual diagonal.")
+    p.add_argument("--dump_npz", type=str, default="",
+                   help="Optional: save the raw binned heating-only and combined arrays "
+                        "to this .npz so the figures can be re-styled without re-running.")
     p.add_argument("--out_dir",     type=str, default="",
                    help="Defaults to the checkpoint's directory.")
     p.add_argument("--device",      type=str, default="")
@@ -451,6 +454,14 @@ def main() -> None:
     plot_epistemic_vs_error_scatter(data_c, id_mask,
                                     os.path.join(out_dir, "ood_epistemic_vs_error_combined.png"),
                                     stage_label="Combined")
+
+    if args.dump_npz:
+        dump = {f"heat/{k}": np.asarray(v) for k, v in binned.items()}
+        dump.update({f"comb/{k}": np.asarray(v) for k, v in binned_c.items()})
+        dump["id_ranges"] = np.asarray(id_ranges, dtype=float)
+        os.makedirs(os.path.dirname(args.dump_npz) or ".", exist_ok=True)
+        np.savez(args.dump_npz, **dump)
+        print(f"[evaluate_ood] Saved raw arrays → {args.dump_npz}")
 
     print(f"\n[evaluate_ood] Complete. All outputs in: {out_dir}")
 

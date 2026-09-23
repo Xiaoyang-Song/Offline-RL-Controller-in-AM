@@ -374,6 +374,10 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--action_bin_width", type=float, default=20.0,
                    help="Laser-power bin width [W] for rmse_vs_action*.png.")
 
+    p.add_argument("--dump_npz", type=str, default="",
+                   help="Optional: also save the raw per-layer MAE/RMSE and per-sample "
+                        "(action, squared-error) arrays of every method to this .npz, so "
+                        "the figures can be re-styled without re-running the evaluation.")
     p.add_argument("--out_dir", type=str, default="baseline_surrogate/results")
     return p.parse_args()
 
@@ -584,6 +588,16 @@ def main() -> None:
     if not results:
         print("[summarize_results] No checkpoints given — nothing to summarise.")
         return
+
+    if args.dump_npz:
+        dump = {}
+        for tag, res, bn in (("tf", results, binned), ("ar", results_ar, binned_ar)):
+            for name, (mae, rmse, _heat, _n) in res.items():
+                dump[f"{tag}/{name}/mae"], dump[f"{tag}/{name}/rmse"] = np.asarray(mae), np.asarray(rmse)
+                dump[f"{tag}/{name}/action"], dump[f"{tag}/{name}/sq_err"] = np.asarray(bn[name][0]), np.asarray(bn[name][1])
+        os.makedirs(os.path.dirname(args.dump_npz) or ".", exist_ok=True)
+        np.savez(args.dump_npz, **dump)
+        print(f"[summarize_results] Saved raw arrays → {args.dump_npz}")
 
     id_range = (args.id_range_min, args.id_range_max)
     _report(results,    binned,    args.out_dir, "",                traj_len, id_range, args.action_bin_width)

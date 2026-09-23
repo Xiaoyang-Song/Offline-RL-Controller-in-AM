@@ -1,0 +1,6 @@
+name,return,deviation_K_mean
+UCPG (ours),-3.0702,204.68
+Kalman filter,-5.4106,360.71
+Offline Q-learning,-6.4574,430.49
+Particle filter,-6.6534,443.56
+Proportional,-34.3776,2291.84

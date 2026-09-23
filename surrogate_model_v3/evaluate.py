@@ -298,7 +298,7 @@ def compute_per_layer_mean_gt(traj_loader, state_mean: torch.Tensor, state_std: 
 
 def _plot_field_2d(ax, values, triang, title, vmin=300, vmax=5000):
     tpc = ax.tripcolor(triang, values, cmap="jet", vmin=vmin, vmax=vmax, shading="gouraud")
-    ax.triplot(triang, color="k", linewidth=0.4, alpha=0.6)
+    ax.triplot(triang, color="k", linewidth=0.15, alpha=0.3)
     plt.colorbar(tpc, ax=ax, label="Temperature [K]")
     ax.set_aspect("auto"); ax.set_xlabel("X"); ax.set_ylabel("Y")
     ax.set_title(title, fontsize=9)
@@ -374,37 +374,33 @@ def plot_example_trajectory(
     for layer in range(T):
         hp, hg = heat_pred[layer], heat_gt[layer]
         np_, ng = next_pred[layer], next_gt[layer]
-        h_mae = np.abs(hp - hg).mean()
-        n_mae = np.abs(np_ - ng).mean()
+        h_err, n_err = np.abs(hp - hg), np.abs(np_ - ng)
+        h_mae, n_mae = h_err.mean(), n_err.mean()
+        h_pct = h_err / np.maximum(np.abs(hg), 1.0) * 100.0      # relative error [%], as in the
+        n_pct = n_err / np.maximum(np.abs(ng), 1.0) * 100.0      # earlier latent-surrogate plots
         lp    = actions[layer]
 
         fig, axes = plt.subplots(2, 3, figsize=(16, 8))
         fig.suptitle(
             f"Traj {traj_idx} — Layer {layer+1}  |  LP = {lp:.0f} W  |  "
-            f"Heat MAE = {h_mae:.2f} K  |  Cool MAE = {n_mae:.2f} K",
+            f"Heat MAE = {h_mae:.2f} K ({h_pct.mean():.2f}%)  |  "
+            f"Cool MAE = {n_mae:.2f} K ({n_pct.mean():.2f}%)",
             fontsize=10,
         )
 
         if triang is not None:
-            _plot_field_2d(axes[0, 0], hg, triang, "Heating GT [K]", vmin, vmax)
-            _plot_field_2d(axes[0, 1], hp, triang, "Heating Pred [K]", vmin, vmax)
-            herr = np.abs(hp - hg)
-            tpc = axes[0, 2].tripcolor(triang, herr, cmap="hot", vmin=0,
-                                       vmax=max(herr.max(), 1.0), shading="gouraud")
-            axes[0, 2].triplot(triang, color="k", linewidth=0.4, alpha=0.6)
-            plt.colorbar(tpc, ax=axes[0, 2], label="Abs Error [K]")
-            axes[0, 2].set_aspect("auto")
-            axes[0, 2].set_title(f"Heating Error  mean={h_mae:.2f}K", fontsize=9)
-
-            _plot_field_2d(axes[1, 0], ng, triang, "Cooling GT [K]", vmin, vmax)
-            _plot_field_2d(axes[1, 1], np_, triang, "Cooling Pred [K]", vmin, vmax)
-            nerr = np.abs(np_ - ng)
-            tpc2 = axes[1, 2].tripcolor(triang, nerr, cmap="hot", vmin=0,
-                                        vmax=max(nerr.max(), 1.0), shading="gouraud")
-            axes[1, 2].triplot(triang, color="k", linewidth=0.4, alpha=0.6)
-            plt.colorbar(tpc2, ax=axes[1, 2], label="Abs Error [K]")
-            axes[1, 2].set_aspect("auto")
-            axes[1, 2].set_title(f"Cooling Error  mean={n_mae:.2f}K", fontsize=9)
+            _plot_field_2d(axes[0, 0], hg, triang, "Heating Ground Truth [K]", vmin, vmax)
+            _plot_field_2d(axes[0, 1], hp, triang, "Heating Predicted [K]", vmin, vmax)
+            _plot_field_2d(axes[1, 0], ng, triang, "Cooling Ground Truth [K]", vmin, vmax)
+            _plot_field_2d(axes[1, 1], np_, triang, "Cooling Predicted [K]", vmin, vmax)
+            for ax, pct, stage in ((axes[0, 2], h_pct, "Heating"), (axes[1, 2], n_pct, "Cooling")):
+                tpc = ax.tripcolor(triang, pct, cmap="hot", vmin=0,
+                                   vmax=max(pct.max(), 1.0), shading="gouraud")
+                ax.triplot(triang, color="k", linewidth=0.15, alpha=0.3)
+                plt.colorbar(tpc, ax=ax, label="Relative Error [%]")
+                ax.set_aspect("auto"); ax.set_xlabel("X"); ax.set_ylabel("Y")
+                ax.set_title(f"{stage} Relative Error [%]  mean={pct.mean():.2f}%  max={pct.max():.1f}%",
+                             fontsize=9)
         else:
             _plot_field_1d(axes[0, 0], hg, "Heating GT [K]", "steelblue")
             _plot_field_1d(axes[0, 1], hp, "Heating Pred [K]", "darkorange")

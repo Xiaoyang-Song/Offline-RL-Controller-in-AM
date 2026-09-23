@@ -131,6 +131,9 @@ def run_episode_real(
     raw_state = np.full(state_dim, args.initial_temp, dtype=np.float32)
     actions, rewards = [], []
 
+    if hasattr(controller, "reset"):   # stateful controllers (Kalman/particle filter)
+        controller.reset()
+
     for t in range(n_layers):
         with torch.no_grad():
             s_t = torch.tensor(raw_state, dtype=torch.float32, device=device).unsqueeze(0)
