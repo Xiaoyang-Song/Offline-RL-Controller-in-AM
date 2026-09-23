@@ -177,21 +177,90 @@ def slugify(name: str) -> str:
     return re.sub(r"[^a-z0-9]+", "_", name.lower()).strip("_")
 
 
+def write_leaderboard(
+    rows: List[dict], out_dir: str, n_layers: int, T_l: float, T_h: float,
+    title: str = "Baseline Comparison",
+    csv_name: str = "leaderboard.csv", png_name: str = "leaderboard.png",
+) -> None:
+    """Writes the return + physical-temperature-deviation comparison CSV and
+    2-panel bar chart. Shared by evaluate_baselines.py (surrogate-driven) and
+    evaluate_real_all_methods.py (real-simulator-driven) so both produce
+    identically formatted, directly comparable leaderboards. `rows` are
+    dicts as returned by `summarize()` (mutated in place with
+    deviation_K_mean/std). deviation_K = -reward*(T_h-T_l) at every layer
+    (see plot_reward_and_action_per_layer's docstring), so the mean
+    per-layer deviation is recovered from the mean undiscounted return as
+    -return_mean/n_layers*(T_h-T_l)."""
+    T_span = T_h - T_l
+    for r in rows:
+        r["deviation_K_mean"] = -r["return_mean"] / n_layers * T_span
+        r["deviation_K_std"]  = r["return_std"]   / n_layers * T_span
+
+    csv_path = os.path.join(out_dir, csv_name)
+    with open(csv_path, "w") as f:
+        f.write("name,return_mean,return_std,deviation_K_mean,deviation_K_std,"
+                "uncertainty_mean,action_mean,action_std\n")
+        for r in sorted(rows, key=lambda r: r["return_mean"], reverse=True):
+            f.write(f"{r['name']},{r['return_mean']:.6f},{r['return_std']:.6f},"
+                    f"{r['deviation_K_mean']:.4f},{r['deviation_K_std']:.4f},"
+                    f"{r['uncertainty_mean']:.6f},{r['action_mean']:.4f},{r['action_std']:.4f}\n")
+    print(f"[eval_harness] Saved → {csv_path}")
+
+    rows_sorted = sorted(rows, key=lambda r: r["return_mean"], reverse=True)
+    names = [r["name"] for r in rows_sorted]
+    means = [r["return_mean"] for r in rows_sorted]
+    stds  = [r["return_std"]  for r in rows_sorted]
+    dev_m = [r["deviation_K_mean"] for r in rows_sorted]
+    dev_s = [r["deviation_K_std"]  for r in rows_sorted]
+
+    fig, (axL, axR) = plt.subplots(1, 2, figsize=(16, 5))
+    axL.barh(names, means, xerr=stds, color="steelblue", alpha=0.8)
+    axL.set_xlabel("Undiscounted episode return (mean ± std)")
+    axL.set_title("Return")
+    axL.grid(True, alpha=0.3, axis="x")
+
+    axR.barh(names, dev_m, xerr=dev_s, color="firebrick", alpha=0.8)
+    axR.set_xlabel("Mean node temperature deviation from window [K]  (lower is better)")
+    axR.set_title("Physical Deviation")
+    axR.grid(True, alpha=0.3, axis="x")
+    axR.set_yticklabels([])
+
+    fig.suptitle(title)
+    fig.tight_layout()
+    png_path = os.path.join(out_dir, png_name)
+    fig.savefig(png_path, dpi=150)
+    plt.close(fig)
+    print(f"[eval_harness] Saved → {png_path}")
+
+
 def plot_reward_and_action_per_layer(
     rewards: np.ndarray,   # (n_ep, T)
     actions: np.ndarray,   # (n_ep, T)
     method_name: str,
     out_path: str,
+    temp_range: Optional[tuple] = None,   # (T_l, T_h) — adds a temperature-deviation [K] panel
 ) -> None:
     """
     Per-layer reward/action trace for one baseline — identical layout to
     online_RL_ucpg_v2/evaluate.py's plot_reward_and_action_per_layer, so
     every method's plot is directly visually comparable to the RL policy's.
+
+    `temp_range`: since reward = -meanDeviation/(T_h-T_l) (both the surrogate
+    env, online_RL_ucpg_v2/env.py's _compute_reward, and the real MATLAB
+    simulator's meanDeviation output use this exact normalization — see
+    simulateHeatingCooling_v2.m line 100), the physical mean node-temperature
+    deviation from the target window is recovered exactly as
+    deviation_K = -reward * (T_h - T_l). When given, this adds a middle panel
+    plotting that directly (not a secondary/twin axis, to avoid any
+    sign-inversion ambiguity for the reader) — omit to keep the original
+    2-panel layout unchanged for any other caller.
     """
     n_ep, T = rewards.shape
     layers  = np.arange(1, T + 1)
 
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 8), sharex=True)
+    n_panels = 3 if temp_range is not None else 2
+    fig, axes = plt.subplots(n_panels, 1, figsize=(10, 4 * n_panels), sharex=True)
+    ax1 = axes[0]
 
     for i in range(n_ep):
         ax1.plot(layers, rewards[i], alpha=0.25, linewidth=0.7, color="steelblue")
@@ -202,6 +271,21 @@ def plot_reward_and_action_per_layer(
     ax1.set_title(f"{method_name} — Per-Layer Reward")
     ax1.legend(); ax1.grid(True, alpha=0.3)
 
+    next_ax_idx = 1
+    if temp_range is not None:
+        T_l, T_h = temp_range
+        dev_K = -rewards * (T_h - T_l)
+        axT = axes[next_ax_idx]; next_ax_idx += 1
+        for i in range(n_ep):
+            axT.plot(layers, dev_K[i], alpha=0.25, linewidth=0.7, color="firebrick")
+        axT.plot(layers, dev_K.mean(axis=0), color="firebrick", linewidth=2.5,
+                 label=f"Mean deviation (n={n_ep})")
+        axT.axhline(0, color="green", linestyle="--", linewidth=1, label="Perfect (in window)")
+        axT.set_ylabel("Mean node temperature\ndeviation from window [K]")
+        axT.set_title(f"{method_name} — Per-Layer Temperature Deviation")
+        axT.legend(); axT.grid(True, alpha=0.3)
+
+    ax2 = axes[next_ax_idx]
     mean_a = actions.mean(axis=0)
     std_a  = actions.std(axis=0)
     ax2.bar(layers, mean_a, alpha=0.7, color="darkorange", label="Mean LP [W]")

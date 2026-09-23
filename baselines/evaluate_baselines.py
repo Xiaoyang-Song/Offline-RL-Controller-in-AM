@@ -35,7 +35,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from baselines.common.eval_harness import (
     Harness, LatentAgentController, summarize, print_leaderboard,
-    plot_reward_and_action_per_layer, slugify,
+    plot_reward_and_action_per_layer, slugify, write_leaderboard,
 )
 from baselines.constant.controller import sweep_constant_controllers
 
@@ -107,6 +107,8 @@ def main() -> None:
 
     rows = []
 
+    temp_range = (args.T_l, args.T_h)
+
     def _evaluate(name: str, ctrl, n_episodes: int) -> None:
         """Roll out `ctrl`, add its row to the leaderboard, AND save its
         per-layer reward/action plot — every method gets both from one rollout."""
@@ -115,6 +117,7 @@ def main() -> None:
         plot_reward_and_action_per_layer(
             result["rewards"], result["actions"], name,
             os.path.join(args.out_dir, f"per_layer_{slugify(name)}.png"),
+            temp_range=temp_range,
         )
 
     # ── 0. Naive policy gradient ────────────────────────────────────────────
@@ -159,6 +162,7 @@ def main() -> None:
         plot_reward_and_action_per_layer(
             best_result["rewards"], best_result["actions"], best_name,
             os.path.join(args.out_dir, f"per_layer_{slugify(best_name)}.png"),
+            temp_range=temp_range,
         )
 
         fig, ax = plt.subplots(figsize=(9, 4.5))
@@ -193,26 +197,10 @@ def main() -> None:
     print()
     print_leaderboard(rows)
 
-    csv_path = os.path.join(args.out_dir, "leaderboard.csv")
-    with open(csv_path, "w") as f:
-        f.write("name,return_mean,return_std,uncertainty_mean,action_mean,action_std\n")
-        for r in sorted(rows, key=lambda r: r["return_mean"], reverse=True):
-            f.write(f"{r['name']},{r['return_mean']:.6f},{r['return_std']:.6f},"
-                    f"{r['uncertainty_mean']:.6f},{r['action_mean']:.4f},{r['action_std']:.4f}\n")
-    print(f"\n[evaluate_baselines] Saved → {csv_path}")
-
-    rows_sorted = sorted(rows, key=lambda r: r["return_mean"], reverse=True)
-    fig, ax = plt.subplots(figsize=(10, 5))
-    names = [r["name"] for r in rows_sorted]
-    means = [r["return_mean"] for r in rows_sorted]
-    stds  = [r["return_std"]  for r in rows_sorted]
-    ax.barh(names, means, xerr=stds, color="steelblue", alpha=0.8)
-    ax.set_xlabel("Undiscounted episode return (mean ± std)")
-    ax.set_title("Baseline Comparison — Undiscounted Return")
-    ax.grid(True, alpha=0.3, axis="x")
-    fig.tight_layout(); fig.savefig(os.path.join(args.out_dir, "leaderboard.png"), dpi=150)
-    plt.close(fig)
-    print(f"[evaluate_baselines] Saved → {os.path.join(args.out_dir, 'leaderboard.png')}")
+    write_leaderboard(
+        rows, args.out_dir, n_layers=args.n_layers, T_l=args.T_l, T_h=args.T_h,
+        title="Baseline Comparison (surrogate-driven)",
+    )
 
 
 if __name__ == "__main__":
