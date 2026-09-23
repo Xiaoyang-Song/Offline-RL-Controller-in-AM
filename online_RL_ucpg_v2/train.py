@@ -139,6 +139,14 @@ def parse_args() -> argparse.Namespace:
                         "Problem-specific — inspect a few --n_traj rollouts' J_u_hat "
                         "under lambda=0 first (e.g. via a short warm-start run) to pick "
                         "a sensible value for your surrogate's uncertainty scale.")
+    p.add_argument("--relative_uncertainty", action="store_true",
+                   help="Express the uncertainty constraint RELATIVE to its budget: the "
+                        "constraint becomes E[G_u,0]/delta <= 1, so the penalty term uses "
+                        "G_u/delta in the advantage and the dual step uses the relative "
+                        "violation (J_u_hat/delta - 1). This makes lambda and --lr_lambda "
+                        "independent of the (small) absolute scale of the surrogate's sigma, "
+                        "so the constraint can actually bind. Off by default = the original "
+                        "absolute formulation, unchanged. Logged J_u stays in raw units.")
     p.add_argument("--lambda_init",  type=float, default=0.0)
     p.add_argument("--lr_theta",     type=float, default=3e-4, help="alpha_theta.")
     p.add_argument("--lr_lambda",    type=float, default=1e-2, help="alpha_lambda.")
@@ -287,6 +295,11 @@ def main() -> None:
     print(f"[train] Output dir : {out_dir}")
     print(f"[train] Device     : {device}")
     print(f"[train] delta (uncertainty budget) : {args.delta}")
+    if args.relative_uncertainty:
+        if args.delta <= 0:
+            raise ValueError("--relative_uncertainty requires --delta > 0.")
+        print("[train] RELATIVE uncertainty constraint: G_u/delta in the advantage, "
+              "dual step on (J_u_hat/delta - 1)")
     print("=" * 65)
 
     # ── load surrogate ────────────────────────────────────────────────────────
@@ -376,7 +389,8 @@ def main() -> None:
             G_r_adv = G_r
             G_u_adv = G_u
 
-        advantage = G_r_adv - agent.lam * G_u_adv           # uses lambda from PREVIOUS iteration
+        u_scale = (1.0 / args.delta) if args.relative_uncertainty else 1.0
+        advantage = G_r_adv - agent.lam * u_scale * G_u_adv   # uses lambda from PREVIOUS iteration
 
         N, T, obs_dim = obs.shape
         obs_flat       = torch.tensor(obs.reshape(N * T, obs_dim), dtype=torch.float32, device=device)
@@ -386,7 +400,7 @@ def main() -> None:
         loss, entropy = agent.policy_step(obs_flat, actions_flat, advantage_flat, N)
 
         j_u_hat = float(G_u[:, 0].mean())
-        lam     = agent.update_lambda(j_u_hat, args.delta, args.lr_lambda)
+        lam     = agent.update_lambda(j_u_hat * u_scale, args.delta * u_scale, args.lr_lambda)
 
         raw_return  = float(rewards.sum(axis=1).mean())   # undiscounted, interpretable in reward units
         act_mean    = float(actions.mean())

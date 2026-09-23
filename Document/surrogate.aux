@@ -103,35 +103,38 @@
 \@writefile{toc}{\contentsline {paragraph}{Setup.}{10}{section*.21}}
 \@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Next-state prediction error [K] on the held-out test builds, \textbf  {full-range} training (all laser powers). Lower is better; the best value in each column is in bold.}}{11}{table.2}}
 \newlabel{tab:surr-full}{{2}{11}{Next-state prediction error [K] on the held-out test builds, \textbf {full-range} training (all laser powers). Lower is better; the best value in each column is in bold}{table.2}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Next-state prediction error [K] when every method is trained on the \textbf  {narrow} $200$--$300$\nobreakspace  {}W range only and evaluated on the full-range test builds, i.e.\ including laser powers never seen in training (extrapolation).}}{11}{table.3}}
-\newlabel{tab:surr-narrow}{{3}{11}{Next-state prediction error [K] when every method is trained on the \textbf {narrow} $200$--$300$~W range only and evaluated on the full-range test builds, i.e.\ including laser powers never seen in training (extrapolation)}{table.3}{}}
 \@writefile{toc}{\contentsline {paragraph}{Full-range accuracy.}{11}{section*.22}}
 \@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Next-state MAE by layer for full-range training on held-out test builds (logarithmic vertical axis): (a) teacher-forced and (b) auto-regressive.}}{12}{figure.2}}
 \newlabel{fig:surr-layer}{{2}{12}{Next-state MAE by layer for full-range training on held-out test builds (logarithmic vertical axis): (a) teacher-forced and (b) auto-regressive}{figure.2}{}}
-\@writefile{toc}{\contentsline {paragraph}{Extrapolation.}{12}{section*.23}}
-\@writefile{toc}{\contentsline {paragraph}{Uncertainty behavior.}{12}{section*.24}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Teacher-forced next-state RMSE as a function of the laser power of the transition, for surrogates trained on $200$--$300$\nobreakspace  {}W only (shaded band).}}{13}{figure.3}}
-\newlabel{fig:surr-rmse-action}{{3}{13}{Teacher-forced next-state RMSE as a function of the laser power of the transition, for surrogates trained on $200$--$300$~W only (shaded band)}{figure.3}{}}
-\@writefile{toc}{\contentsline {paragraph}{Cross-layer accumulation and propagation.}{13}{section*.25}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Reinforcement Learning Results}{13}{subsection.2.3}}
-\newlabel{sec:res-rl}{{2.3}{13}{Reinforcement Learning Results}{subsection.2.3}{}}
-\@writefile{toc}{\contentsline {paragraph}{Setup.}{13}{section*.26}}
-\@writefile{toc}{\contentsline {paragraph}{Evaluation in the surrogate.}{13}{section*.27}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Epistemic uncertainty, aleatoric uncertainty and single-step RMSE of the narrow-trained surrogate versus laser power. Top: heating stage alone; bottom: combined heating and cooling. The shaded band is the training range ($200$--$300$\nobreakspace  {}W).}}{14}{figure.4}}
-\newlabel{fig:surr-ood}{{4}{14}{Epistemic uncertainty, aleatoric uncertainty and single-step RMSE of the narrow-trained surrogate versus laser power. Top: heating stage alone; bottom: combined heating and cooling. The shaded band is the training range ($200$--$300$~W)}{figure.4}{}}
-\@writefile{toc}{\contentsline {paragraph}{Evaluation in the FE simulator.}{14}{section*.28}}
+\@writefile{toc}{\contentsline {paragraph}{Example trajectory.}{12}{section*.23}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Auto-regressive rollout of one held-out build (full-range surrogate) at four layers. Top three rows: heating stage; bottom three rows: cooling stage. For each stage, the simulated (true) field, the predicted field, and the relative error in percent.}}{13}{figure.3}}
+\newlabel{fig:example-traj}{{3}{13}{Auto-regressive rollout of one held-out build (full-range surrogate) at four layers. Top three rows: heating stage; bottom three rows: cooling stage. For each stage, the simulated (true) field, the predicted field, and the relative error in percent}{figure.3}{}}
+\@writefile{toc}{\contentsline {paragraph}{Extrapolation.}{13}{section*.24}}
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Next-state prediction error [K] when every method is trained on the \textbf  {narrow} $200$--$300$\nobreakspace  {}W range only and evaluated on the full-range test builds, i.e.\ including laser powers never seen in training (extrapolation).}}{14}{table.3}}
+\newlabel{tab:surr-narrow}{{3}{14}{Next-state prediction error [K] when every method is trained on the \textbf {narrow} $200$--$300$~W range only and evaluated on the full-range test builds, i.e.\ including laser powers never seen in training (extrapolation)}{table.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Teacher-forced next-state RMSE as a function of the laser power of the transition, for surrogates trained on $200$--$300$\nobreakspace  {}W only (shaded band).}}{14}{figure.4}}
+\newlabel{fig:surr-rmse-action}{{4}{14}{Teacher-forced next-state RMSE as a function of the laser power of the transition, for surrogates trained on $200$--$300$~W only (shaded band)}{figure.4}{}}
+\@writefile{toc}{\contentsline {paragraph}{Uncertainty behavior.}{14}{section*.25}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Epistemic uncertainty, aleatoric uncertainty and single-step RMSE of the narrow-trained surrogate versus laser power. Top: heating stage alone; bottom: combined heating and cooling. The shaded band is the training range ($200$--$300$\nobreakspace  {}W).}}{15}{figure.5}}
+\newlabel{fig:surr-ood}{{5}{15}{Epistemic uncertainty, aleatoric uncertainty and single-step RMSE of the narrow-trained surrogate versus laser power. Top: heating stage alone; bottom: combined heating and cooling. The shaded band is the training range ($200$--$300$~W)}{figure.5}{}}
+\@writefile{toc}{\contentsline {paragraph}{Cross-layer accumulation and propagation.}{15}{section*.26}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Reinforcement Learning Results}{15}{subsection.2.3}}
+\newlabel{sec:res-rl}{{2.3}{15}{Reinforcement Learning Results}{subsection.2.3}{}}
+\@writefile{toc}{\contentsline {paragraph}{Setup.}{15}{section*.27}}
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Controller comparison inside the narrow-range surrogate ($50$ episodes, random cooling duration). Deviation is the mean temperature deviation from the $[2000,2800]$\nobreakspace  {}K window.}}{16}{table.4}}
+\newlabel{tab:rl-surrogate}{{4}{16}{Controller comparison inside the narrow-range surrogate ($50$ episodes, random cooling duration). Deviation is the mean temperature deviation from the $[2000,2800]$~K window}{table.4}{}}
+\@writefile{toc}{\contentsline {paragraph}{Evaluation in the surrogate.}{16}{section*.28}}
+\@writefile{toc}{\contentsline {paragraph}{Evaluation in the FE simulator.}{16}{section*.29}}
 \bibstyle{plainnat}
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Controller comparison in the FE simulator ($1$ episode each, cooling duration $0.10$\nobreakspace  {}s; single deterministic episode, no error bars).}}{17}{table.5}}
+\newlabel{tab:rl-real}{{5}{17}{Controller comparison in the FE simulator ($1$ episode each, cooling duration $0.10$~s; single deterministic episode, no error bars)}{table.5}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Real-physics comparison (one episode per method; naive policy gradient omitted from the plot for clarity, see Table\nobreakspace  {}\ref  {tab:rl-real}). (a)\nobreakspace  {}Episode return, (b)\nobreakspace  {}mean temperature deviation, (c)\nobreakspace  {}per-layer reward with the equivalent deviation on the right axis.}}{17}{figure.6}}
+\newlabel{fig:rl-real}{{6}{17}{Real-physics comparison (one episode per method; naive policy gradient omitted from the plot for clarity, see Table~\ref {tab:rl-real}). (a)~Episode return, (b)~mean temperature deviation, (c)~per-layer reward with the equivalent deviation on the right axis}{figure.6}{}}
+\@writefile{toc}{\contentsline {paragraph}{Discussion and limitations.}{17}{section*.30}}
 \bibcite{altman1999constrained}{{1}{1999}{{Altman}}{{}}}
-\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Controller comparison inside the narrow-range surrogate ($50$ episodes, random cooling duration). Deviation is the mean temperature deviation from the $[2000,2800]$\nobreakspace  {}K window.}}{15}{table.4}}
-\newlabel{tab:rl-surrogate}{{4}{15}{Controller comparison inside the narrow-range surrogate ($50$ episodes, random cooling duration). Deviation is the mean temperature deviation from the $[2000,2800]$~K window}{table.4}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Controller comparison in the FE simulator ($1$ episode each, cooling duration $0.10$\nobreakspace  {}s; single deterministic episode, no error bars).}}{15}{table.5}}
-\newlabel{tab:rl-real}{{5}{15}{Controller comparison in the FE simulator ($1$ episode each, cooling duration $0.10$~s; single deterministic episode, no error bars)}{table.5}{}}
-\@writefile{toc}{\contentsline {paragraph}{Discussion and limitations.}{15}{section*.29}}
 \bibcite{bekas2007}{{2}{2007}{{Bekas et~al.}}{{}}}
 \bibcite{chua2018deep}{{3}{2018}{{Chua et~al.}}{{}}}
 \bibcite{hutchinson1990}{{4}{1990}{{Hutchinson}}{{}}}
 \bibcite{lakshminarayanan2017simple}{{5}{2017}{{Lakshminarayanan et~al.}}{{}}}
 \bibcite{sutton2000policy}{{6}{1999}{{Sutton et~al.}}{{}}}
 \bibcite{tessler2019reward}{{7}{2019}{{Tessler et~al.}}{{}}}
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Real-physics comparison (one episode per method; naive policy gradient omitted from the plot for clarity, see Table\nobreakspace  {}\ref  {tab:rl-real}). (a)\nobreakspace  {}Episode return, (b)\nobreakspace  {}mean temperature deviation, (c)\nobreakspace  {}per-layer reward with the equivalent deviation on the right axis.}}{16}{figure.5}}
-\newlabel{fig:rl-real}{{5}{16}{Real-physics comparison (one episode per method; naive policy gradient omitted from the plot for clarity, see Table~\ref {tab:rl-real}). (a)~Episode return, (b)~mean temperature deviation, (c)~per-layer reward with the equivalent deviation on the right axis}{figure.5}{}}

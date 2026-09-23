@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2026.6.15)  23 SEP 2026 13:11
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2026.6.15)  23 SEP 2026 13:37
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -599,26 +599,33 @@ Package: enumitem 2011/09/28 v3.5.2 Customized lists
 \enit@inbox=\box41
 \enitdp@description=\count136
 )
-\c@remark=\count137
-\c@assumption=\count138
-
-(./surrogate.aux)
+(/usr/share/texlive/texmf-dist/tex/latex/float/float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count137
+\float@exts=\toks40
+\float@box=\box42
+\@float@everytoks=\toks41
+\@floatcapt=\box43
+)
+\c@remark=\count138
+\c@assumption=\count139
+ (./surrogate.aux)
 \openout1 = `surrogate.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 31.
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 31.
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 31.
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 31.
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 31.
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 31.
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 31.
-LaTeX Font Info:    ... okay on input line 31.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -656,17 +663,17 @@ LaTeX Font Info:    ... okay on input line 31.
 
 (/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count139
+\scratchcounter=\count140
 \scratchdimen=\dimen190
-\scratchbox=\box42
-\nofMPsegments=\count140
-\nofMParguments=\count141
-\everyMPshowfont=\toks40
-\MPscratchCnt=\count142
+\scratchbox=\box44
+\nofMPsegments=\count141
+\nofMParguments=\count142
+\everyMPshowfont=\toks42
+\MPscratchCnt=\count143
 \MPscratchDim=\dimen191
-\MPnumerator=\count143
-\makeMPintoPDFobject=\count144
-\everyMPtoPDFconversion=\toks41
+\MPnumerator=\count144
+\makeMPintoPDFobject=\count145
+\everyMPtoPDFconversion=\toks43
 ) (/usr/share/texlive/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
 Package: epstopdf-base 2016/05/15 v2.6 Base part for package epstopdf
 
@@ -685,8 +692,8 @@ File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
 ABD: EveryShipout initializing macros
-\AtBeginShipoutBox=\box43
-Package hyperref Info: Link coloring ON on input line 31.
+\AtBeginShipoutBox=\box45
+Package hyperref Info: Link coloring ON on input line 32.
 
 (/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2016/05/21 v2.44 Cross-referencing by name of section
@@ -694,22 +701,22 @@ Package: nameref 2016/05/21 v2.44 Cross-referencing by name of section
 (/usr/share/texlive/texmf-dist/tex/generic/oberdiek/gettitlestring.sty
 Package: gettitlestring 2016/05/16 v1.5 Cleanup title references (HO)
 )
-\c@section@level=\count145
+\c@section@level=\count146
 )
-LaTeX Info: Redefining \ref on input line 31.
-LaTeX Info: Redefining \pageref on input line 31.
-LaTeX Info: Redefining \nameref on input line 31.
+LaTeX Info: Redefining \ref on input line 32.
+LaTeX Info: Redefining \pageref on input line 32.
+LaTeX Info: Redefining \nameref on input line 32.
 
 (./surrogate.out) (./surrogate.out)
 \@outlinefile=\write4
 \openout4 = `surrogate.out'.
 
-LaTeX Font Info:    Try loading font information for U+msa on input line 33.
+LaTeX Font Info:    Try loading font information for U+msa on input line 34.
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 33.
+LaTeX Font Info:    Try loading font information for U+msb on input line 34.
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
@@ -719,15 +726,28 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 
 [1
 
-{/usr/share/texlive/texmf-dist/fonts/map/pdftex/updmap/pdftex.map}] [2]
-Overfull \hbox (33.01353pt too wide) in paragraph at lines 238--242
+{/usr/share/texlive/texmf-dist/fonts/map/pdftex/updmap/pdftex.map}] [2pdfTeX wa
+rning (ext4): destination with the same identifier (name{table.1}) has been alr
+eady used, duplicate ignored
+
+\@EveryShipout@Output ...@Org@Shipout \box \@cclv 
+                                                  
+l.165 \end{equation}
+                    ]
+Overfull \hbox (33.01353pt too wide) in paragraph at lines 239--243
  [][] 
  []
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[3] [4] [5]
+[3] [4pdfTeX warning (ext4): destination with the same identifier (name{figure.
+1}) has been already used, duplicate ignored
+
+\@EveryShipout@Output ...@Org@Shipout \box \@cclv 
+                                                  
+l.331 
+      ] [5]
 Missing character: There is no â in font cmr10!
 Missing character: There is no € in font cmr10!
 Missing character: There is no ” in font cmr10!
@@ -762,60 +782,124 @@ Missing character: There is no ” in font cmr10!
 File: figures/fig_per_layer_mae_full.png Graphic file (type png)
 <use figures/fig_per_layer_mae_full.png>
 Package pdftex.def Info: figures/fig_per_layer_mae_full.png  used on input line
- 824. on input line 824.
+ 825. on input line 825.
 Package pdftex.def Info: Requested size: 469.75502pt x 173.9945pt on input line
- 824.
- [11]
-<figures/fig_rmse_vs_action_narrow.png, id=259, 524.9211pt x 296.5479pt>
+ 825.
+ [11pdfTeX warning (ext4): destination with the same identifier (name{table.2})
+ has been already used, duplicate ignored
+
+\@EveryShipout@Output ...@Org@Shipout \box \@cclv 
+                                                  
+l.831 
+      ]
+<figures/fig_example_trajectory.png, id=255, 478.71648pt x 489.41245pt>
+File: figures/fig_example_trajectory.png Graphic file (type png)
+<use figures/fig_example_trajectory.png>
+Package pdftex.def Info: figures/fig_example_trajectory.png  used on input line
+ 844. on input line 844.
+Package pdftex.def Info: Requested size: 399.29463pt x 408.236pt on input line 
+844.
+ [12pdfTeX warning (ext4): destination with the same identifier (name{figure.2}
+) has been already used, duplicate ignored
+
+\@EveryShipout@Output ...@Org@Shipout \box \@cclv 
+                                                  
+l.851 
+       <./figures/fig_per_layer_mae_full.png>]
+<figures/fig_rmse_vs_action_narrow.png, id=267, 524.9211pt x 296.5479pt>
 File: figures/fig_rmse_vs_action_narrow.png Graphic file (type png)
 <use figures/fig_rmse_vs_action_narrow.png>
 Package pdftex.def Info: figures/fig_rmse_vs_action_narrow.png  used on input l
-ine 875. on input line 875.
+ine 896. on input line 896.
 Package pdftex.def Info: Requested size: 366.40834pt x 207.00291pt on input lin
-e 875.
-<figures/fig_ood_heating.png, id=261, 1156.32pt x 325.215pt>
+e 896.
+ [13pdfTeX warning (ext4): destination with the same identifier (name{figure.3}
+) has been already used, duplicate ignored
+
+\@EveryShipout@Output ...@Org@Shipout \box \@cclv 
+                                                  
+l.901 
+       <./figures/fig_example_trajectory.png>]
+<figures/fig_ood_heating.png, id=278, 1156.32pt x 325.215pt>
 File: figures/fig_ood_heating.png Graphic file (type png)
 <use figures/fig_ood_heating.png>
-Package pdftex.def Info: figures/fig_ood_heating.png  used on input line 904. o
-n input line 904.
+Package pdftex.def Info: figures/fig_ood_heating.png  used on input line 925. o
+n input line 925.
 Package pdftex.def Info: Requested size: 469.75502pt x 132.11826pt on input lin
-e 904.
-<figures/fig_ood_combined.png, id=262, 1156.32pt x 325.215pt>
+e 925.
+<figures/fig_ood_combined.png, id=279, 1156.32pt x 325.215pt>
 File: figures/fig_ood_combined.png Graphic file (type png)
 <use figures/fig_ood_combined.png>
-Package pdftex.def Info: figures/fig_ood_combined.png  used on input line 905. 
-on input line 905.
+Package pdftex.def Info: figures/fig_ood_combined.png  used on input line 926. 
+on input line 926.
 Package pdftex.def Info: Requested size: 469.75502pt x 132.11826pt on input lin
-e 905.
- [12 <./figures/fig_per_layer_mae_full.png>] [13 <./figures/fig_rmse_vs_action_
-narrow.png>] [14 <./figures/fig_ood_heating.png> <./figures/fig_ood_combined.pn
-g>]
-<figures/fig_rl_real_combined.png, id=298, 957.0957pt x 393.1488pt>
+e 926.
+ [14pdfTeX warning (ext4): destination with the same identifier (name{table.3})
+ has been already used, duplicate ignored
+
+\@EveryShipout@Output ...@Org@Shipout \box \@cclv 
+                                                  
+l.932 \end{figure}
+                  pdfTeX warning (ext4): destination with the same identifier (
+name{figure.4}) has been already used, duplicate ignored
+
+\@EveryShipout@Output ...@Org@Shipout \box \@cclv 
+                                                  
+l.932 \end{figure}
+                   <./figures/fig_rmse_vs_action_narrow.png>] [15pdfTeX warning
+ (ext4): destination with the same identifier (name{figure.5}) has been already
+ used, duplicate ignored
+
+\@EveryShipout@Output ...@Org@Shipout \box \@cclv 
+                                                  
+l.970 
+       <./figures/fig_ood_heating.png> <./figures/fig_ood_combined.png>]
+<figures/fig_rl_real_combined.png, id=302, 957.0957pt x 393.1488pt>
 File: figures/fig_rl_real_combined.png Graphic file (type png)
 <use figures/fig_rl_real_combined.png>
 Package pdftex.def Info: figures/fig_rl_real_combined.png  used on input line 1
-031. on input line 1031.
+052. on input line 1052.
 Package pdftex.def Info: Requested size: 469.75502pt x 192.96854pt on input lin
-e 1031.
- [15] [16 <./figures/fig_rl_real_combined.png>]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1103.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 1103.
+e 1052.
+
+[16pdfTeX warning (ext4): destination with the same identifier (name{table.4}) 
+has been already used, duplicate ignored
+
+\@EveryShipout@Output ...@Org@Shipout \box \@cclv 
+                                                  
+l.1059 
+       ] [17pdfTeX warning (ext4): destination with the same identifier (name{t
+able.5}) has been already used, duplicate ignored
+
+\@EveryShipout@Output ...@Org@Shipout \box \@cclv 
+                                                  
+l.1085 \begin{thebibliography}{7}
+                                 pdfTeX warning (ext4): destination with the sa
+me identifier (name{figure.6}) has been already used, duplicate ignored
+
+\@EveryShipout@Output ...@Org@Shipout \box \@cclv 
+                                                  
+l.1085 \begin{thebibliography}{7}
+                                  <./figures/fig_rl_real_combined.png>]
+[18]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1124.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 1124.
  (./surrogate.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1103.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1103.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1124.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1124.
 
 Package rerunfilecheck Info: File `surrogate.out' has not changed.
 (rerunfilecheck)             Checksum: 6211D671F92F1DD4964991BD6F86FF0B;968.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1103.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1124.
  ) 
 Here is how much of TeX's memory you used:
- 17651 strings out of 494917
- 329162 string characters out of 6180699
- 399777 words of memory out of 5000000
- 20547 multiletter control sequences out of 15000+600000
+ 17719 strings out of 494917
+ 330152 string characters out of 6180699
+ 402388 words of memory out of 5000000
+ 20606 multiletter control sequences out of 15000+600000
  15126 words of font info for 57 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 55i,12n,67p,449b,782s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 55i,12n,67p,449b,786s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></us
 r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/shar
 e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texl
@@ -831,10 +915,10 @@ amsfonts/cm/cmr6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts
 are/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/tex
 live/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/share/texlive/t
 exmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on surrogate.pdf (16 pages, 1208796 bytes).
+Output written on surrogate.pdf (18 pages, 1890400 bytes).
 PDF statistics:
- 390 PDF objects out of 1000 (max. 8388607)
- 341 compressed objects within 4 object streams
- 114 named destinations out of 1000 (max. 500000)
- 142 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 404 PDF objects out of 1000 (max. 8388607)
+ 351 compressed objects within 4 object streams
+ 118 named destinations out of 1000 (max. 500000)
+ 147 words of extra memory for PDF output out of 10000 (max. 10000000)
 
