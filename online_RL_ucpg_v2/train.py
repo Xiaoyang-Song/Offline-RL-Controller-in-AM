@@ -8,7 +8,8 @@ Implements Algorithm 1 exactly, unchanged from online_RL_ucpg/train.py:
 
   for k = 1 .. K:
     collect N trajectories using a_t ~ pi_theta(.|s_t)   (s_t = latent obs)
-    for each transition: u_t = sigma_epis,t + sigma_alea,t   (combined heat+cool, from the surrogate env)
+    for each transition: u_t = sigma_epis,t + sigma_alea,t   (combined heat+cool, from the surrogate env;
+                         sigma_epis,t only with --uncertainty epistemic)
     G_r,t = sum_{k=t}^{T-1} gamma_r^{k-t} r_k
     G_u,t = sum_{k=t}^{T-1} gamma_u^{k-t} u_k
     G_lambda,t = G_r,t - lambda * G_u,t
@@ -147,6 +148,13 @@ def parse_args() -> argparse.Namespace:
                         "independent of the (small) absolute scale of the surrogate's sigma, "
                         "so the constraint can actually bind. Off by default = the original "
                         "absolute formulation, unchanged. Logged J_u stays in raw units.")
+    p.add_argument("--uncertainty", type=str, default="total", choices=["total", "epistemic"],
+                   help="Which per-step uncertainty u_t feeds G_u / J_u_hat / the constraint. "
+                        "'total' (default, original behaviour) = epistemic_std + aleatoric_std. "
+                        "'epistemic' = epistemic_std only — aleatoric noise is roughly flat "
+                        "across laser power and no policy can reduce it, so it only adds an "
+                        "unremovable floor to J_u and dilutes the ID-vs-OOD contrast. "
+                        "--delta must be calibrated in the SAME mode (see calibrate_delta.py).")
     p.add_argument("--lambda_init",  type=float, default=0.0)
     p.add_argument("--lr_theta",     type=float, default=3e-4, help="alpha_theta.")
     p.add_argument("--lr_lambda",    type=float, default=1e-2, help="alpha_lambda.")
@@ -193,7 +201,12 @@ def discounted_returns(values: np.ndarray, gamma: float) -> np.ndarray:
 # Trajectory collection
 # =============================================================================
 
-def collect_batch(env: TwoStageLatentLPBFEnv, agent: UCPGAgentV2, n_traj: int, n_layers: int):
+# --uncertainty mode -> env info key holding u_t
+UNCERTAINTY_KEYS = {"total": "uncertainty", "epistemic": "epistemic_std"}
+
+
+def collect_batch(env: TwoStageLatentLPBFEnv, agent: UCPGAgentV2, n_traj: int, n_layers: int,
+                  u_key: str = "uncertainty"):
     """
     Roll out n_traj fresh trajectories with the current stochastic policy.
 
@@ -202,7 +215,9 @@ def collect_batch(env: TwoStageLatentLPBFEnv, agent: UCPGAgentV2, n_traj: int, n
     obs      : (N, T, obs_dim) float32
     actions  : (N, T) float32   — continuous laser power [W] chosen
     rewards  : (N, T) float32
-    u        : (N, T) float32   — combined (heating+cooling) epistemic_std + aleatoric_std
+    u        : (N, T) float32   — info[u_key]: combined (heating+cooling)
+               epistemic_std + aleatoric_std by default, epistemic_std only
+               with u_key="epistemic_std" (--uncertainty epistemic)
     """
     obs_dim = env.obs_dim
     obs     = np.zeros((n_traj, n_layers, obs_dim), dtype=np.float32)
@@ -219,7 +234,7 @@ def collect_batch(env: TwoStageLatentLPBFEnv, agent: UCPGAgentV2, n_traj: int, n
             obs[i, t]     = state
             actions[i, t] = a
             rewards[i, t] = reward
-            u[i, t]       = info["uncertainty"]
+            u[i, t]       = info[u_key]
 
             state = next_state
             if done:
@@ -300,6 +315,8 @@ def main() -> None:
             raise ValueError("--relative_uncertainty requires --delta > 0.")
         print("[train] RELATIVE uncertainty constraint: G_u/delta in the advantage, "
               "dual step on (J_u_hat/delta - 1)")
+    print(f"[train] Uncertainty signal u_t : {args.uncertainty} "
+          f"(env info['{UNCERTAINTY_KEYS[args.uncertainty]}'])")
     print("=" * 65)
 
     # ── load surrogate ────────────────────────────────────────────────────────
@@ -374,7 +391,8 @@ def main() -> None:
     t0 = time.time()
     for k in range(1, args.n_iterations + 1):
 
-        obs, actions, rewards, u = collect_batch(env, agent, args.n_traj, args.n_layers)
+        obs, actions, rewards, u = collect_batch(env, agent, args.n_traj, args.n_layers,
+                                               u_key=UNCERTAINTY_KEYS[args.uncertainty])
 
         G_r = discounted_returns(rewards, args.gamma_r)   # (N, T)
         G_u = discounted_returns(u,       args.gamma_u)   # (N, T)
