@@ -197,3 +197,50 @@ UCPG v2 (ours)          -2.3042 ± 0.3772        0.00658     169.2 ± 46.4
       layer  5/12  LP= 114.62W  reward=-0.1944  (17s)
       layer  6/12  LP= 133.08W  reward=-0.4102  (18s)
       layer  7/12  LP= 123.66W  reward=-0.4006  (18s)
+      layer  8/12  LP= 110.30W  reward=-0.2803  (17s)
+      layer  9/12  LP= 116.09W  reward=-0.2883  (17s)
+      layer 10/12  LP= 112.69W  reward=-0.3831  (17s)
+      layer 11/12  LP= 100.00W  reward=-0.2796  (18s)
+      layer 12/12  LP= 101.87W  reward=-0.2911  (17s)
+      → episode return: -6.6536
+[eval_harness] Saved → baselines/results_narrow_200_300W_with_online_q_real/per_layer_real_4_particle_filter.png
+  [4. Particle filter] done in 3.4 min
+
+=== UCPG v2 (ours) ===
+[agent] Loaded checkpoint from online_RL_ucpg_v2/runs/narrow_200_300W/ucpg_best.pt  (lambda=0.73808)
+    [UCPG v2 (ours)] episode 1/1  (cool_time=0.100s)
+[evaluate_real] Mesh consistency check passed (matches surrogate_model/mesh.mat).
+      layer  1/12  LP= 283.05W  reward=-0.9360  (17s)
+      layer  2/12  LP= 151.77W  reward=-0.3052  (17s)
+      layer  3/12  LP= 128.03W  reward=-0.1884  (17s)
+      layer  4/12  LP= 147.57W  reward=-0.3193  (17s)
+      layer  5/12  LP= 130.96W  reward=-0.2468  (17s)
+      layer  6/12  LP= 105.25W  reward=-0.1133  (18s)
+      layer  7/12  LP= 101.55W  reward=-0.0945  (18s)
+      layer  8/12  LP= 102.37W  reward=-0.1022  (17s)
+      layer  9/12  LP= 103.10W  reward=-0.1221  (17s)
+      layer 10/12  LP= 103.46W  reward=-0.1769  (17s)
+      layer 11/12  LP= 104.13W  reward=-0.2177  (18s)
+      layer 12/12  LP= 104.84W  reward=-0.2478  (17s)
+      → episode return: -3.0703
+[eval_harness] Saved → baselines/results_narrow_200_300W_with_online_q_real/per_layer_real_ucpg_v2_ours.png
+  [UCPG v2 (ours)] done in 3.4 min
+
+
+Method                     Return (mean±std)   Uncertainty     Action (mean±std)
+--------------------------------------------------------------------------------
+0. Naive PG             -3.0418 ± 0.0000        0.00000     130.3 ± 49.4   
+UCPG v2 (ours)          -3.0703 ± 0.0000        0.00000     130.5 ± 49.3   
+5. Online Q-learning    -4.4444 ± 0.0000        0.00000     139.2 ± 53.6   
+4. Kalman filter        -5.4105 ± 0.0000        0.00000     144.6 ± 59.7   
+1. Offline Q-learning   -6.4573 ± 0.0000        0.00000     140.0 ± 0.0    
+4. Particle filter      -6.6536 ± 0.0000        0.00000     149.5 ± 70.2   
+2. Proportional        -34.3775 ± 0.0000        0.00000     249.5 ± 0.4    
+[eval_harness] Saved → baselines/results_narrow_200_300W_with_online_q_real/leaderboard_real.csv
+[eval_harness] Saved → baselines/results_narrow_200_300W_with_online_q_real/leaderboard_real.png
+============================================================
+Finished : Mon Sep 28 20:52:33 EDT 2026  (exit code: 0)
+Online-Q checkpoint       : baselines/online_q/runs/narrow_200_300W/online_q_best.pt
+Surrogate leaderboard     : baselines/results_narrow_200_300W_with_online_q/leaderboard.png / .csv
+Real-physics leaderboard  : baselines/results_narrow_200_300W_with_online_q_real/leaderboard_real.png / .csv
+============================================================

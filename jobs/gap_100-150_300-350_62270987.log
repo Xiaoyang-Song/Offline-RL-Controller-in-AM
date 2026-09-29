@@ -820,3 +820,84 @@ Iter    20/2000 | return -3.9304 (avg20 -5.8445) | loss -113.1212 | entropy 5.28
 [agent] Checkpoint saved → baselines/naive_pg/runs/gap_100-150_300-350/naive_pg_best.pt
 [agent] Checkpoint saved → baselines/naive_pg/runs/gap_100-150_300-350/naive_pg_best.pt
 [agent] Checkpoint saved → baselines/naive_pg/runs/gap_100-150_300-350/naive_pg_best.pt
+Iter    40/2000 | return -3.7706 (avg20 -3.6937) | loss -103.5811 | entropy 5.283 | OOD-action  46.4% | 167s
+[agent] Checkpoint saved → baselines/naive_pg/runs/gap_100-150_300-350/naive_pg_best.pt
+Iter    60/2000 | return -3.5066 (avg20 -3.6434) | loss -97.4061 | entropy 5.280 | OOD-action  29.7% | 249s
+[agent] Checkpoint saved → baselines/naive_pg/runs/gap_100-150_300-350/naive_pg_best.pt
+Iter    80/2000 | return -3.5293 (avg20 -3.6838) | loss -97.4892 | entropy 5.277 | OOD-action  35.2% | 332s
+[agent] Checkpoint saved → baselines/naive_pg/runs/gap_100-150_300-350/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/gap_100-150_300-350/naive_pg_best.pt
+Iter   100/2000 | return -3.2771 (avg20 -3.5829) | loss -84.8276 | entropy 5.274 | OOD-action  35.2% | 415s
+[agent] Checkpoint saved → baselines/naive_pg/runs/gap_100-150_300-350/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/gap_100-150_300-350/naive_pg_best.pt
+Iter   120/2000 | return -3.4573 (avg20 -3.3731) | loss -95.0096 | entropy 5.271 | OOD-action  42.4% | 498s
+Iter   140/2000 | return -3.4271 (avg20 -3.4743) | loss -94.2439 | entropy 5.268 | OOD-action  28.1% | 580s
+Iter   160/2000 | return -5.6811 (avg20 -4.2789) | loss -127.8056 | entropy 5.265 | OOD-action  53.6% | 663s
+Iter   180/2000 | return -3.7988 (avg20 -4.1943) | loss -104.5777 | entropy 5.262 | OOD-action  38.5% | 746s
+Iter   200/2000 | return -3.5590 (avg20 -3.6157) | loss -95.3043 | entropy 5.260 | OOD-action  39.1% | 829s
+[agent] Checkpoint saved → baselines/naive_pg/runs/gap_100-150_300-350/naive_pg_iter00200.pt
+[train] Plot saved → baselines/naive_pg/runs/gap_100-150_300-350/return.png
+[train] Plot saved → baselines/naive_pg/runs/gap_100-150_300-350/loss.png
+[train] Plot saved → baselines/naive_pg/runs/gap_100-150_300-350/entropy.png
+[train] Plot saved → baselines/naive_pg/runs/gap_100-150_300-350/ood_action_fraction.png
+[agent] Checkpoint saved → baselines/naive_pg/runs/gap_100-150_300-350/naive_pg_best.pt
+Iter   220/2000 | return -3.4916 (avg20 -3.4266) | loss -89.1835 | entropy 5.258 | OOD-action  35.9% | 913s
+Iter   240/2000 | return -3.3652 (avg20 -3.3825) | loss -88.8729 | entropy 5.256 | OOD-action  36.2% | 996s
+[agent] Checkpoint saved → baselines/naive_pg/runs/gap_100-150_300-350/naive_pg_best.pt
+Iter   260/2000 | return -3.2694 (avg20 -3.2335) | loss -89.5655 | entropy 5.254 | OOD-action  42.2% | 1079s
+[agent] Checkpoint saved → baselines/naive_pg/runs/gap_100-150_300-350/naive_pg_best.pt
+Iter   280/2000 | return -3.3341 (avg20 -3.2504) | loss -91.8660 | entropy 5.251 | OOD-action  43.8% | 1163s
+Iter   300/2000 | return -3.1267 (avg20 -3.4127) | loss -78.2815 | entropy 5.248 | OOD-action  47.4% | 1246s
+Iter   320/2000 | return -3.3960 (avg20 -3.2264) | loss -92.0296 | entropy 5.245 | OOD-action  43.8% | 1329s
+Iter   340/2000 | return -3.1417 (avg20 -3.2368) | loss -83.9675 | entropy 5.242 | OOD-action  36.2% | 1413s
+Iter   360/2000 | return -3.3556 (avg20 -3.2269) | loss -93.4671 | entropy 5.238 | OOD-action  36.5% | 1496s
+Iter   380/2000 | return -3.1093 (avg20 -3.2486) | loss -80.6133 | entropy 5.235 | OOD-action  43.8% | 1606s
+Iter   400/2000 | return -4.5055 (avg20 -3.4771) | loss -105.0534 | entropy 5.232 | OOD-action  43.0% | 1716s
+[agent] Checkpoint saved → baselines/naive_pg/runs/gap_100-150_300-350/naive_pg_iter00400.pt
+[train] Plot saved → baselines/naive_pg/runs/gap_100-150_300-350/return.png
+[train] Plot saved → baselines/naive_pg/runs/gap_100-150_300-350/loss.png
+[train] Plot saved → baselines/naive_pg/runs/gap_100-150_300-350/entropy.png
+[train] Plot saved → baselines/naive_pg/runs/gap_100-150_300-350/ood_action_fraction.png
+Iter   420/2000 | return -3.1549 (avg20 -3.5950) | loss -81.1248 | entropy 5.231 | OOD-action  34.1% | 1826s
+Iter   440/2000 | return -3.3393 (avg20 -3.2432) | loss -88.9157 | entropy 5.229 | OOD-action  35.9% | 1936s
+Iter   460/2000 | return -3.2108 (avg20 -3.2007) | loss -87.1584 | entropy 5.226 | OOD-action  33.3% | 2046s
+[agent] Checkpoint saved → baselines/naive_pg/runs/gap_100-150_300-350/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/gap_100-150_300-350/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/gap_100-150_300-350/naive_pg_best.pt
+Iter   480/2000 | return -3.1690 (avg20 -3.1401) | loss -84.5556 | entropy 5.223 | OOD-action  39.3% | 2156s
+Iter   500/2000 | return -3.2381 (avg20 -3.1329) | loss -87.0353 | entropy 5.221 | OOD-action  40.1% | 2266s
+Iter   520/2000 | return -2.9078 (avg20 -3.1497) | loss -73.2001 | entropy 5.219 | OOD-action  43.5% | 2372s
+[agent] Checkpoint saved → baselines/naive_pg/runs/gap_100-150_300-350/naive_pg_best.pt
+Iter   540/2000 | return -3.0195 (avg20 -3.1286) | loss -78.9315 | entropy 5.217 | OOD-action  38.3% | 2482s
+Iter   560/2000 | return -3.1789 (avg20 -3.2237) | loss -81.7940 | entropy 5.215 | OOD-action  46.1% | 2592s
+Iter   580/2000 | return -3.2594 (avg20 -3.6521) | loss -87.4546 | entropy 5.212 | OOD-action  32.0% | 2702s
+Iter   600/2000 | return -3.4834 (avg20 -3.2598) | loss -95.3672 | entropy 5.210 | OOD-action  37.0% | 2811s
+[agent] Checkpoint saved → baselines/naive_pg/runs/gap_100-150_300-350/naive_pg_iter00600.pt
+[train] Plot saved → baselines/naive_pg/runs/gap_100-150_300-350/return.png
+[train] Plot saved → baselines/naive_pg/runs/gap_100-150_300-350/loss.png
+[train] Plot saved → baselines/naive_pg/runs/gap_100-150_300-350/entropy.png
+[train] Plot saved → baselines/naive_pg/runs/gap_100-150_300-350/ood_action_fraction.png
+Iter   620/2000 | return -3.2887 (avg20 -3.2546) | loss -90.9270 | entropy 5.207 | OOD-action  44.0% | 2922s
+Iter   640/2000 | return -3.1561 (avg20 -3.1588) | loss -80.2193 | entropy 5.205 | OOD-action  31.5% | 3032s
+Iter   660/2000 | return -3.1917 (avg20 -3.2779) | loss -85.2816 | entropy 5.203 | OOD-action  51.0% | 3142s
+Iter   680/2000 | return -3.1852 (avg20 -3.2591) | loss -81.8159 | entropy 5.200 | OOD-action  44.3% | 3252s
+Iter   700/2000 | return -3.1554 (avg20 -3.1907) | loss -82.5347 | entropy 5.197 | OOD-action  34.9% | 3361s
+Iter   720/2000 | return -3.0357 (avg20 -3.1599) | loss -77.0693 | entropy 5.193 | OOD-action  38.8% | 3471s
+Iter   740/2000 | return -3.1760 (avg20 -3.1855) | loss -84.6434 | entropy 5.189 | OOD-action  35.2% | 3581s
+Iter   760/2000 | return -3.1918 (avg20 -3.0778) | loss -82.8912 | entropy 5.187 | OOD-action  52.9% | 3691s
+Iter   780/2000 | return -3.1032 (avg20 -3.1076) | loss -80.3086 | entropy 5.185 | OOD-action  45.6% | 3801s
+Iter   800/2000 | return -3.1336 (avg20 -3.0701) | loss -82.7542 | entropy 5.181 | OOD-action  41.9% | 3911s
+[agent] Checkpoint saved → baselines/naive_pg/runs/gap_100-150_300-350/naive_pg_iter00800.pt
+[train] Plot saved → baselines/naive_pg/runs/gap_100-150_300-350/return.png
+[train] Plot saved → baselines/naive_pg/runs/gap_100-150_300-350/loss.png
+[train] Plot saved → baselines/naive_pg/runs/gap_100-150_300-350/entropy.png
+[train] Plot saved → baselines/naive_pg/runs/gap_100-150_300-350/ood_action_fraction.png
+[agent] Checkpoint saved → baselines/naive_pg/runs/gap_100-150_300-350/naive_pg_best.pt
+Iter   820/2000 | return -3.0651 (avg20 -3.0791) | loss -81.0573 | entropy 5.178 | OOD-action  44.3% | 4022s
+[agent] Checkpoint saved → baselines/naive_pg/runs/gap_100-150_300-350/naive_pg_best.pt
+Iter   840/2000 | return -2.9691 (avg20 -3.0368) | loss -77.1996 | entropy 5.175 | OOD-action  37.5% | 4132s
+Iter   860/2000 | return -3.0125 (avg20 -3.1706) | loss -76.1523 | entropy 5.173 | OOD-action  40.1% | 4242s
+[agent] Checkpoint saved → baselines/naive_pg/runs/gap_100-150_300-350/naive_pg_best.pt
+Iter   880/2000 | return -2.9764 (avg20 -3.1017) | loss -75.5753 | entropy 5.171 | OOD-action  43.0% | 4352s
+Iter   900/2000 | return -3.1195 (avg20 -3.0818) | loss -82.5792 | entropy 5.168 | OOD-action  41.1% | 4462s
+Iter   920/2000 | return -3.1167 (avg20 -3.1667) | loss -82.6238 | entropy 5.165 | OOD-action  45.3% | 4573s
