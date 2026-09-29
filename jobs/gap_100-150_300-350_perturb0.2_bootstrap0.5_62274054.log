@@ -1,0 +1,494 @@
+============================================================
+Job ID   : 62274054
+Node     : gl1007
+Started  : Mon Sep 28 20:25:18 EDT 2026
+============================================================
+Python : /home/xysong/.conda/envs/RL/bin/python
+Torch  : 2.5.1+cu121
+CUDA   : True
+MATLAB : /sw/pkgs/arc/matlab/R2024b/bin/matlab
+============================================================
+=== [0/7] Train surrogate_model_v3 on gapped islands 100-150,300-350 (perturb=0.2, bootstrap_frac=0.5) ===
+[train] Output dir : surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5
+[train] Device     : cuda
+[dataset] Loaded 5000 trajectories × 12 layers from DatasetV2_layer_12_samples_5000.pkl
+[dataset] Split → train 4000 | val 500 | test 500
+[dataset] State mean ∈ [164.2, 2761.5], std ∈ [31.5926, 1672.6]
+[dataset] Laser power mean = 249.87 W, std = 89.44 W
+[dataset] Cool time    mean = 0.1005 s, std = 0.0314 s
+[dataset] ROI weight table: (12, 1053), range [0.801, 4.219]
+[train] ROI weights loaded from mesh: /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model/mesh.mat
+[train] LP filter (gapped) active: [100.0, 150.0], [300.0, 350.0] W
+[TwoStageSurrogateDataset] lp_filter=[100.0, 150.0], [300.0, 350.0]W kept 18,518/48,000 transitions
+[TwoStageSurrogateDataset] perturb_frac=20.0% of per-node state_std → noise std 6.32-334.52K (mean 44.31K) applied to 18,518 heating/next-state TARGETS (inputs s_t and the physical trajectory chain remain clean)
+[dataset] Bootstrap masks: (18518, 5), resample_frac=0.5, ~60.6% of (sample, member) pairs unseen (expected ≈ 60.7%)
+[TwoStageSurrogateDataset] 18,518 transitions, state_dim=1053, layers 0–11, bootstrap K=5 (transition-level resampling)
+[TwoStageSurrogateDataset] lp_filter=[100.0, 150.0], [300.0, 350.0]W kept 2,368/6,000 transitions
+[TwoStageSurrogateDataset] perturb_frac=20.0% of per-node state_std → noise std 6.32-334.52K (mean 44.31K) applied to 2,368 heating/next-state TARGETS (inputs s_t and the physical trajectory chain remain clean)
+[dataset] Bootstrap masks: (2368, 5), resample_frac=0.5, ~60.6% of (sample, member) pairs unseen (expected ≈ 60.7%)
+[TwoStageSurrogateDataset] 2,368 transitions, state_dim=1053, layers 0–11, bootstrap K=5 (transition-level resampling)
+[train] TwoStageSurrogate(state=1053, lp_dim=1, cool_dim=1, K=5, n_layers=12, embed=8, rank=0 | heat×5=2,554,020  cool×5=2,554,020 | total=5,108,040)
+
+[train] Starting training for up to 500 epochs (patience=30)
+[train] Weights   → recon_heat=1.0  nll_heat=0.1  recon_cool=1.0  nll_cool=0.1
+[train] Ensemble  → K=5 members, bootstrap_seed=42, bootstrap_frac=0.5
+--------------------------------------------------------------------------------
+Epoch    1/500 | train 0.23896 [rh=0.1150 nh=-0.0569 rc=0.1048 nc=0.2485] | val 0.19944 | lr 1.00e-03 |    6.8s ✓ best
+Epoch    2/500 | train 0.16752 [rh=0.0704 nh=-0.1157 rc=0.0885 nc=0.2021] | val 0.14898 | lr 1.00e-03 |   12.4s ✓ best
+Epoch    3/500 | train 0.13475 [rh=0.0455 nh=-0.1589 rc=0.0861 nc=0.1903] | val 0.12953 | lr 1.00e-03 |   17.9s ✓ best
+Epoch    4/500 | train 0.12666 [rh=0.0425 nh=-0.1700 rc=0.0835 nc=0.1769] | val 0.12550 | lr 1.00e-03 |   23.5s ✓ best
+Epoch    5/500 | train 0.12462 [rh=0.0420 nh=-0.1736 rc=0.0827 nc=0.1724] | val 0.12538 | lr 1.00e-03 |   29.0s ✓ best
+Epoch    6/500 | train 0.12281 [rh=0.0417 nh=-0.1762 rc=0.0820 nc=0.1679] | val 0.12315 | lr 1.00e-03 |   34.8s ✓ best
+Epoch    7/500 | train 0.12194 [rh=0.0416 nh=-0.1774 rc=0.0815 nc=0.1652] | val 0.12353 | lr 1.00e-03 |   40.1s (no improvement 1/30)
+Epoch    8/500 | train 0.12211 [rh=0.0421 nh=-0.1767 rc=0.0813 nc=0.1637] | val 0.12771 | lr 9.99e-04 |   45.5s (no improvement 2/30)
+Epoch    9/500 | train 0.12202 [rh=0.0422 nh=-0.1773 rc=0.0813 nc=0.1631] | val 0.12334 | lr 9.99e-04 |   50.8s (no improvement 3/30)
+Epoch   10/500 | train 0.12065 [rh=0.0413 nh=-0.1808 rc=0.0812 nc=0.1624] | val 0.12263 | lr 9.99e-04 |   56.3s ✓ best
+Epoch   11/500 | train 0.11983 [rh=0.0411 nh=-0.1821 rc=0.0809 nc=0.1606] | val 0.12217 | lr 9.99e-04 |   62.6s ✓ best
+Epoch   12/500 | train 0.12154 [rh=0.0427 nh=-0.1777 rc=0.0807 nc=0.1594] | val 0.12367 | lr 9.99e-04 |   67.9s (no improvement 1/30)
+Epoch   13/500 | train 0.11935 [rh=0.0413 nh=-0.1822 rc=0.0805 nc=0.1580] | val 0.12195 | lr 9.98e-04 |   73.5s ✓ best
+Epoch   14/500 | train 0.11888 [rh=0.0409 nh=-0.1841 rc=0.0806 nc=0.1581] | val 0.12170 | lr 9.98e-04 |   79.0s ✓ best
+Epoch   15/500 | train 0.11822 [rh=0.0409 nh=-0.1849 rc=0.0802 nc=0.1562] | val 0.12220 | lr 9.98e-04 |   84.4s (no improvement 1/30)
+Epoch   16/500 | train 0.11817 [rh=0.0409 nh=-0.1850 rc=0.0802 nc=0.1556] | val 0.12153 | lr 9.98e-04 |   89.9s ✓ best
+Epoch   17/500 | train 0.11790 [rh=0.0408 nh=-0.1857 rc=0.0801 nc=0.1551] | val 0.12158 | lr 9.97e-04 |   95.3s (no improvement 1/30)
+Epoch   18/500 | train 0.11787 [rh=0.0409 nh=-0.1859 rc=0.0801 nc=0.1547] | val 0.12193 | lr 9.97e-04 |  100.9s (no improvement 2/30)
+Epoch   19/500 | train 0.11758 [rh=0.0408 nh=-0.1866 rc=0.0801 nc=0.1541] | val 0.12170 | lr 9.96e-04 |  106.2s (no improvement 3/30)
+Epoch   20/500 | train 0.11944 [rh=0.0424 nh=-0.1816 rc=0.0799 nc=0.1528] | val 0.12239 | lr 9.96e-04 |  111.6s (no improvement 4/30)
+Epoch   21/500 | train 0.11850 [rh=0.0417 nh=-0.1829 rc=0.0798 nc=0.1523] | val 0.12157 | lr 9.96e-04 |  117.0s (no improvement 5/30)
+Epoch   22/500 | train 0.11673 [rh=0.0406 nh=-0.1876 rc=0.0797 nc=0.1514] | val 0.12145 | lr 9.95e-04 |  122.4s ✓ best
+Epoch   23/500 | train 0.11651 [rh=0.0406 nh=-0.1881 rc=0.0796 nc=0.1506] | val 0.12188 | lr 9.95e-04 |  127.8s (no improvement 1/30)
+Epoch   24/500 | train 0.11640 [rh=0.0406 nh=-0.1887 rc=0.0797 nc=0.1506] | val 0.12133 | lr 9.94e-04 |  133.3s ✓ best
+Epoch   25/500 | train 0.11600 [rh=0.0405 nh=-0.1890 rc=0.0794 nc=0.1492] | val 0.12139 | lr 9.94e-04 |  138.6s (no improvement 1/30)
+Epoch   26/500 | train 0.11599 [rh=0.0406 nh=-0.1893 rc=0.0794 nc=0.1490] | val 0.12142 | lr 9.93e-04 |  143.9s (no improvement 2/30)
+Epoch   27/500 | train 0.11582 [rh=0.0405 nh=-0.1897 rc=0.0794 nc=0.1485] | val 0.12185 | lr 9.93e-04 |  149.3s (no improvement 3/30)
+Epoch   28/500 | train 0.11560 [rh=0.0405 nh=-0.1899 rc=0.0793 nc=0.1478] | val 0.12136 | lr 9.92e-04 |  154.6s (no improvement 4/30)
+Epoch   29/500 | train 0.11505 [rh=0.0405 nh=-0.1904 rc=0.0790 nc=0.1459] | val 0.12150 | lr 9.92e-04 |  160.0s (no improvement 5/30)
+Epoch   30/500 | train 0.11482 [rh=0.0404 nh=-0.1907 rc=0.0789 nc=0.1452] | val 0.12137 | lr 9.91e-04 |  165.6s (no improvement 6/30)
+Epoch   31/500 | train 0.11476 [rh=0.0405 nh=-0.1907 rc=0.0789 nc=0.1446] | val 0.12097 | lr 9.91e-04 |  171.1s ✓ best
+Epoch   32/500 | train 0.11468 [rh=0.0405 nh=-0.1910 rc=0.0788 nc=0.1442] | val 0.12129 | lr 9.90e-04 |  176.4s (no improvement 1/30)
+Epoch   33/500 | train 0.11426 [rh=0.0405 nh=-0.1914 rc=0.0787 nc=0.1429] | val 0.12144 | lr 9.89e-04 |  181.8s (no improvement 2/30)
+Epoch   34/500 | train 0.11442 [rh=0.0404 nh=-0.1919 rc=0.0788 nc=0.1439] | val 0.12130 | lr 9.89e-04 |  187.1s (no improvement 3/30)
+Epoch   35/500 | train 0.11473 [rh=0.0409 nh=-0.1897 rc=0.0786 nc=0.1418] | val 0.12096 | lr 9.88e-04 |  192.6s ✓ best
+Epoch   36/500 | train 0.11366 [rh=0.0404 nh=-0.1921 rc=0.0784 nc=0.1406] | val 0.12123 | lr 9.87e-04 |  198.0s (no improvement 1/30)
+Epoch   37/500 | train 0.11342 [rh=0.0403 nh=-0.1927 rc=0.0783 nc=0.1402] | val 0.12113 | lr 9.87e-04 |  203.3s (no improvement 2/30)
+Epoch   38/500 | train 0.11321 [rh=0.0403 nh=-0.1932 rc=0.0783 nc=0.1396] | val 0.12091 | lr 9.86e-04 |  208.8s ✓ best
+Epoch   39/500 | train 0.11290 [rh=0.0403 nh=-0.1933 rc=0.0781 nc=0.1382] | val 0.12165 | lr 9.85e-04 |  214.2s (no improvement 1/30)
+Epoch   40/500 | train 0.11267 [rh=0.0403 nh=-0.1937 rc=0.0780 nc=0.1376] | val 0.12094 | lr 9.84e-04 |  219.5s (no improvement 2/30)
+Epoch   41/500 | train 0.11238 [rh=0.0403 nh=-0.1940 rc=0.0779 nc=0.1364] | val 0.12065 | lr 9.84e-04 |  225.0s ✓ best
+Epoch   42/500 | train 0.11223 [rh=0.0403 nh=-0.1942 rc=0.0778 nc=0.1361] | val 0.12091 | lr 9.83e-04 |  230.4s (no improvement 1/30)
+Epoch   43/500 | train 0.11222 [rh=0.0404 nh=-0.1938 rc=0.0777 nc=0.1354] | val 0.12127 | lr 9.82e-04 |  236.1s (no improvement 2/30)
+Epoch   44/500 | train 0.11201 [rh=0.0402 nh=-0.1946 rc=0.0777 nc=0.1354] | val 0.12068 | lr 9.81e-04 |  241.4s (no improvement 3/30)
+Epoch   45/500 | train 0.11160 [rh=0.0402 nh=-0.1952 rc=0.0775 nc=0.1341] | val 0.12042 | lr 9.80e-04 |  246.9s ✓ best
+Epoch   46/500 | train 0.11180 [rh=0.0403 nh=-0.1949 rc=0.0775 nc=0.1344] | val 0.12116 | lr 9.79e-04 |  252.3s (no improvement 1/30)
+Epoch   47/500 | train 0.11126 [rh=0.0402 nh=-0.1953 rc=0.0773 nc=0.1327] | val 0.12064 | lr 9.79e-04 |  257.6s (no improvement 2/30)
+Epoch   48/500 | train 0.11110 [rh=0.0402 nh=-0.1959 rc=0.0773 nc=0.1324] | val 0.12031 | lr 9.78e-04 |  263.1s ✓ best
+Epoch   49/500 | train 0.11058 [rh=0.0402 nh=-0.1961 rc=0.0770 nc=0.1302] | val 0.12036 | lr 9.77e-04 |  268.4s (no improvement 1/30)
+Epoch   50/500 | train 0.11104 [rh=0.0401 nh=-0.1966 rc=0.0773 nc=0.1325] | val 0.12106 | lr 9.76e-04 |  273.7s (no improvement 2/30)
+Epoch   51/500 | train 0.11106 [rh=0.0401 nh=-0.1967 rc=0.0773 nc=0.1328] | val 0.12065 | lr 9.75e-04 |  279.1s (no improvement 3/30)
+Epoch   52/500 | train 0.11039 [rh=0.0401 nh=-0.1972 rc=0.0770 nc=0.1305] | val 0.12025 | lr 9.74e-04 |  284.6s ✓ best
+Epoch   53/500 | train 0.10985 [rh=0.0401 nh=-0.1973 rc=0.0767 nc=0.1281] | val 0.12031 | lr 9.73e-04 |  290.0s (no improvement 1/30)
+Epoch   54/500 | train 0.11217 [rh=0.0416 nh=-0.1875 rc=0.0766 nc=0.1277] | val 0.11983 | lr 9.72e-04 |  295.4s ✓ best
+Epoch   55/500 | train 0.11017 [rh=0.0403 nh=-0.1940 rc=0.0765 nc=0.1271] | val 0.12001 | lr 9.71e-04 |  301.0s (no improvement 1/30)
+Epoch   56/500 | train 0.10986 [rh=0.0403 nh=-0.1951 rc=0.0764 nc=0.1263] | val 0.12010 | lr 9.70e-04 |  306.4s (no improvement 2/30)
+Epoch   57/500 | train 0.10976 [rh=0.0402 nh=-0.1962 rc=0.0765 nc=0.1273] | val 0.11993 | lr 9.69e-04 |  311.7s (no improvement 3/30)
+Epoch   58/500 | train 0.10918 [rh=0.0401 nh=-0.1967 rc=0.0762 nc=0.1252] | val 0.11999 | lr 9.67e-04 |  317.0s (no improvement 4/30)
+Epoch   59/500 | train 0.10884 [rh=0.0401 nh=-0.1976 rc=0.0761 nc=0.1243] | val 0.11952 | lr 9.66e-04 |  322.5s ✓ best
+Epoch   60/500 | train 0.10923 [rh=0.0404 nh=-0.1954 rc=0.0760 nc=0.1238] | val 0.12291 | lr 9.65e-04 |  327.8s (no improvement 1/30)
+Epoch   61/500 | train 0.10915 [rh=0.0403 nh=-0.1948 rc=0.0760 nc=0.1233] | val 0.11951 | lr 9.64e-04 |  333.3s ✓ best
+Epoch   62/500 | train 0.10886 [rh=0.0401 nh=-0.1972 rc=0.0761 nc=0.1243] | val 0.11979 | lr 9.63e-04 |  338.6s (no improvement 1/30)
+Epoch   63/500 | train 0.10849 [rh=0.0400 nh=-0.1981 rc=0.0759 nc=0.1236] | val 0.11954 | lr 9.62e-04 |  344.0s (no improvement 2/30)
+Epoch   64/500 | train 0.10870 [rh=0.0402 nh=-0.1973 rc=0.0759 nc=0.1234] | val 0.11937 | lr 9.61e-04 |  349.5s ✓ best
+Epoch   65/500 | train 0.10795 [rh=0.0399 nh=-0.1991 rc=0.0757 nc=0.1221] | val 0.11914 | lr 9.59e-04 |  355.0s ✓ best
+Epoch   66/500 | train 0.10773 [rh=0.0400 nh=-0.1990 rc=0.0756 nc=0.1208] | val 0.11944 | lr 9.58e-04 |  360.3s (no improvement 1/30)
+Epoch   67/500 | train 0.10836 [rh=0.0399 nh=-0.1997 rc=0.0760 nc=0.1238] | val 0.11990 | lr 9.57e-04 |  365.9s (no improvement 2/30)
+Epoch   68/500 | train 0.10806 [rh=0.0400 nh=-0.1995 rc=0.0758 nc=0.1227] | val 0.11990 | lr 9.56e-04 |  371.2s (no improvement 3/30)
+Epoch   69/500 | train 0.10770 [rh=0.0400 nh=-0.1996 rc=0.0756 nc=0.1211] | val 0.11950 | lr 9.54e-04 |  376.6s (no improvement 4/30)
+Epoch   70/500 | train 0.10751 [rh=0.0399 nh=-0.2005 rc=0.0756 nc=0.1211] | val 0.11942 | lr 9.53e-04 |  381.9s (no improvement 5/30)
+Epoch   71/500 | train 0.10748 [rh=0.0399 nh=-0.2004 rc=0.0755 nc=0.1209] | val 0.11939 | lr 9.52e-04 |  387.2s (no improvement 6/30)
+Epoch   72/500 | train 0.10672 [rh=0.0399 nh=-0.2005 rc=0.0751 nc=0.1176] | val 0.11950 | lr 9.50e-04 |  392.6s (no improvement 7/30)
+Epoch   73/500 | train 0.10685 [rh=0.0400 nh=-0.2001 rc=0.0751 nc=0.1176] | val 0.11946 | lr 9.49e-04 |  397.9s (no improvement 8/30)
+Epoch   74/500 | train 0.10676 [rh=0.0399 nh=-0.2007 rc=0.0751 nc=0.1182] | val 0.11950 | lr 9.47e-04 |  403.3s (no improvement 9/30)
+Epoch   75/500 | train 0.10714 [rh=0.0398 nh=-0.2014 rc=0.0754 nc=0.1206] | val 0.11947 | lr 9.46e-04 |  408.6s (no improvement 10/30)
+Epoch   76/500 | train 0.10649 [rh=0.0399 nh=-0.2010 rc=0.0750 nc=0.1171] | val 0.11907 | lr 9.45e-04 |  414.0s ✓ best
+Epoch   77/500 | train 0.10641 [rh=0.0400 nh=-0.2008 rc=0.0749 nc=0.1165] | val 0.11938 | lr 9.43e-04 |  419.4s (no improvement 1/30)
+Epoch   78/500 | train 0.10623 [rh=0.0398 nh=-0.2019 rc=0.0749 nc=0.1169] | val 0.11934 | lr 9.42e-04 |  424.7s (no improvement 2/30)
+Epoch   79/500 | train 0.10596 [rh=0.0398 nh=-0.2013 rc=0.0747 nc=0.1152] | val 0.11965 | lr 9.40e-04 |  430.0s (no improvement 3/30)
+Epoch   80/500 | train 0.10652 [rh=0.0398 nh=-0.2019 rc=0.0751 nc=0.1181] | val 0.11961 | lr 9.39e-04 |  435.7s (no improvement 4/30)
+Epoch   81/500 | train 0.10648 [rh=0.0398 nh=-0.2025 rc=0.0751 nc=0.1186] | val 0.11909 | lr 9.37e-04 |  441.0s (no improvement 5/30)
+Epoch   82/500 | train 0.10594 [rh=0.0399 nh=-0.2014 rc=0.0747 nc=0.1152] | val 0.11929 | lr 9.36e-04 |  446.4s (no improvement 6/30)
+Epoch   83/500 | train 0.10529 [rh=0.0398 nh=-0.2020 rc=0.0744 nc=0.1131] | val 0.11915 | lr 9.34e-04 |  451.7s (no improvement 7/30)
+Epoch   84/500 | train 0.10571 [rh=0.0401 nh=-0.1994 rc=0.0743 nc=0.1125] | val 0.11975 | lr 9.33e-04 |  457.0s (no improvement 8/30)
+Epoch   85/500 | train 0.10733 [rh=0.0399 nh=-0.2012 rc=0.0754 nc=0.1212] | val 0.11919 | lr 9.31e-04 |  462.4s (no improvement 9/30)
+Epoch   86/500 | train 0.10526 [rh=0.0398 nh=-0.2021 rc=0.0743 nc=0.1131] | val 0.11911 | lr 9.29e-04 |  467.7s (no improvement 10/30)
+Epoch   87/500 | train 0.10486 [rh=0.0398 nh=-0.2029 rc=0.0742 nc=0.1116] | val 0.11886 | lr 9.28e-04 |  473.2s ✓ best
+Epoch   88/500 | train 0.10474 [rh=0.0398 nh=-0.2029 rc=0.0741 nc=0.1112] | val 0.11901 | lr 9.26e-04 |  478.6s (no improvement 1/30)
+Epoch   89/500 | train 0.10468 [rh=0.0398 nh=-0.2027 rc=0.0741 nc=0.1110] | val 0.11915 | lr 9.25e-04 |  483.9s (no improvement 2/30)
+Epoch   90/500 | train 0.10468 [rh=0.0398 nh=-0.2024 rc=0.0740 nc=0.1108] | val 0.12049 | lr 9.23e-04 |  489.2s (no improvement 3/30)
+Epoch   91/500 | train 0.10486 [rh=0.0399 nh=-0.2017 rc=0.0741 nc=0.1111] | val 0.11863 | lr 9.21e-04 |  494.7s ✓ best
+Epoch   92/500 | train 0.10412 [rh=0.0397 nh=-0.2036 rc=0.0738 nc=0.1092] | val 0.11846 | lr 9.20e-04 |  500.5s ✓ best
+Epoch   93/500 | train 0.10410 [rh=0.0397 nh=-0.2037 rc=0.0738 nc=0.1092] | val 0.11845 | lr 9.18e-04 |  506.0s ✓ best
+Epoch   94/500 | train 0.10428 [rh=0.0398 nh=-0.2030 rc=0.0738 nc=0.1096] | val 0.11865 | lr 9.16e-04 |  511.4s (no improvement 1/30)
+Epoch   95/500 | train 0.10387 [rh=0.0397 nh=-0.2038 rc=0.0737 nc=0.1084] | val 0.11840 | lr 9.14e-04 |  516.9s ✓ best
+Epoch   96/500 | train 0.10388 [rh=0.0398 nh=-0.2036 rc=0.0736 nc=0.1083] | val 0.11886 | lr 9.13e-04 |  522.2s (no improvement 1/30)
+Epoch   97/500 | train 0.10408 [rh=0.0398 nh=-0.2022 rc=0.0736 nc=0.1083] | val 0.11872 | lr 9.11e-04 |  527.6s (no improvement 2/30)
+Epoch   98/500 | train 0.10400 [rh=0.0397 nh=-0.2034 rc=0.0737 nc=0.1090] | val 0.11851 | lr 9.09e-04 |  532.9s (no improvement 3/30)
+Epoch   99/500 | train 0.10356 [rh=0.0397 nh=-0.2039 rc=0.0735 nc=0.1073] | val 0.11832 | lr 9.07e-04 |  538.4s ✓ best
+Epoch  100/500 | train 0.10413 [rh=0.0397 nh=-0.2041 rc=0.0738 nc=0.1104] | val 0.11813 | lr 9.05e-04 |  543.9s ✓ best
+Epoch  101/500 | train 0.10334 [rh=0.0397 nh=-0.2045 rc=0.0734 nc=0.1071] | val 0.11848 | lr 9.04e-04 |  549.2s (no improvement 1/30)
+Epoch  102/500 | train 0.10516 [rh=0.0400 nh=-0.2018 rc=0.0741 nc=0.1125] | val 0.11909 | lr 9.02e-04 |  554.6s (no improvement 2/30)
+Epoch  103/500 | train 0.10440 [rh=0.0397 nh=-0.2037 rc=0.0739 nc=0.1109] | val 0.11840 | lr 9.00e-04 |  560.0s (no improvement 3/30)
+Epoch  104/500 | train 0.10346 [rh=0.0397 nh=-0.2048 rc=0.0735 nc=0.1078] | val 0.11914 | lr 8.98e-04 |  565.3s (no improvement 4/30)
+Epoch  105/500 | train 0.10285 [rh=0.0396 nh=-0.2050 rc=0.0732 nc=0.1050] | val 0.11839 | lr 8.96e-04 |  571.1s (no improvement 5/30)
+Epoch  106/500 | train 0.10315 [rh=0.0396 nh=-0.2052 rc=0.0733 nc=0.1070] | val 0.11857 | lr 8.94e-04 |  576.4s (no improvement 6/30)
+Epoch  107/500 | train 0.10271 [rh=0.0396 nh=-0.2053 rc=0.0731 nc=0.1047] | val 0.11877 | lr 8.92e-04 |  581.7s (no improvement 7/30)
+Epoch  108/500 | train 0.10270 [rh=0.0396 nh=-0.2055 rc=0.0731 nc=0.1048] | val 0.11883 | lr 8.90e-04 |  587.1s (no improvement 8/30)
+Epoch  109/500 | train 0.10261 [rh=0.0396 nh=-0.2056 rc=0.0731 nc=0.1049] | val 0.11797 | lr 8.88e-04 |  592.6s ✓ best
+Epoch  110/500 | train 0.10255 [rh=0.0396 nh=-0.2057 rc=0.0730 nc=0.1046] | val 0.11910 | lr 8.86e-04 |  597.9s (no improvement 1/30)
+Epoch  111/500 | train 0.10237 [rh=0.0396 nh=-0.2057 rc=0.0729 nc=0.1035] | val 0.11838 | lr 8.84e-04 |  603.3s (no improvement 2/30)
+Epoch  112/500 | train 0.10224 [rh=0.0396 nh=-0.2060 rc=0.0729 nc=0.1035] | val 0.11901 | lr 8.82e-04 |  608.6s (no improvement 3/30)
+Epoch  113/500 | train 0.10389 [rh=0.0406 nh=-0.1987 rc=0.0729 nc=0.1033] | val 0.11892 | lr 8.80e-04 |  613.9s (no improvement 4/30)
+Epoch  114/500 | train 0.10340 [rh=0.0400 nh=-0.2004 rc=0.0730 nc=0.1045] | val 0.11808 | lr 8.78e-04 |  619.3s (no improvement 5/30)
+Epoch  115/500 | train 0.10243 [rh=0.0397 nh=-0.2040 rc=0.0728 nc=0.1029] | val 0.11835 | lr 8.76e-04 |  624.7s (no improvement 6/30)
+Epoch  116/500 | train 0.10246 [rh=0.0397 nh=-0.2041 rc=0.0728 nc=0.1028] | val 0.11834 | lr 8.74e-04 |  630.0s (no improvement 7/30)
+Epoch  117/500 | train 0.10212 [rh=0.0396 nh=-0.2049 rc=0.0727 nc=0.1023] | val 0.11803 | lr 8.72e-04 |  635.6s (no improvement 8/30)
+Epoch  118/500 | train 0.10173 [rh=0.0396 nh=-0.2054 rc=0.0726 nc=0.1008] | val 0.11840 | lr 8.70e-04 |  640.9s (no improvement 9/30)
+Epoch  119/500 | train 0.10259 [rh=0.0396 nh=-0.2055 rc=0.0730 nc=0.1046] | val 0.11976 | lr 8.68e-04 |  646.2s (no improvement 10/30)
+Epoch  120/500 | train 0.10194 [rh=0.0397 nh=-0.2043 rc=0.0726 nc=0.1007] | val 0.11819 | lr 8.66e-04 |  651.6s (no improvement 11/30)
+Epoch  121/500 | train 0.10227 [rh=0.0397 nh=-0.2042 rc=0.0727 nc=0.1025] | val 0.11934 | lr 8.64e-04 |  656.9s (no improvement 12/30)
+Epoch  122/500 | train 0.10219 [rh=0.0396 nh=-0.2064 rc=0.0729 nc=0.1041] | val 0.11821 | lr 8.62e-04 |  662.2s (no improvement 13/30)
+Epoch  123/500 | train 0.10201 [rh=0.0397 nh=-0.2047 rc=0.0726 nc=0.1018] | val 0.11766 | lr 8.59e-04 |  667.8s ✓ best
+Epoch  124/500 | train 0.10165 [rh=0.0396 nh=-0.2060 rc=0.0725 nc=0.1011] | val 0.11775 | lr 8.57e-04 |  673.1s (no improvement 1/30)
+Epoch  125/500 | train 0.10184 [rh=0.0396 nh=-0.2063 rc=0.0727 nc=0.1022] | val 0.11833 | lr 8.55e-04 |  678.4s (no improvement 2/30)
+Epoch  126/500 | train 0.10364 [rh=0.0396 nh=-0.2064 rc=0.0737 nc=0.1103] | val 0.11889 | lr 8.53e-04 |  683.8s (no improvement 3/30)
+Epoch  127/500 | train 0.10210 [rh=0.0395 nh=-0.2071 rc=0.0728 nc=0.1045] | val 0.11774 | lr 8.51e-04 |  689.1s (no improvement 4/30)
+Epoch  128/500 | train 0.10266 [rh=0.0396 nh=-0.2061 rc=0.0730 nc=0.1065] | val 0.11772 | lr 8.48e-04 |  694.4s (no improvement 5/30)
+Epoch  129/500 | train 0.10167 [rh=0.0396 nh=-0.2061 rc=0.0725 nc=0.1015] | val 0.11811 | lr 8.46e-04 |  700.0s (no improvement 6/30)
+Epoch  130/500 | train 0.10123 [rh=0.0396 nh=-0.2062 rc=0.0723 nc=0.0997] | val 0.11767 | lr 8.44e-04 |  705.3s (no improvement 7/30)
+Epoch  131/500 | train 0.10159 [rh=0.0398 nh=-0.2025 rc=0.0722 nc=0.0982] | val 0.11702 | lr 8.42e-04 |  710.8s ✓ best
+Epoch  132/500 | train 0.10178 [rh=0.0396 nh=-0.2053 rc=0.0725 nc=0.1019] | val 0.11734 | lr 8.39e-04 |  716.1s (no improvement 1/30)
+Epoch  133/500 | train 0.10075 [rh=0.0395 nh=-0.2063 rc=0.0721 nc=0.0974] | val 0.11774 | lr 8.37e-04 |  721.5s (no improvement 2/30)
+Epoch  134/500 | train 0.10134 [rh=0.0395 nh=-0.2074 rc=0.0725 nc=0.1010] | val 0.11786 | lr 8.35e-04 |  726.8s (no improvement 3/30)
+Epoch  135/500 | train 0.10086 [rh=0.0395 nh=-0.2073 rc=0.0722 nc=0.0989] | val 0.11744 | lr 8.32e-04 |  732.1s (no improvement 4/30)
+Epoch  136/500 | train 0.10061 [rh=0.0395 nh=-0.2076 rc=0.0721 nc=0.0978] | val 0.11741 | lr 8.30e-04 |  737.5s (no improvement 5/30)
+Epoch  137/500 | train 0.10045 [rh=0.0395 nh=-0.2075 rc=0.0720 nc=0.0972] | val 0.11763 | lr 8.28e-04 |  742.8s (no improvement 6/30)
+Epoch  138/500 | train 0.10044 [rh=0.0395 nh=-0.2077 rc=0.0720 nc=0.0970] | val 0.11782 | lr 8.25e-04 |  748.2s (no improvement 7/30)
+Epoch  139/500 | train 0.10029 [rh=0.0396 nh=-0.2073 rc=0.0719 nc=0.0960] | val 0.11763 | lr 8.23e-04 |  753.5s (no improvement 8/30)
+Epoch  140/500 | train 0.10018 [rh=0.0395 nh=-0.2075 rc=0.0718 nc=0.0957] | val 0.11794 | lr 8.21e-04 |  758.8s (no improvement 9/30)
+Epoch  141/500 | train 0.10028 [rh=0.0396 nh=-0.2077 rc=0.0719 nc=0.0958] | val 0.11761 | lr 8.18e-04 |  764.2s (no improvement 10/30)
+Epoch  142/500 | train 0.10110 [rh=0.0398 nh=-0.2038 rc=0.0720 nc=0.0967] | val 0.11768 | lr 8.16e-04 |  769.9s (no improvement 11/30)
+Epoch  143/500 | train 0.10030 [rh=0.0396 nh=-0.2066 rc=0.0718 nc=0.0955] | val 0.11751 | lr 8.13e-04 |  775.2s (no improvement 12/30)
+Epoch  144/500 | train 0.10116 [rh=0.0395 nh=-0.2082 rc=0.0724 nc=0.1011] | val 0.11791 | lr 8.11e-04 |  780.5s (no improvement 13/30)
+Epoch  145/500 | train 0.10239 [rh=0.0405 nh=-0.1951 rc=0.0718 nc=0.0956] | val 0.11799 | lr 8.08e-04 |  785.9s (no improvement 14/30)
+Epoch  146/500 | train 0.10056 [rh=0.0397 nh=-0.2046 rc=0.0718 nc=0.0953] | val 0.11853 | lr 8.06e-04 |  791.2s (no improvement 15/30)
+Epoch  147/500 | train 0.10072 [rh=0.0398 nh=-0.2037 rc=0.0718 nc=0.0954] | val 0.11765 | lr 8.03e-04 |  796.5s (no improvement 16/30)
+Epoch  148/500 | train 0.10024 [rh=0.0396 nh=-0.2055 rc=0.0717 nc=0.0946] | val 0.11816 | lr 8.01e-04 |  801.9s (no improvement 17/30)
+Epoch  149/500 | train 0.10000 [rh=0.0396 nh=-0.2064 rc=0.0717 nc=0.0942] | val 0.11730 | lr 7.98e-04 |  807.2s (no improvement 18/30)
+Epoch  150/500 | train 0.10008 [rh=0.0396 nh=-0.2065 rc=0.0717 nc=0.0949] | val 0.11717 | lr 7.96e-04 |  812.5s (no improvement 19/30)
+Epoch  151/500 | train 0.09992 [rh=0.0395 nh=-0.2074 rc=0.0717 nc=0.0947] | val 0.11779 | lr 7.93e-04 |  817.9s (no improvement 20/30)
+Epoch  152/500 | train 0.09984 [rh=0.0395 nh=-0.2078 rc=0.0717 nc=0.0945] | val 0.11736 | lr 7.91e-04 |  823.2s (no improvement 21/30)
+Epoch  153/500 | train 0.09997 [rh=0.0394 nh=-0.2087 rc=0.0718 nc=0.0961] | val 0.12079 | lr 7.88e-04 |  828.5s (no improvement 22/30)
+Epoch  154/500 | train 0.10054 [rh=0.0395 nh=-0.2078 rc=0.0720 nc=0.0984] | val 0.11737 | lr 7.86e-04 |  834.1s (no improvement 23/30)
+Epoch  155/500 | train 0.09972 [rh=0.0395 nh=-0.2089 rc=0.0716 nc=0.0953] | val 0.11749 | lr 7.83e-04 |  839.5s (no improvement 24/30)
+Epoch  156/500 | train 0.09961 [rh=0.0396 nh=-0.2075 rc=0.0715 nc=0.0932] | val 0.11805 | lr 7.81e-04 |  844.8s (no improvement 25/30)
+Epoch  157/500 | train 0.09941 [rh=0.0395 nh=-0.2082 rc=0.0714 nc=0.0933] | val 0.11823 | lr 7.78e-04 |  850.2s (no improvement 26/30)
+Epoch  158/500 | train 0.09951 [rh=0.0395 nh=-0.2086 rc=0.0715 nc=0.0942] | val 0.11877 | lr 7.75e-04 |  855.5s (no improvement 27/30)
+Epoch  159/500 | train 0.09991 [rh=0.0397 nh=-0.2059 rc=0.0715 nc=0.0936] | val 0.11722 | lr 7.73e-04 |  860.8s (no improvement 28/30)
+Epoch  160/500 | train 0.09935 [rh=0.0395 nh=-0.2077 rc=0.0714 nc=0.0924] | val 0.11713 | lr 7.70e-04 |  866.2s (no improvement 29/30)
+Epoch  161/500 | train 0.09930 [rh=0.0395 nh=-0.2081 rc=0.0713 nc=0.0928] | val 0.11735 | lr 7.68e-04 |  871.5s (no improvement 30/30)
+[train] Early stopping at epoch 161.
+[train] Loss plot → surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/loss_curves.png
+[train] Component loss plot → surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/loss_components.png
+
+[train] Done.  Best val loss : 0.117017
+[train] Best checkpoint  : surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/surrogate_best.pt
+[train] Final checkpoint : surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/surrogate_final.pt
+=== [1/7] Full surrogate evaluation (evaluate.py) ===
+[evaluate] Output dir : /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5
+[evaluate] Device     : cuda
+[evaluate] Mesh loaded: 1053 nodes, 488 triangles. X∈[0.00,12.00], Y∈[0.00,3.00]
+[evaluate] TwoStageSurrogate(state=1053, lp_dim=1, cool_dim=1, K=5, n_layers=12, embed=8, rank=0 | heat×5=2,554,020  cool×5=2,554,020 | total=5,108,040)
+[dataset] Loaded 5000 trajectories × 12 layers from DatasetV2_layer_12_samples_5000.pkl
+[dataset] Split → train 4000 | val 500 | test 500
+[dataset] Bootstrap masks: (4000, 5), resample_frac=1.0, ~37.1% of (sample, member) pairs unseen (expected ≈ 36.8%)
+[TwoStageTrajectoryDataset] 4,000 trajectories, T=12, state_dim=1053, bootstrap K=5 (trajectory-level resampling)
+[dataset] Bootstrap masks: (48000, 5), resample_frac=1.0, ~36.8% of (sample, member) pairs unseen (expected ≈ 36.8%)
+[TwoStageSurrogateDataset] 48,000 transitions, state_dim=1053, layers 0–11, bootstrap K=5 (transition-level resampling)
+[dataset] Bootstrap masks: (500, 5), resample_frac=1.0, ~36.7% of (sample, member) pairs unseen (expected ≈ 36.8%)
+[TwoStageTrajectoryDataset] 500 trajectories, T=12, state_dim=1053, bootstrap K=5 (trajectory-level resampling)
+[dataset] Bootstrap masks: (6000, 5), resample_frac=1.0, ~36.6% of (sample, member) pairs unseen (expected ≈ 36.8%)
+[TwoStageSurrogateDataset] 6,000 transitions, state_dim=1053, layers 0–11, bootstrap K=5 (transition-level resampling)
+[dataset] Bootstrap masks: (500, 5), resample_frac=1.0, ~36.7% of (sample, member) pairs unseen (expected ≈ 36.8%)
+[TwoStageTrajectoryDataset] 500 trajectories, T=12, state_dim=1053, bootstrap K=5 (trajectory-level resampling)
+[dataset] Bootstrap masks: (6000, 5), resample_frac=1.0, ~36.6% of (sample, member) pairs unseen (expected ≈ 36.8%)
+[TwoStageSurrogateDataset] 6,000 transitions, state_dim=1053, layers 0–11, bootstrap K=5 (transition-level resampling)
+
+[evaluate] ════════════════════ TRAIN SET ════════════════════
+  recon_heat    : 0.001235
+  nll_heat      : -0.686578
+  recon_cool    : 0.001174
+  nll_cool      : -0.318561
+
+   Layer   Heat SS RMSE   Heat RO RMSE   Cool SS RMSE   Cool RO RMSE
+       1         12.561         12.561         10.924         11.446
+       2         10.922         15.471         13.053         17.760
+       3          9.737         19.522         12.665         20.592
+       4         10.103         22.213         13.072         22.625
+       5         11.582         24.448         13.775         24.782
+       6         13.572         28.058         12.879         25.928
+       7         12.576         28.452         14.080         27.821
+       8         12.185         30.305         13.874         29.204
+       9         15.258         31.784         14.626         31.049
+      10         16.129         34.794         15.246         33.891
+      11         16.730         37.782         15.271         37.062
+      12         17.488         41.143         16.027         40.744
+
+[evaluate] ════════════════════ VAL SET ════════════════════
+  recon_heat    : 0.001240
+  nll_heat      : -0.687013
+  recon_cool    : 0.001166
+  nll_cool      : -0.318548
+
+   Layer   Heat SS RMSE   Heat RO RMSE   Cool SS RMSE   Cool RO RMSE
+       1         12.615         12.615         11.089         11.502
+       2         11.025         15.709         13.010         17.726
+       3          9.701         19.282         12.633         20.445
+       4         10.082         22.062         12.999         22.510
+       5         11.405         24.182         13.209         24.258
+       6         14.046         27.566         12.737         25.628
+       7         12.518         28.009         13.785         27.433
+       8         12.490         30.145         14.128         29.234
+       9         14.846         31.820         14.060         30.870
+      10         16.357         35.697         14.950         34.230
+      11         16.292         38.450         14.757         37.585
+      12         17.079         41.900         15.675         41.903
+
+[evaluate] ════════════════════ TEST SET ════════════════════
+  recon_heat    : 0.001213
+  nll_heat      : -0.687358
+  recon_cool    : 0.001164
+  nll_cool      : -0.318513
+
+   Layer   Heat SS RMSE   Heat RO RMSE   Cool SS RMSE   Cool RO RMSE
+       1         12.495         12.495         10.558         11.381
+       2         10.442         15.181         12.541         17.355
+       3         10.037         19.284         12.729         20.523
+       4          9.899         22.100         12.851         22.410
+       5         11.289         23.936         13.262         23.962
+       6         13.574         27.628         12.317         25.228
+       7         12.412         27.323         14.056         27.151
+       8         12.464         30.346         14.018         29.156
+       9         15.512         32.325         15.130         31.769
+      10         16.167         35.859         14.710         34.587
+      11         16.325         38.404         14.942         37.780
+      12         17.288         42.193         15.331         41.852
+
+[evaluate] ═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+[evaluate] SUMMARY
+[evaluate] ═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+  Split   heat_ss_rmse [K]heat_ro_rmse [K]cool_ss_rmse [K]cool_ro_rmse [K] heat_epist_std cool_epist_std      total_std
+  train           13.2370        27.2111        13.7911        26.9086         0.0249         0.0243         0.3522
+  val             13.2046        27.2865        13.5858        26.9437         0.0250         0.0243         0.3522
+  test            13.1588        27.2562        13.5370        26.9296         0.0248         0.0242         0.3522
+[evaluate] ═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/per_layer_rmse.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/per_layer_mae.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/per_layer_uncertainty.png
+[evaluate] Saving field plots for 3 test trajectories ...
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_000/actions.txt
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_000/action_sequence.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_000/sigma_per_layer.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_000/layer_01_LP300W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_000/layer_02_LP370W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_000/layer_03_LP270W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_000/layer_04_LP160W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_000/layer_05_LP120W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_000/layer_06_LP340W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_000/layer_07_LP180W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_000/layer_08_LP210W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_000/layer_09_LP400W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_000/layer_10_LP300W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_000/layer_11_LP190W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_000/layer_12_LP270W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_001/actions.txt
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_001/action_sequence.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_001/sigma_per_layer.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_001/layer_01_LP350W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_001/layer_02_LP400W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_001/layer_03_LP230W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_001/layer_04_LP160W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_001/layer_05_LP390W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_001/layer_06_LP260W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_001/layer_07_LP390W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_001/layer_08_LP190W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_001/layer_09_LP170W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_001/layer_10_LP250W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_001/layer_11_LP310W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_001/layer_12_LP170W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_002/actions.txt
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_002/action_sequence.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_002/sigma_per_layer.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_002/layer_01_LP200W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_002/layer_02_LP100W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_002/layer_03_LP240W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_002/layer_04_LP380W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_002/layer_05_LP330W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_002/layer_06_LP100W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_002/layer_07_LP380W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_002/layer_08_LP390W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_002/layer_09_LP400W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_002/layer_10_LP340W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_002/layer_11_LP320W.png
+[evaluate] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/traj_002/layer_12_LP230W.png
+
+[evaluate] Complete. All outputs in: /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5
+=== [2/7] OOD stress test — uncertainty vs. action (evaluate_ood.py) ===
+[evaluate_ood] Output dir : /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5
+[evaluate_ood] Device     : cuda
+[evaluate_ood] TwoStageSurrogate(state=1053, lp_dim=1, cool_dim=1, K=5, n_layers=12, embed=8, rank=0 | heat×5=2,554,020  cool×5=2,554,020 | total=5,108,040)
+[dataset] Loaded 5000 trajectories × 12 layers from DatasetV2_layer_12_samples_5000.pkl
+[evaluate_ood] Wide dataset laser-power range: [100.0, 400.0] W  (checkpoint trained on [100.0, 150.0], [300.0, 350.0] W)
+[dataset] Bootstrap masks: (60000, 5), resample_frac=1.0, ~36.8% of (sample, member) pairs unseen (expected ≈ 36.8%)
+[TwoStageSurrogateDataset] 60,000 transitions, state_dim=1053, layers 0–11, bootstrap K=5 (transition-level resampling)
+[evaluate_ood] Running forward pass over all transitions (heating stage) ...
+
+[evaluate_ood] ══════════════════════════════════════════════════════════════════════════════════════════
+[evaluate_ood] SUMMARY  (n, mean epistemic σ, mean aleatoric σ, RMSE, corr(epistemic σ, per-sample squared error))
+[evaluate_ood] ══════════════════════════════════════════════════════════════════════════════════════════
+  ID           n= 23278  epist σ=0.02003  aleat σ=0.19956  RMSE=   8.16 K  corr(epi,err) pearson=0.421 spearman=0.498
+  OOD          n= 36722  epist σ=0.02683  aleat σ=0.19825  RMSE=  15.93 K  corr(epi,err) pearson=0.211 spearman=0.293
+  ALL          n= 60000  epist σ=0.02419  aleat σ=0.19876  RMSE=  13.46 K  corr(epi,err) pearson=0.314 spearman=0.523
+[evaluate_ood] ══════════════════════════════════════════════════════════════════════════════════════════
+
+     Power bin [W]        n     Epist σ     Aleat σ    RMSE [K]
+    100.0-  125.0     5942     0.01948     0.19971        8.27
+    125.0-  150.0     3803     0.01910     0.19937        6.81
+    150.0-  175.0     5694     0.02254     0.19919       11.07
+    175.0-  200.0     3853     0.02643     0.19936       16.45
+    200.0-  225.0     5813     0.02984     0.19881       16.66
+    225.0-  250.0     3925     0.03097     0.19770       12.26
+    250.0-  275.0     5813     0.02816     0.19752       12.29
+    275.0-  300.0     3940     0.02362     0.19877       11.25
+    300.0-  325.0     5749     0.02046     0.19974        8.73
+    325.0-  350.0     3942     0.02017     0.19964        7.80
+    350.0-  375.0     5800     0.02242     0.19869       11.59
+    375.0-  400.0     5726     0.02689     0.19696       24.75
+[evaluate_ood] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/ood_uncertainty_vs_action.png
+[evaluate_ood] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/ood_epistemic_vs_error.png
+
+[evaluate_ood] Running forward pass over all transitions (combined heat+cool, propagate_uncertainty=False) ...
+
+[evaluate_ood] ══════════════════════════════════════════════════════════════════════════════════════════
+[evaluate_ood] SUMMARY — COMBINED (post-cooling)
+[evaluate_ood] ══════════════════════════════════════════════════════════════════════════════════════════
+  ID           n= 23278  epist σ=0.03261  aleat σ=0.35101  RMSE=  12.10 K  corr(epi,err) pearson=0.351 spearman=0.251
+  OOD          n= 36722  epist σ=0.03814  aleat σ=0.35017  RMSE=  14.38 K  corr(epi,err) pearson=0.217 spearman=0.242
+  ALL          n= 60000  epist σ=0.03600  aleat σ=0.35049  RMSE=  13.54 K  corr(epi,err) pearson=0.287 spearman=0.295
+[evaluate_ood] ══════════════════════════════════════════════════════════════════════════════════════════
+
+     Power bin [W]        n     Epist σ     Aleat σ    RMSE [K]
+    100.0-  125.0     5942     0.03184     0.35200       12.26
+    125.0-  150.0     3803     0.03101     0.35295       12.18
+    150.0-  175.0     5694     0.03368     0.35292       12.39
+    175.0-  200.0     3853     0.03703     0.35255       12.84
+    200.0-  225.0     5813     0.04020     0.35182       12.56
+    225.0-  250.0     3925     0.04149     0.35077       11.49
+    250.0-  275.0     5813     0.03924     0.35023       11.88
+    275.0-  300.0     3940     0.03573     0.35025       11.51
+    300.0-  325.0     5749     0.03347     0.35004       11.05
+    325.0-  350.0     3942     0.03339     0.34926       12.20
+    350.0-  375.0     5800     0.03533     0.34798       15.54
+    375.0-  400.0     5726     0.03908     0.34624       21.18
+[evaluate_ood] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/ood_uncertainty_vs_action_combined.png
+[evaluate_ood] Saved → /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/ood_epistemic_vs_error_combined.png
+
+[evaluate_ood] Complete. All outputs in: /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5
+=== [3/7] Calibrating UCPG's uncertainty budget (delta) ===
+=================================================================
+[train] Uncertainty-Constrained Policy Gradient v2 — LPBF Controller
+[train] (continuous action, two-stage heating/cooling surrogate)
+[train] Output dir : online_RL_ucpg_v2/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5_calib
+[train] Device     : cuda
+[train] delta (uncertainty budget) : 999.0
+=================================================================
+
+[train] Loading surrogate: surrogate_model_v3/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/surrogate_best.pt
+[train] Surrogate   : TwoStageSurrogate(state=1053, lp_dim=1, cool_dim=1, K=5, n_layers=12, embed=8, rank=0 | heat×5=2,554,020  cool×5=2,554,020 | total=5,108,040)
+[TwoStageLatentLPBFEnv] Mesh loaded: 1053 nodes  X∈[0.00, 12.00]  Y∈[0.00, 3.00]
+[train] Action aim range : [100, 400] W  (continuous, unclipped)
+[train] cool_time range  : [0.050, 0.150] s  (drawn once/episode)
+[train] obs_dim     : 1055  (latent_dim=1053 + layer token + cool_time token)
+[train] UCPGAgentV2(ContinuousLatentPolicyNet(latent_dim=1053, action_range=[100, 400]W, hidden=128, depth=3, n_layers=12, layer_embed_dim=8, params=237,167)  lambda=0.00000)
+
+[train] Starting 40 iterations (N=32 trajectories/iter, T=12 steps/traj)
+[train] gamma_r=0.99  gamma_u=0.99  lr_theta=0.0003  lr_lambda=0.01
+-----------------------------------------------------------------
+Iter     1/40 | return -11.4166 (avg1 -11.4166) | J_u 4.39425 (δ=999.0) | λ 0.00000 | loss -456.6473 | entropy 5.286 | action 251.3±47.1W | OOD-action  17.2% | 5s
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5_calib/ucpg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5_calib/ucpg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5_calib/ucpg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5_calib/ucpg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5_calib/ucpg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5_calib/ucpg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5_calib/ucpg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5_calib/ucpg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5_calib/ucpg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5_calib/ucpg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5_calib/ucpg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5_calib/ucpg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5_calib/ucpg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5_calib/ucpg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5_calib/ucpg_best.pt
+Iter    20/40 | return -3.8471 (avg20 -5.7229) | J_u 4.43614 (δ=999.0) | λ 0.00000 | loss -106.7495 | entropy 5.285 | action 181.9±61.4W | OOD-action  33.9% | 84s
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5_calib/ucpg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5_calib/ucpg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5_calib/ucpg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5_calib/ucpg_best.pt
+Iter    40/40 | return -3.6721 (avg20 -3.6353) | J_u 4.45467 (δ=999.0) | λ 0.00000 | loss -96.9467 | entropy 5.283 | action 182.1±77.5W | OOD-action  45.3% | 167s
+[agent] Checkpoint saved → online_RL_ucpg_v2/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5_calib/ucpg_final.pt
+[train] Plot saved → online_RL_ucpg_v2/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5_calib/return.png
+[train] Plot saved → online_RL_ucpg_v2/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5_calib/j_u.png
+[train] Plot saved → online_RL_ucpg_v2/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5_calib/lambda.png
+[train] Plot saved → online_RL_ucpg_v2/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5_calib/loss.png
+[train] Plot saved → online_RL_ucpg_v2/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5_calib/entropy.png
+[train] Plot saved → online_RL_ucpg_v2/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5_calib/action_stats.png
+[train] Plot saved → online_RL_ucpg_v2/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5_calib/ood_action_fraction.png
+
+=================================================================
+[train] Training complete in 2.8 min
+[train] Best undiscounted return : -3.3853
+[train] Final J_u_hat / delta     : 4.45467 / 999.0
+[train] Final lambda              : 0.00000
+[train] Final action              : 182.1 ± 77.5 W
+[train] Best checkpoint  : online_RL_ucpg_v2/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5_calib/ucpg_best.pt
+[train] Final checkpoint : online_RL_ucpg_v2/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5_calib/ucpg_final.pt
+=================================================================
+Calibration: near-random J_u_hat=4.45467  ->  delta=1.78187 (0.4x)
+=== [4/7] Naive PG (no uncertainty) ===
+=================================================================
+[naive_pg] Baseline 0 — naive (unconstrained) policy gradient
+[naive_pg] Output dir : baselines/naive_pg/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5
+[naive_pg] Device     : cuda
+=================================================================
+[TwoStageLatentLPBFEnv] Mesh loaded: 1053 nodes  X∈[0.00, 12.00]  Y∈[0.00, 3.00]
+[naive_pg] UCPGAgentV2(ContinuousLatentPolicyNet(latent_dim=1053, action_range=[100, 400]W, hidden=128, depth=3, n_layers=12, layer_embed_dim=8, params=237,167)  lambda=0.00000)
+Iter     1/2000 | return -11.4166 (avg1 -11.4166) | loss -456.6473 | entropy 5.286 | OOD-action  17.2% | 5s
+[agent] Checkpoint saved → baselines/naive_pg/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/naive_pg_best.pt
+Iter    20/2000 | return -3.8471 (avg20 -5.7229) | loss -106.7495 | entropy 5.285 | OOD-action  33.9% | 86s
+[agent] Checkpoint saved → baselines/naive_pg/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/naive_pg_best.pt
+[agent] Checkpoint saved → baselines/naive_pg/runs/gap_100-150_300-350_perturb0.2_bootstrap0.5/naive_pg_best.pt

@@ -133,7 +133,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--layer_embed_dim", type=int, default=8)
 
     # ── DQN hyperparameters ──────────────────────────────────────────────────
-    p.add_argument("--n_episodes",    type=int,   default=2000,
+    p.add_argument("--n_episodes",    type=int,   default=1000,
                    help="Total number of 12-layer episodes collected online from the environment.")
     p.add_argument("--warmup_episodes", type=int, default=50,
                    help="Episodes of pure random exploration (epsilon=1) before any gradient "

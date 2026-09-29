@@ -24,3 +24,126 @@ Episode    200/2000 | return -7.9899 (avg50 -10.1505) | loss 0.00474 | epsilon 0
 Episode    250/2000 | return -4.8309 (avg50 -9.0565) | loss 0.00307 | epsilon 0.810 | action 220.8±83.0W | OOD-action  66.7% | 56s
 Episode    300/2000 | return -10.9925 (avg50 -9.0575) | loss 0.00237 | epsilon 0.762 | action 233.3±87.9W | OOD-action  50.0% | 67s
 Episode    350/2000 | return -3.8460 (avg50 -8.0022) | loss 0.00312 | epsilon 0.715 | action 194.2±52.2W | OOD-action  66.7% | 79s
+Episode    400/2000 | return -7.4468 (avg50 -7.4395) | loss 0.00475 | epsilon 0.667 | action 226.7±114.3W | OOD-action  75.0% | 91s
+Episode    450/2000 | return -3.0175 (avg50 -7.5077) | loss 0.01569 | epsilon 0.620 | action 199.2±51.2W | OOD-action  41.7% | 103s
+Episode    500/2000 | return -9.9657 (avg50 -6.5571) | loss 0.00494 | epsilon 0.573 | action 219.2±124.5W | OOD-action  91.7% | 116s
+[train] Plot saved → baselines/online_q/runs/narrow_200_300W/return.png
+[train] Plot saved → baselines/online_q/runs/narrow_200_300W/loss.png
+[train] Plot saved → baselines/online_q/runs/narrow_200_300W/epsilon.png
+[train] Plot saved → baselines/online_q/runs/narrow_200_300W/ood_action_fraction.png
+Episode    550/2000 | return -10.4270 (avg50 -6.4921) | loss 0.00150 | epsilon 0.525 | action 203.3±89.6W | OOD-action  66.7% | 129s
+Episode    600/2000 | return -16.2593 (avg50 -5.4642) | loss 0.00093 | epsilon 0.478 | action 256.7±110.3W | OOD-action  83.3% | 141s
+Episode    650/2000 | return -3.7496 (avg50 -5.2290) | loss 0.00183 | epsilon 0.430 | action 185.0±84.8W | OOD-action  75.0% | 153s
+Episode    700/2000 | return -5.4938 (avg50 -4.6730) | loss 0.00133 | epsilon 0.382 | action 236.7±85.5W | OOD-action  58.3% | 165s
+Episode    750/2000 | return -7.6966 (avg50 -4.6511) | loss 0.00129 | epsilon 0.335 | action 220.8±107.7W | OOD-action  83.3% | 178s
+Episode    800/2000 | return -6.0614 (avg50 -4.1504) | loss 0.00095 | epsilon 0.287 | action 230.0±93.7W | OOD-action  58.3% | 190s
+Episode    850/2000 | return -3.1569 (avg50 -3.5823) | loss 0.00699 | epsilon 0.240 | action 200.0±76.2W | OOD-action  83.3% | 203s
+Episode    900/2000 | return -3.4360 (avg50 -3.5937) | loss 0.00091 | epsilon 0.193 | action 196.7±71.0W | OOD-action  83.3% | 215s
+Episode    950/2000 | return -2.8654 (avg50 -3.1911) | loss 0.00101 | epsilon 0.145 | action 183.3±79.1W | OOD-action  83.3% | 227s
+Episode   1000/2000 | return -4.5344 (avg50 -2.8097) | loss 0.00078 | epsilon 0.098 | action 192.5±95.2W | OOD-action  75.0% | 240s
+[train] Plot saved → baselines/online_q/runs/narrow_200_300W/return.png
+[train] Plot saved → baselines/online_q/runs/narrow_200_300W/loss.png
+[train] Plot saved → baselines/online_q/runs/narrow_200_300W/epsilon.png
+[train] Plot saved → baselines/online_q/runs/narrow_200_300W/ood_action_fraction.png
+Episode   1050/2000 | return -2.5840 (avg50 -2.5022) | loss 0.00094 | epsilon 0.050 | action 195.8±42.9W | OOD-action  58.3% | 253s
+Episode   1100/2000 | return -2.5892 (avg50 -2.3861) | loss 0.00078 | epsilon 0.050 | action 192.5±35.6W | OOD-action  66.7% | 266s
+Episode   1150/2000 | return -2.4923 (avg50 -2.4352) | loss 0.00091 | epsilon 0.050 | action 165.8±79.9W | OOD-action  91.7% | 279s
+Episode   1200/2000 | return -3.8730 (avg50 -2.4895) | loss 0.00093 | epsilon 0.050 | action 189.2±75.3W | OOD-action  75.0% | 291s
+Episode   1250/2000 | return -2.9630 (avg50 -2.6219) | loss 0.00097 | epsilon 0.050 | action 180.8±59.9W | OOD-action  91.7% | 304s
+Episode   1300/2000 | return -2.5828 (avg50 -2.4245) | loss 0.00082 | epsilon 0.050 | action 198.3±48.1W | OOD-action  58.3% | 316s
+Episode   1350/2000 | return -1.9949 (avg50 -2.4422) | loss 0.00058 | epsilon 0.050 | action 158.3±59.4W | OOD-action 100.0% | 329s
+Episode   1400/2000 | return -2.6230 (avg50 -2.4419) | loss 0.00066 | epsilon 0.050 | action 200.0±45.8W | OOD-action  66.7% | 342s
+Episode   1450/2000 | return -2.5246 (avg50 -2.4629) | loss 0.00047 | epsilon 0.050 | action 195.0±35.9W | OOD-action  58.3% | 354s
+Episode   1500/2000 | return -2.1902 (avg50 -2.3098) | loss 0.00075 | epsilon 0.050 | action 177.5±61.1W | OOD-action  83.3% | 367s
+[train] Plot saved → baselines/online_q/runs/narrow_200_300W/return.png
+[train] Plot saved → baselines/online_q/runs/narrow_200_300W/loss.png
+[train] Plot saved → baselines/online_q/runs/narrow_200_300W/epsilon.png
+[train] Plot saved → baselines/online_q/runs/narrow_200_300W/ood_action_fraction.png
+Episode   1550/2000 | return -1.8809 (avg50 -2.4694) | loss 0.00096 | epsilon 0.050 | action 145.8±60.8W | OOD-action 100.0% | 380s
+Episode   1600/2000 | return -1.9732 (avg50 -2.5431) | loss 0.00040 | epsilon 0.050 | action 165.0±52.7W | OOD-action  75.0% | 393s
+Episode   1650/2000 | return -2.2501 (avg50 -2.4324) | loss 0.00334 | epsilon 0.050 | action 176.7±49.7W | OOD-action  83.3% | 405s
+Episode   1700/2000 | return -2.2485 (avg50 -2.3721) | loss 0.00053 | epsilon 0.050 | action 168.3±71.7W | OOD-action 100.0% | 418s
+Episode   1750/2000 | return -2.8977 (avg50 -2.4195) | loss 0.00084 | epsilon 0.050 | action 186.7±56.2W | OOD-action  75.0% | 431s
+Episode   1800/2000 | return -2.4710 (avg50 -2.5626) | loss 0.00040 | epsilon 0.050 | action 195.0±42.1W | OOD-action  58.3% | 443s
+Episode   1850/2000 | return -2.5819 (avg50 -2.4588) | loss 0.00066 | epsilon 0.050 | action 183.3±59.1W | OOD-action  66.7% | 456s
+Episode   1900/2000 | return -2.5150 (avg50 -2.4214) | loss 0.00103 | epsilon 0.050 | action 190.8±57.5W | OOD-action  66.7% | 468s
+Episode   1950/2000 | return -2.8624 (avg50 -2.5025) | loss 0.00095 | epsilon 0.050 | action 177.5±90.1W | OOD-action  83.3% | 481s
+Episode   2000/2000 | return -2.4676 (avg50 -2.4990) | loss 0.00073 | epsilon 0.050 | action 191.7±52.4W | OOD-action  66.7% | 493s
+[train] Plot saved → baselines/online_q/runs/narrow_200_300W/return.png
+[train] Plot saved → baselines/online_q/runs/narrow_200_300W/loss.png
+[train] Plot saved → baselines/online_q/runs/narrow_200_300W/epsilon.png
+[train] Plot saved → baselines/online_q/runs/narrow_200_300W/ood_action_fraction.png
+[train] Plot saved → baselines/online_q/runs/narrow_200_300W/return.png
+[train] Plot saved → baselines/online_q/runs/narrow_200_300W/ood_action_fraction.png
+
+[online_q] Done. Best return: -1.7184
+[online_q] Best checkpoint: baselines/online_q/runs/narrow_200_300W/online_q_best.pt
+=== [2/3] Aggregate — SURROGATE-driven leaderboard (all 6 methods) ===
+======================================================================
+  Baselines — Aggregated Evaluation
+======================================================================
+  Surrogate (shared environment) : surrogate_model_v3/runs/narrow_200_300W/surrogate_best.pt
+  Episodes/method                : 50
+======================================================================
+[TwoStageLatentLPBFEnv] Mesh loaded: 1053 nodes  X∈[0.00, 12.00]  Y∈[0.00, 3.00]
+[agent] Loaded checkpoint from baselines/naive_pg/runs/narrow_200_300W/naive_pg_best.pt  (lambda=0.00000)
+[eval_harness] Saved → baselines/results_narrow_200_300W_with_online_q/per_layer_0_naive_pg.png
+[eval_harness] Saved → baselines/results_narrow_200_300W_with_online_q/per_layer_1_offline_q_learning.png
+[eval_harness] Saved → baselines/results_narrow_200_300W_with_online_q/per_layer_5_online_q_learning.png
+[eval_harness] Saved → baselines/results_narrow_200_300W_with_online_q/per_layer_2_proportional.png
+[eval_harness] Saved → baselines/results_narrow_200_300W_with_online_q/per_layer_3_constant_best_160w_reference_only.png
+[evaluate_baselines] Saved → baselines/results_narrow_200_300W_with_online_q/constant_sweep.png
+[eval_harness] Saved → baselines/results_narrow_200_300W_with_online_q/per_layer_4_kalman_filter.png
+[eval_harness] Saved → baselines/results_narrow_200_300W_with_online_q/per_layer_4_particle_filter.png
+[agent] Loaded checkpoint from online_RL_ucpg_v2/runs/narrow_200_300W/ucpg_best.pt  (lambda=0.73808)
+[eval_harness] Saved → baselines/results_narrow_200_300W_with_online_q/per_layer_ucpg_v2_ours.png
+
+Method                     Return (mean±std)   Uncertainty     Action (mean±std)
+--------------------------------------------------------------------------------
+5. Online Q-learning    -2.2091 ± 0.2776        0.00657     176.4 ± 55.4   
+0. Naive PG             -2.2554 ± 0.2785        0.00642     168.9 ± 45.5   
+UCPG v2 (ours)          -2.3042 ± 0.3772        0.00658     169.2 ± 46.4   
+4. Kalman filter        -2.4421 ± 0.3357        0.00558     190.4 ± 53.2   
+4. Particle filter      -2.5162 ± 0.2942        0.00558     193.6 ± 54.6   
+3. Constant (best=160W, reference only)  -3.8486 ± 0.4037        0.00603     160.0 ± 0.0    
+1. Offline Q-learning   -4.7613 ± 0.8412        0.00738     140.0 ± 0.0    
+2. Proportional         -9.8106 ± 3.4379        0.00384     249.9 ± 0.3    
+3. Constant (mean of sweep) -14.2372 ± 10.4654       0.00964     250.0 ± 89.4   
+[eval_harness] Saved → baselines/results_narrow_200_300W_with_online_q/leaderboard.csv
+[eval_harness] Saved → baselines/results_narrow_200_300W_with_online_q/leaderboard.png
+=== [3/3] Aggregate — REAL PHYSICS leaderboard (all 6 methods) ===
+======================================================================
+  All-Methods REAL PHYSICS Evaluation (simulateHeatingCooling_v2.m)
+======================================================================
+  Surrogate (norm stats only) : surrogate_model_v3/runs/narrow_200_300W/surrogate_best.pt
+  Episodes/method              : 1
+======================================================================
+  Scratch dir : /tmp/real_eval_all_0oqfe0r1
+
+=== Naive PG ===
+[agent] Loaded checkpoint from baselines/naive_pg/runs/narrow_200_300W/naive_pg_best.pt  (lambda=0.00000)
+    [0. Naive PG] episode 1/1  (cool_time=0.100s)
+[evaluate_real] Mesh consistency check passed (matches surrogate_model/mesh.mat).
+      layer  1/12  LP= 283.41W  reward=-0.9387  (23s)
+      layer  2/12  LP= 151.26W  reward=-0.3025  (17s)
+      layer  3/12  LP= 127.93W  reward=-0.1878  (17s)
+      layer  4/12  LP= 147.15W  reward=-0.3160  (17s)
+      layer  5/12  LP= 131.14W  reward=-0.2473  (18s)
+      layer  6/12  LP= 104.54W  reward=-0.1082  (17s)
+      layer  7/12  LP= 101.47W  reward=-0.0925  (17s)
+      layer  8/12  LP= 102.19W  reward=-0.1000  (18s)
+      layer  9/12  LP= 102.83W  reward=-0.1200  (17s)
+      layer 10/12  LP= 103.15W  reward=-0.1731  (17s)
+      layer 11/12  LP= 103.78W  reward=-0.2131  (17s)
+      layer 12/12  LP= 104.43W  reward=-0.2426  (17s)
+      → episode return: -3.0418
+[eval_harness] Saved → baselines/results_narrow_200_300W_with_online_q_real/per_layer_real_0_naive_pg.png
+  [0. Naive PG] done in 3.6 min
+
+=== Offline Q ===
+    [1. Offline Q-learning] episode 1/1  (cool_time=0.100s)
+[evaluate_real] Mesh consistency check passed (matches surrogate_model/mesh.mat).
+      layer  1/12  LP= 140.00W  reward=-0.4844  (17s)
+      layer  2/12  LP= 140.00W  reward=-0.2592  (17s)
+      layer  3/12  LP= 140.00W  reward=-0.2102  (17s)
+[2026-09-28T20:22:33.444] error: *** JOB 62273234 ON gl1004 CANCELLED AT 2026-09-28T20:22:33 DUE to SIGNAL Terminated ***

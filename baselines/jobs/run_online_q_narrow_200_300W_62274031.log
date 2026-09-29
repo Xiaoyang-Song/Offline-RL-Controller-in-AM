@@ -1,0 +1,199 @@
+============================================================
+Job ID   : 62274031
+Node     : gl1010
+Started  : Mon Sep 28 20:23:43 EDT 2026
+============================================================
+Python : /home/xysong/.conda/envs/RL/bin/python
+Torch  : 2.5.1+cu121
+CUDA   : True
+MATLAB : /sw/pkgs/arc/matlab/R2024b/bin/matlab
+============================================================
+=== [1/3] Train online Q-learning on the narrow [200, 300]W surrogate ===
+=================================================================
+[online_q] Baseline 5 — online (interactive) Q-learning, discrete actions
+[online_q] Output dir : baselines/online_q/runs/narrow_200_300W
+[online_q] Device     : cuda
+=================================================================
+[TwoStageLatentLPBFEnv] Mesh loaded: 1053 nodes  X∈[0.00, 12.00]  Y∈[0.00, 3.00]
+[online_q] LatentQNet(obs_dim=1055, latent_dim=1053, n_actions=31, n_layers=12, params=241,023)
+Episode      1/1000 | return -12.0107 (avg1 -12.0107) | loss nan | epsilon 1.000 | action 245.8±96.5W | OOD-action  50.0% | 0s
+Episode     50/1000 | return -9.7585 (avg50 -11.9395) | loss nan | epsilon 1.000 | action 279.2±74.0W | OOD-action  50.0% | 6s
+Episode    100/1000 | return -6.9282 (avg50 -10.0082) | loss 0.01002 | epsilon 0.905 | action 255.8±94.7W | OOD-action  66.7% | 15s
+Episode    150/1000 | return -8.9988 (avg50 -9.1429) | loss 0.00743 | epsilon 0.810 | action 240.8±90.8W | OOD-action  66.7% | 25s
+Episode    200/1000 | return -5.6643 (avg50 -7.3896) | loss 0.00301 | epsilon 0.715 | action 210.8±104.7W | OOD-action  75.0% | 34s
+Episode    250/1000 | return -5.1976 (avg50 -7.1083) | loss 0.00266 | epsilon 0.620 | action 203.3±78.6W | OOD-action  66.7% | 43s
+Episode    300/1000 | return -6.3091 (avg50 -6.0805) | loss 0.00334 | epsilon 0.525 | action 236.7±97.2W | OOD-action  75.0% | 53s
+Episode    350/1000 | return -7.9580 (avg50 -6.7179) | loss 0.00538 | epsilon 0.430 | action 204.2±95.9W | OOD-action  83.3% | 62s
+Episode    400/1000 | return -4.5945 (avg50 -5.4030) | loss 0.00273 | epsilon 0.335 | action 212.5±95.0W | OOD-action  75.0% | 72s
+Episode    450/1000 | return -2.1867 (avg50 -3.8180) | loss 0.00339 | epsilon 0.240 | action 175.0±45.0W | OOD-action  83.3% | 82s
+Episode    500/1000 | return -2.6558 (avg50 -3.1924) | loss 0.00116 | epsilon 0.145 | action 190.8±45.5W | OOD-action  50.0% | 91s
+[train] Plot saved → baselines/online_q/runs/narrow_200_300W/return.png
+[train] Plot saved → baselines/online_q/runs/narrow_200_300W/loss.png
+[train] Plot saved → baselines/online_q/runs/narrow_200_300W/epsilon.png
+[train] Plot saved → baselines/online_q/runs/narrow_200_300W/ood_action_fraction.png
+Episode    550/1000 | return -2.6802 (avg50 -2.6590) | loss 0.00146 | epsilon 0.050 | action 200.0±48.1W | OOD-action  75.0% | 102s
+Episode    600/1000 | return -2.9140 (avg50 -2.5668) | loss 0.00143 | epsilon 0.050 | action 204.2±69.9W | OOD-action  91.7% | 112s
+Episode    650/1000 | return -1.9208 (avg50 -2.3915) | loss 0.00058 | epsilon 0.050 | action 155.0±53.6W | OOD-action  83.3% | 122s
+Episode    700/1000 | return -2.5064 (avg50 -2.4029) | loss 0.00131 | epsilon 0.050 | action 190.8±41.1W | OOD-action  58.3% | 132s
+Episode    750/1000 | return -2.2448 (avg50 -2.3663) | loss 0.00194 | epsilon 0.050 | action 182.5±46.2W | OOD-action  75.0% | 141s
+Episode    800/1000 | return -2.5471 (avg50 -2.4805) | loss 0.00093 | epsilon 0.050 | action 187.5±35.4W | OOD-action  66.7% | 151s
+Episode    850/1000 | return -3.2106 (avg50 -2.5176) | loss 0.00096 | epsilon 0.050 | action 205.0±58.2W | OOD-action  58.3% | 161s
+Episode    900/1000 | return -3.1231 (avg50 -2.4625) | loss 0.00129 | epsilon 0.050 | action 189.2±48.7W | OOD-action  66.7% | 171s
+Episode    950/1000 | return -2.4083 (avg50 -2.5536) | loss 0.00136 | epsilon 0.050 | action 190.0±44.7W | OOD-action  66.7% | 181s
+Episode   1000/1000 | return -1.8047 (avg50 -2.4957) | loss 0.00041 | epsilon 0.050 | action 144.2±63.2W | OOD-action 100.0% | 190s
+[train] Plot saved → baselines/online_q/runs/narrow_200_300W/return.png
+[train] Plot saved → baselines/online_q/runs/narrow_200_300W/loss.png
+[train] Plot saved → baselines/online_q/runs/narrow_200_300W/epsilon.png
+[train] Plot saved → baselines/online_q/runs/narrow_200_300W/ood_action_fraction.png
+[train] Plot saved → baselines/online_q/runs/narrow_200_300W/return.png
+[train] Plot saved → baselines/online_q/runs/narrow_200_300W/ood_action_fraction.png
+
+[online_q] Done. Best return: -1.7304
+[online_q] Best checkpoint: baselines/online_q/runs/narrow_200_300W/online_q_best.pt
+=== [2/3] Aggregate — SURROGATE-driven leaderboard (all 6 methods) ===
+======================================================================
+  Baselines — Aggregated Evaluation
+======================================================================
+  Surrogate (shared environment) : surrogate_model_v3/runs/narrow_200_300W/surrogate_best.pt
+  Episodes/method                : 50
+======================================================================
+[TwoStageLatentLPBFEnv] Mesh loaded: 1053 nodes  X∈[0.00, 12.00]  Y∈[0.00, 3.00]
+[agent] Loaded checkpoint from baselines/naive_pg/runs/narrow_200_300W/naive_pg_best.pt  (lambda=0.00000)
+[eval_harness] Saved → baselines/results_narrow_200_300W_with_online_q/per_layer_0_naive_pg.png
+[eval_harness] Saved → baselines/results_narrow_200_300W_with_online_q/per_layer_1_offline_q_learning.png
+[eval_harness] Saved → baselines/results_narrow_200_300W_with_online_q/per_layer_5_online_q_learning.png
+[eval_harness] Saved → baselines/results_narrow_200_300W_with_online_q/per_layer_2_proportional.png
+[eval_harness] Saved → baselines/results_narrow_200_300W_with_online_q/per_layer_3_constant_best_160w_reference_only.png
+[evaluate_baselines] Saved → baselines/results_narrow_200_300W_with_online_q/constant_sweep.png
+[eval_harness] Saved → baselines/results_narrow_200_300W_with_online_q/per_layer_4_kalman_filter.png
+[eval_harness] Saved → baselines/results_narrow_200_300W_with_online_q/per_layer_4_particle_filter.png
+[agent] Loaded checkpoint from online_RL_ucpg_v2/runs/narrow_200_300W/ucpg_best.pt  (lambda=0.73808)
+[eval_harness] Saved → baselines/results_narrow_200_300W_with_online_q/per_layer_ucpg_v2_ours.png
+
+Method                     Return (mean±std)   Uncertainty     Action (mean±std)
+--------------------------------------------------------------------------------
+5. Online Q-learning    -2.2163 ± 0.2608        0.00653     176.8 ± 54.1   
+0. Naive PG             -2.2554 ± 0.2785        0.00642     168.9 ± 45.5   
+UCPG v2 (ours)          -2.3042 ± 0.3772        0.00658     169.2 ± 46.4   
+4. Kalman filter        -2.4421 ± 0.3357        0.00558     190.4 ± 53.2   
+4. Particle filter      -2.5162 ± 0.2942        0.00558     193.6 ± 54.6   
+3. Constant (best=160W, reference only)  -3.8486 ± 0.4037        0.00603     160.0 ± 0.0    
+1. Offline Q-learning   -4.7613 ± 0.8412        0.00738     140.0 ± 0.0    
+2. Proportional         -9.8106 ± 3.4379        0.00384     249.9 ± 0.3    
+3. Constant (mean of sweep) -14.2372 ± 10.4654       0.00964     250.0 ± 89.4   
+[eval_harness] Saved → baselines/results_narrow_200_300W_with_online_q/leaderboard.csv
+[eval_harness] Saved → baselines/results_narrow_200_300W_with_online_q/leaderboard.png
+=== [3/3] Aggregate — REAL PHYSICS leaderboard (all 6 methods) ===
+======================================================================
+  All-Methods REAL PHYSICS Evaluation (simulateHeatingCooling_v2.m)
+======================================================================
+  Surrogate (norm stats only) : surrogate_model_v3/runs/narrow_200_300W/surrogate_best.pt
+  Episodes/method              : 1
+======================================================================
+  Scratch dir : /tmp/real_eval_all_w7j5kdre
+
+=== Naive PG ===
+[agent] Loaded checkpoint from baselines/naive_pg/runs/narrow_200_300W/naive_pg_best.pt  (lambda=0.00000)
+    [0. Naive PG] episode 1/1  (cool_time=0.100s)
+[evaluate_real] Mesh consistency check passed (matches surrogate_model/mesh.mat).
+      layer  1/12  LP= 283.41W  reward=-0.9387  (20s)
+      layer  2/12  LP= 151.26W  reward=-0.3025  (17s)
+      layer  3/12  LP= 127.93W  reward=-0.1878  (17s)
+      layer  4/12  LP= 147.15W  reward=-0.3160  (17s)
+      layer  5/12  LP= 131.14W  reward=-0.2473  (17s)
+      layer  6/12  LP= 104.54W  reward=-0.1082  (17s)
+      layer  7/12  LP= 101.47W  reward=-0.0925  (18s)
+      layer  8/12  LP= 102.19W  reward=-0.1000  (17s)
+      layer  9/12  LP= 102.83W  reward=-0.1200  (17s)
+      layer 10/12  LP= 103.15W  reward=-0.1731  (17s)
+      layer 11/12  LP= 103.78W  reward=-0.2131  (17s)
+      layer 12/12  LP= 104.43W  reward=-0.2426  (17s)
+      → episode return: -3.0418
+[eval_harness] Saved → baselines/results_narrow_200_300W_with_online_q_real/per_layer_real_0_naive_pg.png
+  [0. Naive PG] done in 3.4 min
+
+=== Offline Q ===
+    [1. Offline Q-learning] episode 1/1  (cool_time=0.100s)
+[evaluate_real] Mesh consistency check passed (matches surrogate_model/mesh.mat).
+      layer  1/12  LP= 140.00W  reward=-0.4844  (17s)
+      layer  2/12  LP= 140.00W  reward=-0.2592  (17s)
+      layer  3/12  LP= 140.00W  reward=-0.2102  (17s)
+      layer  4/12  LP= 140.00W  reward=-0.2258  (17s)
+      layer  5/12  LP= 140.00W  reward=-0.2495  (17s)
+      layer  6/12  LP= 140.00W  reward=-0.3637  (18s)
+      layer  7/12  LP= 140.00W  reward=-0.4980  (17s)
+      layer  8/12  LP= 140.00W  reward=-0.6088  (17s)
+      layer  9/12  LP= 140.00W  reward=-0.6132  (17s)
+      layer 10/12  LP= 140.00W  reward=-0.8520  (17s)
+      layer 11/12  LP= 140.00W  reward=-0.9943  (18s)
+      layer 12/12  LP= 140.00W  reward=-1.0983  (17s)
+      → episode return: -6.4573
+[eval_harness] Saved → baselines/results_narrow_200_300W_with_online_q_real/per_layer_real_1_offline_q_learning.png
+  [1. Offline Q-learning] done in 3.4 min
+
+=== Online Q ===
+    [5. Online Q-learning] episode 1/1  (cool_time=0.100s)
+[evaluate_real] Mesh consistency check passed (matches surrogate_model/mesh.mat).
+      layer  1/12  LP= 310.00W  reward=-1.1892  (17s)
+      layer  2/12  LP= 140.00W  reward=-0.2579  (18s)
+      layer  3/12  LP= 160.00W  reward=-0.4075  (17s)
+      layer  4/12  LP= 130.00W  reward=-0.2447  (17s)
+      layer  5/12  LP= 130.00W  reward=-0.2439  (17s)
+      layer  6/12  LP= 130.00W  reward=-0.3252  (17s)
+      layer  7/12  LP= 110.00W  reward=-0.2164  (17s)
+      layer  8/12  LP= 110.00W  reward=-0.2142  (17s)
+      layer  9/12  LP= 120.00W  reward=-0.2766  (17s)
+      layer 10/12  LP= 110.00W  reward=-0.3112  (17s)
+      layer 11/12  LP= 110.00W  reward=-0.3607  (17s)
+      layer 12/12  LP= 110.00W  reward=-0.3967  (17s)
+      → episode return: -4.4444
+[eval_harness] Saved → baselines/results_narrow_200_300W_with_online_q_real/per_layer_real_5_online_q_learning.png
+  [5. Online Q-learning] done in 3.4 min
+
+=== Proportional ===
+    [2. Proportional] episode 1/1  (cool_time=0.100s)
+[evaluate_real] Mesh consistency check passed (matches surrogate_model/mesh.mat).
+      layer  1/12  LP= 250.32W  reward=-0.6910  (17s)
+      layer  2/12  LP= 249.99W  reward=-1.1670  (17s)
+      layer  3/12  LP= 249.80W  reward=-1.6245  (17s)
+      layer  4/12  LP= 249.68W  reward=-1.9866  (17s)
+      layer  5/12  LP= 249.59W  reward=-2.2651  (17s)
+      layer  6/12  LP= 249.52W  reward=-2.9924  (17s)
+      layer  7/12  LP= 249.39W  reward=-3.3724  (18s)
+      layer  8/12  LP= 249.30W  reward=-3.6384  (17s)
+      layer  9/12  LP= 249.26W  reward=-3.5745  (17s)
+      layer 10/12  LP= 249.20W  reward=-4.0835  (18s)
+      layer 11/12  LP= 249.10W  reward=-4.3844  (18s)
+      layer 12/12  LP= 249.03W  reward=-4.5978  (17s)
+      → episode return: -34.3775
+[eval_harness] Saved → baselines/results_narrow_200_300W_with_online_q_real/per_layer_real_2_proportional.png
+  [2. Proportional] done in 3.4 min
+
+=== Kalman / Particle filter ===
+    [4. Kalman filter] episode 1/1  (cool_time=0.100s)
+[evaluate_real] Mesh consistency check passed (matches surrogate_model/mesh.mat).
+      layer  1/12  LP= 334.93W  reward=-1.4514  (17s)
+      layer  2/12  LP= 164.48W  reward=-0.4775  (17s)
+      layer  3/12  LP= 139.48W  reward=-0.3066  (17s)
+      layer  4/12  LP= 144.52W  reward=-0.3566  (17s)
+      layer  5/12  LP= 131.46W  reward=-0.2817  (17s)
+      layer  6/12  LP= 133.66W  reward=-0.3962  (17s)
+      layer  7/12  LP= 123.55W  reward=-0.3739  (18s)
+      layer  8/12  LP= 110.02W  reward=-0.2615  (17s)
+      layer  9/12  LP= 123.22W  reward=-0.3444  (17s)
+      layer 10/12  LP= 113.95W  reward=-0.4060  (17s)
+      layer 11/12  LP= 101.23W  reward=-0.3002  (18s)
+      layer 12/12  LP= 114.56W  reward=-0.4546  (17s)
+      → episode return: -5.4105
+[eval_harness] Saved → baselines/results_narrow_200_300W_with_online_q_real/per_layer_real_4_kalman_filter.png
+  [4. Kalman filter] done in 3.4 min
+
+    [4. Particle filter] episode 1/1  (cool_time=0.100s)
+[evaluate_real] Mesh consistency check passed (matches surrogate_model/mesh.mat).
+      layer  1/12  LP= 335.25W  reward=-1.4547  (17s)
+      layer  2/12  LP= 250.07W  reward=-1.3974  (17s)
+      layer  3/12  LP= 190.82W  reward=-1.0465  (17s)
+      layer  4/12  LP= 105.66W  reward=-0.2272  (17s)
+      layer  5/12  LP= 114.62W  reward=-0.1944  (17s)
+      layer  6/12  LP= 133.08W  reward=-0.4102  (18s)
+      layer  7/12  LP= 123.66W  reward=-0.4006  (18s)
