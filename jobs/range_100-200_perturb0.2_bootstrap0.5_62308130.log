@@ -528,3 +528,15 @@ Iter   540/2000 | return -3.1772 (avg20 -3.0098) | loss -80.2704 | entropy 5.238
 [agent] Checkpoint saved → baselines/naive_pg/runs/range_100-200_perturb0.2_bootstrap0.5/naive_pg_best.pt
 Iter   560/2000 | return -2.8185 (avg20 -2.9028) | loss -73.7084 | entropy 5.236 | OOD-action  46.1% | 2361s
 Iter   580/2000 | return -3.0363 (avg20 -3.1440) | loss -79.1573 | entropy 5.234 | OOD-action  52.6% | 2445s
+Iter   600/2000 | return -3.2490 (avg20 -3.0558) | loss -88.2332 | entropy 5.232 | OOD-action  67.2% | 2530s
+[agent] Checkpoint saved → baselines/naive_pg/runs/range_100-200_perturb0.2_bootstrap0.5/naive_pg_iter00600.pt
+[train] Plot saved → baselines/naive_pg/runs/range_100-200_perturb0.2_bootstrap0.5/return.png
+[train] Plot saved → baselines/naive_pg/runs/range_100-200_perturb0.2_bootstrap0.5/loss.png
+[train] Plot saved → baselines/naive_pg/runs/range_100-200_perturb0.2_bootstrap0.5/entropy.png
+[train] Plot saved → baselines/naive_pg/runs/range_100-200_perturb0.2_bootstrap0.5/ood_action_fraction.png
+Iter   620/2000 | return -3.0893 (avg20 -3.0054) | loss -86.5911 | entropy 5.230 | OOD-action  51.0% | 2615s
+[agent] Checkpoint saved → baselines/naive_pg/runs/range_100-200_perturb0.2_bootstrap0.5/naive_pg_best.pt
+Iter   640/2000 | return -2.9189 (avg20 -2.9000) | loss -74.1269 | entropy 5.229 | OOD-action  58.6% | 2700s
+Iter   660/2000 | return -3.0177 (avg20 -3.0591) | loss -81.9134 | entropy 5.228 | OOD-action  50.8% | 2784s
+Iter   680/2000 | return -3.0333 (avg20 -2.9917) | loss -79.4289 | entropy 5.226 | OOD-action  58.1% | 2868s
+Iter   700/2000 | return -2.9042 (avg20 -2.9581) | loss -75.4529 | entropy 5.224 | OOD-action  54.9% | 2952s

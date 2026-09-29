@@ -522,3 +522,14 @@ Iter   440/2000 | return -12.4377 (avg20 -13.7352) | loss -504.9182 | entropy 5.
 Iter   460/2000 | return -14.0861 (avg20 -13.5065) | loss -580.4031 | entropy 5.285 | OOD-action  99.7% | 1943s
 Iter   480/2000 | return -13.3142 (avg20 -13.5264) | loss -543.0825 | entropy 5.285 | OOD-action  99.7% | 2028s
 Iter   500/2000 | return -11.6188 (avg20 -13.5652) | loss -466.8193 | entropy 5.286 | OOD-action  99.7% | 2112s
+Iter   520/2000 | return -13.9732 (avg20 -13.3058) | loss -561.8272 | entropy 5.286 | OOD-action  97.7% | 2197s
+Iter   540/2000 | return -12.7283 (avg20 -13.0443) | loss -511.4656 | entropy 5.285 | OOD-action  99.5% | 2282s
+Iter   560/2000 | return -13.5353 (avg20 -13.3679) | loss -552.9373 | entropy 5.285 | OOD-action 100.0% | 2366s
+Iter   580/2000 | return -12.4205 (avg20 -13.1373) | loss -500.1250 | entropy 5.285 | OOD-action 100.0% | 2451s
+Iter   600/2000 | return -12.5117 (avg20 -13.2321) | loss -512.3368 | entropy 5.286 | OOD-action 100.0% | 2536s
+[agent] Checkpoint saved → baselines/naive_pg/runs/range_300-400_perturb0.2_bootstrap0.5/naive_pg_iter00600.pt
+[train] Plot saved → baselines/naive_pg/runs/range_300-400_perturb0.2_bootstrap0.5/return.png
+[train] Plot saved → baselines/naive_pg/runs/range_300-400_perturb0.2_bootstrap0.5/loss.png
+[train] Plot saved → baselines/naive_pg/runs/range_300-400_perturb0.2_bootstrap0.5/entropy.png
+[train] Plot saved → baselines/naive_pg/runs/range_300-400_perturb0.2_bootstrap0.5/ood_action_fraction.png
+Iter   620/2000 | return -12.0811 (avg20 -13.1539) | loss -489.4240 | entropy 5.285 | OOD-action  99.7% | 2621s
