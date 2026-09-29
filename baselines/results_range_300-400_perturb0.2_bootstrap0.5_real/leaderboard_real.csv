@@ -1,0 +1,3 @@
+name,return_mean,return_std,deviation_K_mean,deviation_K_std,uncertainty_mean,action_mean,action_std
+0. Naive PG,-5.451045,0.000000,363.4030,0.0000,0.000000,142.6907,49.4779
+UCPG v2 (ours),-7.263034,0.000000,484.2023,0.0000,0.000000,150.7369,42.0847
