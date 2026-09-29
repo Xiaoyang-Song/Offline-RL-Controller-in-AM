@@ -1,0 +1,27 @@
+============================================================
+Job ID   : 62271037
+Node     : gl3194
+Started  : Mon Sep 28 19:52:22 EDT 2026
+============================================================
+Python : /home/xysong/.conda/envs/RL/bin/python
+MATLAB : /sw/pkgs/arc/matlab/R2024b/bin/matlab
+============================================================
+[sweep_diagnostic] Surrogate : surrogate_model_v3/runs/narrow_200_300W/surrogate_best.pt
+[sweep_diagnostic] Powers    : [100.0, 130.0, 160.0, 190.0, 220.0, 250.0, 280.0, 310.0, 340.0, 370.0, 400.0]
+[sweep_diagnostic] Episodes  : surrogate=20  real=1
+[sweep_diagnostic] Cool time : 0.1s (fixed for both)
+[TwoStageLatentLPBFEnv] Mesh loaded: 1053 nodes  X∈[0.00, 12.00]  Y∈[0.00, 3.00]
+[sweep_diagnostic] Scratch dir: /tmp/sweep_diag_2_gnimde
+
+Traceback (most recent call last):
+  File "/home/xysong/.conda/envs/RL/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/home/xysong/.conda/envs/RL/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/baselines/sweep_diagnostic.py", line 207, in <module>
+    main()
+  File "/nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/baselines/sweep_diagnostic.py", line 137, in main
+    _actions, r = run_episode_real(
+  File "/nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/baselines/evaluate_real_all_methods.py", line 129, in run_episode_real
+    cool_token = (cool_time_s - args.cool_time_min) / max(args.cool_time_max - args.cool_time_min, 1e-8)
+AttributeError: 'Namespace' object has no attribute 'cool_time_min'. Did you mean: 'cool_time'?

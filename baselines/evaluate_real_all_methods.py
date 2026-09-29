@@ -36,6 +36,7 @@ Usage
         --surrogate surrogate_model_v3/runs/narrow_200_300W/surrogate_best.pt \\
         --naive_pg_checkpoint    baselines/naive_pg/runs/narrow_200_300W/naive_pg_best.pt \\
         --offline_q_checkpoint   baselines/offline_q/runs/narrow_200_300W/offline_q_best.pt \\
+        --online_q_checkpoint    baselines/online_q/runs/narrow_200_300W/online_q_best.pt \\
         --ucpg_v2_checkpoint     online_RL_ucpg_v2/runs/narrow_200_300W/ucpg_best.pt \\
         --proportional_fitted    baselines/proportional/fitted_narrow_200_300W.pt \\
         --kalman_particle_fitted baselines/kalman_particle/fitted_narrow_200_300W.pt \\
@@ -97,6 +98,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--naive_pg_checkpoint",    type=str, default=None)
     p.add_argument("--ucpg_v2_checkpoint",     type=str, default=None)
     p.add_argument("--offline_q_checkpoint",   type=str, default=None)
+    p.add_argument("--online_q_checkpoint",    type=str, default=None)
     p.add_argument("--proportional_fitted",    type=str, default=None)
     p.add_argument("--kalman_particle_fitted", type=str, default=None)
     p.add_argument("--kalman_R",   type=float, default=2500.0)
@@ -233,6 +235,11 @@ def main() -> None:
         print("=== Offline Q ===")
         from baselines.offline_q.model import load_offline_q_controller
         _evaluate("1. Offline Q-learning", load_offline_q_controller(args.offline_q_checkpoint, device=device))
+
+    if args.online_q_checkpoint:
+        print("=== Online Q ===")
+        from baselines.online_q.model import load_online_q_controller
+        _evaluate("5. Online Q-learning", load_online_q_controller(args.online_q_checkpoint, device=device))
 
     if args.proportional_fitted:
         print("=== Proportional ===")

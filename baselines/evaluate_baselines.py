@@ -16,6 +16,7 @@ Usage
         --surrogate surrogate_model_v3/runs/<ts>/surrogate_best.pt \\
         --naive_pg_checkpoint     baselines/naive_pg/runs/<ts>/naive_pg_best.pt \\
         --offline_q_checkpoint    baselines/offline_q/runs/<ts>/offline_q_best.pt \\
+        --online_q_checkpoint     baselines/online_q/runs/<ts>/online_q_best.pt \\
         --proportional_fitted     baselines/proportional/fitted.pt \\
         --kalman_particle_fitted  baselines/kalman_particle/fitted.pt \\
         --ucpg_v2_checkpoint      online_RL_ucpg_v2/runs/<ts>/ucpg_best.pt \\
@@ -65,6 +66,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--ucpg_v2_checkpoint",     type=str, default=None,
                    help="Optional: also include the real online_RL_ucpg_v2 policy for a full leaderboard.")
     p.add_argument("--offline_q_checkpoint",   type=str, default=None)
+    p.add_argument("--online_q_checkpoint",    type=str, default=None)
     p.add_argument("--proportional_fitted",    type=str, default=None)
     p.add_argument("--kalman_particle_fitted", type=str, default=None)
     p.add_argument("--kalman_R",    type=float, default=2500.0, help="Synthetic sensor-noise variance [K^2] for the Kalman controller.")
@@ -130,6 +132,12 @@ def main() -> None:
         from baselines.offline_q.model import load_offline_q_controller
         ctrl = load_offline_q_controller(args.offline_q_checkpoint, device=device)
         _evaluate("1. Offline Q-learning", ctrl, args.n_episodes)
+
+    # ── 5. Online Q-learning ─────────────────────────────────────────────────
+    if args.online_q_checkpoint:
+        from baselines.online_q.model import load_online_q_controller
+        ctrl = load_online_q_controller(args.online_q_checkpoint, device=device)
+        _evaluate("5. Online Q-learning", ctrl, args.n_episodes)
 
     # ── 2. Proportional controller ──────────────────────────────────────────
     if args.proportional_fitted:

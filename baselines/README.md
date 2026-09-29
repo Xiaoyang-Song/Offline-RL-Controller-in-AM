@@ -1,6 +1,6 @@
 # Baselines for `online_RL_ucpg_v2`
 
-Five comparison points for the Uncertainty-Constrained Policy Gradient (UCPG)
+Six comparison points for the Uncertainty-Constrained Policy Gradient (UCPG)
 controller in [`online_RL_ucpg_v2/`](../online_RL_ucpg_v2/), ranging from "RL
 minus the uncertainty constraint" down to classical, non-learning process
 control. **None of these are expected to beat UCPG v2** — several (constant
@@ -17,6 +17,7 @@ ever **imports** from `surrogate_model_latent_uncertainty_v2` and
 | 2 | [Proportional controller](#2-proportional-controller) | ❌ (raw dataset only, for fitting) | ✅ | Fit via least squares, not RL |
 | 3 | [Constant policy](#3-constant-policy) | — | — | No |
 | 4 | [Kalman / particle filter](#4-kalman--particle-filter) | ❌ (raw dataset only, for fitting) | ✅ | Fit via least squares, not RL |
+| 5 | [Online Q-learning](#5-online-q-learning-discrete) | ✅ (as the training env) | — | ✅ (online RL) |
 
 **Fair-comparison design.** Methods 1/2/4 are trained/fit purely from the
 static pickled dataset and never touch the neural surrogate while learning —
@@ -79,6 +80,35 @@ python -m baselines.offline_q.train \
     --data_path Data/DatasetV2_layer_12_samples_5000.pkl \
     --epochs 50
 ```
+
+## 5. Online Q-learning (discrete)
+
+The interactive counterpart to baseline 1: standard epsilon-greedy DQN
+(replay buffer + target network) over the **same discrete laser-power grid**
+(`baselines.offline_q.model.ACTION_GRID`, reused directly), but trained by
+**stepping through the surrogate environment** — the exact same
+`online_RL_ucpg_v2.env.TwoStageLatentLPBFEnv` naive PG and UCPG v2 train
+against — rather than a fixed offline buffer. No `--data_path`, no pickled
+dataset anywhere in this baseline's training. This isolates one further
+variable against offline Q-learning: does letting a value-based method
+interact with the (surrogate) environment change anything, independent of
+the reward-vs-uncertainty question naive PG / UCPG v2 already isolate.
+
+Every environment/surrogate flag (`--T_l/--T_h/--action_min/--ood_min/...`)
+is identical to `baselines.naive_pg.train`'s, so the three on-policy
+baselines (naive PG, UCPG v2, online Q-learning) share one CLI for anything
+they have in common — only the algorithm and its own hyperparameters differ.
+
+```bash
+python -m baselines.online_q.train \
+    --surrogate surrogate_model_v3/runs/<ts>/surrogate_best.pt \
+    --action_min 100 --action_max 400 \
+    --n_episodes 5000
+```
+
+Saves `online_q_best.pt` / `online_q_final.pt`, loadable via
+`baselines.online_q.model.load_online_q_controller` — pass either straight
+to `--online_q_checkpoint` below.
 
 ## 2. Proportional controller
 
@@ -172,6 +202,7 @@ python -m baselines.evaluate_baselines \
     --surrogate                surrogate_model_latent_uncertainty_v2/runs/<ts>/two_stage_best.pt \
     --naive_pg_checkpoint      baselines/naive_pg/runs/<ts>/naive_pg_best.pt \
     --offline_q_checkpoint     baselines/offline_q/runs/<ts>/offline_q_best.pt \
+    --online_q_checkpoint      baselines/online_q/runs/<ts>/online_q_best.pt \
     --proportional_fitted      baselines/proportional/fitted.pt \
     --kalman_particle_fitted   baselines/kalman_particle/fitted.pt \
     --ucpg_v2_checkpoint       online_RL_ucpg_v2/runs/<ts>/ucpg_best.pt \
@@ -206,6 +237,7 @@ baselines/
   proportional/controller.py   ← baseline 2
   constant/controller.py       ← baseline 3
   kalman_particle/filters.py   ← baseline 4 (both filters)
+  online_q/{model,train}.py    ← baseline 5
   evaluate_baselines.py        ← aggregation CLI
   results/                     ← leaderboard.csv / .png, constant_sweep.png
   README.md                    ← this file

@@ -1,0 +1,30 @@
+============================================================
+Job ID   : 62273084
+Node     : gl3053
+Started  : Mon Sep 28 20:05:22 EDT 2026
+============================================================
+Python : /home/xysong/.conda/envs/RL/bin/python
+MATLAB : /sw/pkgs/arc/matlab/R2024b/bin/matlab
+============================================================
+[sweep_diagnostic] Surrogate : surrogate_model_v3/runs/narrow_200_300W/surrogate_best.pt
+[sweep_diagnostic] Powers    : [100.0, 130.0, 160.0, 190.0, 220.0, 250.0, 280.0, 310.0, 340.0, 370.0, 400.0]
+[sweep_diagnostic] Episodes  : surrogate=20  real=1
+[sweep_diagnostic] Cool time : 0.1s (fixed for both)
+[TwoStageLatentLPBFEnv] Mesh loaded: 1053 nodes  X∈[0.00, 12.00]  Y∈[0.00, 3.00]
+[sweep_diagnostic] Scratch dir: /tmp/sweep_diag_y55vifa3
+
+[evaluate_real] Mesh consistency check passed (matches surrogate_model/mesh.mat).
+      layer  1/12  LP= 100.00W  reward=-0.8463  (18s)
+      layer  2/12  LP= 100.00W  reward=-0.5474  (15s)
+      layer  3/12  LP= 100.00W  reward=-0.4055  (15s)
+      layer  4/12  LP= 100.00W  reward=-0.3204  (15s)
+      layer  5/12  LP= 100.00W  reward=-0.2675  (16s)
+      layer  6/12  LP= 100.00W  reward=-0.0927  (15s)
+      layer  7/12  LP= 100.00W  reward=-0.0584  (14s)
+      layer  8/12  LP= 100.00W  reward=-0.0530  (15s)
+      layer  9/12  LP= 100.00W  reward=-0.0954  (16s)
+      layer 10/12  LP= 100.00W  reward=-0.1051  (16s)
+      layer 11/12  LP= 100.00W  reward=-0.1256  (16s)
+      layer 12/12  LP= 100.00W  reward=-0.1499  (15s)
+  [ 100.0W] surrogate=-8.404±0.000  real=-3.067±0.000  gap(surr-real)=-5.337  (186s)
+      layer  1/12  LP= 130.00W  reward=-0.5530  (16s)
