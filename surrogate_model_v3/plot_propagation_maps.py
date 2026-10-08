@@ -150,7 +150,11 @@ def accumulate(model, loader, device, traj_len, roi, num_probes, lp_mean, lp_std
     keys = [f"{m}_{q}" for m in ("naive", "prop") for q in QUANTITIES]
     sums = {g: {k: np.zeros((traj_len, D)) for k in keys} for g in groups}
     counts = {g: np.zeros(traj_len) for g in groups}
-    per_traj = {q: [[] for _ in range(traj_len)] for q in QUANTITIES}
+    # per-(layer, trajectory) σ ratios: inside the ROI (keys "epi"/"ale"/"total") and outside it ("out_*")
+    per_traj = {k: [[] for _ in range(traj_len)] for q in QUANTITIES for k in (q, f"out_{q}")}
+    # per-(layer, trajectory) region-summed variances, for bootstrapping the pooled ratio
+    per_traj_sums = {f"{m}_{q}_{reg}": [[] for _ in range(traj_len)]
+                     for m in ("naive", "prop") for q in QUANTITIES for reg in ("in", "out")}
     per_traj_lp = [[] for _ in range(traj_len)]
     examples = {k: [] for k in keys}
     roi_t = torch.as_tensor(roi, device=device)
@@ -180,11 +184,16 @@ def accumulate(model, loader, device, traj_len, roi, num_probes, lp_mean, lp_std
                     var[f"{tag}_ale"] = combo["aleatoric_std"].pow(2)
                     var[f"{tag}_total"] = combo["total_std"].pow(2)
 
-                # per-trajectory in-ROI σ ratio (ROI-summed variance, then ratio)
+                # per-trajectory σ ratio inside / outside the ROI (region-summed variance, then ratio)
                 m = roi_t[t].float()
                 for q in QUANTITIES:
-                    r = ((var[f"prop_{q}"] * m).sum(-1) / (var[f"naive_{q}"] * m).sum(-1).clamp_min(1e-30)).sqrt()
-                    per_traj[q][t].extend(r.cpu().numpy().tolist())
+                    for key, w in ((q, m), (f"out_{q}", 1.0 - m)):
+                        r = ((var[f"prop_{q}"] * w).sum(-1) / (var[f"naive_{q}"] * w).sum(-1).clamp_min(1e-30)).sqrt()
+                        per_traj[key][t].extend(r.cpu().numpy().tolist())
+                    for reg, w in (("in", m), ("out", 1.0 - m)):
+                        for mth in ("naive", "prop"):
+                            per_traj_sums[f"{mth}_{q}_{reg}"][t].extend(
+                                (var[f"{mth}_{q}"] * w).sum(-1).cpu().numpy().tolist())
 
                 lp_raw = (a_t[:, 0] * lp_std + lp_mean).cpu().numpy()
                 per_traj_lp[t].extend(lp_raw.tolist())
@@ -209,6 +218,7 @@ def accumulate(model, loader, device, traj_len, roi, num_probes, lp_mean, lp_std
                     examples[k].append(np.stack(ex_batch[k], axis=1))       # (n_keep, T, D)
             n_seen += B
     per_traj = {q: np.array(v) for q, v in per_traj.items()}                # (T, N_traj)
+    per_traj.update({f"sum_{k}": np.array(v) for k, v in per_traj_sums.items()})
     examples = {k: (np.concatenate(v) if v else np.zeros((0, traj_len, D))) for k, v in examples.items()}
     return sums, counts, per_traj, np.array(per_traj_lp), examples
 
