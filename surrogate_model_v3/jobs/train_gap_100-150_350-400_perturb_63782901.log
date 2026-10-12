@@ -609,3 +609,14 @@ Epoch  500/500 | train -0.60551 [rh=0.0001 nh=-3.2025 rc=0.0002 nc=-2.8555] | va
 
 [evaluate_ood] Complete. All outputs in: surrogate_model_v3/results_ood_gap_100-150_350-400_perturb0.01
 === [3/3] paper figures ===
+[paper_figure_ood] checkpoint: /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_350-400_perturb0.01_bootstrap0.5/surrogate_best.pt  split: test  propagated: True
+[paper_figure_ood] Saved → surrogate_model_v3/results_ood_gap_100-150_350-400_perturb0.01/paper_fig_ood_both.{pdf,png}
+[paper_figure_ood] checkpoint: /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_350-400_perturb0.01_bootstrap0.5/surrogate_best.pt  split: test  propagated: True
+[paper_figure_ood] Saved → surrogate_model_v3/results_ood_gap_100-150_350-400_perturb0.01/paper_fig_ood_comb.{pdf,png}
+[paper_figure_ood] checkpoint: /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_350-400_perturb0.01_bootstrap0.5/surrogate_best.pt  split: test  propagated: True
+[paper_figure_ood] Saved → surrogate_model_v3/results_ood_gap_100-150_350-400_perturb0.01/paper_fig_ood_heat.{pdf,png}
+============================================================
+Finished   : Mon Oct 12 18:37:09 EDT 2026
+Checkpoint : surrogate_model_v3/runs/gap_100-150_350-400_perturb0.01_bootstrap0.5/surrogate_best.pt
+Figures    : surrogate_model_v3/results_ood_gap_100-150_350-400_perturb0.01/
+============================================================
