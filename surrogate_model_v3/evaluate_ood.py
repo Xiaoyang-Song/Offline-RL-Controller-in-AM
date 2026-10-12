@@ -69,7 +69,7 @@ from torch.utils.data import DataLoader
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from surrogate_model_v3.dataset import load_trajectories, TwoStageSurrogateDataset
+from surrogate_model_v3.dataset import load_trajectories, split_trajectories, TwoStageSurrogateDataset
 from surrogate_model_v3.model import (
     load_surrogate, combine_stage_uncertainties, combine_stage_uncertainties_naive_full,
 )
@@ -95,6 +95,7 @@ def collect_ood_samples(model, loader: DataLoader, state_mean, state_std,
     ss = state_std.to(device)
 
     actions, epi, ale, tot, sq_err, abs_err = [], [], [], [], [], []
+    epi_k, ale_k, tot_k = [], [], []
 
     for s, a, _c, h, _s2, layer_idx, _bmask in loader:
         s         = s.to(device)
@@ -112,6 +113,9 @@ def collect_ood_samples(model, loader: DataLoader, state_mean, state_std,
         epi.append(epi_std.mean(dim=-1).cpu().numpy())
         ale.append(ale_std.mean(dim=-1).cpu().numpy())
         tot.append(tot_std.mean(dim=-1).cpu().numpy())
+        epi_k.append((epi_std * ss).mean(dim=-1).cpu().numpy())
+        ale_k.append((ale_std * ss).mean(dim=-1).cpu().numpy())
+        tot_k.append((tot_std * ss).mean(dim=-1).cpu().numpy())
         sq_err.append((diff_k ** 2).mean(dim=-1).cpu().numpy())
         abs_err.append(diff_k.abs().mean(dim=-1).cpu().numpy())
 
@@ -120,6 +124,9 @@ def collect_ood_samples(model, loader: DataLoader, state_mean, state_std,
         "epi":     np.concatenate(epi),
         "ale":     np.concatenate(ale),
         "tot":     np.concatenate(tot),
+        "epi_K":   np.concatenate(epi_k),       # σ in Kelvin (per-node σ × state_std, then node mean)
+        "ale_K":   np.concatenate(ale_k),
+        "tot_K":   np.concatenate(tot_k),
         "sq_err":  np.concatenate(sq_err),
         "abs_err": np.concatenate(abs_err),
     }
@@ -155,6 +162,7 @@ def collect_ood_samples_combined(
     use_full = propagate_uncertainty or (model.rank > 0)
 
     actions, epi, ale, tot, sq_err, abs_err = [], [], [], [], [], []
+    epi_k, ale_k, tot_k = [], [], []
 
     for s, a, c, _h, s2, layer_idx, _bmask in loader:
         s, a, c, s2 = s.to(device), a.to(device), c.to(device), s2.to(device)
@@ -185,6 +193,9 @@ def collect_ood_samples_combined(
         epi.append(epi_std.mean(dim=-1).cpu().numpy())
         ale.append(ale_std.mean(dim=-1).cpu().numpy())
         tot.append(tot_std.mean(dim=-1).cpu().numpy())
+        epi_k.append((epi_std * ss).mean(dim=-1).cpu().numpy())
+        ale_k.append((ale_std * ss).mean(dim=-1).cpu().numpy())
+        tot_k.append((tot_std * ss).mean(dim=-1).cpu().numpy())
         sq_err.append((diff_k ** 2).mean(dim=-1).cpu().numpy())
         abs_err.append(diff_k.abs().mean(dim=-1).cpu().numpy())
 
@@ -193,6 +204,9 @@ def collect_ood_samples_combined(
         "epi":     np.concatenate(epi),
         "ale":     np.concatenate(ale),
         "tot":     np.concatenate(tot),
+        "epi_K":   np.concatenate(epi_k),       # σ in Kelvin (per-node σ × state_std, then node mean)
+        "ale_K":   np.concatenate(ale_k),
+        "tot_K":   np.concatenate(tot_k),
         "sq_err":  np.concatenate(sq_err),
         "abs_err": np.concatenate(abs_err),
     }
@@ -338,6 +352,13 @@ def parse_args() -> argparse.Namespace:
                         "comma-separated 'lo-hi' ranges, e.g. '150-200,300-350' (should match "
                         "the checkpoint's --lp_filter_ranges exactly). ID = union of these "
                         "ranges; overrides --id_action_min/--id_action_max when given.")
+    p.add_argument("--split", choices=["all", "train", "val", "test"], default="all",
+                   help="Which trajectories to evaluate. 'all' (default, original behaviour) includes the "
+                        "checkpoint's own training transitions; 'test' uses only the held-out test split "
+                        "(same seed-42 trajectory split as train.py), so ID numbers are not in-sample.")
+    p.add_argument("--val_fraction",  type=float, default=0.10)
+    p.add_argument("--test_fraction", type=float, default=0.10)
+    p.add_argument("--seed",          type=int,   default=42)
     p.add_argument("--n_bins",      type=int, default=12)
     p.add_argument("--batch_size",  type=int, default=256)
     p.add_argument("--num_workers", type=int, default=4)
@@ -380,6 +401,11 @@ def main() -> None:
     range_str = ", ".join(f"[{lo}, {hi}]" for lo, hi in id_ranges)
 
     trajs = load_trajectories(args.data_path)
+    if args.split != "all":
+        tr, va, te = split_trajectories(trajs, val_fraction=args.val_fraction,
+                                        test_fraction=args.test_fraction, seed=args.seed)
+        trajs = {"train": tr, "val": va, "test": te}[args.split]
+        print(f"[evaluate_ood] Using the '{args.split}' split only: {len(trajs)} trajectories")
     all_actions = np.array([step.lp_action for traj in trajs for step in traj])
     print(f"[evaluate_ood] Wide dataset laser-power range: "
           f"[{all_actions.min():.1f}, {all_actions.max():.1f}] W  "
@@ -458,7 +484,13 @@ def main() -> None:
     if args.dump_npz:
         dump = {f"heat/{k}": np.asarray(v) for k, v in binned.items()}
         dump.update({f"comb/{k}": np.asarray(v) for k, v in binned_c.items()})
+        dump.update({f"heat_samples/{k}": np.asarray(v) for k, v in data.items()})
+        dump.update({f"comb_samples/{k}": np.asarray(v) for k, v in data_c.items()})
+        dump["id_mask"] = id_mask
         dump["id_ranges"] = np.asarray(id_ranges, dtype=float)
+        dump["checkpoint"] = np.asarray(os.path.abspath(args.checkpoint))
+        dump["split"] = np.asarray(args.split)
+        dump["propagate_uncertainty"] = np.asarray(args.propagate_uncertainty)
         os.makedirs(os.path.dirname(args.dump_npz) or ".", exist_ok=True)
         np.savez(args.dump_npz, **dump)
         print(f"[evaluate_ood] Saved raw arrays → {args.dump_npz}")
