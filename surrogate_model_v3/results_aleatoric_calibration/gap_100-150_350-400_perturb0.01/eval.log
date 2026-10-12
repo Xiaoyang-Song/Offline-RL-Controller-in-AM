@@ -1,0 +1,65 @@
+[evaluate_ood] Output dir : surrogate_model_v3/results_aleatoric_calibration/gap_100-150_350-400_perturb0.01
+[evaluate_ood] Device     : cuda
+[evaluate_ood] TwoStageSurrogate(state=1053, lp_dim=1, cool_dim=1, K=5, n_layers=12, embed=8, rank=0 | heat×5=2,554,020  cool×5=2,554,020 | total=5,108,040)
+[dataset] Loaded 5000 trajectories × 12 layers from DatasetV2_layer_12_samples_5000.pkl
+[dataset] Split → train 4000 | val 500 | test 500
+[evaluate_ood] Using the 'test' split only: 500 trajectories
+[evaluate_ood] Wide dataset laser-power range: [100.0, 400.0] W  (checkpoint trained on [100.0, 150.0], [350.0, 400.0] W)
+[dataset] Bootstrap masks: (6000, 5), resample_frac=1.0, ~36.5% of (sample, member) pairs unseen (expected ≈ 36.8%)
+[TwoStageSurrogateDataset] 6,000 transitions, state_dim=1053, layers 0–11, bootstrap K=5 (transition-level resampling)
+/home/xysong/.conda/envs/RL/lib/python3.10/site-packages/torch/utils/data/dataloader.py:617: UserWarning: This DataLoader will create 4 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+[evaluate_ood] Running forward pass over all transitions (heating stage) ...
+
+[evaluate_ood] ══════════════════════════════════════════════════════════════════════════════════════════
+[evaluate_ood] SUMMARY  (n, mean epistemic σ, mean aleatoric σ, RMSE, corr(epistemic σ, per-sample squared error))
+[evaluate_ood] ══════════════════════════════════════════════════════════════════════════════════════════
+  ID           n=  2340  epist σ=0.00238  aleat σ=0.01059  RMSE=   2.30 K  corr(epi,err) pearson=0.539 spearman=0.474
+  OOD          n=  3660  epist σ=0.00290  aleat σ=0.01054  RMSE=   5.40 K  corr(epi,err) pearson=0.465 spearman=0.558
+  ALL          n=  6000  epist σ=0.00270  aleat σ=0.01056  RMSE=   4.46 K  corr(epi,err) pearson=0.518 spearman=0.631
+[evaluate_ood] ══════════════════════════════════════════════════════════════════════════════════════════
+
+     Power bin [W]        n     Epist σ     Aleat σ    RMSE [K]
+    100.0-  125.0      584     0.00212     0.01052        2.18
+    125.0-  150.0      411     0.00206     0.01052        2.27
+    150.0-  175.0      560     0.00224     0.01048        2.59
+    175.0-  200.0      367     0.00252     0.01043        4.02
+    200.0-  225.0      569     0.00311     0.01047        6.54
+    225.0-  250.0      400     0.00346     0.01048        8.18
+    250.0-  275.0      568     0.00337     0.01056        7.41
+    275.0-  300.0      385     0.00297     0.01057        5.06
+    300.0-  325.0      608     0.00271     0.01063        2.79
+    325.0-  350.0      403     0.00254     0.01064        1.91
+    350.0-  375.0      590     0.00260     0.01068        2.20
+    375.0-  400.0      555     0.00274     0.01066        2.46
+[evaluate_ood] Saved → surrogate_model_v3/results_aleatoric_calibration/gap_100-150_350-400_perturb0.01/ood_uncertainty_vs_action.png
+[evaluate_ood] Saved → surrogate_model_v3/results_aleatoric_calibration/gap_100-150_350-400_perturb0.01/ood_epistemic_vs_error.png
+
+[evaluate_ood] Running forward pass over all transitions (combined heat+cool, propagate_uncertainty=True) ...
+
+[evaluate_ood] ══════════════════════════════════════════════════════════════════════════════════════════
+[evaluate_ood] SUMMARY — COMBINED (post-cooling)
+[evaluate_ood] ══════════════════════════════════════════════════════════════════════════════════════════
+  ID           n=  2340  epist σ=0.00425  aleat σ=0.01813  RMSE=   1.99 K  corr(epi,err) pearson=0.430 spearman=0.659
+  OOD          n=  3660  epist σ=0.00499  aleat σ=0.01814  RMSE=   3.22 K  corr(epi,err) pearson=0.411 spearman=0.529
+  ALL          n=  6000  epist σ=0.00470  aleat σ=0.01813  RMSE=   2.80 K  corr(epi,err) pearson=0.470 spearman=0.641
+[evaluate_ood] ══════════════════════════════════════════════════════════════════════════════════════════
+
+     Power bin [W]        n     Epist σ     Aleat σ    RMSE [K]
+    100.0-  125.0      584     0.00394     0.01796        1.41
+    125.0-  150.0      411     0.00383     0.01798        1.37
+    150.0-  175.0      560     0.00406     0.01797        1.67
+    175.0-  200.0      367     0.00435     0.01794        2.42
+    200.0-  225.0      569     0.00524     0.01804        3.66
+    225.0-  250.0      400     0.00575     0.01806        4.50
+    250.0-  275.0      568     0.00564     0.01820        4.12
+    275.0-  300.0      385     0.00507     0.01819        3.13
+    300.0-  325.0      608     0.00479     0.01829        2.46
+    325.0-  350.0      403     0.00456     0.01831        2.18
+    350.0-  375.0      590     0.00452     0.01831        2.43
+    375.0-  400.0      555     0.00470     0.01829        2.44
+[evaluate_ood] Saved → surrogate_model_v3/results_aleatoric_calibration/gap_100-150_350-400_perturb0.01/ood_uncertainty_vs_action_combined.png
+[evaluate_ood] Saved → surrogate_model_v3/results_aleatoric_calibration/gap_100-150_350-400_perturb0.01/ood_epistemic_vs_error_combined.png
+[evaluate_ood] Saved raw arrays → surrogate_model_v3/results_aleatoric_calibration/gap_100-150_350-400_perturb0.01/ood_test.npz
+
+[evaluate_ood] Complete. All outputs in: surrogate_model_v3/results_aleatoric_calibration/gap_100-150_350-400_perturb0.01

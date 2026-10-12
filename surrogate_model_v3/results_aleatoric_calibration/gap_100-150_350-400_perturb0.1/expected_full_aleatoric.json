@@ -1,0 +1,11 @@
+[
+  {
+    "checkpoint": "/nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model_v3/runs/gap_100-150_350-400_perturb0.1_bootstrap0.5/surrogate_best.pt",
+    "perturb": 0.1,
+    "n_transitions": 300,
+    "expected_full": 0.173096930483977,
+    "expected_full_sd": 4.227867901377863e-05,
+    "expected_full_diag_only": 0.17301709299286205,
+    "sqrt3_eps": 0.17320508075688773
+  }
+]

@@ -2,38 +2,35 @@
 surrogate_model_v3/paper_figure_aleatoric.py
 --------------------------------------------------------
 Paper figure: does the learned ALEATORIC uncertainty recover a known amount of
-data noise? Uses surrogates trained with Gaussian target noise of std
-perturb_frac x state_std (per node) added to the end-of-heating and
-next-state fields (--perturb_frac in train.py), one npz per noise level from
+data noise? One panel per data-coverage setting; each panel compares, for
+models trained with injected target noise of std ε (x state_std, per node;
+train.py --perturb_frac), the learned aleatoric σ with its expected value:
 
-    python -m surrogate_model_v3.evaluate_ood --split test --propagate_uncertainty --dump_npz <...>
+  heating stage   : expected = ε                  (one noise draw on its target)
+  full transition : expected = ε · mean_i √(2 + ‖a_i‖²), a_i = row i of the
+                    model's own cooling Jacobian A = I + J, averaged over test
+                    transitions (expected_aleatoric_jacobian.py). Reduces to
+                    √3 ε when A ≈ I.
 
-All σ are in normalised units (fraction of each node's state_std), the unit the
-noise is injected in. Expected aleatoric σ:
-  heating stage   : perturb_frac              (one noise draw on its target)
-  full transition : sqrt(3) x perturb_frac    (heating noise, plus the cooling
-                    stage's target is next-state minus the NOISY heating field:
-                    two more independent draws)
+All σ in normalised units (fraction of each node's state_std), node-averaged,
+test-split mean; learned full-transition σ is the propagated one.
 
-Layout (double-column, 1 x 3):
-  (a) learned vs injected noise, both stages, with the expected y = x and
-      y = sqrt(3) x lines.
-  (b) full-transition aleatoric σ vs laser power, one line per noise level, with
-      the expected level dashed: flat across InD and OoD.
-  (c) full-transition epistemic σ vs laser power, same runs: rises in the gap.
+Inputs: surrogate_model_v3/results_aleatoric_calibration/<setting>_perturb<ε>/
+          ood_test.npz                  (evaluate_ood.py --split test --propagate_uncertainty --dump_npz)
+          expected_full_aleatoric.json  (expected_aleatoric_jacobian.py)
+Settings without any finished run are skipped.
 
 Usage
 -----
     python -m surrogate_model_v3.paper_figure_aleatoric \\
-        --npz surrogate_model_v3/results_ood_gap_100-150_350-400_perturb0.05/ood_gap_test.npz \\
-              surrogate_model_v3/results_ood_gap_100-150_350-400_perturb0.1/ood_gap_test.npz \\
-              surrogate_model_v3/results_ood_gap_100-150_350-400/ood_gap_test.npz \\
-        --perturb 0.05 0.1 0.2 \\
         --out surrogate_model_v3/results_aleatoric_calibration/paper_fig_aleatoric
 """
 
 import argparse
+import glob
+import json
 import os
+import re
 
 import matplotlib
 matplotlib.use("Agg")
@@ -41,96 +38,98 @@ import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 import numpy as np
 
-from surrogate_model_v3.paper_figure_ood import PAPER_RC, INK, INK_2, INK_3, GRID, _group_index, _shade_training, \
-    _panel_label
+from surrogate_model_v3.paper_figure_ood import PAPER_RC, INK, INK_2, INK_3, GRID, _panel_label
 
-# one hue per noise level (light -> dark = more noise); stage by marker fill / line style
-LEVEL_C = ["#7fb7b0", "#2a8a80", "#0f4740"]
-HEAT_STYLE = dict(marker="o", markerfacecolor="white", linestyle=(0, (3.2, 1.6)))
-FULL_STYLE = dict(marker="s", linestyle="-")
+SETTINGS = [  # folder prefix, panel title
+    ("full_range",          "Full range (100–400 W)"),
+    ("narrow_200_300W",     "Narrow (200–300 W)"),
+    ("gap_100-150_350-400", "Gap (100–150, 350–400 W)"),
+]
+HEAT_C, FULL_C = "#e76f51", "#264653"          # heating stage, full transition (match OOD figure palette)
+
+
+def _load_setting(root, prefix):
+    rows = []
+    for d in glob.glob(os.path.join(root, f"{prefix}_perturb*")):
+        m = re.search(r"_perturb([0-9.]+)$", d)
+        npz, js = os.path.join(d, "ood_test.npz"), os.path.join(d, "expected_full_aleatoric.json")
+        if not (m and os.path.exists(npz) and os.path.exists(js)):
+            continue
+        z = np.load(npz)
+        exp = json.load(open(js))[0]
+        h, c = z["heat_samples/ale"], z["comb_samples/ale"]
+        rows.append(dict(eps=float(m.group(1)),
+                         heat=h.mean(), heat_lo=np.percentile(h, 5), heat_hi=np.percentile(h, 95),
+                         full=c.mean(), full_lo=np.percentile(c, 5), full_hi=np.percentile(c, 95),
+                         full_exp=exp["expected_full"], checkpoint=str(z["checkpoint"])))
+    return sorted(rows, key=lambda r: r["eps"])
 
 
 def main() -> None:
     p = argparse.ArgumentParser()
-    p.add_argument("--npz", nargs="+", required=True)
-    p.add_argument("--perturb", nargs="+", type=float, required=True, help="perturb_frac of each npz, same order.")
+    p.add_argument("--root", default="surrogate_model_v3/results_aleatoric_calibration")
     p.add_argument("--out", required=True)
     a = p.parse_args()
-    assert len(a.npz) == len(a.perturb)
     plt.rcParams.update(PAPER_RC)
-    order = np.argsort(a.perturb)
-    runs = [(a.perturb[i], np.load(a.npz[i])) for i in order]
-    colors = LEVEL_C if len(runs) <= 3 else plt.cm.viridis(np.linspace(0.3, 0.9, len(runs)))
 
-    fig, axes = plt.subplots(1, 3, figsize=(7.0, 2.4), gridspec_kw=dict(wspace=0.45))
+    data = [(t, _load_setting(a.root, pre)) for pre, t in SETTINGS]
+    data = [(t, rows) for t, rows in data if rows]
+    if not data:
+        raise SystemExit(f"No finished runs under {a.root}")
 
-    # ---------------- (a) learned vs injected --------------------------------
-    ax = axes[0]
-    pmax = max(pf for pf, _ in runs) * 1.15
-    xs = np.linspace(0, pmax, 50)
-    ax.plot(xs, xs, color=INK_3, linewidth=0.8, zorder=1)
-    ax.plot(xs, np.sqrt(3) * xs, color=INK_3, linewidth=0.8, linestyle=(0, (1.5, 1.5)), zorder=1)
-    ax.text(pmax * 0.97, pmax * 0.97, "$y = x$", ha="right", va="bottom", fontsize=6.5, color=INK_2,
-            rotation=0)
-    ax.text(pmax * 0.60, np.sqrt(3) * pmax * 0.60, r"$y = \sqrt{3}\,x$", ha="right", va="bottom",
-            fontsize=6.5, color=INK_2)
-    for (pf, z), col in zip(runs, colors):
-        for st, style in (("heat", HEAT_STYLE), ("comb", FULL_STYLE)):
-            v = z[f"{st}_samples/ale"]
-            lo, hi = np.percentile(v, [5, 95])
-            ax.errorbar(pf, v.mean(), yerr=[[v.mean() - lo], [hi - v.mean()]], color=col, capsize=1.5,
-                        elinewidth=0.7, markersize=4.5, markeredgecolor=col, zorder=3,
-                        marker=style["marker"], markerfacecolor=style.get("markerfacecolor", col), linestyle="none")
-    ax.set_xlim(0, pmax); ax.set_ylim(0, np.sqrt(3) * pmax * 0.9)
-    ax.set_xlabel(r"Injected noise std ($\times$ state std)")
-    ax.set_ylabel(r"Learned aleatoric $\sigma$")
-    ax.set_title("Recovered noise level", pad=3, color=INK_2)
-    ax.legend(handles=[Line2D([], [], color=INK_2, linestyle="none", label="Heating stage", **{k: v for k, v in HEAT_STYLE.items() if k != "linestyle"}),
-                       Line2D([], [], color=INK_2, linestyle="none", label="Full transition", marker="s")],
-              loc="upper left", handlelength=1.0, borderaxespad=0.2)
-    ax.grid(color=GRID, linewidth=0.6); ax.set_axisbelow(True)
-    _panel_label(ax, "a")
+    n = len(data)
+    fig, axes = plt.subplots(1, n, figsize=(2.45 * n + 0.2, 2.45), sharey=True, squeeze=False,
+                             gridspec_kw=dict(wspace=0.12))
+    axes = axes[0]
+    emax = max(r["eps"] for _, rows in data for r in rows) * 1.12
+    ymax = max(max(r["full_hi"], r["full_exp"]) for _, rows in data for r in rows) * 1.08
 
-    # ---------------- (b)/(c) σ vs laser power, full transition --------------
-    id_ranges = [tuple(r) for r in runs[0][1]["id_ranges"]]
-    for ax, key, title, letter in ((axes[1], "ale", "Aleatoric", "b"), (axes[2], "epi", "Epistemic", "c")):
-        action = runs[0][1]["comb_samples/action"]
-        ax.set_xlim(action.min() - 5, action.max() + 5)
-        _shade_training(ax, id_ranges)
-        ymax = 0.0
-        for (pf, z), col in zip(runs, colors):
-            act = z["comb_samples/action"]
-            gidx, centres = _group_index(act, 25.0)
-            v = z[f"comb_samples/{key}"]
-            med = np.array([np.median(v[gidx == b]) for b in range(len(centres))])
-            ymax = max(ymax, med.max())
-            if key == "ale":
-                ax.axhline(np.sqrt(3) * pf, color=col, linewidth=0.8, linestyle=(0, (1.5, 1.5)), zorder=1)
-            ax.plot(centres, med, color="white", linewidth=3.0, alpha=0.8, zorder=3)
-            ax.plot(centres, med, color=col, linewidth=1.5, marker="s", markersize=2.0, zorder=4,
-                    label=f"{pf:g}")
-        ax.set_ylim(0, ymax * (1.45 if key == "ale" else 1.3))
-        ax.set_xlabel("Laser power [W]")
-        ax.set_xticks(np.arange(np.ceil(action.min() / 100) * 100, action.max() + 1, 100))
-        ax.set_ylabel(f"{title} $\\sigma$, full transition")
-        ax.set_title(f"{title} uncertainty (median)", pad=3, color=INK_2)
-        ax.grid(axis="y", color=GRID, linewidth=0.6); ax.set_axisbelow(True)
-        _panel_label(ax, letter)
-    leg = axes[1].legend(title="Injected noise", title_fontsize=6.5, loc="upper center",
-                         bbox_to_anchor=(0.5, 0.88), ncols=3, handlelength=1.4, columnspacing=0.8)
-    leg.get_title().set_color(INK_2)
+    for j, (ax, (title, rows)) in enumerate(zip(axes, data)):
+        eps = np.array([r["eps"] for r in rows])
+        # expected: heating y = ε (line), full transition from the Jacobian (dashed through points)
+        ax.plot([0, emax], [0, emax], color=HEAT_C, linewidth=0.8, alpha=0.6, zorder=1)
+        fe = np.array([r["full_exp"] for r in rows])
+        ax.plot(np.r_[0, eps], np.r_[0, fe], color=FULL_C, linewidth=0.8, alpha=0.6,
+                linestyle=(0, (3, 2)), zorder=1)
+        ax.scatter(eps, fe, marker="_", s=110, linewidths=1.4, color=FULL_C, zorder=2)
+        # learned
+        for key, col, mk, face in (("heat", HEAT_C, "o", "white"), ("full", FULL_C, "s", FULL_C)):
+            y = np.array([r[key] for r in rows])
+            yerr = np.array([[r[key] - r[f"{key}_lo"] for r in rows], [r[f"{key}_hi"] - r[key] for r in rows]])
+            ax.errorbar(eps, y, yerr=yerr, fmt=mk, color=col, markerfacecolor=face, markeredgecolor=col,
+                        markeredgewidth=1.0, markersize=4.2, capsize=1.5, elinewidth=0.7, zorder=3)
+        ax.set_xlim(-0.005, emax); ax.set_ylim(-0.005, ymax)
+        ax.set_xticks([t for t in (0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3) if t <= emax])
+        ax.set_xlabel(r"Injected noise std $\varepsilon$")
+        ax.set_title(title, pad=3, color=INK_2)
+        ax.grid(color=GRID, linewidth=0.6); ax.set_axisbelow(True)
+        _panel_label(ax, "abc"[j], x=-0.08 if j else -0.2)
+    axes[0].set_ylabel(r"Aleatoric $\sigma$ (× state std)")
+
+    handles = [
+        Line2D([], [], color=HEAT_C, marker="o", markerfacecolor="white", linestyle="none", markersize=4.2,
+               label="Heating stage, learned"),
+        Line2D([], [], color=HEAT_C, linewidth=0.8, alpha=0.6, label=r"Heating stage, expected ($\varepsilon$)"),
+        Line2D([], [], color=FULL_C, marker="s", linestyle="none", markersize=4.2, label="Full transition, learned"),
+        Line2D([], [], color=FULL_C, marker="_", markersize=9, markeredgewidth=1.4, linewidth=0.8, alpha=0.8,
+               linestyle=(0, (3, 2)), label="Full transition, expected (Jacobian)"),
+    ]
+    fig.legend(handles=handles, loc="upper center", bbox_to_anchor=(0.5, 1.13), ncols=2, handlelength=2.0,
+               columnspacing=1.2)
 
     os.makedirs(os.path.dirname(a.out) or ".", exist_ok=True)
     for ext in ("pdf", "png"):
         fig.savefig(f"{a.out}.{ext}")
     plt.close(fig)
 
-    print("[paper_figure_aleatoric] learned aleatoric σ (test-set mean) vs expected:")
-    for pf, z in runs:
-        h, c = z["heat_samples/ale"].mean(), z["comb_samples/ale"].mean()
-        print(f"  perturb {pf:g}: heating {h:.4f} (expected {pf:.4f}, {100 * (h / pf - 1):+.1f}%)   "
-              f"full {c:.4f} (expected {np.sqrt(3) * pf:.4f}, {100 * (c / (np.sqrt(3) * pf) - 1):+.1f}%)   "
-              f"[{z['checkpoint']}]")
+    print("[paper_figure_aleatoric] learned vs expected (test-set mean, normalised units):")
+    for title, rows in data:
+        print(f"  {title}")
+        for r in rows:
+            dh = 100 * (r["heat"] / r["eps"] - 1) if r["eps"] > 0 else float("nan")
+            df = 100 * (r["full"] / r["full_exp"] - 1) if r["eps"] > 0 else float("nan")
+            print(f"    ε={r['eps']:<5g} heating {r['heat']:.4f} vs {r['eps']:.4f} ({dh:+.1f}%)   "
+                  f"full {r['full']:.4f} vs {r['full_exp']:.4f} ({df:+.1f}%)")
     print(f"[paper_figure_aleatoric] Saved → {a.out}.{{pdf,png}}")
 
 

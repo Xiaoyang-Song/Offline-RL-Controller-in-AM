@@ -1,0 +1,56 @@
+============================================================
+Job ID   : 63783901_2
+Node     : gl1019
+Started  : Mon Oct 12 18:02:58 EDT 2026
+Setting  : full_range   perturb_frac = 0.1
+============================================================
+=== [1/3] train ===
+/home/xysong/.conda/envs/RL/lib/python3.10/site-packages/torch/utils/data/dataloader.py:617: UserWarning: This DataLoader will create 4 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+/home/xysong/.conda/envs/RL/lib/python3.10/site-packages/torch/utils/data/dataloader.py:617: UserWarning: This DataLoader will create 4 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+[train] Output dir : surrogate_model_v3/runs/full_range_perturb0.1_bootstrap0.5
+[train] Device     : cuda
+[dataset] Loaded 5000 trajectories × 12 layers from DatasetV2_layer_12_samples_5000.pkl
+[dataset] Split → train 4000 | val 500 | test 500
+[dataset] State mean ∈ [164.2, 2761.5], std ∈ [31.5926, 1672.6]
+[dataset] Laser power mean = 249.87 W, std = 89.44 W
+[dataset] Cool time    mean = 0.1005 s, std = 0.0314 s
+[dataset] ROI weight table: (12, 1053), range [0.801, 4.219]
+[train] ROI weights loaded from mesh: /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/surrogate_model/mesh.mat
+[TwoStageSurrogateDataset] perturb_frac=10.0% of per-node state_std → noise std 3.16-167.26K (mean 22.16K) applied to 48,000 heating/next-state TARGETS (inputs s_t and the physical trajectory chain remain clean)
+[dataset] Bootstrap masks: (48000, 5), resample_frac=0.5, ~60.6% of (sample, member) pairs unseen (expected ≈ 60.7%)
+[TwoStageSurrogateDataset] 48,000 transitions, state_dim=1053, layers 0–11, bootstrap K=5 (transition-level resampling)
+[TwoStageSurrogateDataset] perturb_frac=10.0% of per-node state_std → noise std 3.16-167.26K (mean 22.16K) applied to 6,000 heating/next-state TARGETS (inputs s_t and the physical trajectory chain remain clean)
+[dataset] Bootstrap masks: (6000, 5), resample_frac=0.5, ~60.4% of (sample, member) pairs unseen (expected ≈ 60.7%)
+[TwoStageSurrogateDataset] 6,000 transitions, state_dim=1053, layers 0–11, bootstrap K=5 (transition-level resampling)
+[train] TwoStageSurrogate(state=1053, lp_dim=1, cool_dim=1, K=5, n_layers=12, embed=8, rank=0 | heat×5=2,554,020  cool×5=2,554,020 | total=5,108,040)
+
+[train] Starting training for up to 500 epochs (patience=30)
+[train] Weights   → recon_heat=1.0  nll_heat=0.1  recon_cool=1.0  nll_cool=0.1
+[train] Ensemble  → K=5 members, bootstrap_seed=42, bootstrap_frac=0.5
+--------------------------------------------------------------------------------
+Epoch    1/500 | train -0.02636 [rh=0.0452 nh=-0.7183 rc=0.0363 nc=-0.3594] | val -0.08631 | lr 1.00e-03 |   19.2s ✓ best
+Epoch    2/500 | train -0.09548 [rh=0.0126 nh=-0.8321 rc=0.0231 nc=-0.4798] | val -0.09968 | lr 1.00e-03 |   35.9s ✓ best
+Epoch    3/500 | train -0.10226 [rh=0.0115 nh=-0.8481 rc=0.0216 nc=-0.5046] | val -0.10367 | lr 1.00e-03 |   54.0s ✓ best
+Epoch    4/500 | train -0.10406 [rh=0.0112 nh=-0.8542 rc=0.0212 nc=-0.5107] | val -0.10440 | lr 1.00e-03 |   70.7s ✓ best
+Epoch    5/500 | train -0.10550 [rh=0.0109 nh=-0.8588 rc=0.0210 nc=-0.5155] | val -0.10572 | lr 1.00e-03 |   87.4s ✓ best
+Epoch    6/500 | train -0.10645 [rh=0.0108 nh=-0.8616 rc=0.0208 nc=-0.5192] | val -0.10717 | lr 1.00e-03 |  104.2s ✓ best
+Epoch    7/500 | train -0.10694 [rh=0.0107 nh=-0.8644 rc=0.0208 nc=-0.5198] | val -0.10672 | lr 1.00e-03 |  120.7s (no improvement 1/30)
+Epoch    8/500 | train -0.10747 [rh=0.0106 nh=-0.8655 rc=0.0207 nc=-0.5223] | val -0.10628 | lr 9.99e-04 |  138.8s (no improvement 2/30)
+Epoch    9/500 | train -0.10750 [rh=0.0107 nh=-0.8657 rc=0.0207 nc=-0.5228] | val -0.10799 | lr 9.99e-04 |  155.5s ✓ best
+Epoch   10/500 | train -0.10818 [rh=0.0105 nh=-0.8688 rc=0.0206 nc=-0.5240] | val -0.10794 | lr 9.99e-04 |  172.0s (no improvement 1/30)
+Epoch   11/500 | train -0.10816 [rh=0.0105 nh=-0.8691 rc=0.0206 nc=-0.5238] | val -0.10695 | lr 9.99e-04 |  188.6s (no improvement 2/30)
+Epoch   12/500 | train -0.10855 [rh=0.0105 nh=-0.8694 rc=0.0205 nc=-0.5262] | val -0.10745 | lr 9.99e-04 |  205.1s (no improvement 3/30)
+Epoch   13/500 | train -0.10862 [rh=0.0105 nh=-0.8705 rc=0.0205 nc=-0.5257] | val -0.10741 | lr 9.98e-04 |  223.0s (no improvement 4/30)
+Epoch   14/500 | train -0.10874 [rh=0.0105 nh=-0.8706 rc=0.0205 nc=-0.5265] | val -0.10846 | lr 9.98e-04 |  239.7s ✓ best
+Epoch   15/500 | train -0.10898 [rh=0.0104 nh=-0.8720 rc=0.0205 nc=-0.5268] | val -0.10848 | lr 9.98e-04 |  256.5s ✓ best
+Epoch   16/500 | train -0.10933 [rh=0.0104 nh=-0.8729 rc=0.0204 nc=-0.5283] | val -0.10799 | lr 9.98e-04 |  273.0s (no improvement 1/30)
+Epoch   17/500 | train -0.10924 [rh=0.0104 nh=-0.8724 rc=0.0204 nc=-0.5284] | val -0.10842 | lr 9.97e-04 |  289.8s (no improvement 2/30)
+Epoch   18/500 | train -0.10942 [rh=0.0104 nh=-0.8733 rc=0.0204 nc=-0.5287] | val -0.10825 | lr 9.97e-04 |  306.4s (no improvement 3/30)
+Epoch   19/500 | train -0.10944 [rh=0.0104 nh=-0.8736 rc=0.0204 nc=-0.5287] | val -0.10894 | lr 9.96e-04 |  323.2s ✓ best
+Epoch   20/500 | train -0.10981 [rh=0.0103 nh=-0.8746 rc=0.0203 nc=-0.5301] | val -0.10865 | lr 9.96e-04 |  339.8s (no improvement 1/30)
+Epoch   21/500 | train -0.10965 [rh=0.0104 nh=-0.8741 rc=0.0204 nc=-0.5298] | val -0.10862 | lr 9.96e-04 |  356.4s (no improvement 2/30)
+Epoch   22/500 | train -0.10988 [rh=0.0103 nh=-0.8754 rc=0.0204 nc=-0.5300] | val -0.10930 | lr 9.95e-04 |  373.4s ✓ best
+Epoch   23/500 | train -0.10998 [rh=0.0103 nh=-0.8752 rc=0.0203 nc=-0.5310] | val -0.10922 | lr 9.95e-04 |  390.0s (no improvement 1/30)
+Epoch   24/500 | train -0.10992 [rh=0.0104 nh=-0.8746 rc=0.0203 nc=-0.5314] | val -0.10894 | lr 9.94e-04 |  406.5s (no improvement 2/30)
