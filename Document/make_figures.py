@@ -114,12 +114,16 @@ def ood(ood_npz, prefix, stage_word, fname, ylab_note):
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(); ap.add_argument("--raw_dir", required=True)
+    ap.add_argument("--out_dir", default=OUT, help="Where to write the figures (default Document/figures).")
     a = ap.parse_args()
+    OUT = a.out_dir
     full = np.load(os.path.join(a.raw_dir, "full.npz"))
     narrow = np.load(os.path.join(a.raw_dir, "narrow.npz"))
-    oodz = np.load(os.path.join(a.raw_dir, "ood.npz"))
     os.makedirs(OUT, exist_ok=True)
     per_layer_mae(full)
     rmse_vs_action(narrow)
-    ood(oodz, "heat", "Heating stage", "fig_ood_heating.png", " (normalized)")
-    ood(oodz, "comb", "Combined heating + cooling (post-cooling state)", "fig_ood_combined.png", " (normalized)")
+    # OOD figures are optional (superseded by surrogate_model_v3/paper_figure_ood.py)
+    if os.path.exists(os.path.join(a.raw_dir, "ood.npz")):
+        oodz = np.load(os.path.join(a.raw_dir, "ood.npz"))
+        ood(oodz, "heat", "Heating stage", "fig_ood_heating.png", " (normalized)")
+        ood(oodz, "comb", "Combined heating + cooling (post-cooling state)", "fig_ood_combined.png", " (normalized)")

@@ -311,3 +311,90 @@ class SingleStageTrajectoryDataset(Dataset):
 
     def __getitem__(self, idx: int):
         return self.samples[idx]
+
+
+class SingleStageSegmentDataset(Dataset):
+    """
+    LSTM training data with NO exposure to out-of-range laser powers
+    (lstm/train.py --ood_mode segment). Each trajectory is cut into its
+    maximal runs of CONSECUTIVE layers whose laser power lies inside
+    lp_filter; every run becomes one sample, so the LSTM's hidden state starts
+    from zero at the first layer of the run and only ever processes in-range
+    steps. The run's first input is the TRUE state at that layer (which may
+    follow an out-of-range layer -- a property of the dataset shared by every
+    model, not an exposure to the out-of-range action itself).
+
+    Samples use the same (states, actions, cool_times, step_mask) format as
+    SingleStageTrajectoryDataset, padded to the longest run (padding steps
+    have step_mask=False), so lstm/train.py's masked_mse_loss_fn is reused
+    unchanged. With lp_filter=None every trajectory is a single 12-layer run,
+    i.e. identical to SingleStageTrajectoryDataset.
+    """
+
+    def __init__(
+        self,
+        trajectories: List[TrajectoryV2],
+        state_mean:   torch.Tensor,
+        state_std:    torch.Tensor,
+        lp_mean:      float,
+        lp_std:       float,
+        cool_mean:    float,
+        cool_std:     float,
+        initial_temp: float = 300.0,
+        lp_filter:    Optional[Union[Tuple[float, float], List[Tuple[float, float]]]] = None,
+    ):
+        super().__init__()
+        state_mean = state_mean.cpu()
+        state_std  = state_std.cpu()
+
+        sample_u  = np.asarray(trajectories[0][0].u_final, dtype=np.float32).reshape(-1)
+        state_dim = sample_u.shape[0]
+        init_raw  = np.full(state_dim, initial_temp, dtype=np.float32)
+
+        ranges = None
+        if lp_filter is not None:
+            ranges = [lp_filter] if isinstance(lp_filter[0], (int, float)) else list(lp_filter)
+
+        runs = []   # (states (L+1, D) raw, actions (L,), cools (L,))
+        for traj in trajectories:
+            states = [init_raw.copy()] + [np.asarray(st.u_final, dtype=np.float32).reshape(-1) for st in traj]
+            inr = [ranges is None or any(lo <= st.lp_action <= hi for lo, hi in ranges) for st in traj]
+            t = 0
+            while t < len(traj):
+                if not inr[t]:
+                    t += 1
+                    continue
+                t0 = t
+                while t < len(traj) and inr[t]:
+                    t += 1
+                runs.append((np.stack(states[t0:t + 1]),
+                             np.array([st.lp_action for st in traj[t0:t]], dtype=np.float32),
+                             np.array([st.cool_time for st in traj[t0:t]], dtype=np.float32)))
+
+        L_max = max(len(r[1]) for r in runs)
+        self.samples = []
+        for S, A, C in runs:
+            L = len(A)
+            S_pad = np.zeros((L_max + 1, state_dim), dtype=np.float32); S_pad[:L + 1] = S
+            A_pad = np.zeros(L_max, dtype=np.float32); A_pad[:L] = A
+            C_pad = np.zeros(L_max, dtype=np.float32); C_pad[:L] = C
+            mask = np.zeros(L_max, dtype=bool); mask[:L] = True
+            S_n = (torch.tensor(S_pad) - state_mean) / state_std
+            S_n[L + 1:] = 0.0                                   # padding stays exactly zero
+            self.samples.append((
+                S_n,
+                ((torch.tensor(A_pad) - lp_mean) / lp_std).unsqueeze(-1) * torch.tensor(mask).unsqueeze(-1),
+                ((torch.tensor(C_pad) - cool_mean) / cool_std).unsqueeze(-1) * torch.tensor(mask).unsqueeze(-1),
+                torch.tensor(mask),
+            ))
+
+        lens = np.array([len(r[1]) for r in runs])
+        print(f"[SingleStageSegmentDataset] {len(runs):,} in-range runs from {len(trajectories):,} "
+              f"trajectories (length mean {lens.mean():.2f}, max {lens.max()}), "
+              f"{int(lens.sum()):,} supervised steps; padded to {L_max} steps")
+
+    def __len__(self) -> int:
+        return len(self.samples)
+
+    def __getitem__(self, idx: int):
+        return self.samples[idx]

@@ -38,6 +38,9 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--n_components", type=int, default=64,
                    help="PCA latent dimension (matches the main surrogate's --latent_dim default).")
 
+    p.add_argument("--no_layer_bias", action="store_true",
+                   help="Drop the per-layer one-hot bias (layer-index conditioning); use one shared bias "
+                        "instead, so the Kalman filter, like the other baselines, gets no layer index.")
     p.add_argument("--out_dir", type=str, default="baseline_surrogate/kalman_filter/runs/default")
     return p.parse_args()
 
@@ -71,7 +74,7 @@ def main() -> None:
 
     model = fit_linear_gaussian_kalman(
         data["s"], data["a"], data["c"], data["layer"], data["s2"],
-        n_components=args.n_components, n_layers=n_layers,
+        n_components=args.n_components, n_layers=n_layers, use_layer_bias=not args.no_layer_bias,
     )
 
     ckpt_path = os.path.join(args.out_dir, "kalman_filter_fitted.pt")
@@ -81,6 +84,7 @@ def main() -> None:
         "coeffs":               model.coeffs,
         "n_layers":             model.n_layers,
         "latent_dim":           model.latent_dim,
+        "use_layer_bias":       model.use_layer_bias,
         "state_mean": state_mean, "state_std": state_std,
         "lp_mean": lp_mean, "lp_std": lp_std, "cool_mean": cool_mean, "cool_std": cool_std,
         "train_args": vars(args),

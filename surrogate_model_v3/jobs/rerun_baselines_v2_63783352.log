@@ -1,0 +1,27 @@
+============================================================
+Job ID   : 63783352
+Node     : gl1013
+Started  : Mon Oct 12 17:38:30 EDT 2026
+============================================================
+Python : /home/xysong/.conda/envs/RL/bin/python
+CUDA   : True
+============================================================
+=== [full 1/4] mlp ===
+/home/xysong/.conda/envs/RL/lib/python3.10/site-packages/torch/utils/data/dataloader.py:617: UserWarning: This DataLoader will create 2 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+/home/xysong/.conda/envs/RL/lib/python3.10/site-packages/torch/utils/data/dataloader.py:617: UserWarning: This DataLoader will create 2 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+[mlp.train] Output dir : baseline_surrogate/mlp/runs/full_range_v2
+[mlp.train] Device     : cuda
+[dataset_v2] Loaded 5000 trajectories × 12 layers from DatasetV2_layer_12_samples_5000.pkl
+[dataset_v2] Split → train 4000 | val 500 | test 500
+[baseline_surrogate.data] State mean ∈ [162.8, 1853.1], std ∈ [31.4412, 893.7]
+[baseline_surrogate.data] Laser power mean = 249.87 W, std = 89.44 W
+[baseline_surrogate.data] Cool time    mean = 0.1005 s, std = 0.0314 s
+[SingleStageFlatDataset] 48,000 transitions, state_dim=1053, layers 0–11
+[SingleStageFlatDataset] 6,000 transitions, state_dim=1053, layers 0–11
+[mlp.train] PlainMLPSurrogate params=1,872,925
+[mlp.train] Epoch    1/100 | train 0.06410 | val 0.03233 |    4.7s ✓ best
+[mlp.train] Epoch    2/100 | train 0.01654 | val 0.01350 |    8.4s ✓ best
+[mlp.train] Epoch    3/100 | train 0.00778 | val 0.00451 |   12.3s ✓ best
+[mlp.train] Epoch    4/100 | train 0.00620 | val 0.00311 |   16.2s ✓ best

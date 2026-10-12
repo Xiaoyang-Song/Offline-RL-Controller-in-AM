@@ -30,7 +30,9 @@ from torch.utils.data import DataLoader
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 from surrogate_model_latent_uncertainty_v2.dataset_v2 import load_trajectories, split_trajectories
-from baseline_surrogate.common.data import build_single_stage_normalizers, SingleStageTrajectoryDataset
+from baseline_surrogate.common.data import (
+    build_single_stage_normalizers, SingleStageTrajectoryDataset, SingleStageSegmentDataset,
+)
 from baseline_surrogate.common.train_loop import run_training
 from baseline_surrogate.lstm.model import LSTMSurrogate
 
@@ -44,6 +46,12 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--seed",          type=int,   default=42)
     p.add_argument("--lp_filter_min", type=float, default=None)
     p.add_argument("--lp_filter_max", type=float, default=None)
+    p.add_argument("--ood_mode", choices=["mask", "segment"], default="mask",
+                   help="How out-of-range layers are handled when an LP filter is given. 'mask' (original): "
+                        "walk every trajectory in full, only mask the loss at out-of-range layers -- the "
+                        "LSTM still RECEIVES those laser powers as inputs. 'segment': train only on "
+                        "contiguous in-range runs of layers, hidden state reset at each run start, so no "
+                        "out-of-range input ever enters the network. Identical when no filter is given.")
 
     p.add_argument("--hidden",  type=int, default=512)
     p.add_argument("--dropout", type=float, default=0.0)
@@ -112,8 +120,11 @@ def main() -> None:
         state_mean=state_mean, state_std=state_std, lp_mean=lp_mean, lp_std=lp_std,
         cool_mean=cool_mean, cool_std=cool_std, initial_temp=args.initial_temp, lp_filter=lp_filter,
     )
-    train_ds = SingleStageTrajectoryDataset(train_trajs, **ds_kwargs)
-    val_ds   = SingleStageTrajectoryDataset(val_trajs,   **ds_kwargs)
+    DS = SingleStageSegmentDataset if (args.ood_mode == "segment" and lp_filter is not None) \
+        else SingleStageTrajectoryDataset
+    print(f"[lstm.train] ood_mode={args.ood_mode} -> {DS.__name__}")
+    train_ds = DS(train_trajs, **ds_kwargs)
+    val_ds   = DS(val_trajs,   **ds_kwargs)
 
     loader_kw    = dict(batch_size=args.batch_size, num_workers=args.num_workers,
                         pin_memory=(device == "cuda"))

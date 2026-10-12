@@ -42,12 +42,13 @@ class LinearGaussianKalmanSurrogate:
     fit_linear_gaussian_kalman; nothing after that needs sklearn at all."""
 
     def __init__(self, components: np.ndarray, mean: np.ndarray, coeffs: np.ndarray,
-                n_layers: int, latent_dim: int):
+                n_layers: int, latent_dim: int, use_layer_bias: bool = True):
         self.components = components   # (n_components, state_dim)
         self.mean       = mean         # (state_dim,)
         self.coeffs     = coeffs       # (latent_dim + 2 + n_layers, latent_dim)
         self.n_layers   = n_layers
         self.latent_dim = latent_dim
+        self.use_layer_bias = use_layer_bias   # False: z_{t+1} = A z_t + B a_t + C cool_t + b (no layer index)
 
     def _pca_transform(self, X: np.ndarray) -> np.ndarray:
         return (X - self.mean) @ self.components.T
@@ -57,6 +58,10 @@ class LinearGaussianKalmanSurrogate:
 
     def _design(self, z: np.ndarray, a: np.ndarray, c: np.ndarray, layer_idx: np.ndarray) -> np.ndarray:
         B = z.shape[0]
+        if not self.use_layer_bias:
+            # single shared bias column instead of a per-layer one-hot
+            return np.concatenate([z, a[:, None], c[:, None], np.ones((B, 1), dtype=np.float32)],
+                                  axis=1).astype(np.float32)
         onehot = np.zeros((B, self.n_layers), dtype=np.float32)
         onehot[np.arange(B), np.clip(layer_idx, 0, self.n_layers - 1)] = 1.0
         return np.concatenate([z, a[:, None], c[:, None], onehot], axis=1).astype(np.float32)
@@ -74,7 +79,7 @@ class LinearGaussianKalmanSurrogate:
 
 def fit_linear_gaussian_kalman(
     s: np.ndarray, a: np.ndarray, c: np.ndarray, layer_idx: np.ndarray, s2: np.ndarray,
-    n_components: int = 64, n_layers: int = 12,
+    n_components: int = 64, n_layers: int = 12, use_layer_bias: bool = True,
 ) -> LinearGaussianKalmanSurrogate:
     """Fit PCA on pooled {s, s2} (so the same basis represents both sides of
     the transition), then fit the linear process model on the (filtered)
@@ -88,6 +93,7 @@ def fit_linear_gaussian_kalman(
     model = LinearGaussianKalmanSurrogate(
         components=pca.components_.astype(np.float32), mean=pca.mean_.astype(np.float32),
         coeffs=np.zeros((1, 1), dtype=np.float32), n_layers=n_layers, latent_dim=n_components,
+        use_layer_bias=use_layer_bias,
     )
     z_t    = model._pca_transform(s)
     z_next = model._pca_transform(s2)
@@ -109,6 +115,7 @@ def load_kalman_surrogate(path: str) -> tuple:
     model = LinearGaussianKalmanSurrogate(
         components=ckpt["pca_components"], mean=ckpt["pca_mean"],
         coeffs=ckpt["coeffs"], n_layers=ckpt["n_layers"], latent_dim=ckpt["latent_dim"],
+        use_layer_bias=ckpt.get("use_layer_bias", True),   # older checkpoints: per-layer bias
     )
     return (model, ckpt["state_mean"], ckpt["state_std"],
             ckpt["lp_mean"], ckpt["lp_std"], ckpt["cool_mean"], ckpt["cool_std"])
