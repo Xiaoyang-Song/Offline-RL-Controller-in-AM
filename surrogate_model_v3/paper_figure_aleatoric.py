@@ -45,6 +45,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.colors import to_rgb
+from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
 import numpy as np
 
@@ -55,7 +56,9 @@ SETTINGS = [  # folder prefix, panel title
     ("narrow_200_300W",     "Narrow (200–300 W)"),
     ("gap_100-150_350-400", "Gap (100–150, 350–400 W)"),
 ]
-HEAT_C, FULL_C = "#c8553d", "#2a6f97"          # heating stage (terracotta), full transition (steel blue)
+# same heating-red / cooling-blue pair as paper_figure_propagation.py (WARM / COOL, light variants for fills)
+HEAT_C, FULL_C = "#c4352d", "#3b55c4"           # heating stage (red), full transition = after cooling (blue)
+HEAT_L, FULL_L = "#efa99b", "#9fb0ea"
 _lighten = lambda c, f=0.62: tuple(1 - f * (1 - np.array(to_rgb(c))))   # mix toward white
 
 
@@ -201,6 +204,58 @@ def plot_merged(root, out):
     _save(fig, out)
     print(f"[paper_figure_aleatoric] Saved → {out}.{{pdf,png}}")
 
+def _draw_panel_target(ax, rows, ymax, bw=0.29, shade=False, annotate=False):
+    """Learned sigma as bars (one per stage), expected as a dark target line across each bar,
+    5-95 % whiskers over test samples; optionally the deviation (%) above each bar (annotate) and light
+    bands per noise level (shade) — both off in the paper version."""
+    rows = [r for r in rows if r["eps"] > 0]
+    x = np.arange(len(rows))
+    if shade:
+        for i in x[::2]:
+            ax.axvspan(i - 0.5, i + 0.5, color="#f6f5f8", zorder=0, linewidth=0)
+    fs = plt.rcParams["font.size"] - 2.6
+    for k, (ek, lk, lo_k, hi_k, col) in enumerate((("eps", "heat", "heat_lo", "heat_hi", HEAT_C),
+                                                   ("full_exp", "full", "full_lo", "full_hi", FULL_C))):
+        xs = x + (k - 0.5) * (bw + 0.08)
+        learned = np.array([r[lk] for r in rows]); expected = np.array([r[ek] for r in rows])
+        ax.bar(xs, learned, width=bw, color=HEAT_L if k == 0 else FULL_L, edgecolor=col, linewidth=0.8, zorder=2)
+        ax.vlines(xs, [r[lo_k] for r in rows], [r[hi_k] for r in rows], color=INK_2,
+                  linewidth=0.6, zorder=3)
+        ax.hlines(expected, xs - bw * 0.62, xs + bw * 0.62, color="#1f1f1f", linewidth=1.3, zorder=4)
+        for xi, l, e, hi in (zip(xs, learned, expected, [r[hi_k] for r in rows]) if annotate else ()):
+            dev = 100 * (l / e - 1)
+            txt = "0%" if abs(dev) < 0.5 else f"{dev:+.0f}%".replace("-", "\u2212")
+            ax.text(xi, max(l, e, hi) + ymax * 0.012, txt, ha="center", va="bottom", fontsize=fs, color=col)
+    ax.set_xticks(x); ax.set_xticklabels([f"{r['eps']:g}" for r in rows])
+    ax.set_xlim(-0.5, len(rows) - 0.5); ax.set_ylim(0, ymax)
+    ax.grid(axis="y", color=GRID, linewidth=0.6); ax.set_axisbelow(True)
+    ax.tick_params(axis="x", length=0)
+
+
+def plot_row_target(root, subset, out):
+    data = [(t, _load_setting(root, pre, subset)) for pre, t in SETTINGS]
+    data = [(t, rows) for t, rows in data if rows]
+    ymax = max(max(r["full_hi"], r["full_exp"], r["full"]) for _, rows in data for r in rows) * 1.06
+    n = len(data)
+    fig, axes = plt.subplots(1, n, figsize=(2.5 * n + 0.2, 2.5), sharey=True, squeeze=False,
+                             gridspec_kw=dict(wspace=0.1))
+    for j, (ax, (title, rows)) in enumerate(zip(axes[0], data)):
+        _draw_panel_target(ax, rows, ymax)
+        ax.set_xlabel(r"Injected noise std $\varepsilon$")
+        ax.set_title(title, pad=3, color=INK_2)
+        _panel_label(ax, "abc"[j], x=-0.08 if j else -0.2)
+    axes[0, 0].set_ylabel(r"Aleatoric $\sigma$ (× state std)")
+    handles = [Patch(facecolor=HEAT_L, edgecolor=HEAT_C, linewidth=0.8, label="Heating stage, learned"),
+               Patch(facecolor=FULL_L, edgecolor=FULL_C, linewidth=0.8, label="Full transition, learned"),
+               Line2D([], [], color="#1f1f1f", linewidth=1.3, label="Expected"),
+               Line2D([], [], color=INK_2, linewidth=0.6, label="5–95 % over test samples")]
+    fig.legend(handles=handles, loc="upper center", bbox_to_anchor=(0.5, 1.1), ncols=4, handlelength=1.5,
+               columnspacing=1.4)
+    _save(fig, out)
+    _report(subset.upper(), data)
+    print(f"[paper_figure_aleatoric] Saved → {out}.{{pdf,png}}")
+
+
 def main() -> None:
     p = argparse.ArgumentParser()
     p.add_argument("--root", default="surrogate_model_v3/results_aleatoric_calibration")
@@ -212,11 +267,16 @@ def main() -> None:
     p.add_argument("--merged", action="store_true",
                    help="2 x 3 figure: InD (top row, a-c) and OoD (bottom row, d-e) test samples together; "
                         "--subset is ignored.")
+    p.add_argument("--target", action="store_true",
+                   help="Row layout with learned-sigma bars, expected value as a target line, 5-95 %% whiskers "
+                        "and the deviation in %% (instead of separate expected / learned bars).")
     p.add_argument("--out", required=True)
     a = p.parse_args()
     plt.rcParams.update(PAPER_RC)
     if a.merged:
         plot_merged(a.root, a.out)
+    elif a.target:
+        plot_row_target(a.root, a.subset, a.out)
     else:
         plot_row(a.root, a.subset, a.out)
 

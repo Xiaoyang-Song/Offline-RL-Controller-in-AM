@@ -15,6 +15,9 @@ paper_figure_aleatoric.py (same data, same expected values, InD + OoD):
                   (setting, stage, ε); colour = stage, marker = setting; the
                   diagonal is perfect recovery, the band ±10 %.
 
+  --combined      InD and OoD test samples pooled: every style becomes one row
+                  of three panels (full range / narrow / gap).
+
     python -m surrogate_model_v3.paper_figure_aleatoric_alt --style dot \\
         --out surrogate_model_v3/results_aleatoric_calibration/alt/paper_fig_aleatoric_dot
 """
@@ -137,14 +140,73 @@ def plot_parity(root, out):
     _save(fig, out)
 
 
+# ── combined InD + OoD (all test samples): one row, one panel per setting ──────────
+def row_1x3(draw, ylabel, handles, root, subset="all", figsize=(7.4, 2.5), legend_cols=4):
+    fig, axes = plt.subplots(1, 3, figsize=figsize, sharey=True, gridspec_kw=dict(wspace=0.12))
+    for j, (ax, (pre, title)) in enumerate(zip(axes, SETTINGS)):
+        draw(ax, _load_setting(root, pre, subset))
+        ax.set_title(title, pad=3, color=INK_2)
+        ax.set_xlabel(r"Injected noise std $\varepsilon$")
+        _panel_label(ax, "abc"[j], x=-0.2 if j == 0 else -0.08)
+    axes[0].set_ylabel(ylabel)
+    fig.legend(handles=handles, loc="upper center", bbox_to_anchor=(0.5, 1.12), ncols=legend_cols,
+               handlelength=1.6, columnspacing=1.4)
+    return fig
+
+
+def draw_parity_panel(ax, rows, lo=0.007, hi=0.5):
+    g = np.geomspace(lo, hi, 50)
+    ax.fill_between(g, g * 0.9, g * 1.1, color="#f1f0f3", linewidth=0, zorder=0)
+    ax.plot(g, g, color=INK_3, linewidth=0.8, zorder=1)
+    rows = [r for r in rows if r["eps"] > 0]
+    for ek, lk, col, _ in STAGES:
+        ax.scatter([r[ek] for r in rows], [r[lk] for r in rows], marker="o", s=26, color=col,
+                   edgecolor="white", linewidth=0.5, zorder=3)
+    ax.set_xscale("log"); ax.set_yscale("log"); ax.set_xlim(lo, hi); ax.set_ylim(lo, hi)
+    _plain_log(ax.xaxis); _plain_log(ax.yaxis)
+    ax.set_aspect("equal")
+    ax.grid(color=GRID, linewidth=0.6); ax.set_axisbelow(True)
+
+
+def plot_parity_combined(root, out):
+    fig, axes = plt.subplots(1, 3, figsize=(7.2, 2.75), sharey=True, gridspec_kw=dict(wspace=0.1))
+    for j, (ax, (pre, title)) in enumerate(zip(axes, SETTINGS)):
+        draw_parity_panel(ax, _load_setting(root, pre, "all"))
+        ax.set_title(title, pad=3, color=INK_2)
+        ax.set_xlabel(r"Expected aleatoric $\sigma$ (× state std)")
+        _panel_label(ax, "abc"[j], x=-0.22 if j == 0 else -0.06)
+    axes[0].set_ylabel(r"Learned aleatoric $\sigma$ (× state std)")
+    from matplotlib.patches import Patch
+    h = [Line2D([], [], marker="o", linestyle="none", color=HEAT_C, markersize=5, markeredgecolor="white",
+                label="Heating stage"),
+         Line2D([], [], marker="o", linestyle="none", color=FULL_C, markersize=5, markeredgecolor="white",
+                label="Full transition"),
+         Line2D([], [], color=INK_3, linewidth=0.8, label="Perfect recovery"),
+         Patch(facecolor="#f1f0f3", label="±10 %")]
+    fig.legend(handles=h, loc="upper center", bbox_to_anchor=(0.5, 0.99), ncols=4, handlelength=1.6,
+               columnspacing=1.4)
+    _save(fig, out)
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--root", default="surrogate_model_v3/results_aleatoric_calibration")
     p.add_argument("--style", choices=["dot", "ratio", "parity"], required=True)
+    p.add_argument("--combined", action="store_true",
+                   help="Pool InD and OoD test samples (subset 'all'): one row of three panels, one per setting.")
     p.add_argument("--out", required=True)
     a = p.parse_args()
     plt.rcParams.update(PAPER_RC)
     base.ROOT[0] = a.root
+    if a.combined:
+        if a.style == "dot":
+            _save(row_1x3(draw_dot, r"Aleatoric $\sigma$ (× state std, log scale)", dot_handles(), a.root), a.out)
+        elif a.style == "ratio":
+            _save(row_1x3(draw_ratio, r"Learned / expected aleatoric $\sigma$", ratio_handles(), a.root), a.out)
+        else:
+            plot_parity_combined(a.root, a.out)
+        print(f"[paper_figure_aleatoric_alt] Saved → {a.out}.{{pdf,png}}")
+        return
     if a.style == "dot":
         fig, _ = grid_2x3(draw_dot, r"Aleatoric $\sigma$ (× state std, log scale)", dot_handles())
         _save(fig, a.out)
