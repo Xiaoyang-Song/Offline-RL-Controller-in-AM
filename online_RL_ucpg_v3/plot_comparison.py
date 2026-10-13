@@ -52,6 +52,10 @@ def _colour(name):
     if m:
         f = float(np.clip(0.3 + 0.7 * np.log(float(m.group(1)) / 5.0) / np.log(800 / 5.0), 0.3, 1.0))  # c=5 K light .. 800 K dark
         return tuple((1 - f) * np.array(to_rgb(light)) + f * np.array(to_rgb(dark)))
+    m = re.search(r"k=([\d.]+)", n)                       # multiplicative tau_k sweep: small k (strong) darker
+    if m:
+        f = float(np.clip(1.0 - 0.7 * np.log(float(m.group(1)) / 0.5) / np.log(8.0 / 0.5), 0.3, 1.0))  # k=0.5 dark .. 8 light
+        return tuple((1 - f) * np.array(to_rgb(light)) + f * np.array(to_rgb(dark)))
     shaped = "shaped" in n or "v3" in n
     return dark if shaped else light
 

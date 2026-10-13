@@ -50,9 +50,15 @@ def add_env_args(p: argparse.ArgumentParser) -> None:
                    help="'propagated' (default): mean chained through the ensemble mean, epistemic covariance "
                         "propagated between layers via Jacobians. 'member_rollout': LEGACY per-member "
                         "trajectories (only to reproduce runs trained before this option existed).")
-    p.add_argument("--shaping", choices=["additive", "shrink"], default="additive",
+    p.add_argument("--shaping", choices=["additive", "shrink", "multiplicative"], default="additive",
                    help="'additive': d + (1-w) c (never rewards uncertainty, default); "
-                        "'shrink': w d + (1-w) c (exploitable when d > c; for comparison only).")
+                        "'shrink': w d + (1-w) c (exploitable when d > c; for comparison only); "
+                        "'multiplicative': reward = mean_i w_i exp(-d_i / W) (positive, no c).")
+    p.add_argument("--uncertainty", choices=["epistemic", "total"], default="epistemic",
+                   help="Std used for shaping and tau: propagated epistemic (default), or total = propagated "
+                        "epistemic + propagated aleatoric (needs --uncertainty_mode propagated).")
+    p.add_argument("--n_probes", type=int, default=16,
+                   help="Rademacher probes per stage for the propagated aleatoric diagonal (--uncertainty total).")
 
 
 def resolve_id_ranges(args):
@@ -79,6 +85,7 @@ def make_env(args, device: str):
         cool_time_min=args.cool_time_min, cool_time_max=args.cool_time_max,
         reward_field=args.reward_field, reward_mode="plain", tau=None, pess_dev=args.pess_dev,
         shaping=args.shaping, uncertainty_mode=args.uncertainty_mode,
+        uncertainty=args.uncertainty, n_probes=args.n_probes,
     )
     # trust scale — computed for BOTH modes so a plain run logs the same shaped diagnostic
     if args.tau is not None:
@@ -93,5 +100,5 @@ def make_env(args, device: str):
     env.reward_mode = args.reward_mode
     print(f"[v3] reward_field={args.reward_field}  reward_mode={args.reward_mode}  "
           f"tau={tau if tau is None else f'{tau:.3f} K'}  (median ID sigma {med:.3f} K, k={args.tau_k})  "
-          f"pess_dev={env.pess_dev:.1f} K  shaping={env.shaping}  uncertainty={env.uncertainty_mode}  members={env.K}")
+          f"pess_dev={env.pess_dev:.1f} K  shaping={env.shaping}  uncertainty={env.uncertainty_mode}/{env.uncertainty}  members={env.K}")
     return env, dict(tau=tau, median_id_sigma=med)
