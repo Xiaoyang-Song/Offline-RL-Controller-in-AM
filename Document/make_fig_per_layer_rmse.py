@@ -3,9 +3,9 @@ Document/make_fig_per_layer_rmse.py
 Per-layer next-state RMSE of the proposed surrogate vs. the baselines, in the
 same paper style as the surrogate_model_v3 figures (paper_figure_ood.PAPER_RC):
 
-  (a) full range, teacher-forced      (b) full range, autoregressive
-  (c) narrow 200-300 W, teacher-forced (d) gap 100-150 & 350-400 W, teacher-forced
-      — (d) only if <raw_dir>/gap.npz exists.
+  one row, teacher-forced first: (a) full range | (b) narrow 200-300 W |
+  (c) gap 100-150 & 350-400 W (only if <raw_dir>/gap.npz exists) — then the
+  last panel: full range, autoregressive.
 
 Inputs are the `baseline_surrogate.summarize_results --dump_npz` files
 (full.npz, narrow.npz[, gap.npz]). Lines = pooled RMSE over all test
@@ -24,7 +24,6 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
-from matplotlib.patches import Patch
 from matplotlib.ticker import FuncFormatter, LogLocator, NullFormatter
 import numpy as np
 
@@ -87,33 +86,28 @@ def main():
     narrow = np.load(os.path.join(a.raw_dir, "narrow.npz"))
     gap_path = os.path.join(a.raw_dir, "gap.npz")
     panels = [(full, "tf", "Full range (100–400 W) · teacher-forced"),
-              (full, "ar", "Full range (100–400 W) · autoregressive"),
               (narrow, "tf", "Narrow (200–300 W) · teacher-forced")]
     if os.path.exists(gap_path):
         panels.append((np.load(gap_path), "tf", "Gap (100–150 & 350–400 W) · teacher-forced"))
+    panels.append((full, "ar", "Full range (100–400 W) · autoregressive"))
 
-    nr = 2 if len(panels) == 4 else 1
-    nc = 2 if len(panels) == 4 else 3
-    fig, axes = plt.subplots(nr, nc, figsize=(6.6, 4.8) if nr == 2 else (9.0, 2.6), sharey=True, squeeze=False,
-                             gridspec_kw=dict(wspace=0.08, hspace=0.38))
-    for k, (ax, (z, tag, title)) in enumerate(zip(axes.flat, panels)):
+    n = len(panels)
+    fig, axes = plt.subplots(1, n, figsize=(2.25 * n + 0.3, 2.6), sharey=True, squeeze=False,
+                             gridspec_kw=dict(wspace=0.08))
+    for k, (ax, (z, tag, title)) in enumerate(zip(axes[0], panels)):
         draw(ax, z, tag)
-        ax.set_title(title, pad=3, color=INK_2)
-        col = k % nc
-        if k // nc == nr - 1:
-            ax.set_xlabel("Layer")
-        if col == 0:
+        ax.set_title(title.replace(" · ", "\n"), pad=3, color=INK_2, linespacing=1.25)
+        ax.set_xlabel("Layer")
+        if k == 0:
             ax.set_ylabel("Next-state RMSE [K]")
-        _panel_label(ax, "abcd"[k], x=-0.13 if col == 0 else -0.04)
-    for ax in list(axes.flat)[len(panels):]:
-        ax.axis("off")
+        _panel_label(ax, "abcd"[k], x=-0.15 if k == 0 else -0.04)
 
     handles = [Line2D([], [], color=c, marker=m, markersize=3.6 if i == 0 else 3.0, linewidth=1.9 if i == 0 else 1.2,
                       markeredgecolor="white", markeredgewidth=0.4, label=n)
                for i, (_, n, c, m) in enumerate(METHODS)]
     handles.append(Line2D([], [], color=INK_3, linewidth=0.9, marker="|", markersize=0,
                           label="10–90th pct. over trajectories"))
-    fig.legend(handles=handles, loc="upper center", bbox_to_anchor=(0.5, 1.0 + (0.045 if nr == 2 else 0.1)),
+    fig.legend(handles=handles, loc="upper center", bbox_to_anchor=(0.5, 1.14),
                ncols=6, handlelength=1.8, columnspacing=1.1)
     os.makedirs(os.path.dirname(a.out) or ".", exist_ok=True)
     for ext in ("pdf", "png"):

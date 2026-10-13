@@ -82,7 +82,12 @@ FIXED_PARAMS = dict(
     k=0.0067, rho=0.00433, specificHeat=0.526,
     thick=4.0,                      # NOTE: v2 uses 4.0, not v1's 2.0 — see multilayer_random_v2.m
     hmax=0.4, style="simultaneous",
-    heatTime=0.05, nTimeStepsHeat=50, nTimeStepsCool=50,
+    # heatTime: the training data (Data/DatasetV2_layer_12_samples_5000.pkl <- RL_Dataset_v2) was
+    # generated with 0.025 s; multilayer_random_v2.m was LATER switched to 0.05 s (RL_Dataset_v2_longer_heatTime).
+    # Verified 2026-10-13: 0.025 reproduces the stored u_heat exactly (max |du| = 0.000 K), 0.05 is off by
+    # up to 816 K. Real-physics results produced before this date used 0.05. Override (e.g. to reproduce
+    # them) with the environment variable LPBF_HEAT_TIME=0.05.
+    heatTime=float(os.environ.get("LPBF_HEAT_TIME", "0.025")), nTimeStepsHeat=50, nTimeStepsCool=50,
     doPlot=False,
     ss_fixed=600.0,                  # scan speed — fixed, not policy-controlled (unused by the surrogate too)
     eeta=0.3, r_b=0.06, H=0.1,
