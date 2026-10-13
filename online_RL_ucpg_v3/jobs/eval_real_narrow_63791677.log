@@ -1,0 +1,14 @@
+Started: Mon Oct 12 22:13:38 EDT 2026   Node: gl1018   reward_field of v3 runs: cool
+=== [1/2] surrogate evaluation (plain deviation, 100 episodes) ===
+[agent] Loaded checkpoint from online_RL_ucpg_v3/runs/narrow_pg_plain_cool/pg_best.pt  (lambda=0.00000)
+  PG plain (cool)                    deviation   121.3 ±  53.2 K | sigma 103.73 K | OOD  64.6% | LP 299.6 W
+[agent] Loaded checkpoint from online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/pg_best.pt  (lambda=0.00000)
+  UCPG v3 shaped (cool)              deviation   324.8 ± 138.5 K | sigma   4.37 K | OOD   5.9% | LP 261.8 W
+[agent] Loaded checkpoint from baselines/naive_pg/runs/narrow_200_300W/naive_pg_best.pt  (lambda=0.00000)
+  Naive PG (heat, earlier)           deviation   754.6 ± 190.1 K | sigma  20.04 K | OOD  82.7% | LP 167.2 W
+  Q plain (cool)                     deviation   121.6 ±  53.2 K | sigma  97.45 K | OOD  58.0% | LP 299.3 W
+  Q v3 shaped (cool)                 deviation   304.9 ± 129.5 K | sigma   4.72 K | OOD   5.5% | LP 266.6 W
+  Online Q (heat, earlier)           deviation   714.0 ± 174.7 K | sigma  21.17 K | OOD  83.8% | LP 174.3 W
+Saved → online_RL_ucpg_v3/results_narrow_cool/leaderboard_surrogate_v3.csv, per_episode_surrogate.json
+[plot_comparison] Saved → online_RL_ucpg_v3/results_narrow_cool/comparison.{pdf,png}
+=== [2/2] real-physics evaluation (MATLAB, 3 episodes) ===
