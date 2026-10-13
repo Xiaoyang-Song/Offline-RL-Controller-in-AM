@@ -10,7 +10,9 @@ layer t = 1..12:
     (reset_each_layer=True)
   * between-layer propagated sigma (multistep_propagation.rollout_propagated)
 sigma is aggregated like the RMSE: sqrt(mean over trajectories and nodes of
-sigma_i^2 * state_std_i^2), total = epistemic + aleatoric.
+sigma_i^2 * state_std_i^2) (RMS, not a plain mean), total = epistemic + aleatoric.
+Lines = this pooled RMS; bands (sigma curves only) = 10-90th percentile over test trajectories of the
+per-trajectory RMS over nodes.
 
     python -m surrogate_model_v3.paper_figure_multistep \\
         --checkpoint "Full range (100–400 W)=surrogate_model_v3/runs/full_range/surrogate_best.pt" \\
@@ -62,38 +64,49 @@ def compute(name, ckpt, data_path, chunk, n_probes, device):
     return out
 
 
-def plot(results, out):
+def plot(results, out, band=(10, 90)):
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
     from matplotlib.lines import Line2D
-    from surrogate_model_v3.paper_figure_ood import PAPER_RC, INK, INK_2, GRID, _panel_label
+    from matplotlib.patches import Patch
+    from surrogate_model_v3.paper_figure_ood import PAPER_RC, INK_2, GRID, _panel_label
     plt.rcParams.update(PAPER_RC)
     ERR, PROP, ONE = "#1f1f1f", "#2a6f97", "#c8553d"
+    styles = [("rmse", ERR, "D", 3.0, "-", None, 4),                      # no band: line only
+              ("prop", PROP, "o", 3.2, "-", 0.18, 3),
+              ("one", ONE, "s", 3.0, (0, (3.2, 1.6)), 0.14, 2)]
     n = len(results)
-    fig, axes = plt.subplots(1, n, figsize=(3.4 * n + 0.2, 2.6), squeeze=False, gridspec_kw=dict(wspace=0.28))
+    fig, axes = plt.subplots(1, n, figsize=(3.2 * n + 0.2, 2.7), squeeze=False, gridspec_kw=dict(wspace=0.26))
     for j, (ax, (name, r)) in enumerate(zip(axes[0], results)):
         L = r["layers"]
-        ax.plot(L, r["rmse"], color=ERR, marker="D", markersize=3, linewidth=1.6, zorder=4)
-        ax.plot(L, r["prop"], color=PROP, marker="o", markersize=3.2, linewidth=1.6, zorder=3)
-        ax.plot(L, r["one"], color=ONE, marker="s", markersize=3, linewidth=1.4, linestyle=(0, (3.2, 1.6)), zorder=3)
+        for key, col, mk, ms, ls, alpha, z in styles:
+            if alpha is not None and f"{key}_traj" in r:
+                lo, hi = np.percentile(r[f"{key}_traj"], band, axis=0)
+                ax.fill_between(L, lo, hi, color=col, alpha=alpha, linewidth=0, zorder=z - 3)
+                ax.plot(L, lo, color=col, alpha=0.35, linewidth=0.5, linestyle=ls, zorder=z - 3)
+                ax.plot(L, hi, color=col, alpha=0.35, linewidth=0.5, linestyle=ls, zorder=z - 3)
+            ax.plot(L, r[key], color=col, marker=mk, markersize=ms, linewidth=1.6 if ls == "-" else 1.4,
+                    linestyle=ls, zorder=z, markeredgecolor="white", markeredgewidth=0.4)
         ax.set_xticks([1, 3, 6, 9, 12]); ax.set_xlim(0.5, L[-1] + 0.5); ax.set_ylim(bottom=0)
         ax.set_xlabel("Layer (autoregressive step)")
         if j == 0:
-            ax.set_ylabel("Next-state error / σ [K] (RMS over nodes)")
+            ax.set_ylabel("Next-state error / σ [K]")
         ax.set_title(name, pad=3, color=INK_2)
         ax.grid(axis="y", color=GRID, linewidth=0.6); ax.set_axisbelow(True)
-        _panel_label(ax, "abcd"[j], x=-0.16 if j == 0 else -0.08)
+        _panel_label(ax, "abcd"[j], x=-0.17 if j == 0 else -0.09)
     handles = [Line2D([], [], color=ERR, marker="D", markersize=3, linewidth=1.6, label="Autoregressive RMSE"),
                Line2D([], [], color=PROP, marker="o", markersize=3.2, linewidth=1.6, label="σ, propagated between layers"),
                Line2D([], [], color=ONE, marker="s", markersize=3, linewidth=1.4, linestyle=(0, (3.2, 1.6)),
-                      label="σ, one-step")]
-    fig.legend(handles=handles, loc="upper center", bbox_to_anchor=(0.5, 1.1), ncols=3, handlelength=2.2)
+                      label="σ, one-step"),
+               Patch(facecolor="#9a9a9a", alpha=0.3, edgecolor="none",
+                     label=f"σ, {band[0]}–{band[1]}th pct. over trajectories")]
+    fig.legend(handles=handles, loc="upper center", bbox_to_anchor=(0.5, 1.1), ncols=4, handlelength=2.0,
+               columnspacing=1.3)
     for ext in ("pdf", "png"):
         fig.savefig(f"{out}.{ext}")
     plt.close(fig)
     print(f"[multistep] Saved → {out}.{{pdf,png}}")
-
 
 def main():
     p = argparse.ArgumentParser()

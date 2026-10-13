@@ -34,6 +34,8 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--seed",          type=int,   default=42)
     p.add_argument("--lp_filter_min", type=float, default=None)
     p.add_argument("--lp_filter_max", type=float, default=None)
+    p.add_argument("--lp_filter_ranges", type=str, default=None,
+                   help="Several training power ranges, e.g. '100-150,350-400' (W); mutually exclusive with --lp_filter_min/--lp_filter_max.")
 
     p.add_argument("--n_ensemble", type=int, default=5)
     p.add_argument("--hidden",     type=int, default=512)
@@ -83,6 +85,10 @@ def main() -> None:
             "--lp_filter_min and --lp_filter_max must be given together."
         lp_filter = (args.lp_filter_min, args.lp_filter_max)
         print(f"[vanilla_ensemble.train] LP filter active: [{args.lp_filter_min}, {args.lp_filter_max}] W")
+    if args.lp_filter_ranges:
+        assert lp_filter is None, "--lp_filter_ranges is mutually exclusive with --lp_filter_min/--lp_filter_max."
+        lp_filter = [tuple(float(x) for x in r.split("-")) for r in args.lp_filter_ranges.split(",")]
+        print(f"[vanilla_ensemble.train] LP filter active: {lp_filter} W")
 
     ds_kwargs = dict(
         state_mean=state_mean, state_std=state_std, lp_mean=lp_mean, lp_std=lp_std,

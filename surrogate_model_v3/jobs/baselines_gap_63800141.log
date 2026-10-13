@@ -1,0 +1,57 @@
+============================================================
+Job ID   : 63800141
+Node     : gl1016
+Started  : Tue Oct 13 03:57:55 EDT 2026
+============================================================
+Python : /home/xysong/.conda/envs/RL/bin/python
+CUDA   : True
+============================================================
+=== [gap 1/5] lstm (segment mode: no out-of-range inputs) ===
+/home/xysong/.conda/envs/RL/lib/python3.10/site-packages/torch/utils/data/dataloader.py:617: UserWarning: This DataLoader will create 2 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+/home/xysong/.conda/envs/RL/lib/python3.10/site-packages/torch/utils/data/dataloader.py:617: UserWarning: This DataLoader will create 2 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+[lstm.train] Output dir : baseline_surrogate/lstm/runs/gap_100-150_350-400_v2
+[lstm.train] Device     : cuda
+[dataset_v2] Loaded 5000 trajectories × 12 layers from DatasetV2_layer_12_samples_5000.pkl
+[dataset_v2] Split → train 4000 | val 500 | test 500
+[baseline_surrogate.data] State mean ∈ [162.8, 1853.1], std ∈ [31.4412, 893.7]
+[baseline_surrogate.data] Laser power mean = 249.87 W, std = 89.44 W
+[baseline_surrogate.data] Cool time    mean = 0.1005 s, std = 0.0314 s
+[lstm.train] LP filter active: [(100.0, 150.0), (350.0, 400.0)] W
+[lstm.train] ood_mode=segment -> SingleStageSegmentDataset
+[SingleStageSegmentDataset] 11,981 in-range runs from 4,000 trajectories (length mean 1.55, max 9), 18,549 supervised steps; padded to 9 steps
+[SingleStageSegmentDataset] 1,533 in-range runs from 500 trajectories (length mean 1.52, max 9), 2,330 supervised steps; padded to 9 steps
+[lstm.train] LSTMSurrogate params=3,753,501
+[lstm.train] Epoch    1/150 | train 0.10121 | val 0.02451 |    3.7s ✓ best
+[lstm.train] Epoch    2/150 | train 0.01378 | val 0.00760 |    6.1s ✓ best
+[lstm.train] Epoch    3/150 | train 0.00566 | val 0.00724 |    8.5s ✓ best
+[lstm.train] Epoch    4/150 | train 0.00374 | val 0.00354 |   11.0s ✓ best
+[lstm.train] Epoch    5/150 | train 0.00324 | val 0.00396 |   13.3s (no improvement 1/15)
+[lstm.train] Epoch    6/150 | train 0.00265 | val 0.00252 |   15.7s ✓ best
+[lstm.train] Epoch    7/150 | train 0.00241 | val 0.00534 |   18.1s (no improvement 1/15)
+[lstm.train] Epoch    8/150 | train 0.00274 | val 0.00205 |   20.5s ✓ best
+[lstm.train] Epoch    9/150 | train 0.00193 | val 0.00163 |   22.9s ✓ best
+[lstm.train] Epoch   10/150 | train 0.00196 | val 0.00291 |   25.2s (no improvement 1/15)
+[lstm.train] Epoch   11/150 | train 0.00157 | val 0.00195 |   27.6s (no improvement 2/15)
+[lstm.train] Epoch   12/150 | train 0.00202 | val 0.00177 |   29.9s (no improvement 3/15)
+[lstm.train] Epoch   13/150 | train 0.00147 | val 0.00166 |   32.2s (no improvement 4/15)
+[lstm.train] Epoch   14/150 | train 0.00154 | val 0.00251 |   34.6s (no improvement 5/15)
+[lstm.train] Epoch   15/150 | train 0.00204 | val 0.00156 |   37.0s ✓ best
+[lstm.train] Epoch   16/150 | train 0.00107 | val 0.00103 |   39.5s ✓ best
+[lstm.train] Epoch   17/150 | train 0.00134 | val 0.00122 |   41.8s (no improvement 1/15)
+[lstm.train] Epoch   18/150 | train 0.00153 | val 0.00093 |   44.2s ✓ best
+[lstm.train] Epoch   19/150 | train 0.00125 | val 0.00364 |   46.6s (no improvement 1/15)
+[lstm.train] Epoch   20/150 | train 0.00210 | val 0.00141 |   48.9s (no improvement 2/15)
+[lstm.train] Epoch   21/150 | train 0.00143 | val 0.00161 |   51.2s (no improvement 3/15)
+[lstm.train] Epoch   22/150 | train 0.00110 | val 0.00082 |   53.7s ✓ best
+[lstm.train] Epoch   23/150 | train 0.00093 | val 0.00099 |   56.0s (no improvement 1/15)
+[lstm.train] Epoch   24/150 | train 0.00120 | val 0.00123 |   58.4s (no improvement 2/15)
+[lstm.train] Epoch   25/150 | train 0.00170 | val 0.00170 |   60.7s (no improvement 3/15)
+[lstm.train] Epoch   26/150 | train 0.00156 | val 0.00113 |   63.0s (no improvement 4/15)
+[lstm.train] Epoch   27/150 | train 0.00116 | val 0.00072 |   65.5s ✓ best
+[lstm.train] Epoch   28/150 | train 0.00104 | val 0.00204 |   67.8s (no improvement 1/15)
+[lstm.train] Epoch   29/150 | train 0.00084 | val 0.00115 |   70.2s (no improvement 2/15)
+[lstm.train] Epoch   30/150 | train 0.00107 | val 0.00071 |   72.6s ✓ best
+[lstm.train] Epoch   31/150 | train 0.00084 | val 0.00116 |   75.0s (no improvement 1/15)
+[lstm.train] Epoch   32/150 | train 0.00149 | val 0.00161 |   77.3s (no improvement 2/15)
