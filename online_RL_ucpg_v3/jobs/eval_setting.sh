@@ -21,6 +21,7 @@ R="online_RL_ucpg_v3/runs"
 OUT="online_RL_ucpg_v3/results_${TAG}_${F}"
 cd /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM
 module load matlab; source ~/.bashrc; conda activate RL
+set -e
 echo "Started: $(date)  Node: $SLURMD_NODENAME  $TAG  field=$F  ID=[$OOD_MIN,$OOD_MAX] W"
 METHODS=(
     --pg "PG plain=$R/${TAG}_pg_plain_$F/pg_best.pt"

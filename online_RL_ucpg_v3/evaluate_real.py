@@ -83,7 +83,7 @@ def parse_args():
 
 
 def _split(spec):
-    name, path = spec.split("=", 1)
+    name, path = spec.rsplit("=", 1)          # names may contain "=" (e.g. "c=5 K"); paths do not
     return name.strip(), path.strip()
 
 

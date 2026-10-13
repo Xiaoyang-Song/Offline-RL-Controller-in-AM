@@ -230,19 +230,42 @@ class UncertaintyShapedLPBFEnv:
         return np.concatenate([z, np.array([layer_token, cool_token], dtype=np.float32)]).astype(np.float32)
 
 
-def calibrate_tau(env: UncertaintyShapedLPBFEnv, id_min: float, id_max: float, k: float = 2.0,
+def parse_ranges(spec):
+    """'100-150,350-400' -> [(100.0, 150.0), (350.0, 400.0)]."""
+    out = []
+    for part in str(spec).split(","):
+        lo, hi = part.strip().split("-")
+        out.append((float(lo), float(hi)))
+    return out
+
+
+def in_ranges(actions, ranges) -> np.ndarray:
+    """Boolean mask: action inside ANY of the (lo, hi) ranges (inclusive)."""
+    a = np.asarray(actions, dtype=float)
+    m = np.zeros(a.shape, bool)
+    for lo, hi in ranges:
+        m |= (a >= lo) & (a <= hi)
+    return m
+
+
+def calibrate_tau(env: UncertaintyShapedLPBFEnv, id_ranges, k: float = 2.0,
                   n_episodes: int = 64, seed: int = 0) -> Tuple[float, float]:
     """tau = k x median ROI epistemic sigma [K] of MULTI-STEP member rollouts whose
-    actions are drawn uniformly from the in-distribution range [id_min, id_max]
-    (every layer, every ROI node pooled). Returns (tau, median_sigma)."""
+    actions are drawn uniformly from the in-distribution laser-power set — the
+    union of `id_ranges` [(lo, hi), ...], each range picked with probability
+    proportional to its width (every layer, every ROI node pooled).
+    Returns (tau, median_sigma)."""
     rng = np.random.default_rng(seed)
+    widths = np.array([hi - lo for lo, hi in id_ranges], dtype=float)
+    probs = widths / widths.sum()
     saved_mode, saved_tau = env.reward_mode, env.tau
     env.reward_mode, env.tau = "plain", None
     sig = []
     for _ in range(n_episodes):
         env.reset()
         for _t in range(env.n_layers):
-            _o, _r, _d, info = env.step(float(rng.uniform(id_min, id_max)))
+            lo, hi = id_ranges[rng.choice(len(id_ranges), p=probs)]
+            _o, _r, _d, info = env.step(float(rng.uniform(lo, hi)))
             sig.append(info["sigma_epi_roi_K"])
     env.reward_mode, env.tau = saved_mode, saved_tau
     med = float(np.median(sig))

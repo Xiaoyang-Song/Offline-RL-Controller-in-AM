@@ -8,7 +8,7 @@ algorithms see exactly the same environment, reward and trust scale.
 import argparse
 
 from surrogate_model_v3.model import load_surrogate
-from online_RL_ucpg_v3.env import UncertaintyShapedLPBFEnv, calibrate_tau
+from online_RL_ucpg_v3.env import UncertaintyShapedLPBFEnv, calibrate_tau, parse_ranges
 
 
 def add_env_args(p: argparse.ArgumentParser) -> None:
@@ -30,6 +30,9 @@ def add_env_args(p: argparse.ArgumentParser) -> None:
                    help="Surrogate's trained laser-power range (diagnostic OOD-action fraction, and the "
                         "in-distribution range used to calibrate tau). Give with --ood_max.")
     p.add_argument("--ood_max", type=float, default=None)
+    p.add_argument("--id_ranges", type=str, default=None,
+                   help="In-distribution laser-power set as ranges, e.g. '100-150,350-400' (overrides "
+                        "--ood_min/--ood_max; needed for gapped coverage).")
 
     # v3 reward
     p.add_argument("--reward_field", choices=["cool", "heat"], default="cool",
@@ -48,7 +51,19 @@ def add_env_args(p: argparse.ArgumentParser) -> None:
                         "'shrink': w d + (1-w) c (exploitable when d > c; for comparison only).")
 
 
+def resolve_id_ranges(args):
+    """Sets args.id_range_list = [(lo, hi), ...] from --id_ranges, else from --ood_min/--ood_max, else None."""
+    if getattr(args, "id_ranges", None):
+        args.id_range_list = parse_ranges(args.id_ranges)
+    elif args.ood_min is not None and args.ood_max is not None:
+        args.id_range_list = [(args.ood_min, args.ood_max)]
+    else:
+        args.id_range_list = None
+    return args.id_range_list
+
+
 def make_env(args, device: str):
+    resolve_id_ranges(args)
     (surrogate, sm, ss, lm, ls, cm, cs) = load_surrogate(args.surrogate, device=device)
     surrogate.eval()
     env = UncertaintyShapedLPBFEnv(
@@ -64,11 +79,11 @@ def make_env(args, device: str):
     # trust scale — computed for BOTH modes so a plain run logs the same shaped diagnostic
     if args.tau is not None:
         tau, med = args.tau, float("nan")
-    elif args.ood_min is not None and args.ood_max is not None:
-        tau, med = calibrate_tau(env, args.ood_min, args.ood_max, k=args.tau_k)
+    elif args.id_range_list:
+        tau, med = calibrate_tau(env, args.id_range_list, k=args.tau_k)
     else:
         if args.reward_mode == "shaped":
-            raise ValueError("--reward_mode shaped needs --tau, or --ood_min/--ood_max to calibrate it.")
+            raise ValueError("--reward_mode shaped needs --tau, or --id_ranges / --ood_min+--ood_max to calibrate it.")
         tau, med = None, float("nan")
     env.tau = tau
     env.reward_mode = args.reward_mode

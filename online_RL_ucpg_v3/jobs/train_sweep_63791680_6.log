@@ -1,0 +1,117 @@
+Job 63791680_6 on gl1018 Mon Oct 12 23:27:47 EDT 2026
+Run: algo=q  shaped  pess_dev=20 K  field=cool  ->  online_RL_ucpg_v3/runs/narrow_q_shaped_cool_c20
+======================================================================
+[v3-Q (shaped, cool)] out_dir=online_RL_ucpg_v3/runs/narrow_q_shaped_cool_c20 device=cuda
+======================================================================
+[v3] reward_field=cool  reward_mode=shaped  tau=7.081 K  (median ID sigma 3.541 K, k=2.0)  pess_dev=20.0 K  shaping=additive  members=5
+Episode      1/3000 | return -6.5596 | plain -6.3570 | sigma 17.50K | loss nan | eps 1.000 | action 212.5±94.5W | OOD  83.3% | 0s
+Episode     50/3000 | return -8.8809 | plain -8.7009 | sigma 11.09K | loss nan | eps 1.000 | action 263.3±62.6W | OOD  50.0% | 5s
+  [greedy eval @ ep 100] return -2.9398 | plain -2.6762 | best -2.9398
+Episode    100/3000 | return -8.9539 | plain -8.7143 | sigma 23.25K | loss 0.02041 | eps 0.968 | action 250.0±91.8W | OOD  66.7% | 17s
+Episode    150/3000 | return -6.6494 | plain -6.3841 | sigma 25.75K | loss 0.06878 | eps 0.937 | action 247.5±111.0W | OOD  83.3% | 26s
+  [greedy eval @ ep 200] return -2.6170 | plain -2.3460 | best -2.6170
+Episode    200/3000 | return -8.7572 | plain -8.4967 | sigma 30.21K | loss 0.20905 | eps 0.905 | action 255.0±100.2W | OOD  75.0% | 37s
+Episode    250/3000 | return -5.8824 | plain -5.6216 | sigma 32.33K | loss 0.00429 | eps 0.873 | action 255.0±109.2W | OOD  91.7% | 46s
+  [greedy eval @ ep 300] return -2.3039 | plain -2.0306 | best -2.3039
+Episode    300/3000 | return -4.0908 | plain -3.8636 | sigma 19.09K | loss 0.00218 | eps 0.842 | action 282.5±92.8W | OOD  75.0% | 57s
+Episode    350/3000 | return -5.6006 | plain -5.3653 | sigma 18.81K | loss 0.03489 | eps 0.810 | action 260.8±99.6W | OOD  83.3% | 66s
+  [greedy eval @ ep 400] return -2.3051 | plain -2.0303 | best -2.3039
+Episode    400/3000 | return -8.4584 | plain -8.2035 | sigma 36.12K | loss 0.00277 | eps 0.778 | action 291.7±95.8W | OOD  58.3% | 77s
+Episode    450/3000 | return -3.6354 | plain -3.3887 | sigma 22.21K | loss 0.00265 | eps 0.747 | action 223.3±91.5W | OOD  66.7% | 87s
+  [greedy eval @ ep 500] return -2.2482 | plain -1.9694 | best -2.2482
+Episode    500/3000 | return -12.3867 | plain -12.1367 | sigma 24.67K | loss 0.00191 | eps 0.715 | action 235.8±98.4W | OOD  75.0% | 98s
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_q_shaped_cool_c20/return.png
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_q_shaped_cool_c20/return_plain.png
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_q_shaped_cool_c20/ood_action_fraction.png
+Episode    550/3000 | return -5.6172 | plain -5.4363 | sigma 13.25K | loss 0.00249 | eps 0.683 | action 244.2±92.0W | OOD  75.0% | 108s
+  [greedy eval @ ep 600] return -2.5154 | plain -2.2330 | best -2.2482
+Episode    600/3000 | return -3.6095 | plain -3.3658 | sigma 23.87K | loss 0.00195 | eps 0.652 | action 270.0±105.3W | OOD  91.7% | 119s
+Episode    650/3000 | return -2.4361 | plain -2.2301 | sigma 15.79K | loss 0.00110 | eps 0.620 | action 250.8±81.5W | OOD  50.0% | 129s
+  [greedy eval @ ep 700] return -1.9768 | plain -1.7027 | best -1.9768
+Episode    700/3000 | return -4.2255 | plain -3.9939 | sigma 29.50K | loss 0.00364 | eps 0.588 | action 270.8±98.9W | OOD  66.7% | 140s
+Episode    750/3000 | return -2.0845 | plain -1.8364 | sigma 32.36K | loss 0.00159 | eps 0.557 | action 220.8±96.0W | OOD  75.0% | 149s
+  [greedy eval @ ep 800] return -2.2002 | plain -1.9226 | best -1.9768
+Episode    800/3000 | return -5.2696 | plain -4.9882 | sigma 48.44K | loss 0.00293 | eps 0.525 | action 326.7±76.5W | OOD  75.0% | 160s
+Episode    850/3000 | return -4.7968 | plain -4.5090 | sigma 114.23K | loss 0.00145 | eps 0.493 | action 340.8±70.2W | OOD  75.0% | 170s
+  [greedy eval @ ep 900] return -2.0106 | plain -1.7362 | best -1.9768
+Episode    900/3000 | return -1.7313 | plain -1.4708 | sigma 25.39K | loss 0.00107 | eps 0.462 | action 257.5±94.9W | OOD  83.3% | 181s
+Episode    950/3000 | return -3.9300 | plain -3.6425 | sigma 52.93K | loss 0.00115 | eps 0.430 | action 305.8±105.9W | OOD  75.0% | 190s
+  [greedy eval @ ep 1000] return -1.9262 | plain -1.6512 | best -1.9262
+Episode   1000/3000 | return -3.8117 | plain -3.5546 | sigma 29.90K | loss 0.01204 | eps 0.398 | action 236.7±105.5W | OOD  83.3% | 202s
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_q_shaped_cool_c20/return.png
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_q_shaped_cool_c20/return_plain.png
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_q_shaped_cool_c20/ood_action_fraction.png
+Episode   1050/3000 | return -5.9490 | plain -5.6891 | sigma 25.45K | loss 0.00106 | eps 0.367 | action 260.0±103.1W | OOD  58.3% | 212s
+  [greedy eval @ ep 1100] return -2.0983 | plain -1.8224 | best -1.9262
+Episode   1100/3000 | return -3.0366 | plain -2.7813 | sigma 21.94K | loss 0.00113 | eps 0.335 | action 262.5±93.1W | OOD  41.7% | 223s
+Episode   1150/3000 | return -5.3322 | plain -5.0461 | sigma 68.02K | loss 0.00522 | eps 0.303 | action 321.7±83.8W | OOD  66.7% | 233s
+  [greedy eval @ ep 1200] return -2.8592 | plain -2.5785 | best -1.9262
+Episode   1200/3000 | return -2.3555 | plain -2.0752 | sigma 40.14K | loss 0.03242 | eps 0.272 | action 310.0±82.8W | OOD  58.3% | 244s
+Episode   1250/3000 | return -6.8012 | plain -6.5396 | sigma 42.71K | loss 0.00065 | eps 0.240 | action 298.3±108.9W | OOD  66.7% | 254s
+  [greedy eval @ ep 1300] return -2.0228 | plain -1.7472 | best -1.9262
+Episode   1300/3000 | return -2.1778 | plain -1.8972 | sigma 43.17K | loss 0.00076 | eps 0.208 | action 315.8±67.6W | OOD  41.7% | 265s
+Episode   1350/3000 | return -3.2326 | plain -2.9380 | sigma 273.69K | loss 0.00101 | eps 0.177 | action 349.2±52.4W | OOD  75.0% | 275s
+  [greedy eval @ ep 1400] return -2.1907 | plain -1.9113 | best -1.9262
+Episode   1400/3000 | return -1.7252 | plain -1.4490 | sigma 32.25K | loss 0.00097 | eps 0.145 | action 282.5±95.1W | OOD  75.0% | 286s
+Episode   1450/3000 | return -2.7250 | plain -2.4388 | sigma 51.72K | loss 0.00465 | eps 0.113 | action 325.8±68.1W | OOD  66.7% | 296s
+  [greedy eval @ ep 1500] return -2.0032 | plain -1.7293 | best -1.9262
+Episode   1500/3000 | return -1.9671 | plain -1.7297 | sigma 33.91K | loss 0.00173 | eps 0.082 | action 200.0±93.5W | OOD  83.3% | 307s
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_q_shaped_cool_c20/return.png
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_q_shaped_cool_c20/return_plain.png
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_q_shaped_cool_c20/ood_action_fraction.png
+Episode   1550/3000 | return -3.4676 | plain -3.1725 | sigma 341.21K | loss 0.00090 | eps 0.050 | action 365.8±36.6W | OOD 100.0% | 318s
+  [greedy eval @ ep 1600] return -2.3170 | plain -2.0359 | best -1.9262
+Episode   1600/3000 | return -3.2329 | plain -2.9418 | sigma 86.82K | loss 0.00072 | eps 0.050 | action 342.5±70.8W | OOD  75.0% | 329s
+Episode   1650/3000 | return -1.4656 | plain -1.2044 | sigma 26.03K | loss 0.00137 | eps 0.050 | action 256.7±98.8W | OOD  58.3% | 339s
+  [greedy eval @ ep 1700] return -2.1135 | plain -1.8375 | best -1.9262
+Episode   1700/3000 | return -3.6806 | plain -3.3855 | sigma 246.17K | loss 0.00315 | eps 0.050 | action 348.3±53.5W | OOD  66.7% | 350s
+Episode   1750/3000 | return -2.8196 | plain -2.5264 | sigma 125.91K | loss 0.00039 | eps 0.050 | action 340.0±59.6W | OOD  75.0% | 360s
+  [greedy eval @ ep 1800] return -2.2050 | plain -1.9247 | best -1.9262
+Episode   1800/3000 | return -2.0144 | plain -1.7327 | sigma 41.35K | loss 0.00055 | eps 0.050 | action 312.5±73.2W | OOD  58.3% | 371s
+Episode   1850/3000 | return -2.1190 | plain -1.8386 | sigma 42.61K | loss 0.00269 | eps 0.050 | action 321.7±61.6W | OOD  41.7% | 381s
+  [greedy eval @ ep 1900] return -2.4361 | plain -2.1545 | best -1.9262
+Episode   1900/3000 | return -1.9527 | plain -1.6849 | sigma 25.86K | loss 0.00051 | eps 0.050 | action 286.7±83.3W | OOD  41.7% | 393s
+Episode   1950/3000 | return -1.4554 | plain -1.1968 | sigma 22.79K | loss 0.00218 | eps 0.050 | action 266.7±86.4W | OOD  75.0% | 402s
+  [greedy eval @ ep 2000] return -2.3002 | plain -2.0186 | best -1.9262
+Episode   2000/3000 | return -1.2375 | plain -0.9797 | sigma 30.30K | loss 0.00068 | eps 0.050 | action 221.7±110.1W | OOD  83.3% | 414s
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_q_shaped_cool_c20/return.png
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_q_shaped_cool_c20/return_plain.png
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_q_shaped_cool_c20/ood_action_fraction.png
+Episode   2050/3000 | return -6.3544 | plain -6.0666 | sigma 97.50K | loss 0.00043 | eps 0.050 | action 321.7±101.4W | OOD  66.7% | 424s
+  [greedy eval @ ep 2100] return -2.2577 | plain -1.9781 | best -1.9262
+Episode   2100/3000 | return -3.5702 | plain -3.2748 | sigma 345.88K | loss 0.00151 | eps 0.050 | action 362.5±40.0W | OOD  75.0% | 436s
+Episode   2150/3000 | return -1.7857 | plain -1.5467 | sigma 20.96K | loss 0.00042 | eps 0.050 | action 264.2±85.9W | OOD  50.0% | 445s
+  [greedy eval @ ep 2200] return -2.2326 | plain -1.9557 | best -1.9262
+Episode   2200/3000 | return -0.9938 | plain -0.7279 | sigma 35.66K | loss 0.00151 | eps 0.050 | action 208.3±98.6W | OOD  83.3% | 457s
+Episode   2250/3000 | return -1.5002 | plain -1.2401 | sigma 26.62K | loss 0.00109 | eps 0.050 | action 270.8±96.5W | OOD  58.3% | 467s
+  [greedy eval @ ep 2300] return -2.2345 | plain -1.9549 | best -1.9262
+Episode   2300/3000 | return -3.3121 | plain -3.0173 | sigma 298.19K | loss 0.00046 | eps 0.050 | action 355.0±47.5W | OOD  83.3% | 478s
+Episode   2350/3000 | return -3.5577 | plain -3.2624 | sigma 349.41K | loss 0.00087 | eps 0.050 | action 365.8±32.0W | OOD 100.0% | 488s
+  [greedy eval @ ep 2400] return -1.8222 | plain -1.5511 | best -1.8222
+Episode   2400/3000 | return -1.5824 | plain -1.3148 | sigma 27.66K | loss 0.00157 | eps 0.050 | action 285.0±84.1W | OOD  33.3% | 499s
+Episode   2450/3000 | return -3.1370 | plain -2.8426 | sigma 253.08K | loss 0.00070 | eps 0.050 | action 356.7±38.8W | OOD 100.0% | 509s
+  [greedy eval @ ep 2500] return -2.2078 | plain -1.9284 | best -1.8222
+Episode   2500/3000 | return -0.9609 | plain -0.7074 | sigma 32.26K | loss 0.00114 | eps 0.050 | action 209.2±94.3W | OOD  83.3% | 520s
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_q_shaped_cool_c20/return.png
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_q_shaped_cool_c20/return_plain.png
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_q_shaped_cool_c20/ood_action_fraction.png
+Episode   2550/3000 | return -2.8330 | plain -2.5399 | sigma 113.59K | loss 0.00036 | eps 0.050 | action 337.5±61.1W | OOD  75.0% | 531s
+  [greedy eval @ ep 2600] return -2.1540 | plain -1.8744 | best -1.8222
+Episode   2600/3000 | return -2.2957 | plain -2.0080 | sigma 55.79K | loss 0.00311 | eps 0.050 | action 321.7±84.9W | OOD  58.3% | 542s
+Episode   2650/3000 | return -1.4698 | plain -1.2085 | sigma 23.10K | loss 0.00377 | eps 0.050 | action 257.5±94.3W | OOD  58.3% | 552s
+  [greedy eval @ ep 2700] return -1.9029 | plain -1.6311 | best -1.8222
+Episode   2700/3000 | return -2.8383 | plain -2.5631 | sigma 38.16K | loss 0.00055 | eps 0.050 | action 312.5±69.8W | OOD  41.7% | 563s
+Episode   2750/3000 | return -1.8921 | plain -1.6114 | sigma 38.66K | loss 0.00050 | eps 0.050 | action 304.2±79.8W | OOD  41.7% | 573s
+  [greedy eval @ ep 2800] return -2.3599 | plain -2.0765 | best -1.8222
+Episode   2800/3000 | return -2.1303 | plain -1.8465 | sigma 46.91K | loss 0.00096 | eps 0.050 | action 309.2±86.3W | OOD  66.7% | 584s
+Episode   2850/3000 | return -4.8067 | plain -4.5162 | sigma 173.10K | loss 0.00029 | eps 0.050 | action 346.7±70.0W | OOD  91.7% | 594s
+  [greedy eval @ ep 2900] return -2.1161 | plain -1.8394 | best -1.8222
+Episode   2900/3000 | return -1.1014 | plain -0.8522 | sigma 22.15K | loss 0.00041 | eps 0.050 | action 237.5±90.7W | OOD  83.3% | 605s
+Episode   2950/3000 | return -3.2935 | plain -2.9987 | sigma 333.09K | loss 0.00033 | eps 0.050 | action 358.3±41.0W | OOD  83.3% | 615s
+  [greedy eval @ ep 3000] return -2.2180 | plain -1.9371 | best -1.8222
+Episode   3000/3000 | return -4.8094 | plain -4.5226 | sigma 85.86K | loss 0.00060 | eps 0.050 | action 338.3±67.3W | OOD  66.7% | 627s
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_q_shaped_cool_c20/return.png
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_q_shaped_cool_c20/return_plain.png
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_q_shaped_cool_c20/ood_action_fraction.png
+[v3-Q (shaped, cool)] done. best greedy trained return -1.8222  checkpoint: online_RL_ucpg_v3/runs/narrow_q_shaped_cool_c20/q_best.pt
+Finished: Mon Oct 12 23:38:27 EDT 2026

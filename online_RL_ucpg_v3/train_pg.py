@@ -36,6 +36,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from online_RL_ucpg_v2.agent import UCPGAgentV2
 from online_RL_ucpg_v2.train import discounted_returns, _plot_series
 from online_RL_ucpg_v3.common import add_env_args, make_env
+from online_RL_ucpg_v3.env import in_ranges
 
 
 def parse_args():
@@ -100,7 +101,7 @@ def main():
         min_log_sigma=args.min_log_sigma, max_log_sigma=args.max_log_sigma,
         lr_theta=args.lr_theta, lambda_init=0.0, max_grad_norm=args.max_grad_norm, device=device,
     )
-    have_ood = args.ood_min is not None and args.ood_max is not None
+    have_ood = args.id_range_list is not None
     H = {k: [] for k in ("ret", "plain", "sigma", "trust", "act_mean", "ood", "loss", "entropy")}
     best = -float("inf")
     t0 = time.time()
@@ -119,7 +120,7 @@ def main():
         H["trust"].append(float(np.nanmean(trust))); H["act_mean"].append(float(act.mean()))
         H["loss"].append(loss); H["entropy"].append(ent)
         if have_ood:
-            H["ood"].append(float(((act < args.ood_min) | (act > args.ood_max)).mean()))
+            H["ood"].append(float((~in_ranges(act, args.id_range_list)).mean()))
 
         if it % args.log_freq == 0 or it == 1:
             ood = f" | OOD {H['ood'][-1] * 100:5.1f}%" if have_ood else ""

@@ -1,0 +1,23 @@
+Started: Tue Oct 13 02:03:33 EDT 2026   Node: gl1023   field: heat   penalties: 5 10 20 40
+=== [1/2] surrogate evaluation ===
+[agent] Loaded checkpoint from online_RL_ucpg_v3/runs/narrow_pg_plain_heat/pg_best.pt  (lambda=0.00000)
+  PG plain                           deviation   146.9 ±  17.7 K | sigma  18.39 K | OOD  80.8% | LP 179.4 W
+[agent] Loaded checkpoint from online_RL_ucpg_v3/runs/narrow_pg_shaped_heat_c5/pg_best.pt  (lambda=0.00000)
+  UCPG v3 (c=5 K)                    deviation   146.6 ±  17.7 K | sigma  18.24 K | OOD  80.5% | LP 179.1 W
+[agent] Loaded checkpoint from online_RL_ucpg_v3/runs/narrow_pg_shaped_heat_c10/pg_best.pt  (lambda=0.00000)
+  UCPG v3 (c=10 K)                   deviation   146.7 ±  17.8 K | sigma  18.13 K | OOD  72.0% | LP 179.1 W
+[agent] Loaded checkpoint from online_RL_ucpg_v3/runs/narrow_pg_shaped_heat_c20/pg_best.pt  (lambda=0.00000)
+  UCPG v3 (c=20 K)                   deviation   146.5 ±  17.8 K | sigma  17.94 K | OOD  71.9% | LP 178.7 W
+[agent] Loaded checkpoint from online_RL_ucpg_v3/runs/narrow_pg_shaped_heat_c40/pg_best.pt  (lambda=0.00000)
+  UCPG v3 (c=40 K)                   deviation   147.0 ±  17.7 K | sigma  17.68 K | OOD  70.7% | LP 178.7 W
+[agent] Loaded checkpoint from online_RL_ucpg_v3/runs/narrow_pg_shaped_heat/pg_best.pt  (lambda=0.00000)
+  UCPG v3 (c=800 K)                  deviation   200.7 ±  10.5 K | sigma  11.17 K | OOD  50.8% | LP 190.7 W
+  Q plain                            deviation   147.0 ±  19.2 K | sigma  20.21 K | OOD  74.0% | LP 170.6 W
+  Q v3 (c=5 K)                       deviation   144.2 ±  17.0 K | sigma  19.79 K | OOD  70.3% | LP 173.3 W
+  Q v3 (c=10 K)                      deviation   145.6 ±  18.1 K | sigma  19.10 K | OOD  70.9% | LP 172.1 W
+  Q v3 (c=20 K)                      deviation   145.8 ±  19.2 K | sigma  19.79 K | OOD  68.7% | LP 170.8 W
+  Q v3 (c=40 K)                      deviation   144.6 ±  18.2 K | sigma  18.68 K | OOD  70.8% | LP 173.4 W
+  Q v3 (c=800 K)                     deviation   190.9 ±  16.7 K | sigma  10.44 K | OOD  52.5% | LP 191.1 W
+Saved → online_RL_ucpg_v3/results_sweep_narrow_heat/leaderboard_surrogate_v3.csv, per_episode_surrogate.json
+[plot_comparison] Saved → online_RL_ucpg_v3/results_sweep_narrow_heat/comparison.{pdf,png}
+=== [2/2] real-physics evaluation ===

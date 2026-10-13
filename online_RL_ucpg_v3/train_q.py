@@ -34,6 +34,7 @@ from online_RL_ucpg_v2.train import _plot_series
 from baselines.online_q.model import ACTION_GRID, LatentQNet
 from baselines.online_q.train import ReplayBuffer
 from online_RL_ucpg_v3.common import add_env_args, make_env
+from online_RL_ucpg_v3.env import in_ranges
 
 
 def parse_args():
@@ -96,7 +97,7 @@ def main():
     opt = torch.optim.Adam(qnet.parameters(), lr=args.lr, weight_decay=args.weight_decay)
     buf = ReplayBuffer(args.buffer_size, env.obs_dim)
     decay = args.epsilon_decay_episodes or max(args.n_episodes // 2, 1)
-    have_ood = args.ood_min is not None and args.ood_max is not None
+    have_ood = args.id_range_list is not None
 
     def save(path, **extra):
         torch.save(dict(qnet_state_dict=qnet.state_dict(), model_config=cfg, action_grid=ACTION_GRID,
@@ -143,7 +144,7 @@ def main():
         acts = np.array(acts)
         H["ret"].append(R); H["plain"].append(P); H["sigma"].append(float(np.mean(sig))); H["eps"].append(float(eps))
         if have_ood:
-            H["ood"].append(float(((acts < args.ood_min) | (acts > args.ood_max)).mean()))
+            H["ood"].append(float((~in_ranges(acts, args.id_range_list)).mean()))
 
         if ep % args.eval_every == 0 and ep > args.warmup_episodes:
             g_ret, g_plain = greedy_eval()

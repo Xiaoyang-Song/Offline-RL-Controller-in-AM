@@ -1,0 +1,29 @@
+Started: Tue Oct 13 01:52:51 EDT 2026   Node: gl1007   field: cool   penalties: 5 10 20 40
+=== [1/2] surrogate evaluation ===
+Traceback (most recent call last):
+  File "/home/xysong/.conda/envs/RL/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/home/xysong/.conda/envs/RL/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/online_RL_ucpg_v3/evaluate_surrogate.py", line 121, in <module>
+    main()
+  File "/nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/online_RL_ucpg_v3/evaluate_surrogate.py", line 87, in main
+    ctrl = make()
+  File "/nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/online_RL_ucpg_v3/evaluate_surrogate.py", line 79, in <lambda>
+    methods = ([(n, lambda p=p: LatentAgentController(p, device=device, greedy=True)) for n, p in map(split, args.pg)] +
+  File "/nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/baselines/common/eval_harness.py", line 152, in __init__
+    self.agent  = UCPGAgentV2.load(checkpoint_path, device=device)
+  File "/nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/online_RL_ucpg_v2/agent.py", line 201, in load
+    ckpt  = torch.load(path, map_location=device, weights_only=False)
+  File "/home/xysong/.conda/envs/RL/lib/python3.10/site-packages/torch/serialization.py", line 1319, in load
+    with _open_file_like(f, "rb") as opened_file:
+  File "/home/xysong/.conda/envs/RL/lib/python3.10/site-packages/torch/serialization.py", line 659, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+  File "/home/xysong/.conda/envs/RL/lib/python3.10/site-packages/torch/serialization.py", line 640, in __init__
+    super().__init__(open(name, mode))
+FileNotFoundError: [Errno 2] No such file or directory: '5 K)=online_RL_ucpg_v3/runs/narrow_pg_shaped_cool_c5/pg_best.pt'
+[agent] Loaded checkpoint from online_RL_ucpg_v3/runs/narrow_pg_plain_cool/pg_best.pt  (lambda=0.00000)
+  PG plain                           deviation   121.3 ±  53.2 K | sigma 103.73 K | OOD  64.6% | LP 299.6 W
+No per_episode_surrogate.json / per_layer_real.json in online_RL_ucpg_v3/results_sweep_narrow_cool
+=== [2/2] real-physics evaluation ===
+[2026-10-13T02:03:06.168] error: *** JOB 63791681 ON gl1007 CANCELLED AT 2026-10-13T02:03:06 DUE to SIGNAL Terminated ***

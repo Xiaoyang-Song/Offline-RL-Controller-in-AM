@@ -35,7 +35,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from surrogate_model_v3.model import load_surrogate
 from baselines.common.eval_harness import StepContext, LatentAgentController
-from online_RL_ucpg_v3.env import UncertaintyShapedLPBFEnv
+from online_RL_ucpg_v3.env import UncertaintyShapedLPBFEnv, parse_ranges, in_ranges
 
 
 def parse_args():
@@ -47,6 +47,7 @@ def parse_args():
     p.add_argument("--n_episodes", type=int, default=100)
     p.add_argument("--ood_min", type=float, default=None)
     p.add_argument("--ood_max", type=float, default=None)
+    p.add_argument("--id_ranges", type=str, default=None, help="e.g. '100-150,350-400' (overrides --ood_min/--ood_max)")
     p.add_argument("--T_l", type=float, default=2000.0)
     p.add_argument("--T_h", type=float, default=2800.0)
     p.add_argument("--n_layers", type=int, default=12)
@@ -75,12 +76,14 @@ def main():
     W = args.T_h - args.T_l
 
     from baselines.online_q.model import load_online_q_controller
-    split = lambda spec: [x.strip() for x in spec.split("=", 1)]
+    split = lambda spec: [x.strip() for x in spec.rsplit("=", 1)]   # names may contain "="
     methods = ([(n, lambda p=p: LatentAgentController(p, device=device, greedy=True)) for n, p in map(split, args.pg)] +
                [(n, lambda p=p: load_online_q_controller(p, device=device)) for n, p in map(split, args.q)])
     if not methods:
         raise SystemExit("Pass at least one --pg or --q.")
-    have_ood = args.ood_min is not None and args.ood_max is not None
+    ranges = (parse_ranges(args.id_ranges) if args.id_ranges else
+              [(args.ood_min, args.ood_max)] if args.ood_min is not None and args.ood_max is not None else None)
+    have_ood = ranges is not None
 
     episodes, summary = [], []
     for name, make in methods:
@@ -97,7 +100,7 @@ def main():
                 s_ep.append(info["sigma_epi_roi_K"]); a_ep.append(a)
             a_ep = np.array(a_ep)
             devs.append(float(np.mean(d_ep))); sigs.append(float(np.mean(s_ep))); acts.append(float(a_ep.mean()))
-            oods.append(float(((a_ep < args.ood_min) | (a_ep > args.ood_max)).mean()) if have_ood else float("nan"))
+            oods.append(float((~in_ranges(a_ep, ranges)).mean()) if have_ood else float("nan"))
             episodes.append(dict(method=name, cool_time=float(ct), dev_K=devs[-1], sigma_K=sigs[-1],
                                  action_W=acts[-1], ood_frac=oods[-1], actions=a_ep.tolist()))
         summary.append(dict(method=name, dev_K_mean=float(np.mean(devs)), dev_K_std=float(np.std(devs)),

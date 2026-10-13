@@ -24,6 +24,7 @@ OUT="online_RL_ucpg_v3/results_sweep_narrow_$F"
 SURR="surrogate_model_v3/runs/narrow_200_300W/surrogate_best.pt"
 cd /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM
 module load matlab; source ~/.bashrc; conda activate RL
+set -e
 echo "Started: $(date)   Node: $SLURMD_NODENAME   field: $F   penalties: ${PENS[*]}"
 
 # comparison set: plain (naive) PG/Q of the same field, the sweep, and the original c = 800 K runs

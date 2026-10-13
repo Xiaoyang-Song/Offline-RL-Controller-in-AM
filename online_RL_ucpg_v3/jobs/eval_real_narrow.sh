@@ -35,6 +35,7 @@ cd /nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM
 module load matlab
 source ~/.bashrc
 conda activate RL
+set -e
 echo "Started: $(date)   Node: $SLURMD_NODENAME   reward_field of v3 runs: $F"
 
 OUT="online_RL_ucpg_v3/results_narrow_$F"

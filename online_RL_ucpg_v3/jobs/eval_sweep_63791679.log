@@ -1,0 +1,96 @@
+Started: Tue Oct 13 01:38:06 EDT 2026   Node: gl1007   field: heat   penalties: 5 10 20 40
+=== [1/2] surrogate evaluation ===
+Traceback (most recent call last):
+  File "/home/xysong/.conda/envs/RL/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/home/xysong/.conda/envs/RL/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/online_RL_ucpg_v3/evaluate_surrogate.py", line 121, in <module>
+    main()
+  File "/nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/online_RL_ucpg_v3/evaluate_surrogate.py", line 87, in main
+    ctrl = make()
+  File "/nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/online_RL_ucpg_v3/evaluate_surrogate.py", line 79, in <lambda>
+    methods = ([(n, lambda p=p: LatentAgentController(p, device=device, greedy=True)) for n, p in map(split, args.pg)] +
+  File "/nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/baselines/common/eval_harness.py", line 152, in __init__
+    self.agent  = UCPGAgentV2.load(checkpoint_path, device=device)
+  File "/nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/online_RL_ucpg_v2/agent.py", line 201, in load
+    ckpt  = torch.load(path, map_location=device, weights_only=False)
+  File "/home/xysong/.conda/envs/RL/lib/python3.10/site-packages/torch/serialization.py", line 1319, in load
+    with _open_file_like(f, "rb") as opened_file:
+  File "/home/xysong/.conda/envs/RL/lib/python3.10/site-packages/torch/serialization.py", line 659, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+  File "/home/xysong/.conda/envs/RL/lib/python3.10/site-packages/torch/serialization.py", line 640, in __init__
+    super().__init__(open(name, mode))
+FileNotFoundError: [Errno 2] No such file or directory: '5 K)=online_RL_ucpg_v3/runs/narrow_pg_shaped_heat_c5/pg_best.pt'
+[agent] Loaded checkpoint from online_RL_ucpg_v3/runs/narrow_pg_plain_heat/pg_best.pt  (lambda=0.00000)
+  PG plain                           deviation   146.9 ±  17.7 K | sigma  18.39 K | OOD  80.8% | LP 179.4 W
+No per_episode_surrogate.json / per_layer_real.json in online_RL_ucpg_v3/results_sweep_narrow_heat
+=== [2/2] real-physics evaluation ===
+Traceback (most recent call last):
+  File "/home/xysong/.conda/envs/RL/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/home/xysong/.conda/envs/RL/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/online_RL_ucpg_v3/evaluate_real.py", line 181, in <module>
+    main()
+  File "/nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/online_RL_ucpg_v3/evaluate_real.py", line 145, in main
+    ctrl = make()
+  File "/nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/online_RL_ucpg_v3/evaluate_real.py", line 136, in <lambda>
+    methods = ([(n, lambda p=p: LatentAgentController(p, device=device, greedy=True)) for n, p in map(_split, args.pg)] +
+  File "/nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/baselines/common/eval_harness.py", line 152, in __init__
+    self.agent  = UCPGAgentV2.load(checkpoint_path, device=device)
+  File "/nfs/turbo/coe-sunwbgt/xysong/Offline-RL-Controller-in-AM/online_RL_ucpg_v2/agent.py", line 201, in load
+    ckpt  = torch.load(path, map_location=device, weights_only=False)
+  File "/home/xysong/.conda/envs/RL/lib/python3.10/site-packages/torch/serialization.py", line 1319, in load
+    with _open_file_like(f, "rb") as opened_file:
+  File "/home/xysong/.conda/envs/RL/lib/python3.10/site-packages/torch/serialization.py", line 659, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+  File "/home/xysong/.conda/envs/RL/lib/python3.10/site-packages/torch/serialization.py", line 640, in __init__
+    super().__init__(open(name, mode))
+FileNotFoundError: [Errno 2] No such file or directory: '5 K)=online_RL_ucpg_v3/runs/narrow_pg_shaped_heat_c5/pg_best.pt'
+=== PG plain ===
+[agent] Loaded checkpoint from online_RL_ucpg_v3/runs/narrow_pg_plain_heat/pg_best.pt  (lambda=0.00000)
+    episode cool_time=0.060s
+[evaluate_real] Mesh consistency check passed (matches surrogate_model/mesh.mat).
+      layer  1  LP= 303.2W  dev_heat=  894.7K (py   894.7)  dev_cool=  195.4K  (23s)
+      layer  2  LP= 150.8W  dev_heat=  366.0K (py   366.0)  dev_cool=  159.8K  (17s)
+      layer  3  LP= 102.4W  dev_heat=  115.6K (py   115.6)  dev_cool=  256.5K  (17s)
+      layer  4  LP= 101.1W  dev_heat=   92.2K (py    92.2)  dev_cool=  260.6K  (18s)
+      layer  5  LP= 100.7W  dev_heat=   89.9K (py    89.9)  dev_cool=  243.2K  (17s)
+      layer  6  LP= 101.7W  dev_heat=  129.5K (py   129.5)  dev_cool=  119.2K  (17s)
+      layer  7  LP= 100.4W  dev_heat=  168.9K (py   168.9)  dev_cool=   65.6K  (17s)
+      layer  8  LP= 100.5W  dev_heat=  201.6K (py   201.6)  dev_cool=   31.8K  (17s)
+      layer  9  LP= 100.8W  dev_heat=  208.1K (py   208.1)  dev_cool=   38.3K  (17s)
+      layer 10  LP= 100.8W  dev_heat=  327.8K (py   327.8)  dev_cool=   10.1K  (17s)
+      layer 11  LP= 100.9W  dev_heat=  404.6K (py   404.6)  dev_cool=    3.6K  (17s)
+      layer 12  LP= 101.1W  dev_heat=  467.0K (py   467.0)  dev_cool=    0.0K  (17s)
+    episode cool_time=0.100s
+      layer  1  LP= 303.2W  dev_heat=  894.6K (py   894.6)  dev_cool=  589.5K  (17s)
+      layer  2  LP= 162.6W  dev_heat=  328.1K (py   328.1)  dev_cool=  526.8K  (17s)
+      layer  3  LP= 118.2W  dev_heat=  123.6K (py   123.6)  dev_cool=  583.8K  (17s)
+      layer  4  LP= 153.8W  dev_heat=  298.6K (py   298.6)  dev_cool=  430.1K  (17s)
+      layer  5  LP= 125.5W  dev_heat=  178.1K (py   178.1)  dev_cool=  454.9K  (17s)
+      layer  6  LP= 128.9W  dev_heat=  247.8K (py   247.8)  dev_cool=  323.8K  (17s)
+      layer  7  LP= 100.7W  dev_heat=  107.1K (py   107.1)  dev_cool=  381.3K  (17s)
+      layer  8  LP= 101.1W  dev_heat=   94.4K (py    94.4)  dev_cool=  393.6K  (17s)
+      layer  9  LP= 105.0W  dev_heat=  117.4K (py   117.4)  dev_cool=  388.8K  (17s)
+      layer 10  LP= 102.0W  dev_heat=  145.6K (py   145.6)  dev_cool=  322.6K  (17s)
+      layer 11  LP= 101.6W  dev_heat=  164.8K (py   164.8)  dev_cool=  281.6K  (17s)
+      layer 12  LP= 101.8W  dev_heat=  179.5K (py   179.5)  dev_cool=  250.9K  (17s)
+    episode cool_time=0.140s
+      layer  1  LP= 303.2W  dev_heat=  894.6K (py   894.6)  dev_cool=  841.1K  (17s)
+      layer  2  LP= 190.5W  dev_heat=  439.7K (py   439.7)  dev_cool=  706.7K  (17s)
+      layer  3  LP= 166.9W  dev_heat=  343.1K (py   343.1)  dev_cool=  655.0K  (18s)
+      layer  4  LP= 165.4W  dev_heat=  355.6K (py   355.6)  dev_cool=  606.8K  (17s)
+      layer  5  LP= 151.3W  dev_heat=  281.3K (py   281.3)  dev_cool=  614.2K  (17s)
+      layer  6  LP= 145.2W  dev_heat=  313.0K (py   313.0)  dev_cool=  522.8K  (17s)
+      layer  7  LP= 119.0W  dev_heat=  164.4K (py   164.4)  dev_cool=  571.3K  (17s)
+      layer  8  LP= 130.2W  dev_heat=  223.5K (py   223.5)  dev_cool=  543.1K  (17s)
+      layer  9  LP= 143.7W  dev_heat=  312.0K (py   312.0)  dev_cool=  478.3K  (17s)
+      layer 10  LP= 103.8W  dev_heat=  131.6K (py   131.6)  dev_cool=  534.9K  (17s)
+      layer 11  LP= 116.1W  dev_heat=  196.6K (py   196.6)  dev_cool=  500.4K  (17s)
+      layer 12  LP= 112.9W  dev_heat=  186.3K (py   186.3)  dev_cool=  497.0K  (18s)
+    → PG plain: heat deviation 283.0 K
+=== UCPG v3 (c ===
+[plot_comparison] Saved → online_RL_ucpg_v3/results_sweep_narrow_heat/comparison.{pdf,png}
+Finished: Tue Oct 13 01:49:00 EDT 2026   Results: online_RL_ucpg_v3/results_sweep_narrow_heat/
