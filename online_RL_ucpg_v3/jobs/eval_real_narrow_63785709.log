@@ -12,3 +12,4 @@ Started: Mon Oct 12 20:57:24 EDT 2026   Node: gl1016   reward_field of v3 runs: 
 Saved → online_RL_ucpg_v3/results_narrow_cool/leaderboard_surrogate_v3.csv, per_episode_surrogate.json
 [plot_comparison] Saved → online_RL_ucpg_v3/results_narrow_cool/comparison.{pdf,png}
 === [2/2] real-physics evaluation (MATLAB, 3 episodes) ===
+[2026-10-12T21:59:11.951] error: *** JOB 63785709 ON gl1016 CANCELLED AT 2026-10-12T21:59:11 DUE to SIGNAL Terminated ***

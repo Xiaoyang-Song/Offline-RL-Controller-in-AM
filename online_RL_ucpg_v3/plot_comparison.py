@@ -39,12 +39,21 @@ REF_C = "#b8b6b0"                       # earlier reference methods
 
 
 def _colour(name):
+    """Shaped = dark, plain = light, earlier references = grey. Penalty-sweep runs
+    named '... (c=<X> K)' get a shade between light and dark that darkens with c."""
+    import re
+    from matplotlib.colors import to_rgb
     n = name.lower()
     if "earlier" in n:
         return REF_C
     is_q = n.startswith("q") or " q" in n
+    dark, light = (Q_C, Q_L) if is_q else (PG_C, PG_L)
+    m = re.search(r"c=(\d+)", n)
+    if m:
+        f = float(np.clip(0.3 + 0.7 * np.log(float(m.group(1)) / 5.0) / np.log(800 / 5.0), 0.3, 1.0))  # c=5 K light .. 800 K dark
+        return tuple((1 - f) * np.array(to_rgb(light)) + f * np.array(to_rgb(dark)))
     shaped = "shaped" in n or "v3" in n
-    return (Q_C if shaped else Q_L) if is_q else (PG_C if shaped else PG_L)
+    return dark if shaped else light
 
 
 def _load(results_dir, field):

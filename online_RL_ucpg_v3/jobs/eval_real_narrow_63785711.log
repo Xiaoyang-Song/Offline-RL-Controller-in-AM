@@ -1,0 +1,15 @@
+Started: Mon Oct 12 21:55:36 EDT 2026   Node: gl1001   reward_field of v3 runs: heat
+=== [1/2] surrogate evaluation (plain deviation, 100 episodes) ===
+[agent] Loaded checkpoint from online_RL_ucpg_v3/runs/narrow_pg_plain_heat/pg_best.pt  (lambda=0.00000)
+  PG plain (heat)                    deviation   146.9 ±  17.7 K | sigma  18.39 K | OOD  80.8% | LP 179.4 W
+[agent] Loaded checkpoint from online_RL_ucpg_v3/runs/narrow_pg_shaped_heat/pg_best.pt  (lambda=0.00000)
+  UCPG v3 shaped (heat)              deviation   200.7 ±  10.5 K | sigma  11.17 K | OOD  50.8% | LP 190.7 W
+[agent] Loaded checkpoint from baselines/naive_pg/runs/narrow_200_300W/naive_pg_best.pt  (lambda=0.00000)
+  Naive PG (heat, earlier)           deviation   149.2 ±  21.7 K | sigma  19.60 K | OOD  82.7% | LP 167.2 W
+  Q plain (heat)                     deviation   147.0 ±  19.2 K | sigma  20.21 K | OOD  74.0% | LP 170.6 W
+  Q v3 shaped (heat)                 deviation   190.9 ±  16.7 K | sigma  10.44 K | OOD  52.5% | LP 191.1 W
+  Online Q (heat, earlier)           deviation   145.5 ±  17.3 K | sigma  20.81 K | OOD  83.8% | LP 174.3 W
+Saved → online_RL_ucpg_v3/results_narrow_heat/leaderboard_surrogate_v3.csv, per_episode_surrogate.json
+[plot_comparison] Saved → online_RL_ucpg_v3/results_narrow_heat/comparison.{pdf,png}
+=== [2/2] real-physics evaluation (MATLAB, 3 episodes) ===
+[2026-10-12T21:59:09.935] error: *** JOB 63785711 ON gl1001 CANCELLED AT 2026-10-12T21:59:09 DUE to SIGNAL Terminated ***
