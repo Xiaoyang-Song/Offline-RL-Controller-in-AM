@@ -64,6 +64,30 @@ def parse_args():
     return p.parse_args()
 
 
+def collect_batched(env, agent, n_traj, n_layers):
+    """All n_traj episodes stepped together (propagated mode). Actions sampled from the
+    same Gaussian policy as UCPGAgentV2.select_action(explore=True)."""
+    from torch.distributions import Normal
+    obs = np.zeros((n_traj, n_layers, env.obs_dim), np.float32)
+    act = np.zeros((n_traj, n_layers), np.float32)
+    rew = np.zeros((n_traj, n_layers), np.float32)
+    plain = np.zeros((n_traj, n_layers), np.float32)
+    sig = np.zeros((n_traj, n_layers), np.float32)
+    trust = np.zeros((n_traj, n_layers), np.float32)
+    o = env.reset_batch(n_traj)
+    for t in range(n_layers):
+        with torch.no_grad():
+            agent.policy.eval()
+            mu, sd = agent.policy(torch.as_tensor(o, device=agent.device))
+            a = Normal(mu, sd).sample().cpu().numpy().reshape(-1)
+            agent.policy.train()
+        o2, r, _done, info = env.step_batch(a)
+        obs[:, t], act[:, t], rew[:, t] = o, a, r
+        plain[:, t], sig[:, t], trust[:, t] = info["reward_plain"], info["sigma_epi_roi_K"], info["trust_roi"]
+        o = o2
+    return obs, act, rew, plain, sig, trust
+
+
 def collect(env, agent, n_traj, n_layers):
     obs = np.zeros((n_traj, n_layers, env.obs_dim), np.float32)
     act = np.zeros((n_traj, n_layers), np.float32)
@@ -106,7 +130,8 @@ def main():
     best = -float("inf")
     t0 = time.time()
     for it in range(1, args.n_iterations + 1):
-        obs, act, rew, plain, sig, trust = collect(env, agent, args.n_traj, args.n_layers)
+        col = collect_batched if env.uncertainty_mode == "propagated" else collect
+        obs, act, rew, plain, sig, trust = col(env, agent, args.n_traj, args.n_layers)
         G = discounted_returns(rew, args.gamma)
         adv = G - G.mean(axis=0, keepdims=True) if args.use_baseline else G
         N, T, D = obs.shape

@@ -221,6 +221,59 @@ class UncertaintyShapedLPBFEnv:
         reward = r["reward_shaped"] if self.reward_mode == "shaped" else r["reward_plain"]
         return self._make_obs(), float(reward), done, info
 
+    # --------------------------------------------------------- batched API
+    # Steps B independent episodes in lock-step (same layer index, own action /
+    # cool time each). Propagated mode only. The per-call cost of the Jacobian
+    # products is dominated by fixed kernel-launch overhead, so batching B
+    # trajectories costs about the same as one.
+    def reset_batch(self, B: int, cool_times=None) -> np.ndarray:
+        assert self.uncertainty_mode == "propagated", "batched API is for uncertainty_mode='propagated'"
+        s0 = torch.full((B, self.state_dim), self.initial_temp, dtype=torch.float32, device=self.device)
+        self._bs = (s0 - self.state_mean) / self.state_std
+        self._bF = torch.zeros(B, self.state_dim, 0, device=self.device)
+        self._bcool = (np.asarray(cool_times, dtype=float) if cool_times is not None
+                       else np.random.uniform(self.cool_time_min, self.cool_time_max, B))
+        self._blayer = 0
+        return self._make_obs_batch()
+
+    @torch.no_grad()
+    def step_batch(self, actions_W):
+        B = self._bs.shape[0]
+        t = self._blayer
+        a_n = torch.as_tensor((np.asarray(actions_W, dtype=float) - self.lp_mean) / self.lp_std,
+                              dtype=torch.float32, device=self.device).reshape(B, 1)
+        c_n = torch.as_tensor((self._bcool - self.cool_mean) / self.cool_std,
+                              dtype=torch.float32, device=self.device).reshape(B, 1)
+        li = torch.full((B,), t, dtype=torch.long, device=self.device)
+        m, F = self._bs, self._bF
+        with torch.enable_grad():
+            dh, Fe, _ = _members(self.surrogate.heating_transitions, m, a_n, li)
+            F = torch.cat([_apply_A(self.surrogate.heating_transitions, m, a_n, li, F, chunk=256), Fe], -1)
+            h = m + dh
+            sig_h = (F ** 2).sum(-1).sqrt()
+            dc, Fe, _ = _members(self.surrogate.cooling_transitions, h, c_n, li)
+            F = torch.cat([_apply_A(self.surrogate.cooling_transitions, h, c_n, li, F, chunk=256), Fe], -1)
+            nxt = h + dc
+            sig_n = (F ** 2).sum(-1).sqrt()
+        self._bF, self._bs = F.detach(), nxt.detach()
+        std, mean = self.state_std, self.state_mean
+        mu_h = (h.detach() * std + mean).cpu().numpy(); mu_n = (self._bs * std + mean).cpu().numpy()
+        sg_h = (sig_h.detach() * std).cpu().numpy(); sg_n = (sig_n.detach() * std).cpu().numpy()
+        rows = [self._rewards(mu_h[b], sg_h[b], mu_n[b], sg_n[b], t) for b in range(B)]
+        info = {k: np.array([r[k] for r in rows]) for k in rows[0]}
+        self._blayer += 1
+        done = self._blayer >= self.n_layers
+        reward = info["reward_shaped"] if self.reward_mode == "shaped" else info["reward_plain"]
+        return self._make_obs_batch(), reward.astype(np.float32), done, info
+
+    def _make_obs_batch(self) -> np.ndarray:
+        z = self._bs.detach().cpu().numpy()
+        B = z.shape[0]
+        layer_token = np.full((B, 1), min(self._blayer, self.n_layers - 1) / max(self.n_layers - 1, 1))
+        cool_token = ((self._bcool - self.cool_time_min) /
+                      max(self.cool_time_max - self.cool_time_min, 1e-8)).reshape(B, 1)
+        return np.concatenate([z, layer_token, cool_token], 1).astype(np.float32)
+
     # ------------------------------------------------------------- rewards
     def _rewards(self, mu_h, sig_h, mu_n, sig_n, t: int) -> dict:
         """mu_*: per-node mean temperature [K]; sig_*: per-node epistemic std [K], carried across layers."""
@@ -291,12 +344,20 @@ def calibrate_tau(env: UncertaintyShapedLPBFEnv, id_ranges, k: float = 2.0,
     saved_mode, saved_tau = env.reward_mode, env.tau
     env.reward_mode, env.tau = "plain", None
     sig = []
-    for _ in range(n_episodes):
-        env.reset()
+    if env.uncertainty_mode == "propagated":                 # batched: all episodes in lock-step
+        env.reset_batch(n_episodes)
         for _t in range(env.n_layers):
-            lo, hi = id_ranges[rng.choice(len(id_ranges), p=probs)]
-            _o, _r, _d, info = env.step(float(rng.uniform(lo, hi)))
-            sig.append(info["sigma_epi_roi_K"])
+            idx = rng.choice(len(id_ranges), p=probs, size=n_episodes)
+            acts = [rng.uniform(*id_ranges[i]) for i in idx]
+            _o, _r, _d, info = env.step_batch(acts)
+            sig.extend(info["sigma_epi_roi_K"].tolist())
+    else:
+        for _ in range(n_episodes):
+            env.reset()
+            for _t in range(env.n_layers):
+                lo, hi = id_ranges[rng.choice(len(id_ranges), p=probs)]
+                _o, _r, _d, info = env.step(float(rng.uniform(lo, hi)))
+                sig.append(info["sigma_epi_roi_K"])
     env.reward_mode, env.tau = saved_mode, saved_tau
     med = float(np.median(sig))
     return k * med, med

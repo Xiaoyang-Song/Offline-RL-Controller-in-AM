@@ -40,23 +40,26 @@ def compute(name, ckpt, data_path, chunk, n_probes, device):
                                    cool_mean=cm, cool_std=cs, initial_temp=300.0, n_ensemble=model.n_ensemble,
                                    bootstrap_seed=42)
     std2 = (ss.to(device).reshape(-1) ** 2)
-    acc = {k: 0.0 for k in ("se", "one_epi", "one_ale", "prop_epi", "prop_ale")}
-    T = None; n = 0
+    keys = ("se", "one_epi", "one_ale", "prop_epi", "prop_ale")
+    per = {k: [] for k in keys}                                          # per trajectory: node-mean, (N,T)
+    T = None
     for i0 in range(0, len(ds), chunk):
         S, _H, A, C = [torch.stack(x).to(device) for x in zip(*[ds[i][:4] for i in range(i0, min(i0 + chunk, len(ds)))])]
         T = A.shape[1]
         P = rollout_propagated(model, S[:, 0], A, C, n_probes=n_probes)
         O = rollout_propagated(model, S[:, 0], A, C, reset_each_layer=True, n_probes=n_probes)
-        red = lambda v: (v * std2).sum(dim=(0, 2)).cpu().numpy()          # sum over traj & nodes, per layer
-        acc["se"] += red((P["next_mean"] - S[:, 1:T + 1]) ** 2)
-        acc["one_epi"] += red(O["next_epi"]); acc["one_ale"] += red(O["next_ale"])
-        acc["prop_epi"] += red(P["next_epi"]); acc["prop_ale"] += red(P["next_ale"])
-        n += S.shape[0] * S.shape[-1]
+        red = lambda v: (v * std2).mean(-1).cpu().numpy()                 # mean over nodes, K^2
+        per["se"].append(red((P["next_mean"] - S[:, 1:T + 1]) ** 2))
+        per["one_epi"].append(red(O["next_epi"])); per["one_ale"].append(red(O["next_ale"]))
+        per["prop_epi"].append(red(P["next_epi"])); per["prop_ale"].append(red(P["next_ale"]))
         print(f"  [{name}] {min(i0 + chunk, len(ds))}/{len(ds)} trajectories", flush=True)
-    r = {k: np.sqrt(v / n) for k, v in acc.items()}
-    return dict(rmse=r["se"], one=np.sqrt(r["one_epi"] ** 2 + r["one_ale"] ** 2),
-                prop=np.sqrt(r["prop_epi"] ** 2 + r["prop_ale"] ** 2),
-                prop_epi=r["prop_epi"], one_epi=r["one_epi"], layers=np.arange(1, T + 1))
+    per = {k: np.concatenate(v, 0) for k, v in per.items()}
+    tr = dict(rmse=per["se"], one=per["one_epi"] + per["one_ale"], prop=per["prop_epi"] + per["prop_ale"],
+              prop_epi=per["prop_epi"], one_epi=per["one_epi"])               # (N,T) mean-square per trajectory
+    out = {k: np.sqrt(v.mean(0)) for k, v in tr.items()}                      # pooled RMS over traj & nodes
+    out.update({f"{k}_traj": np.sqrt(v) for k, v in tr.items()})              # per-trajectory RMS over nodes
+    out["layers"] = np.arange(1, T + 1)
+    return out
 
 
 def plot(results, out):
