@@ -2,3 +2,172 @@
 Job ID  : 63785708_1   Node: gl1016   Started: Mon Oct 12 18:40:34 EDT 2026
 Run     : algo=pg  reward_mode=shaped  reward_field=cool  ->  online_RL_ucpg_v3/runs/narrow_pg_shaped_cool
 ============================================================
+======================================================================
+[v3-PG (shaped, cool)] out_dir=online_RL_ucpg_v3/runs/narrow_pg_shaped_cool device=cuda
+======================================================================
+[v3] reward_field=cool  reward_mode=shaped  tau=7.081 K  (median ID sigma 3.541 K, k=2.0)  pess_dev=800.0 K  shaping=additive  members=5
+Iter     1/2000 | return -11.4124 | plain -7.1855 | sigma 6.03K | trust 0.648 | action 251.0±47.0W | OOD  29.4% | entropy 5.286 | 5s
+[agent] Checkpoint saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/pg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/pg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/pg_best.pt
+[agent] Checkpoint saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/pg_best.pt
+Iter    20/2000 | return -10.0869 | plain -4.8403 | sigma 8.51K | trust 0.563 | action 259.6±55.0W | OOD  37.8% | entropy 5.282 | 82s
+Iter    40/2000 | return -10.4594 | plain -5.2639 | sigma 8.34K | trust 0.567 | action 265.6±53.9W | OOD  35.4% | entropy 5.279 | 163s
+Iter    60/2000 | return -10.2352 | plain -5.6404 | sigma 7.28K | trust 0.617 | action 261.6±51.3W | OOD  33.1% | entropy 5.275 | 244s
+Iter    80/2000 | return -10.3191 | plain -5.2597 | sigma 7.88K | trust 0.578 | action 258.0±51.9W | OOD  32.0% | entropy 5.271 | 325s
+Iter   100/2000 | return -9.4021 | plain -4.4569 | sigma 7.89K | trust 0.588 | action 256.4±55.2W | OOD  37.8% | entropy 5.267 | 406s
+Iter   120/2000 | return -11.4214 | plain -6.5748 | sigma 7.62K | trust 0.596 | action 255.9±53.3W | OOD  33.6% | entropy 5.262 | 487s
+Iter   140/2000 | return -10.0898 | plain -4.8900 | sigma 8.74K | trust 0.567 | action 270.5±52.0W | OOD  39.1% | entropy 5.258 | 568s
+Iter   160/2000 | return -10.5229 | plain -5.6444 | sigma 8.17K | trust 0.593 | action 260.9±54.4W | OOD  36.5% | entropy 5.253 | 649s
+Iter   180/2000 | return -10.8133 | plain -5.6990 | sigma 8.49K | trust 0.574 | action 265.7±49.2W | OOD  31.2% | entropy 5.249 | 730s
+Iter   200/2000 | return -10.5810 | plain -5.7671 | sigma 7.12K | trust 0.599 | action 255.0±51.3W | OOD  34.4% | entropy 5.245 | 812s
+[agent] Checkpoint saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/pg_iter00200.pt
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/return.png
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/return_plain.png
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/sigma.png
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/ood_action_fraction.png
+Iter   220/2000 | return -9.9048 | plain -5.1677 | sigma 7.30K | trust 0.605 | action 264.3±49.8W | OOD  32.3% | entropy 5.240 | 896s
+Iter   240/2000 | return -10.1503 | plain -5.0695 | sigma 8.26K | trust 0.577 | action 261.2±52.9W | OOD  35.4% | entropy 5.236 | 979s
+Iter   260/2000 | return -9.6319 | plain -4.5382 | sigma 7.95K | trust 0.576 | action 261.9±53.4W | OOD  33.6% | entropy 5.231 | 1062s
+Iter   280/2000 | return -9.5837 | plain -4.9233 | sigma 7.09K | trust 0.612 | action 253.9±55.1W | OOD  37.2% | entropy 5.226 | 1144s
+[agent] Checkpoint saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/pg_best.pt
+Iter   300/2000 | return -9.0097 | plain -4.5325 | sigma 6.48K | trust 0.627 | action 257.8±49.5W | OOD  35.9% | entropy 5.221 | 1227s
+Iter   320/2000 | return -10.8329 | plain -6.0081 | sigma 7.42K | trust 0.598 | action 258.0±51.3W | OOD  32.8% | entropy 5.217 | 1310s
+Iter   340/2000 | return -9.8544 | plain -5.2567 | sigma 7.29K | trust 0.617 | action 259.7±50.9W | OOD  30.7% | entropy 5.212 | 1392s
+Iter   360/2000 | return -10.5948 | plain -6.0314 | sigma 7.26K | trust 0.620 | action 252.8±51.2W | OOD  32.8% | entropy 5.208 | 1474s
+Iter   380/2000 | return -9.4535 | plain -4.8440 | sigma 7.31K | trust 0.616 | action 261.1±53.7W | OOD  38.5% | entropy 5.203 | 1558s
+Iter   400/2000 | return -9.7017 | plain -5.5865 | sigma 6.15K | trust 0.657 | action 252.7±48.9W | OOD  29.9% | entropy 5.198 | 1639s
+[agent] Checkpoint saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/pg_iter00400.pt
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/return.png
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/return_plain.png
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/sigma.png
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/ood_action_fraction.png
+Iter   420/2000 | return -9.6648 | plain -5.2444 | sigma 6.66K | trust 0.632 | action 249.5±50.4W | OOD  33.1% | entropy 5.193 | 1724s
+Iter   440/2000 | return -9.2432 | plain -4.8076 | sigma 7.22K | trust 0.630 | action 254.7±52.1W | OOD  34.9% | entropy 5.188 | 1806s
+Iter   460/2000 | return -10.9048 | plain -6.3487 | sigma 6.88K | trust 0.620 | action 257.5±49.8W | OOD  31.8% | entropy 5.184 | 1887s
+Iter   480/2000 | return -9.8916 | plain -5.3282 | sigma 6.74K | trust 0.620 | action 263.4±48.0W | OOD  30.7% | entropy 5.179 | 1969s
+Iter   500/2000 | return -10.1981 | plain -5.8233 | sigma 6.63K | trust 0.635 | action 256.3±48.4W | OOD  31.0% | entropy 5.174 | 2051s
+Iter   520/2000 | return -9.6427 | plain -5.4403 | sigma 6.21K | trust 0.650 | action 257.3±46.9W | OOD  32.3% | entropy 5.169 | 2133s
+Iter   540/2000 | return -9.6361 | plain -5.4419 | sigma 6.74K | trust 0.650 | action 258.3±46.3W | OOD  27.9% | entropy 5.165 | 2214s
+Iter   560/2000 | return -9.5230 | plain -5.1907 | sigma 6.27K | trust 0.639 | action 256.4±48.0W | OOD  29.7% | entropy 5.160 | 2296s
+Iter   580/2000 | return -9.9827 | plain -5.6397 | sigma 6.28K | trust 0.638 | action 264.2±45.0W | OOD  28.6% | entropy 5.156 | 2378s
+Iter   600/2000 | return -10.3050 | plain -5.6165 | sigma 7.79K | trust 0.609 | action 258.1±52.4W | OOD  32.8% | entropy 5.152 | 2459s
+[agent] Checkpoint saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/pg_iter00600.pt
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/return.png
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/return_plain.png
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/sigma.png
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/ood_action_fraction.png
+Iter   620/2000 | return -9.4500 | plain -5.0453 | sigma 6.60K | trust 0.633 | action 257.6±48.6W | OOD  32.6% | entropy 5.148 | 2542s
+Iter   640/2000 | return -10.1848 | plain -5.7654 | sigma 6.72K | trust 0.632 | action 266.7±45.2W | OOD  29.9% | entropy 5.145 | 2624s
+Iter   660/2000 | return -9.7514 | plain -5.4418 | sigma 6.17K | trust 0.641 | action 254.9±47.7W | OOD  33.3% | entropy 5.141 | 2705s
+Iter   680/2000 | return -9.6429 | plain -5.1343 | sigma 7.28K | trust 0.624 | action 248.7±51.7W | OOD  29.7% | entropy 5.136 | 2787s
+Iter   700/2000 | return -10.9101 | plain -6.7175 | sigma 6.54K | trust 0.651 | action 253.6±47.5W | OOD  28.4% | entropy 5.132 | 2868s
+Iter   720/2000 | return -9.7925 | plain -5.3704 | sigma 6.41K | trust 0.631 | action 264.4±46.0W | OOD  30.2% | entropy 5.129 | 2950s
+Iter   740/2000 | return -9.6391 | plain -5.3259 | sigma 6.87K | trust 0.641 | action 261.5±49.2W | OOD  34.6% | entropy 5.125 | 3031s
+Iter   760/2000 | return -10.0455 | plain -5.6249 | sigma 6.28K | trust 0.632 | action 260.7±45.5W | OOD  31.0% | entropy 5.120 | 3113s
+Iter   780/2000 | return -9.9289 | plain -5.2194 | sigma 7.43K | trust 0.608 | action 253.3±52.8W | OOD  37.0% | entropy 5.116 | 3195s
+Iter   800/2000 | return -10.5803 | plain -5.0442 | sigma 10.98K | trust 0.539 | action 276.3±51.4W | OOD  39.1% | entropy 5.112 | 3277s
+[agent] Checkpoint saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/pg_iter00800.pt
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/return.png
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/return_plain.png
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/sigma.png
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/ood_action_fraction.png
+[agent] Checkpoint saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/pg_best.pt
+Iter   820/2000 | return -9.6395 | plain -5.0707 | sigma 6.95K | trust 0.619 | action 265.5±48.7W | OOD  32.0% | entropy 5.108 | 3359s
+Iter   840/2000 | return -9.4046 | plain -5.2385 | sigma 6.15K | trust 0.653 | action 259.7±46.4W | OOD  29.2% | entropy 5.104 | 3441s
+Iter   860/2000 | return -9.5420 | plain -5.2522 | sigma 6.44K | trust 0.643 | action 260.8±47.1W | OOD  30.7% | entropy 5.100 | 3522s
+Iter   880/2000 | return -8.8566 | plain -4.5558 | sigma 6.54K | trust 0.642 | action 250.5±50.5W | OOD  31.8% | entropy 5.096 | 3604s
+Iter   900/2000 | return -8.4406 | plain -4.9375 | sigma 5.01K | trust 0.708 | action 255.0±43.9W | OOD  25.8% | entropy 5.091 | 3686s
+[agent] Checkpoint saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/pg_best.pt
+Iter   920/2000 | return -9.5889 | plain -4.6394 | sigma 7.59K | trust 0.588 | action 265.6±53.0W | OOD  35.9% | entropy 5.087 | 3767s
+[agent] Checkpoint saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/pg_best.pt
+Iter   940/2000 | return -9.5737 | plain -5.4703 | sigma 6.10K | trust 0.658 | action 258.9±44.8W | OOD  25.3% | entropy 5.083 | 3849s
+Iter   960/2000 | return -9.8145 | plain -5.1989 | sigma 6.97K | trust 0.615 | action 263.6±47.2W | OOD  30.5% | entropy 5.080 | 3930s
+Iter   980/2000 | return -10.2722 | plain -5.9905 | sigma 6.10K | trust 0.643 | action 254.7±45.0W | OOD  26.3% | entropy 5.076 | 4012s
+Iter  1000/2000 | return -9.1307 | plain -5.3751 | sigma 5.53K | trust 0.687 | action 258.3±43.8W | OOD  24.5% | entropy 5.073 | 4093s
+[agent] Checkpoint saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/pg_iter01000.pt
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/return.png
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/return_plain.png
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/sigma.png
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/ood_action_fraction.png
+Iter  1020/2000 | return -9.5755 | plain -5.3200 | sigma 6.21K | trust 0.645 | action 265.3±43.1W | OOD  28.9% | entropy 5.069 | 4176s
+Iter  1040/2000 | return -9.3209 | plain -5.4075 | sigma 5.77K | trust 0.674 | action 264.2±42.4W | OOD  27.1% | entropy 5.066 | 4258s
+Iter  1060/2000 | return -9.2589 | plain -5.2657 | sigma 6.06K | trust 0.667 | action 255.7±45.5W | OOD  26.0% | entropy 5.063 | 4340s
+Iter  1080/2000 | return -10.0508 | plain -6.2926 | sigma 5.36K | trust 0.687 | action 261.5±40.9W | OOD  24.0% | entropy 5.059 | 4421s
+Iter  1100/2000 | return -9.1688 | plain -5.0267 | sigma 5.91K | trust 0.655 | action 256.1±45.2W | OOD  25.8% | entropy 5.055 | 4503s
+Iter  1120/2000 | return -9.3387 | plain -5.4409 | sigma 5.54K | trust 0.675 | action 258.2±43.0W | OOD  26.3% | entropy 5.052 | 4585s
+Iter  1140/2000 | return -9.0794 | plain -4.8949 | sigma 5.97K | trust 0.651 | action 258.1±47.2W | OOD  30.7% | entropy 5.048 | 4666s
+Iter  1160/2000 | return -9.6029 | plain -5.5960 | sigma 5.74K | trust 0.666 | action 252.2±46.6W | OOD  27.6% | entropy 5.044 | 4748s
+Iter  1180/2000 | return -9.6555 | plain -5.7151 | sigma 5.66K | trust 0.672 | action 256.7±44.6W | OOD  27.6% | entropy 5.040 | 4830s
+Iter  1200/2000 | return -9.6392 | plain -5.2049 | sigma 7.26K | trust 0.630 | action 264.5±46.1W | OOD  27.6% | entropy 5.036 | 4911s
+[agent] Checkpoint saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/pg_iter01200.pt
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/return.png
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/return_plain.png
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/sigma.png
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/ood_action_fraction.png
+Iter  1220/2000 | return -9.0655 | plain -5.2162 | sigma 5.58K | trust 0.679 | action 259.1±44.9W | OOD  27.3% | entropy 5.033 | 4994s
+Iter  1240/2000 | return -9.5380 | plain -5.3712 | sigma 6.17K | trust 0.653 | action 264.7±45.4W | OOD  31.2% | entropy 5.029 | 5076s
+Iter  1260/2000 | return -9.8020 | plain -5.5195 | sigma 6.59K | trust 0.643 | action 260.4±47.5W | OOD  31.0% | entropy 5.026 | 5158s
+Iter  1280/2000 | return -10.2148 | plain -5.7034 | sigma 7.07K | trust 0.624 | action 264.6±46.7W | OOD  31.2% | entropy 5.023 | 5240s
+Iter  1300/2000 | return -9.4155 | plain -5.2184 | sigma 5.96K | trust 0.650 | action 259.5±45.8W | OOD  29.9% | entropy 5.020 | 5322s
+Iter  1320/2000 | return -9.6544 | plain -5.7487 | sigma 5.53K | trust 0.675 | action 265.2±41.0W | OOD  26.8% | entropy 5.016 | 5403s
+Iter  1340/2000 | return -8.9456 | plain -4.8069 | sigma 5.95K | trust 0.655 | action 258.8±44.2W | OOD  26.0% | entropy 5.013 | 5485s
+Iter  1360/2000 | return -9.7881 | plain -5.2101 | sigma 7.21K | trust 0.618 | action 261.5±47.7W | OOD  31.2% | entropy 5.010 | 5567s
+[agent] Checkpoint saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/pg_best.pt
+Iter  1380/2000 | return -9.2720 | plain -4.9586 | sigma 6.63K | trust 0.641 | action 265.2±47.3W | OOD  26.0% | entropy 5.006 | 5649s
+Iter  1400/2000 | return -9.6205 | plain -5.4277 | sigma 6.04K | trust 0.651 | action 255.0±45.7W | OOD  28.1% | entropy 5.002 | 5731s
+[agent] Checkpoint saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/pg_iter01400.pt
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/return.png
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/return_plain.png
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/sigma.png
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/ood_action_fraction.png
+Iter  1420/2000 | return -10.3946 | plain -6.3323 | sigma 6.05K | trust 0.661 | action 267.6±39.6W | OOD  25.0% | entropy 4.999 | 5813s
+Iter  1440/2000 | return -9.6807 | plain -5.6869 | sigma 6.18K | trust 0.667 | action 255.2±44.5W | OOD  26.0% | entropy 4.995 | 5895s
+Iter  1460/2000 | return -9.0132 | plain -5.7780 | sigma 4.64K | trust 0.730 | action 254.8±39.7W | OOD  20.8% | entropy 4.991 | 5977s
+Iter  1480/2000 | return -9.4166 | plain -5.4597 | sigma 5.97K | trust 0.670 | action 265.4±39.7W | OOD  25.5% | entropy 4.988 | 6058s
+Iter  1500/2000 | return -9.9357 | plain -5.7625 | sigma 6.06K | trust 0.652 | action 259.1±44.8W | OOD  27.3% | entropy 4.984 | 6140s
+[agent] Checkpoint saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/pg_best.pt
+Iter  1520/2000 | return -9.6553 | plain -5.8170 | sigma 5.48K | trust 0.680 | action 254.5±39.8W | OOD  18.8% | entropy 4.981 | 6222s
+Iter  1540/2000 | return -9.6430 | plain -5.6022 | sigma 6.22K | trust 0.663 | action 259.7±45.5W | OOD  29.9% | entropy 4.977 | 6304s
+Iter  1560/2000 | return -8.7797 | plain -4.9857 | sigma 5.48K | trust 0.684 | action 258.0±43.9W | OOD  27.9% | entropy 4.974 | 6385s
+Iter  1580/2000 | return -9.8964 | plain -5.4694 | sigma 6.95K | trust 0.631 | action 269.5±44.4W | OOD  32.3% | entropy 4.969 | 6467s
+Iter  1600/2000 | return -8.8225 | plain -5.0234 | sigma 5.37K | trust 0.683 | action 257.0±42.3W | OOD  26.0% | entropy 4.966 | 6549s
+[agent] Checkpoint saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/pg_iter01600.pt
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/return.png
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/return_plain.png
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/sigma.png
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/ood_action_fraction.png
+Iter  1620/2000 | return -8.6601 | plain -5.3231 | sigma 4.80K | trust 0.722 | action 258.6±36.8W | OOD  19.5% | entropy 4.963 | 6632s
+Iter  1640/2000 | return -9.6156 | plain -6.1315 | sigma 4.99K | trust 0.710 | action 254.0±38.9W | OOD  18.8% | entropy 4.960 | 6713s
+Iter  1660/2000 | return -9.4929 | plain -5.8289 | sigma 5.20K | trust 0.695 | action 259.8±39.7W | OOD  23.7% | entropy 4.956 | 6795s
+Iter  1680/2000 | return -9.1570 | plain -5.5271 | sigma 5.31K | trust 0.698 | action 256.9±39.0W | OOD  20.1% | entropy 4.953 | 6877s
+[agent] Checkpoint saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/pg_best.pt
+Iter  1700/2000 | return -9.5754 | plain -5.6509 | sigma 5.54K | trust 0.673 | action 261.9±37.6W | OOD  20.6% | entropy 4.949 | 6959s
+Iter  1720/2000 | return -9.8222 | plain -5.9909 | sigma 5.60K | trust 0.681 | action 264.9±38.8W | OOD  25.0% | entropy 4.946 | 7040s
+Iter  1740/2000 | return -9.3550 | plain -5.4677 | sigma 5.82K | trust 0.676 | action 263.7±42.5W | OOD  24.7% | entropy 4.942 | 7122s
+Iter  1760/2000 | return -9.4313 | plain -5.6672 | sigma 5.71K | trust 0.686 | action 254.7±40.8W | OOD  22.9% | entropy 4.939 | 7204s
+Iter  1780/2000 | return -8.9370 | plain -5.0063 | sigma 5.66K | trust 0.672 | action 263.5±43.6W | OOD  30.5% | entropy 4.936 | 7286s
+[agent] Checkpoint saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/pg_best.pt
+Iter  1800/2000 | return -9.2650 | plain -4.9504 | sigma 6.49K | trust 0.640 | action 257.9±48.5W | OOD  31.5% | entropy 4.932 | 7367s
+[agent] Checkpoint saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/pg_iter01800.pt
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/return.png
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/return_plain.png
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/sigma.png
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/ood_action_fraction.png
+Iter  1820/2000 | return -10.0884 | plain -5.3744 | sigma 7.21K | trust 0.607 | action 273.8±42.3W | OOD  30.2% | entropy 4.928 | 7450s
+Iter  1840/2000 | return -8.9548 | plain -5.2835 | sigma 5.28K | trust 0.694 | action 260.2±43.6W | OOD  26.0% | entropy 4.925 | 7532s
+Iter  1860/2000 | return -9.5436 | plain -5.3718 | sigma 6.04K | trust 0.652 | action 250.8±46.3W | OOD  27.9% | entropy 4.922 | 7613s
+Iter  1880/2000 | return -8.9472 | plain -5.4246 | sigma 5.02K | trust 0.706 | action 255.3±39.9W | OOD  21.9% | entropy 4.919 | 7695s
+Iter  1900/2000 | return -10.1083 | plain -6.2135 | sigma 5.86K | trust 0.675 | action 270.3±37.5W | OOD  24.2% | entropy 4.916 | 7776s
+Iter  1920/2000 | return -8.4790 | plain -5.0947 | sigma 4.72K | trust 0.718 | action 256.3±40.5W | OOD  25.5% | entropy 4.913 | 7858s
+Iter  1940/2000 | return -9.1498 | plain -5.4787 | sigma 5.21K | trust 0.694 | action 254.8±41.7W | OOD  25.5% | entropy 4.910 | 7940s
+Iter  1960/2000 | return -9.2430 | plain -5.1204 | sigma 5.69K | trust 0.656 | action 260.7±42.1W | OOD  25.3% | entropy 4.907 | 8021s
+Iter  1980/2000 | return -8.9824 | plain -5.2669 | sigma 5.26K | trust 0.690 | action 256.4±41.7W | OOD  22.9% | entropy 4.904 | 8103s
+Iter  2000/2000 | return -8.6441 | plain -5.1823 | sigma 4.93K | trust 0.712 | action 262.1±38.0W | OOD  21.1% | entropy 4.902 | 8185s
+[agent] Checkpoint saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/pg_final.pt
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/return.png
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/return_plain.png
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/sigma.png
+[train] Plot saved → online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/ood_action_fraction.png
+[v3-PG (shaped, cool)] done. best trained return -7.7538  checkpoint: online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/pg_best.pt
+Finished: Mon Oct 12 20:57:18 EDT 2026   Outputs: online_RL_ucpg_v3/runs/narrow_pg_shaped_cool/

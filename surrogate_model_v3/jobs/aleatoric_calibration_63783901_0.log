@@ -326,3 +326,291 @@ Epoch  293/500 | train -0.60081 [rh=0.0001 nh=-3.1793 rc=0.0002 nc=-2.8319] | va
 Epoch  294/500 | train -0.60068 [rh=0.0001 nh=-3.1779 rc=0.0002 nc=-2.8321] | val -0.59849 | lr 3.70e-04 | 4894.6s (no improvement 1/30)
 Epoch  295/500 | train -0.60072 [rh=0.0001 nh=-3.1783 rc=0.0002 nc=-2.8321] | val -0.59864 | lr 3.67e-04 | 4911.0s (no improvement 2/30)
 Epoch  296/500 | train -0.60093 [rh=0.0001 nh=-3.1789 rc=0.0002 nc=-2.8335] | val -0.59879 | lr 3.64e-04 | 4927.5s (no improvement 3/30)
+Epoch  297/500 | train -0.60086 [rh=0.0001 nh=-3.1782 rc=0.0002 nc=-2.8334] | val -0.59914 | lr 3.61e-04 | 4944.1s ✓ best
+Epoch  298/500 | train -0.60091 [rh=0.0001 nh=-3.1797 rc=0.0002 nc=-2.8324] | val -0.59881 | lr 3.58e-04 | 4960.8s (no improvement 1/30)
+Epoch  299/500 | train -0.60098 [rh=0.0001 nh=-3.1790 rc=0.0002 nc=-2.8338] | val -0.59850 | lr 3.55e-04 | 4977.3s (no improvement 2/30)
+Epoch  300/500 | train -0.60073 [rh=0.0001 nh=-3.1801 rc=0.0002 nc=-2.8303] | val -0.59908 | lr 3.52e-04 | 4993.7s (no improvement 3/30)
+Epoch  301/500 | train -0.60112 [rh=0.0001 nh=-3.1797 rc=0.0002 nc=-2.8346] | val -0.59925 | lr 3.49e-04 | 5010.3s ✓ best
+Epoch  302/500 | train -0.60097 [rh=0.0001 nh=-3.1793 rc=0.0002 nc=-2.8334] | val -0.59874 | lr 3.46e-04 | 5026.8s (no improvement 1/30)
+Epoch  303/500 | train -0.60106 [rh=0.0001 nh=-3.1798 rc=0.0002 nc=-2.8339] | val -0.59895 | lr 3.43e-04 | 5043.5s (no improvement 2/30)
+Epoch  304/500 | train -0.60113 [rh=0.0001 nh=-3.1808 rc=0.0002 nc=-2.8336] | val -0.59906 | lr 3.40e-04 | 5059.9s (no improvement 3/30)
+Epoch  305/500 | train -0.60101 [rh=0.0001 nh=-3.1801 rc=0.0002 nc=-2.8331] | val -0.59913 | lr 3.37e-04 | 5076.3s (no improvement 4/30)
+Epoch  306/500 | train -0.60119 [rh=0.0001 nh=-3.1801 rc=0.0002 nc=-2.8349] | val -0.59875 | lr 3.34e-04 | 5092.7s (no improvement 5/30)
+Epoch  307/500 | train -0.60098 [rh=0.0001 nh=-3.1802 rc=0.0002 nc=-2.8327] | val -0.59907 | lr 3.31e-04 | 5109.1s (no improvement 6/30)
+Epoch  308/500 | train -0.60123 [rh=0.0001 nh=-3.1804 rc=0.0002 nc=-2.8350] | val -0.59818 | lr 3.29e-04 | 5125.9s (no improvement 7/30)
+Epoch  309/500 | train -0.60119 [rh=0.0001 nh=-3.1808 rc=0.0002 nc=-2.8342] | val -0.59865 | lr 3.26e-04 | 5142.3s (no improvement 8/30)
+Epoch  310/500 | train -0.60111 [rh=0.0001 nh=-3.1797 rc=0.0002 nc=-2.8345] | val -0.59837 | lr 3.23e-04 | 5158.7s (no improvement 9/30)
+Epoch  311/500 | train -0.60129 [rh=0.0001 nh=-3.1812 rc=0.0002 nc=-2.8347] | val -0.59941 | lr 3.20e-04 | 5175.3s ✓ best
+Epoch  312/500 | train -0.60125 [rh=0.0001 nh=-3.1804 rc=0.0002 nc=-2.8351] | val -0.59924 | lr 3.17e-04 | 5191.8s (no improvement 1/30)
+Epoch  313/500 | train -0.60129 [rh=0.0001 nh=-3.1812 rc=0.0002 nc=-2.8347] | val -0.59887 | lr 3.14e-04 | 5208.5s (no improvement 2/30)
+Epoch  314/500 | train -0.60140 [rh=0.0001 nh=-3.1821 rc=0.0002 nc=-2.8350] | val -0.59929 | lr 3.11e-04 | 5224.9s (no improvement 3/30)
+Epoch  315/500 | train -0.60133 [rh=0.0001 nh=-3.1808 rc=0.0002 nc=-2.8356] | val -0.59869 | lr 3.08e-04 | 5241.3s (no improvement 4/30)
+Epoch  316/500 | train -0.60128 [rh=0.0001 nh=-3.1814 rc=0.0002 nc=-2.8345] | val -0.59934 | lr 3.06e-04 | 5257.8s (no improvement 5/30)
+Epoch  317/500 | train -0.60139 [rh=0.0001 nh=-3.1816 rc=0.0002 nc=-2.8354] | val -0.59931 | lr 3.03e-04 | 5274.2s (no improvement 6/30)
+Epoch  318/500 | train -0.60130 [rh=0.0001 nh=-3.1823 rc=0.0002 nc=-2.8338] | val -0.59917 | lr 3.00e-04 | 5290.9s (no improvement 7/30)
+Epoch  319/500 | train -0.60144 [rh=0.0001 nh=-3.1812 rc=0.0002 nc=-2.8362] | val -0.59921 | lr 2.97e-04 | 5307.4s (no improvement 8/30)
+Epoch  320/500 | train -0.60152 [rh=0.0001 nh=-3.1816 rc=0.0002 nc=-2.8367] | val -0.59936 | lr 2.94e-04 | 5323.8s (no improvement 9/30)
+Epoch  321/500 | train -0.60146 [rh=0.0001 nh=-3.1822 rc=0.0002 nc=-2.8355] | val -0.59873 | lr 2.91e-04 | 5340.3s (no improvement 10/30)
+Epoch  322/500 | train -0.60156 [rh=0.0001 nh=-3.1822 rc=0.0002 nc=-2.8365] | val -0.59942 | lr 2.89e-04 | 5356.9s ✓ best
+Epoch  323/500 | train -0.60168 [rh=0.0001 nh=-3.1828 rc=0.0002 nc=-2.8371] | val -0.59919 | lr 2.86e-04 | 5373.6s (no improvement 1/30)
+Epoch  324/500 | train -0.60152 [rh=0.0001 nh=-3.1820 rc=0.0002 nc=-2.8363] | val -0.59914 | lr 2.83e-04 | 5390.0s (no improvement 2/30)
+Epoch  325/500 | train -0.60154 [rh=0.0001 nh=-3.1825 rc=0.0002 nc=-2.8360] | val -0.59942 | lr 2.80e-04 | 5406.7s ✓ best
+Epoch  326/500 | train -0.60149 [rh=0.0001 nh=-3.1823 rc=0.0002 nc=-2.8357] | val -0.59899 | lr 2.78e-04 | 5423.1s (no improvement 1/30)
+Epoch  327/500 | train -0.60159 [rh=0.0001 nh=-3.1823 rc=0.0002 nc=-2.8366] | val -0.59881 | lr 2.75e-04 | 5439.5s (no improvement 2/30)
+Epoch  328/500 | train -0.60167 [rh=0.0001 nh=-3.1832 rc=0.0002 nc=-2.8366] | val -0.59941 | lr 2.72e-04 | 5456.2s (no improvement 3/30)
+Epoch  329/500 | train -0.60178 [rh=0.0001 nh=-3.1832 rc=0.0002 nc=-2.8376] | val -0.59937 | lr 2.69e-04 | 5472.7s (no improvement 4/30)
+Epoch  330/500 | train -0.60174 [rh=0.0001 nh=-3.1826 rc=0.0002 nc=-2.8378] | val -0.59946 | lr 2.67e-04 | 5489.3s ✓ best
+Epoch  331/500 | train -0.60177 [rh=0.0001 nh=-3.1833 rc=0.0002 nc=-2.8375] | val -0.59952 | lr 2.64e-04 | 5505.9s ✓ best
+Epoch  332/500 | train -0.60180 [rh=0.0001 nh=-3.1841 rc=0.0002 nc=-2.8369] | val -0.59944 | lr 2.61e-04 | 5522.3s (no improvement 1/30)
+Epoch  333/500 | train -0.60175 [rh=0.0001 nh=-3.1835 rc=0.0002 nc=-2.8370] | val -0.59911 | lr 2.58e-04 | 5539.0s (no improvement 2/30)
+Epoch  334/500 | train -0.60178 [rh=0.0001 nh=-3.1835 rc=0.0002 nc=-2.8374] | val -0.59975 | lr 2.56e-04 | 5555.7s ✓ best
+Epoch  335/500 | train -0.60178 [rh=0.0001 nh=-3.1837 rc=0.0002 nc=-2.8371] | val -0.59862 | lr 2.53e-04 | 5572.1s (no improvement 1/30)
+Epoch  336/500 | train -0.60194 [rh=0.0001 nh=-3.1843 rc=0.0002 nc=-2.8381] | val -0.59969 | lr 2.50e-04 | 5588.5s (no improvement 2/30)
+Epoch  337/500 | train -0.60193 [rh=0.0001 nh=-3.1839 rc=0.0002 nc=-2.8384] | val -0.59950 | lr 2.48e-04 | 5604.9s (no improvement 3/30)
+Epoch  338/500 | train -0.60192 [rh=0.0001 nh=-3.1841 rc=0.0002 nc=-2.8382] | val -0.59962 | lr 2.45e-04 | 5621.7s (no improvement 4/30)
+Epoch  339/500 | train -0.60193 [rh=0.0001 nh=-3.1844 rc=0.0002 nc=-2.8380] | val -0.59940 | lr 2.42e-04 | 5638.1s (no improvement 5/30)
+Epoch  340/500 | train -0.60199 [rh=0.0001 nh=-3.1847 rc=0.0002 nc=-2.8383] | val -0.59973 | lr 2.40e-04 | 5654.5s (no improvement 6/30)
+Epoch  341/500 | train -0.60196 [rh=0.0001 nh=-3.1840 rc=0.0002 nc=-2.8387] | val -0.59957 | lr 2.37e-04 | 5670.9s (no improvement 7/30)
+Epoch  342/500 | train -0.60203 [rh=0.0001 nh=-3.1847 rc=0.0002 nc=-2.8387] | val -0.59931 | lr 2.35e-04 | 5687.3s (no improvement 8/30)
+Epoch  343/500 | train -0.60197 [rh=0.0001 nh=-3.1849 rc=0.0002 nc=-2.8378] | val -0.59957 | lr 2.32e-04 | 5704.0s (no improvement 9/30)
+Epoch  344/500 | train -0.60206 [rh=0.0001 nh=-3.1844 rc=0.0002 nc=-2.8392] | val -0.59977 | lr 2.29e-04 | 5720.6s ✓ best
+Epoch  345/500 | train -0.60208 [rh=0.0001 nh=-3.1849 rc=0.0002 nc=-2.8390] | val -0.59974 | lr 2.27e-04 | 5737.1s (no improvement 1/30)
+Epoch  346/500 | train -0.60207 [rh=0.0001 nh=-3.1848 rc=0.0002 nc=-2.8390] | val -0.59967 | lr 2.24e-04 | 5753.5s (no improvement 2/30)
+Epoch  347/500 | train -0.60210 [rh=0.0001 nh=-3.1852 rc=0.0002 nc=-2.8388] | val -0.59973 | lr 2.22e-04 | 5770.0s (no improvement 3/30)
+Epoch  348/500 | train -0.60216 [rh=0.0001 nh=-3.1851 rc=0.0002 nc=-2.8395] | val -0.59944 | lr 2.19e-04 | 5786.6s (no improvement 4/30)
+Epoch  349/500 | train -0.60218 [rh=0.0001 nh=-3.1858 rc=0.0002 nc=-2.8391] | val -0.59970 | lr 2.17e-04 | 5803.1s (no improvement 5/30)
+Epoch  350/500 | train -0.60205 [rh=0.0001 nh=-3.1847 rc=0.0002 nc=-2.8388] | val -0.59974 | lr 2.14e-04 | 5819.5s (no improvement 6/30)
+Epoch  351/500 | train -0.60216 [rh=0.0001 nh=-3.1856 rc=0.0002 nc=-2.8390] | val -0.59955 | lr 2.12e-04 | 5836.0s (no improvement 7/30)
+Epoch  352/500 | train -0.60219 [rh=0.0001 nh=-3.1856 rc=0.0002 nc=-2.8394] | val -0.59953 | lr 2.09e-04 | 5852.4s (no improvement 8/30)
+Epoch  353/500 | train -0.60219 [rh=0.0001 nh=-3.1850 rc=0.0002 nc=-2.8399] | val -0.59971 | lr 2.07e-04 | 5870.2s (no improvement 9/30)
+Epoch  354/500 | train -0.60225 [rh=0.0001 nh=-3.1861 rc=0.0002 nc=-2.8394] | val -0.59980 | lr 2.04e-04 | 5886.9s ✓ best
+Epoch  355/500 | train -0.60229 [rh=0.0001 nh=-3.1859 rc=0.0002 nc=-2.8400] | val -0.59980 | lr 2.02e-04 | 5903.5s ✓ best
+Epoch  356/500 | train -0.60227 [rh=0.0001 nh=-3.1853 rc=0.0002 nc=-2.8404] | val -0.59976 | lr 1.99e-04 | 5919.9s (no improvement 1/30)
+Epoch  357/500 | train -0.60233 [rh=0.0001 nh=-3.1862 rc=0.0002 nc=-2.8402] | val -0.59960 | lr 1.97e-04 | 5936.4s (no improvement 2/30)
+Epoch  358/500 | train -0.60238 [rh=0.0001 nh=-3.1865 rc=0.0002 nc=-2.8403] | val -0.59986 | lr 1.94e-04 | 5954.5s ✓ best
+Epoch  359/500 | train -0.60227 [rh=0.0001 nh=-3.1862 rc=0.0002 nc=-2.8395] | val -0.59923 | lr 1.92e-04 | 5970.9s (no improvement 1/30)
+Epoch  360/500 | train -0.60241 [rh=0.0001 nh=-3.1866 rc=0.0002 nc=-2.8405] | val -0.59988 | lr 1.89e-04 | 5987.5s ✓ best
+Epoch  361/500 | train -0.60240 [rh=0.0001 nh=-3.1864 rc=0.0002 nc=-2.8405] | val -0.59987 | lr 1.87e-04 | 6004.0s (no improvement 1/30)
+Epoch  362/500 | train -0.60236 [rh=0.0001 nh=-3.1864 rc=0.0002 nc=-2.8403] | val -0.59993 | lr 1.85e-04 | 6020.6s ✓ best
+Epoch  363/500 | train -0.60246 [rh=0.0001 nh=-3.1868 rc=0.0002 nc=-2.8408] | val -0.60003 | lr 1.82e-04 | 6038.6s ✓ best
+Epoch  364/500 | train -0.60243 [rh=0.0001 nh=-3.1867 rc=0.0002 nc=-2.8406] | val -0.59985 | lr 1.80e-04 | 6055.0s (no improvement 1/30)
+Epoch  365/500 | train -0.60245 [rh=0.0001 nh=-3.1871 rc=0.0002 nc=-2.8404] | val -0.59973 | lr 1.78e-04 | 6071.5s (no improvement 2/30)
+Epoch  366/500 | train -0.60249 [rh=0.0001 nh=-3.1869 rc=0.0002 nc=-2.8411] | val -0.59975 | lr 1.75e-04 | 6087.9s (no improvement 3/30)
+Epoch  367/500 | train -0.60255 [rh=0.0001 nh=-3.1872 rc=0.0002 nc=-2.8412] | val -0.59989 | lr 1.73e-04 | 6105.5s (no improvement 4/30)
+Epoch  368/500 | train -0.60252 [rh=0.0001 nh=-3.1870 rc=0.0002 nc=-2.8412] | val -0.59981 | lr 1.71e-04 | 6123.3s (no improvement 5/30)
+Epoch  369/500 | train -0.60256 [rh=0.0001 nh=-3.1875 rc=0.0002 nc=-2.8412] | val -0.60000 | lr 1.68e-04 | 6139.7s (no improvement 6/30)
+Epoch  370/500 | train -0.60256 [rh=0.0001 nh=-3.1873 rc=0.0002 nc=-2.8414] | val -0.60002 | lr 1.66e-04 | 6156.2s (no improvement 7/30)
+Epoch  371/500 | train -0.60259 [rh=0.0001 nh=-3.1875 rc=0.0002 nc=-2.8414] | val -0.59997 | lr 1.64e-04 | 6172.7s (no improvement 8/30)
+Epoch  372/500 | train -0.60261 [rh=0.0001 nh=-3.1875 rc=0.0002 nc=-2.8416] | val -0.60001 | lr 1.62e-04 | 6189.4s (no improvement 9/30)
+Epoch  373/500 | train -0.60256 [rh=0.0001 nh=-3.1873 rc=0.0002 nc=-2.8413] | val -0.59976 | lr 1.59e-04 | 6205.8s (no improvement 10/30)
+Epoch  374/500 | train -0.60265 [rh=0.0001 nh=-3.1880 rc=0.0002 nc=-2.8415] | val -0.60010 | lr 1.57e-04 | 6222.5s ✓ best
+Epoch  375/500 | train -0.60268 [rh=0.0001 nh=-3.1879 rc=0.0002 nc=-2.8419] | val -0.60002 | lr 1.55e-04 | 6238.9s (no improvement 1/30)
+Epoch  376/500 | train -0.60264 [rh=0.0001 nh=-3.1876 rc=0.0002 nc=-2.8418] | val -0.59984 | lr 1.53e-04 | 6255.3s (no improvement 2/30)
+Epoch  377/500 | train -0.60268 [rh=0.0001 nh=-3.1878 rc=0.0002 nc=-2.8420] | val -0.60015 | lr 1.51e-04 | 6272.2s ✓ best
+Epoch  378/500 | train -0.60270 [rh=0.0001 nh=-3.1881 rc=0.0002 nc=-2.8419] | val -0.60004 | lr 1.48e-04 | 6288.7s (no improvement 1/30)
+Epoch  379/500 | train -0.60274 [rh=0.0001 nh=-3.1882 rc=0.0002 nc=-2.8422] | val -0.60015 | lr 1.46e-04 | 6305.3s ✓ best
+Epoch  380/500 | train -0.60275 [rh=0.0001 nh=-3.1884 rc=0.0002 nc=-2.8421] | val -0.60006 | lr 1.44e-04 | 6321.8s (no improvement 1/30)
+Epoch  381/500 | train -0.60274 [rh=0.0001 nh=-3.1883 rc=0.0002 nc=-2.8421] | val -0.60007 | lr 1.42e-04 | 6338.2s (no improvement 2/30)
+Epoch  382/500 | train -0.60276 [rh=0.0001 nh=-3.1885 rc=0.0002 nc=-2.8421] | val -0.60010 | lr 1.40e-04 | 6354.9s (no improvement 3/30)
+Epoch  383/500 | train -0.60281 [rh=0.0001 nh=-3.1886 rc=0.0002 nc=-2.8425] | val -0.60009 | lr 1.38e-04 | 6371.4s (no improvement 4/30)
+Epoch  384/500 | train -0.60280 [rh=0.0001 nh=-3.1885 rc=0.0002 nc=-2.8425] | val -0.60017 | lr 1.36e-04 | 6388.0s ✓ best
+Epoch  385/500 | train -0.60281 [rh=0.0001 nh=-3.1886 rc=0.0002 nc=-2.8424] | val -0.60022 | lr 1.34e-04 | 6404.6s ✓ best
+Epoch  386/500 | train -0.60284 [rh=0.0001 nh=-3.1888 rc=0.0002 nc=-2.8426] | val -0.60007 | lr 1.32e-04 | 6421.0s (no improvement 1/30)
+Epoch  387/500 | train -0.60282 [rh=0.0001 nh=-3.1887 rc=0.0002 nc=-2.8426] | val -0.60017 | lr 1.30e-04 | 6437.7s (no improvement 2/30)
+Epoch  388/500 | train -0.60288 [rh=0.0001 nh=-3.1890 rc=0.0002 nc=-2.8428] | val -0.60013 | lr 1.28e-04 | 6454.2s (no improvement 3/30)
+Epoch  389/500 | train -0.60288 [rh=0.0001 nh=-3.1888 rc=0.0002 nc=-2.8430] | val -0.60027 | lr 1.26e-04 | 6470.8s ✓ best
+Epoch  390/500 | train -0.60291 [rh=0.0001 nh=-3.1892 rc=0.0002 nc=-2.8429] | val -0.59994 | lr 1.24e-04 | 6487.3s (no improvement 1/30)
+Epoch  391/500 | train -0.60290 [rh=0.0001 nh=-3.1891 rc=0.0002 nc=-2.8429] | val -0.60006 | lr 1.22e-04 | 6503.7s (no improvement 2/30)
+Epoch  392/500 | train -0.60289 [rh=0.0001 nh=-3.1888 rc=0.0002 nc=-2.8431] | val -0.60023 | lr 1.20e-04 | 6520.5s (no improvement 3/30)
+Epoch  393/500 | train -0.60294 [rh=0.0001 nh=-3.1894 rc=0.0002 nc=-2.8430] | val -0.60024 | lr 1.18e-04 | 6536.9s (no improvement 4/30)
+Epoch  394/500 | train -0.60296 [rh=0.0001 nh=-3.1893 rc=0.0002 nc=-2.8432] | val -0.60023 | lr 1.16e-04 | 6553.4s (no improvement 5/30)
+Epoch  395/500 | train -0.60298 [rh=0.0001 nh=-3.1895 rc=0.0002 nc=-2.8433] | val -0.60025 | lr 1.14e-04 | 6569.8s (no improvement 6/30)
+Epoch  396/500 | train -0.60300 [rh=0.0001 nh=-3.1896 rc=0.0002 nc=-2.8434] | val -0.60023 | lr 1.12e-04 | 6586.3s (no improvement 7/30)
+Epoch  397/500 | train -0.60298 [rh=0.0001 nh=-3.1894 rc=0.0002 nc=-2.8434] | val -0.60016 | lr 1.10e-04 | 6603.0s (no improvement 8/30)
+Epoch  398/500 | train -0.60301 [rh=0.0001 nh=-3.1896 rc=0.0002 nc=-2.8435] | val -0.60030 | lr 1.08e-04 | 6619.7s ✓ best
+Epoch  399/500 | train -0.60304 [rh=0.0001 nh=-3.1899 rc=0.0002 nc=-2.8435] | val -0.60026 | lr 1.06e-04 | 6636.1s (no improvement 1/30)
+Epoch  400/500 | train -0.60303 [rh=0.0001 nh=-3.1897 rc=0.0002 nc=-2.8436] | val -0.60028 | lr 1.05e-04 | 6652.5s (no improvement 2/30)
+Epoch  401/500 | train -0.60305 [rh=0.0001 nh=-3.1898 rc=0.0002 nc=-2.8437] | val -0.60029 | lr 1.03e-04 | 6669.0s (no improvement 3/30)
+Epoch  402/500 | train -0.60305 [rh=0.0001 nh=-3.1898 rc=0.0002 nc=-2.8437] | val -0.60026 | lr 1.01e-04 | 6685.7s (no improvement 4/30)
+Epoch  403/500 | train -0.60302 [rh=0.0001 nh=-3.1895 rc=0.0002 nc=-2.8437] | val -0.60023 | lr 9.91e-05 | 6702.1s (no improvement 5/30)
+Epoch  404/500 | train -0.60309 [rh=0.0001 nh=-3.1901 rc=0.0002 nc=-2.8439] | val -0.60032 | lr 9.74e-05 | 6718.7s ✓ best
+Epoch  405/500 | train -0.60311 [rh=0.0001 nh=-3.1901 rc=0.0002 nc=-2.8440] | val -0.60030 | lr 9.56e-05 | 6735.2s (no improvement 1/30)
+Epoch  406/500 | train -0.60314 [rh=0.0001 nh=-3.1903 rc=0.0002 nc=-2.8441] | val -0.60033 | lr 9.39e-05 | 6751.8s ✓ best
+Epoch  407/500 | train -0.60314 [rh=0.0001 nh=-3.1903 rc=0.0002 nc=-2.8441] | val -0.60036 | lr 9.21e-05 | 6768.7s ✓ best
+Epoch  408/500 | train -0.60313 [rh=0.0001 nh=-3.1902 rc=0.0002 nc=-2.8441] | val -0.60029 | lr 9.04e-05 | 6785.2s (no improvement 1/30)
+Epoch  409/500 | train -0.60315 [rh=0.0001 nh=-3.1904 rc=0.0002 nc=-2.8441] | val -0.60038 | lr 8.87e-05 | 6801.8s ✓ best
+Epoch  410/500 | train -0.60316 [rh=0.0001 nh=-3.1904 rc=0.0002 nc=-2.8442] | val -0.60035 | lr 8.71e-05 | 6818.2s (no improvement 1/30)
+Epoch  411/500 | train -0.60314 [rh=0.0001 nh=-3.1901 rc=0.0002 nc=-2.8443] | val -0.60034 | lr 8.54e-05 | 6834.7s (no improvement 2/30)
+Epoch  412/500 | train -0.60321 [rh=0.0001 nh=-3.1906 rc=0.0002 nc=-2.8444] | val -0.60037 | lr 8.38e-05 | 6851.4s (no improvement 3/30)
+Epoch  413/500 | train -0.60320 [rh=0.0001 nh=-3.1907 rc=0.0002 nc=-2.8444] | val -0.60035 | lr 8.21e-05 | 6867.9s (no improvement 4/30)
+Epoch  414/500 | train -0.60322 [rh=0.0001 nh=-3.1907 rc=0.0002 nc=-2.8445] | val -0.60038 | lr 8.05e-05 | 6884.5s ✓ best
+Epoch  415/500 | train -0.60318 [rh=0.0001 nh=-3.1903 rc=0.0002 nc=-2.8446] | val -0.60043 | lr 7.89e-05 | 6901.1s ✓ best
+Epoch  416/500 | train -0.60324 [rh=0.0001 nh=-3.1908 rc=0.0002 nc=-2.8446] | val -0.60038 | lr 7.74e-05 | 6917.6s (no improvement 1/30)
+Epoch  417/500 | train -0.60323 [rh=0.0001 nh=-3.1907 rc=0.0002 nc=-2.8446] | val -0.60042 | lr 7.58e-05 | 6934.3s (no improvement 2/30)
+Epoch  418/500 | train -0.60327 [rh=0.0001 nh=-3.1910 rc=0.0002 nc=-2.8447] | val -0.60040 | lr 7.43e-05 | 6950.8s (no improvement 3/30)
+Epoch  419/500 | train -0.60328 [rh=0.0001 nh=-3.1910 rc=0.0002 nc=-2.8448] | val -0.60044 | lr 7.27e-05 | 6967.4s ✓ best
+Epoch  420/500 | train -0.60330 [rh=0.0001 nh=-3.1911 rc=0.0002 nc=-2.8449] | val -0.60047 | lr 7.12e-05 | 6984.0s ✓ best
+Epoch  421/500 | train -0.60330 [rh=0.0001 nh=-3.1910 rc=0.0002 nc=-2.8449] | val -0.60046 | lr 6.97e-05 | 7000.5s (no improvement 1/30)
+Epoch  422/500 | train -0.60332 [rh=0.0001 nh=-3.1912 rc=0.0002 nc=-2.8449] | val -0.60046 | lr 6.83e-05 | 7017.2s (no improvement 2/30)
+Epoch  423/500 | train -0.60332 [rh=0.0001 nh=-3.1912 rc=0.0002 nc=-2.8450] | val -0.60042 | lr 6.68e-05 | 7033.6s (no improvement 3/30)
+Epoch  424/500 | train -0.60332 [rh=0.0001 nh=-3.1912 rc=0.0002 nc=-2.8451] | val -0.60044 | lr 6.54e-05 | 7050.1s (no improvement 4/30)
+Epoch  425/500 | train -0.60333 [rh=0.0001 nh=-3.1912 rc=0.0002 nc=-2.8450] | val -0.60046 | lr 6.40e-05 | 7066.4s (no improvement 5/30)
+Epoch  426/500 | train -0.60336 [rh=0.0001 nh=-3.1914 rc=0.0002 nc=-2.8452] | val -0.60046 | lr 6.25e-05 | 7082.9s (no improvement 6/30)
+Epoch  427/500 | train -0.60337 [rh=0.0001 nh=-3.1915 rc=0.0002 nc=-2.8452] | val -0.60045 | lr 6.12e-05 | 7100.5s (no improvement 7/30)
+Epoch  428/500 | train -0.60338 [rh=0.0001 nh=-3.1915 rc=0.0002 nc=-2.8453] | val -0.60045 | lr 5.98e-05 | 7116.9s (no improvement 8/30)
+Epoch  429/500 | train -0.60338 [rh=0.0001 nh=-3.1915 rc=0.0002 nc=-2.8453] | val -0.60049 | lr 5.84e-05 | 7133.6s ✓ best
+Epoch  430/500 | train -0.60339 [rh=0.0001 nh=-3.1915 rc=0.0002 nc=-2.8453] | val -0.60047 | lr 5.71e-05 | 7150.0s (no improvement 1/30)
+Epoch  431/500 | train -0.60340 [rh=0.0001 nh=-3.1917 rc=0.0002 nc=-2.8454] | val -0.60045 | lr 5.58e-05 | 7166.5s (no improvement 2/30)
+Epoch  432/500 | train -0.60341 [rh=0.0001 nh=-3.1917 rc=0.0002 nc=-2.8454] | val -0.60050 | lr 5.45e-05 | 7184.5s ✓ best
+Epoch  433/500 | train -0.60342 [rh=0.0001 nh=-3.1917 rc=0.0002 nc=-2.8455] | val -0.60052 | lr 5.32e-05 | 7201.1s ✓ best
+Epoch  434/500 | train -0.60343 [rh=0.0001 nh=-3.1917 rc=0.0002 nc=-2.8455] | val -0.60051 | lr 5.20e-05 | 7217.5s (no improvement 1/30)
+Epoch  435/500 | train -0.60344 [rh=0.0001 nh=-3.1918 rc=0.0002 nc=-2.8456] | val -0.60050 | lr 5.07e-05 | 7234.0s (no improvement 2/30)
+Epoch  436/500 | train -0.60345 [rh=0.0001 nh=-3.1918 rc=0.0002 nc=-2.8456] | val -0.60053 | lr 4.95e-05 | 7250.6s ✓ best
+Epoch  437/500 | train -0.60346 [rh=0.0001 nh=-3.1919 rc=0.0002 nc=-2.8457] | val -0.60048 | lr 4.83e-05 | 7268.4s (no improvement 1/30)
+Epoch  438/500 | train -0.60347 [rh=0.0001 nh=-3.1920 rc=0.0002 nc=-2.8457] | val -0.60052 | lr 4.71e-05 | 7284.9s (no improvement 2/30)
+Epoch  439/500 | train -0.60348 [rh=0.0001 nh=-3.1920 rc=0.0002 nc=-2.8458] | val -0.60050 | lr 4.59e-05 | 7301.3s (no improvement 3/30)
+Epoch  440/500 | train -0.60349 [rh=0.0001 nh=-3.1921 rc=0.0002 nc=-2.8458] | val -0.60052 | lr 4.48e-05 | 7317.8s (no improvement 4/30)
+Epoch  441/500 | train -0.60349 [rh=0.0001 nh=-3.1921 rc=0.0002 nc=-2.8458] | val -0.60053 | lr 4.36e-05 | 7334.4s ✓ best
+Epoch  442/500 | train -0.60351 [rh=0.0001 nh=-3.1922 rc=0.0002 nc=-2.8459] | val -0.60053 | lr 4.25e-05 | 7352.2s (no improvement 1/30)
+Epoch  443/500 | train -0.60351 [rh=0.0001 nh=-3.1922 rc=0.0002 nc=-2.8459] | val -0.60054 | lr 4.14e-05 | 7368.9s ✓ best
+Epoch  444/500 | train -0.60352 [rh=0.0001 nh=-3.1922 rc=0.0002 nc=-2.8460] | val -0.60051 | lr 4.03e-05 | 7385.4s (no improvement 1/30)
+Epoch  445/500 | train -0.60353 [rh=0.0001 nh=-3.1922 rc=0.0002 nc=-2.8460] | val -0.60052 | lr 3.93e-05 | 7401.8s (no improvement 2/30)
+Epoch  446/500 | train -0.60354 [rh=0.0001 nh=-3.1923 rc=0.0002 nc=-2.8461] | val -0.60056 | lr 3.82e-05 | 7420.0s ✓ best
+Epoch  447/500 | train -0.60355 [rh=0.0001 nh=-3.1924 rc=0.0002 nc=-2.8461] | val -0.60055 | lr 3.72e-05 | 7436.4s (no improvement 1/30)
+Epoch  448/500 | train -0.60356 [rh=0.0001 nh=-3.1924 rc=0.0002 nc=-2.8461] | val -0.60055 | lr 3.62e-05 | 7452.8s (no improvement 2/30)
+Epoch  449/500 | train -0.60356 [rh=0.0001 nh=-3.1925 rc=0.0002 nc=-2.8462] | val -0.60057 | lr 3.52e-05 | 7469.5s ✓ best
+Epoch  450/500 | train -0.60357 [rh=0.0001 nh=-3.1925 rc=0.0002 nc=-2.8462] | val -0.60055 | lr 3.42e-05 | 7485.9s (no improvement 1/30)
+Epoch  451/500 | train -0.60357 [rh=0.0001 nh=-3.1925 rc=0.0002 nc=-2.8462] | val -0.60056 | lr 3.33e-05 | 7502.6s (no improvement 2/30)
+Epoch  452/500 | train -0.60358 [rh=0.0001 nh=-3.1925 rc=0.0002 nc=-2.8463] | val -0.60059 | lr 3.23e-05 | 7519.2s ✓ best
+Epoch  453/500 | train -0.60359 [rh=0.0001 nh=-3.1926 rc=0.0002 nc=-2.8463] | val -0.60058 | lr 3.14e-05 | 7535.7s (no improvement 1/30)
+Epoch  454/500 | train -0.60360 [rh=0.0001 nh=-3.1926 rc=0.0002 nc=-2.8463] | val -0.60057 | lr 3.05e-05 | 7552.1s (no improvement 2/30)
+Epoch  455/500 | train -0.60360 [rh=0.0001 nh=-3.1926 rc=0.0002 nc=-2.8464] | val -0.60057 | lr 2.97e-05 | 7568.6s (no improvement 3/30)
+Epoch  456/500 | train -0.60361 [rh=0.0001 nh=-3.1927 rc=0.0002 nc=-2.8464] | val -0.60056 | lr 2.88e-05 | 7585.2s (no improvement 4/30)
+Epoch  457/500 | train -0.60362 [rh=0.0001 nh=-3.1927 rc=0.0002 nc=-2.8464] | val -0.60059 | lr 2.80e-05 | 7601.7s (no improvement 5/30)
+Epoch  458/500 | train -0.60363 [rh=0.0001 nh=-3.1928 rc=0.0002 nc=-2.8465] | val -0.60058 | lr 2.71e-05 | 7618.1s (no improvement 6/30)
+Epoch  459/500 | train -0.60363 [rh=0.0001 nh=-3.1928 rc=0.0002 nc=-2.8465] | val -0.60059 | lr 2.63e-05 | 7634.8s ✓ best
+Epoch  460/500 | train -0.60364 [rh=0.0001 nh=-3.1928 rc=0.0002 nc=-2.8466] | val -0.60059 | lr 2.56e-05 | 7651.4s ✓ best
+Epoch  461/500 | train -0.60364 [rh=0.0001 nh=-3.1928 rc=0.0002 nc=-2.8466] | val -0.60060 | lr 2.48e-05 | 7668.3s ✓ best
+Epoch  462/500 | train -0.60365 [rh=0.0001 nh=-3.1929 rc=0.0002 nc=-2.8466] | val -0.60059 | lr 2.40e-05 | 7684.8s (no improvement 1/30)
+Epoch  463/500 | train -0.60365 [rh=0.0001 nh=-3.1929 rc=0.0002 nc=-2.8466] | val -0.60060 | lr 2.33e-05 | 7701.2s (no improvement 2/30)
+Epoch  464/500 | train -0.60366 [rh=0.0001 nh=-3.1930 rc=0.0002 nc=-2.8466] | val -0.60059 | lr 2.26e-05 | 7717.7s (no improvement 3/30)
+Epoch  465/500 | train -0.60367 [rh=0.0001 nh=-3.1930 rc=0.0002 nc=-2.8467] | val -0.60059 | lr 2.19e-05 | 7734.1s (no improvement 4/30)
+Epoch  466/500 | train -0.60367 [rh=0.0001 nh=-3.1930 rc=0.0002 nc=-2.8467] | val -0.60060 | lr 2.13e-05 | 7750.8s (no improvement 5/30)
+Epoch  467/500 | train -0.60368 [rh=0.0001 nh=-3.1931 rc=0.0002 nc=-2.8467] | val -0.60060 | lr 2.06e-05 | 7767.4s ✓ best
+Epoch  468/500 | train -0.60368 [rh=0.0001 nh=-3.1931 rc=0.0002 nc=-2.8467] | val -0.60060 | lr 2.00e-05 | 7784.1s ✓ best
+Epoch  469/500 | train -0.60368 [rh=0.0001 nh=-3.1930 rc=0.0002 nc=-2.8468] | val -0.60061 | lr 1.94e-05 | 7800.7s ✓ best
+Epoch  470/500 | train -0.60369 [rh=0.0001 nh=-3.1931 rc=0.0002 nc=-2.8468] | val -0.60061 | lr 1.88e-05 | 7817.3s (no improvement 1/30)
+Epoch  471/500 | train -0.60370 [rh=0.0001 nh=-3.1932 rc=0.0002 nc=-2.8468] | val -0.60061 | lr 1.82e-05 | 7834.0s (no improvement 2/30)
+Epoch  472/500 | train -0.60370 [rh=0.0001 nh=-3.1932 rc=0.0002 nc=-2.8468] | val -0.60060 | lr 1.76e-05 | 7850.4s (no improvement 3/30)
+Epoch  473/500 | train -0.60370 [rh=0.0001 nh=-3.1932 rc=0.0002 nc=-2.8468] | val -0.60061 | lr 1.71e-05 | 7867.1s ✓ best
+Epoch  474/500 | train -0.60371 [rh=0.0001 nh=-3.1932 rc=0.0002 nc=-2.8469] | val -0.60062 | lr 1.66e-05 | 7883.7s ✓ best
+Epoch  475/500 | train -0.60371 [rh=0.0001 nh=-3.1932 rc=0.0002 nc=-2.8469] | val -0.60061 | lr 1.61e-05 | 7900.1s (no improvement 1/30)
+Epoch  476/500 | train -0.60372 [rh=0.0001 nh=-3.1932 rc=0.0002 nc=-2.8469] | val -0.60062 | lr 1.56e-05 | 7916.9s (no improvement 2/30)
+Epoch  477/500 | train -0.60372 [rh=0.0001 nh=-3.1932 rc=0.0002 nc=-2.8469] | val -0.60062 | lr 1.52e-05 | 7933.3s (no improvement 3/30)
+Epoch  478/500 | train -0.60372 [rh=0.0001 nh=-3.1933 rc=0.0002 nc=-2.8469] | val -0.60062 | lr 1.47e-05 | 7949.7s (no improvement 4/30)
+Epoch  479/500 | train -0.60373 [rh=0.0001 nh=-3.1933 rc=0.0002 nc=-2.8470] | val -0.60062 | lr 1.43e-05 | 7966.2s (no improvement 5/30)
+Epoch  480/500 | train -0.60374 [rh=0.0001 nh=-3.1933 rc=0.0002 nc=-2.8470] | val -0.60062 | lr 1.39e-05 | 7982.6s (no improvement 6/30)
+Epoch  481/500 | train -0.60374 [rh=0.0001 nh=-3.1933 rc=0.0002 nc=-2.8470] | val -0.60062 | lr 1.35e-05 | 7999.4s (no improvement 7/30)
+Epoch  482/500 | train -0.60374 [rh=0.0001 nh=-3.1933 rc=0.0002 nc=-2.8470] | val -0.60063 | lr 1.32e-05 | 8016.0s ✓ best
+Epoch  483/500 | train -0.60374 [rh=0.0001 nh=-3.1934 rc=0.0002 nc=-2.8470] | val -0.60062 | lr 1.28e-05 | 8032.4s (no improvement 1/30)
+Epoch  484/500 | train -0.60375 [rh=0.0001 nh=-3.1934 rc=0.0002 nc=-2.8470] | val -0.60063 | lr 1.25e-05 | 8049.1s ✓ best
+Epoch  485/500 | train -0.60375 [rh=0.0001 nh=-3.1934 rc=0.0002 nc=-2.8471] | val -0.60062 | lr 1.22e-05 | 8065.5s (no improvement 1/30)
+Epoch  486/500 | train -0.60375 [rh=0.0001 nh=-3.1934 rc=0.0002 nc=-2.8471] | val -0.60063 | lr 1.19e-05 | 8082.4s ✓ best
+Epoch  487/500 | train -0.60375 [rh=0.0001 nh=-3.1934 rc=0.0002 nc=-2.8471] | val -0.60062 | lr 1.17e-05 | 8098.9s (no improvement 1/30)
+Epoch  488/500 | train -0.60375 [rh=0.0001 nh=-3.1934 rc=0.0002 nc=-2.8471] | val -0.60062 | lr 1.14e-05 | 8115.3s (no improvement 2/30)
+Epoch  489/500 | train -0.60376 [rh=0.0001 nh=-3.1935 rc=0.0002 nc=-2.8471] | val -0.60062 | lr 1.12e-05 | 8131.8s (no improvement 3/30)
+Epoch  490/500 | train -0.60375 [rh=0.0001 nh=-3.1934 rc=0.0002 nc=-2.8471] | val -0.60063 | lr 1.10e-05 | 8148.2s (no improvement 4/30)
+Epoch  491/500 | train -0.60376 [rh=0.0001 nh=-3.1935 rc=0.0002 nc=-2.8471] | val -0.60062 | lr 1.08e-05 | 8164.9s (no improvement 5/30)
+Epoch  492/500 | train -0.60376 [rh=0.0001 nh=-3.1935 rc=0.0002 nc=-2.8471] | val -0.60063 | lr 1.06e-05 | 8181.6s ✓ best
+Epoch  493/500 | train -0.60376 [rh=0.0001 nh=-3.1935 rc=0.0002 nc=-2.8471] | val -0.60063 | lr 1.05e-05 | 8198.0s (no improvement 1/30)
+Epoch  494/500 | train -0.60377 [rh=0.0001 nh=-3.1935 rc=0.0002 nc=-2.8471] | val -0.60063 | lr 1.04e-05 | 8214.5s (no improvement 2/30)
+Epoch  495/500 | train -0.60377 [rh=0.0001 nh=-3.1935 rc=0.0002 nc=-2.8471] | val -0.60063 | lr 1.02e-05 | 8230.9s (no improvement 3/30)
+Epoch  496/500 | train -0.60377 [rh=0.0001 nh=-3.1935 rc=0.0002 nc=-2.8471] | val -0.60062 | lr 1.02e-05 | 8247.6s (no improvement 4/30)
+Epoch  497/500 | train -0.60377 [rh=0.0001 nh=-3.1935 rc=0.0002 nc=-2.8472] | val -0.60061 | lr 1.01e-05 | 8264.1s (no improvement 5/30)
+Epoch  498/500 | train -0.60377 [rh=0.0001 nh=-3.1935 rc=0.0002 nc=-2.8471] | val -0.60062 | lr 1.00e-05 | 8280.5s (no improvement 6/30)
+Epoch  499/500 | train -0.60377 [rh=0.0001 nh=-3.1935 rc=0.0002 nc=-2.8472] | val -0.60063 | lr 1.00e-05 | 8297.0s (no improvement 7/30)
+Epoch  500/500 | train -0.60377 [rh=0.0001 nh=-3.1935 rc=0.0002 nc=-2.8472] | val -0.60062 | lr 1.00e-05 | 8313.4s (no improvement 8/30)
+[train] Loss plot → surrogate_model_v3/runs/full_range_perturb0.01_bootstrap0.5/loss_curves.png
+[train] Component loss plot → surrogate_model_v3/runs/full_range_perturb0.01_bootstrap0.5/loss_components.png
+
+[train] Done.  Best val loss : -0.600633
+[train] Best checkpoint  : surrogate_model_v3/runs/full_range_perturb0.01_bootstrap0.5/surrogate_best.pt
+[train] Final checkpoint : surrogate_model_v3/runs/full_range_perturb0.01_bootstrap0.5/surrogate_final.pt
+=== [2/3] evaluate_ood (test split, propagated uncertainty) ===
+/home/xysong/.conda/envs/RL/lib/python3.10/site-packages/torch/utils/data/dataloader.py:617: UserWarning: This DataLoader will create 4 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+[evaluate_ood] Output dir : surrogate_model_v3/results_aleatoric_calibration/full_range_perturb0.01
+[evaluate_ood] Device     : cuda
+[evaluate_ood] TwoStageSurrogate(state=1053, lp_dim=1, cool_dim=1, K=5, n_layers=12, embed=8, rank=0 | heat×5=2,554,020  cool×5=2,554,020 | total=5,108,040)
+[dataset] Loaded 5000 trajectories × 12 layers from DatasetV2_layer_12_samples_5000.pkl
+[dataset] Split → train 4000 | val 500 | test 500
+[evaluate_ood] Using the 'test' split only: 500 trajectories
+[evaluate_ood] Wide dataset laser-power range: [100.0, 400.0] W  (checkpoint trained on [100.0, 400.0] W)
+[evaluate_ood] WARNING: this dataset does not actually extend past the training range(s) — there is no real OOD region to test.
+[dataset] Bootstrap masks: (6000, 5), resample_frac=1.0, ~36.5% of (sample, member) pairs unseen (expected ≈ 36.8%)
+[TwoStageSurrogateDataset] 6,000 transitions, state_dim=1053, layers 0–11, bootstrap K=5 (transition-level resampling)
+[evaluate_ood] Running forward pass over all transitions (heating stage) ...
+
+[evaluate_ood] ══════════════════════════════════════════════════════════════════════════════════════════
+[evaluate_ood] SUMMARY  (n, mean epistemic σ, mean aleatoric σ, RMSE, corr(epistemic σ, per-sample squared error))
+[evaluate_ood] ══════════════════════════════════════════════════════════════════════════════════════════
+  ID           n=  6000  epist σ=0.00071  aleat σ=0.00996  RMSE=   0.33 K  corr(epi,err) pearson=0.791 spearman=0.857
+  OOD          n=0 (empty region)
+  ALL          n=  6000  epist σ=0.00071  aleat σ=0.00996  RMSE=   0.33 K  corr(epi,err) pearson=0.791 spearman=0.857
+[evaluate_ood] ══════════════════════════════════════════════════════════════════════════════════════════
+
+     Power bin [W]        n     Epist σ     Aleat σ    RMSE [K]
+    100.0-  125.0      584     0.00092     0.00992        0.43
+    125.0-  150.0      411     0.00073     0.00995        0.31
+    150.0-  175.0      560     0.00069     0.00996        0.29
+    175.0-  200.0      367     0.00063     0.00997        0.24
+    200.0-  225.0      569     0.00063     0.00996        0.23
+    225.0-  250.0      400     0.00065     0.00996        0.25
+    250.0-  275.0      568     0.00063     0.00997        0.24
+    275.0-  300.0      385     0.00062     0.00997        0.25
+    300.0-  325.0      608     0.00064     0.00997        0.27
+    325.0-  350.0      403     0.00065     0.00997        0.30
+    350.0-  375.0      590     0.00073     0.00996        0.39
+    375.0-  400.0      555     0.00094     0.00992        0.52
+[evaluate_ood] Saved → surrogate_model_v3/results_aleatoric_calibration/full_range_perturb0.01/ood_uncertainty_vs_action.png
+[evaluate_ood] Saved → surrogate_model_v3/results_aleatoric_calibration/full_range_perturb0.01/ood_epistemic_vs_error.png
+
+[evaluate_ood] Running forward pass over all transitions (combined heat+cool, propagate_uncertainty=True) ...
+
+[evaluate_ood] ══════════════════════════════════════════════════════════════════════════════════════════
+[evaluate_ood] SUMMARY — COMBINED (post-cooling)
+[evaluate_ood] ══════════════════════════════════════════════════════════════════════════════════════════
+  ID           n=  6000  epist σ=0.00129  aleat σ=0.01723  RMSE=   0.44 K  corr(epi,err) pearson=0.729 spearman=0.718
+  OOD          n=0 (empty region)
+  ALL          n=  6000  epist σ=0.00129  aleat σ=0.01723  RMSE=   0.44 K  corr(epi,err) pearson=0.729 spearman=0.718
+[evaluate_ood] ══════════════════════════════════════════════════════════════════════════════════════════
+
+     Power bin [W]        n     Epist σ     Aleat σ    RMSE [K]
+    100.0-  125.0      584     0.00172     0.01717        0.55
+    125.0-  150.0      411     0.00139     0.01721        0.42
+    150.0-  175.0      560     0.00132     0.01722        0.43
+    175.0-  200.0      367     0.00119     0.01724        0.35
+    200.0-  225.0      569     0.00116     0.01724        0.36
+    225.0-  250.0      400     0.00119     0.01724        0.38
+    250.0-  275.0      568     0.00113     0.01725        0.37
+    275.0-  300.0      385     0.00111     0.01725        0.37
+    300.0-  325.0      608     0.00113     0.01725        0.40
+    325.0-  350.0      403     0.00117     0.01725        0.41
+    350.0-  375.0      590     0.00128     0.01723        0.51
+    375.0-  400.0      555     0.00155     0.01720        0.62
+[evaluate_ood] Saved → surrogate_model_v3/results_aleatoric_calibration/full_range_perturb0.01/ood_uncertainty_vs_action_combined.png
+[evaluate_ood] Saved → surrogate_model_v3/results_aleatoric_calibration/full_range_perturb0.01/ood_epistemic_vs_error_combined.png
+[evaluate_ood] Saved raw arrays → surrogate_model_v3/results_aleatoric_calibration/full_range_perturb0.01/ood_test.npz
+
+[evaluate_ood] Complete. All outputs in: surrogate_model_v3/results_aleatoric_calibration/full_range_perturb0.01
+=== [3/3] Jacobian-based expected aleatoric σ ===
+[dataset] Loaded 5000 trajectories × 12 layers from DatasetV2_layer_12_samples_5000.pkl
+[dataset] Split → train 4000 | val 500 | test 500
+[dataset] Bootstrap masks: (6000, 5), resample_frac=1.0, ~36.5% of (sample, member) pairs unseen (expected ≈ 36.8%)
+[TwoStageSurrogateDataset] 6,000 transitions, state_dim=1053, layers 0–11, bootstrap K=5 (transition-level resampling)
+[expected_aleatoric] ε=0.01: Jacobian-based 0.0173 (sd over transitions 0.0000; diagonal-only 0.0173; √3ε 0.0173)  [surrogate_model_v3/runs/full_range_perturb0.01_bootstrap0.5/surrogate_best.pt]
+[expected_aleatoric] Saved → surrogate_model_v3/results_aleatoric_calibration/full_range_perturb0.01/expected_full_aleatoric.json
+============================================================
+Finished : Mon Oct 12 20:16:39 EDT 2026
+Outputs  : surrogate_model_v3/runs/full_range_perturb0.01_bootstrap0.5/  and  surrogate_model_v3/results_aleatoric_calibration/full_range_perturb0.01/
+============================================================
