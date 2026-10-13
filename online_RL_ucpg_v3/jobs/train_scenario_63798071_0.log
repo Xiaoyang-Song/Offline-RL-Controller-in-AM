@@ -1,0 +1,2 @@
+Job 63798071_0 on gl1001 Tue Oct 13 02:24:24 EDT 2026
+Run: range_100-200  --reward_mode plain  field=heat  ID=100-200  surrogate=surrogate_model_v3/runs/range_100-200_perturb0.2_bootstrap0.5/surrogate_best.pt -> online_RL_ucpg_v3/runs/range_100-200/heat/pg_plain

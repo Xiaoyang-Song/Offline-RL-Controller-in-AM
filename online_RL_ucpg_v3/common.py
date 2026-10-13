@@ -46,6 +46,10 @@ def add_env_args(p: argparse.ArgumentParser) -> None:
     p.add_argument("--tau_k", type=float, default=2.0)
     p.add_argument("--pess_dev", type=float, default=None,
                    help="Penalty c [K] for a fully untrusted node. Default: T_h - T_l.")
+    p.add_argument("--uncertainty_mode", choices=["propagated", "member_rollout"], default="propagated",
+                   help="'propagated' (default): mean chained through the ensemble mean, epistemic covariance "
+                        "propagated between layers via Jacobians. 'member_rollout': LEGACY per-member "
+                        "trajectories (only to reproduce runs trained before this option existed).")
     p.add_argument("--shaping", choices=["additive", "shrink"], default="additive",
                    help="'additive': d + (1-w) c (never rewards uncertainty, default); "
                         "'shrink': w d + (1-w) c (exploitable when d > c; for comparison only).")
@@ -74,7 +78,7 @@ def make_env(args, device: str):
         action_min=args.action_min, action_max=args.action_max,
         cool_time_min=args.cool_time_min, cool_time_max=args.cool_time_max,
         reward_field=args.reward_field, reward_mode="plain", tau=None, pess_dev=args.pess_dev,
-        shaping=args.shaping,
+        shaping=args.shaping, uncertainty_mode=args.uncertainty_mode,
     )
     # trust scale — computed for BOTH modes so a plain run logs the same shaped diagnostic
     if args.tau is not None:
@@ -89,5 +93,5 @@ def make_env(args, device: str):
     env.reward_mode = args.reward_mode
     print(f"[v3] reward_field={args.reward_field}  reward_mode={args.reward_mode}  "
           f"tau={tau if tau is None else f'{tau:.3f} K'}  (median ID sigma {med:.3f} K, k={args.tau_k})  "
-          f"pess_dev={env.pess_dev:.1f} K  shaping={env.shaping}  members={env.K}")
+          f"pess_dev={env.pess_dev:.1f} K  shaping={env.shaping}  uncertainty={env.uncertainty_mode}  members={env.K}")
     return env, dict(tau=tau, median_id_sigma=med)

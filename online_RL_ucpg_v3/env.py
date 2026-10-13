@@ -2,12 +2,19 @@
 online_RL_ucpg_v3/env.py
 ----------------------------
 LPBF surrogate environment with an UNCERTAINTY-SHAPED, per-node reward and
-uncertainty carried ACROSS layers by rolling out every ensemble member as its
-own trajectory (see README.md for the full math).
+uncertainty carried ACROSS layers (see README.md for the full math).
+
+uncertainty_mode (how the per-node epistemic sigma is carried across layers):
+  'propagated' (DEFAULT) — scheme A: the state mean is chained through the
+      ensemble mean (as TwoStageSurrogate.rollout), and the epistemic covariance
+      is propagated BETWEEN layers through both stages' Jacobians
+      (surrogate_model_v3.multistep_propagation; P_0 = 0).
+  'member_rollout' (LEGACY, scheme B) — every ensemble member rolled out as its
+      own trajectory; kept only so runs trained before this change reproduce.
 
 Differences from online_RL_ucpg_v2.env.TwoStageLatentLPBFEnv
 ----------------------------------------------------------------
-1. Member rollouts. The K members of the two-stage surrogate are rolled out as
+1. (legacy 'member_rollout' mode) Member rollouts. The K members of the two-stage surrogate are rolled out as
    K separate trajectories (member k uses ITS OWN heating and cooling network
    on ITS OWN previous state):
        h^(k)_t      = s^(k)_t + Δheat_k(s^(k)_t, a_t, t)
@@ -41,6 +48,8 @@ from typing import Optional, Tuple
 import numpy as np
 import torch
 from scipy.io import loadmat
+
+from surrogate_model_v3.multistep_propagation import _members, _apply_A
 
 
 def hinge_deviation(u: np.ndarray, T_l: float, T_h: float) -> np.ndarray:
@@ -106,8 +115,11 @@ class UncertaintyShapedLPBFEnv:
         tau:            Optional[float] = None,
         pess_dev:       Optional[float] = None,
         shaping:        str   = "additive",
+        uncertainty_mode: str = "propagated",
     ) -> None:
         assert shaping in ("additive", "shrink"), shaping
+        assert uncertainty_mode in ("propagated", "member_rollout"), uncertainty_mode
+        self.uncertainty_mode = uncertainty_mode
         assert reward_field in ("cool", "heat"), reward_field
         assert reward_mode in ("shaped", "plain"), reward_mode
         self.surrogate = surrogate
@@ -136,7 +148,8 @@ class UncertaintyShapedLPBFEnv:
         self._std_np = self.state_std.detach().cpu().numpy()
         self._mean_np = self.state_mean.detach().cpu().numpy()
 
-        self._s: Optional[torch.Tensor] = None            # (K, D) normalised member states
+        self._s: Optional[torch.Tensor] = None            # member_rollout: (K, D) member states; propagated: (1, D) mean
+        self._F: Optional[torch.Tensor] = None            # propagated: (1, D, m) epistemic covariance factor
         self._layer = 0
         self._cool_time = 0.0
 
@@ -144,7 +157,11 @@ class UncertaintyShapedLPBFEnv:
     def reset(self, cool_time: Optional[float] = None) -> np.ndarray:
         s0 = torch.full((1, self.state_dim), self.initial_temp, dtype=torch.float32, device=self.device)
         s0 = (s0 - self.state_mean) / self.state_std
-        self._s = s0.expand(self.K, -1).clone()            # every member starts from the known IC
+        if self.uncertainty_mode == "member_rollout":
+            self._s = s0.expand(self.K, -1).clone()        # every member starts from the known IC
+        else:
+            self._s = s0.clone()                           # mean state
+            self._F = torch.zeros(1, self.state_dim, 0, device=self.device)   # P_0 = 0 (known IC)
         self._layer = 0
         self._cool_time = (float(cool_time) if cool_time is not None
                            else float(np.random.uniform(self.cool_time_min, self.cool_time_max)))
@@ -160,50 +177,63 @@ class UncertaintyShapedLPBFEnv:
         c_n = torch.full((1, 1), (self._cool_time - self.cool_mean) / self.cool_std, device=self.device)
         li = torch.tensor([t], dtype=torch.long, device=self.device)
 
-        heat, nxt = [], []
-        for k in range(K):                                  # member k on its own state
-            s_k = self._s[k:k + 1]
-            h_k = s_k + self.surrogate.heating_transitions[k](s_k, a_n, li)[0]
-            n_k = h_k + self.surrogate.cooling_transitions[k](h_k, c_n, li)[0]
-            heat.append(h_k); nxt.append(n_k)
-        heat = torch.cat(heat, 0)                           # (K, D) normalised
-        nxt = torch.cat(nxt, 0)
-
-        heat_raw = (heat * self.state_std + self.state_mean).cpu().numpy()   # (K, D) Kelvin
-        next_raw = (nxt * self.state_std + self.state_mean).cpu().numpy()
-        r = self._rewards(heat_raw, next_raw, t)
+        if self.uncertainty_mode == "member_rollout":     # legacy scheme B
+            heat, nxt = [], []
+            for k in range(K):                              # member k on its own state
+                s_k = self._s[k:k + 1]
+                h_k = s_k + self.surrogate.heating_transitions[k](s_k, a_n, li)[0]
+                n_k = h_k + self.surrogate.cooling_transitions[k](h_k, c_n, li)[0]
+                heat.append(h_k); nxt.append(n_k)
+            heat_raw = (torch.cat(heat, 0) * self.state_std + self.state_mean).cpu().numpy()   # (K, D) Kelvin
+            next_raw = (torch.cat(nxt, 0) * self.state_std + self.state_mean).cpu().numpy()
+            mu_h, sig_h = heat_raw.mean(0), heat_raw.std(0)
+            mu_n, sig_n = next_raw.mean(0), next_raw.std(0)
+            nxt = torch.cat(nxt, 0)
+        else:                                               # scheme A + between-layer propagation
+            m, F = self._s, self._F
+            with torch.enable_grad():
+                dh, Fe, _ = _members(self.surrogate.heating_transitions, m, a_n, li)
+                F = torch.cat([_apply_A(self.surrogate.heating_transitions, m, a_n, li, F), Fe], -1)
+                h = m + dh
+                sig_h_n = (F ** 2).sum(-1).sqrt()
+                dc, Fe, _ = _members(self.surrogate.cooling_transitions, h, c_n, li)
+                F = torch.cat([_apply_A(self.surrogate.cooling_transitions, h, c_n, li, F), Fe], -1)
+                nxt = h + dc
+                sig_n_n = (F ** 2).sum(-1).sqrt()
+            self._F = F.detach()
+            nxt = nxt.detach()
+            mu_h = (h.detach() * self.state_std + self.state_mean)[0].cpu().numpy()
+            mu_n = (nxt * self.state_std + self.state_mean)[0].cpu().numpy()
+            sig_h = (sig_h_n.detach() * self.state_std)[0].cpu().numpy()       # Kelvin
+            sig_n = (sig_n_n.detach() * self.state_std)[0].cpu().numpy()
+        r = self._rewards(mu_h, sig_h, mu_n, sig_n, t)
 
         self._s = nxt
         self._layer += 1
         done = self._layer >= self.n_layers
 
-        heat_mean = heat_raw.mean(0)
-        next_mean = next_raw.mean(0)
         info = dict(
             layer=self._layer, action_W=action_W, cool_time_s=self._cool_time,
-            mean_heat_temp_K=float(heat_mean.mean()), max_heat_temp_K=float(heat_mean.max()),
-            mean_next_temp_K=float(next_mean.mean()), max_next_temp_K=float(next_mean.max()),
+            mean_heat_temp_K=float(mu_h.mean()), max_heat_temp_K=float(mu_h.max()),
+            mean_next_temp_K=float(mu_n.mean()), max_next_temp_K=float(mu_n.max()),
             **r,
         )
         reward = r["reward_shaped"] if self.reward_mode == "shaped" else r["reward_plain"]
         return self._make_obs(), float(reward), done, info
 
     # ------------------------------------------------------------- rewards
-    def _rewards(self, heat_raw: np.ndarray, next_raw: np.ndarray, t: int) -> dict:
+    def _rewards(self, mu_h, sig_h, mu_n, sig_n, t: int) -> dict:
+        """mu_*: per-node mean temperature [K]; sig_*: per-node epistemic std [K], carried across layers."""
         m = self._masks[t]
-        sel = (lambda f: f[:, m]) if m is not None else (lambda f: f)
-        field = next_raw if self.reward_field == "cool" else heat_raw
-        other = heat_raw if self.reward_field == "cool" else next_raw
-
-        f = sel(field)                                      # (K, |R|)
-        mu = f.mean(0)
-        sigma = f.std(0)                                    # epistemic, carried across layers
+        sel = (lambda f: f[m]) if m is not None else (lambda f: f)
+        mu, sigma, mu_other = ((mu_n, sig_n, mu_h) if self.reward_field == "cool" else (mu_h, sig_h, mu_n))
+        mu, sigma = sel(mu), sel(sigma)
         d = hinge_deviation(mu, self.T_l, self.T_h)
         r_plain = -float(d.mean() / self.W)
 
         out = dict(
             reward_plain=r_plain,
-            reward_plain_other_field=-float(hinge_deviation(sel(other).mean(0), self.T_l, self.T_h).mean() / self.W),
+            reward_plain_other_field=-float(hinge_deviation(sel(mu_other), self.T_l, self.T_h).mean() / self.W),
             sigma_epi_roi_K=float(sigma.mean()),
             epistemic_std=float(sigma.mean()),              # v2-compatible key
         )
@@ -224,7 +254,7 @@ class UncertaintyShapedLPBFEnv:
 
     # ----------------------------------------------------------------- obs
     def _make_obs(self) -> np.ndarray:
-        z = self._s.mean(0).detach().cpu().numpy()          # member-mean normalised state
+        z = self._s.mean(0).detach().cpu().numpy()          # mean normalised state (both modes)
         layer_token = min(self._layer, self.n_layers - 1) / max(self.n_layers - 1, 1)
         cool_token = (self._cool_time - self.cool_time_min) / max(self.cool_time_max - self.cool_time_min, 1e-8)
         return np.concatenate([z, np.array([layer_token, cool_token], dtype=np.float32)]).astype(np.float32)

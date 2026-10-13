@@ -1,0 +1,2 @@
+Job 63798071_2 on gl1014 Tue Oct 13 02:24:23 EDT 2026
+Run: range_100-200  --reward_mode shaped --pess_dev 100  field=heat  ID=100-200  surrogate=surrogate_model_v3/runs/range_100-200_perturb0.2_bootstrap0.5/surrogate_best.pt -> online_RL_ucpg_v3/runs/range_100-200/heat/pg_c100

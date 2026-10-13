@@ -45,6 +45,8 @@ def parse_args():
     p.add_argument("--pg", action="append", default=[], metavar="NAME=CKPT")
     p.add_argument("--q", action="append", default=[], metavar="NAME=CKPT")
     p.add_argument("--n_episodes", type=int, default=100)
+    p.add_argument("--uncertainty_mode", choices=["propagated", "member_rollout"], default="propagated",
+                   help="How the evaluation env carries the state/uncertainty (default: scheme A + propagation).")
     p.add_argument("--ood_min", type=float, default=None)
     p.add_argument("--ood_max", type=float, default=None)
     p.add_argument("--id_ranges", type=str, default=None, help="e.g. '100-150,350-400' (overrides --ood_min/--ood_max)")
@@ -71,7 +73,8 @@ def main():
     env = UncertaintyShapedLPBFEnv(s, sm, ss, lm, ls, cm, cs, temp_range=(args.T_l, args.T_h),
                                    n_layers=args.n_layers, device=device, mesh_path=args.mesh_path,
                                    cool_time_min=args.cool_time_min, cool_time_max=args.cool_time_max,
-                                   reward_field=args.field, reward_mode="plain")
+                                   reward_field=args.field, reward_mode="plain",
+                                   uncertainty_mode=args.uncertainty_mode)
     cool_times = np.random.default_rng(args.seed).uniform(args.cool_time_min, args.cool_time_max, args.n_episodes)
     W = args.T_h - args.T_l
 
