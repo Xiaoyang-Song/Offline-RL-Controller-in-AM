@@ -131,6 +131,10 @@ def parse_args() -> argparse.Namespace:
                         "TwoStageSurrogateDataset's perturb_frac docstring for the full rationale.")
     p.add_argument("--perturb_seed", type=int, default=0,
                    help="RNG seed for --perturb_frac noise (independent of --bootstrap_seed).")
+    p.add_argument("--max_train_traj", type=int, default=0,
+                   help="Use only this many TRAINING trajectories (0 = all). A fixed random subset (seed = --seed), "
+                        "nested across sizes (the 500 are inside the 1000, ...); val/test splits are unchanged, "
+                        "normalisers are built from the subset. For data-scarcity experiments.")
 
     # ── model ─────────────────────────────────────────────────────────────────
     p.add_argument("--n_ensemble",      type=int, default=5,
@@ -555,6 +559,10 @@ def main() -> None:
     train_trajs, val_trajs, _ = split_trajectories(
         all_trajs, val_fraction=args.val_fraction, test_fraction=args.test_fraction, seed=args.seed,
     )
+    if args.max_train_traj and args.max_train_traj < len(train_trajs):
+        order = np.random.RandomState(args.seed).permutation(len(train_trajs))
+        train_trajs = [train_trajs[i] for i in sorted(order[:args.max_train_traj])]
+        print(f"[train] max_train_traj: using {len(train_trajs)} training trajectories (nested subset, seed {args.seed})")
     state_mean, state_std, lp_mean, lp_std, cool_mean, cool_std = build_normalizers(
         train_trajs, initial_temp=args.initial_temp
     )

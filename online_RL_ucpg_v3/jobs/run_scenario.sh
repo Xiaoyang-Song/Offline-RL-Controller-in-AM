@@ -9,6 +9,7 @@
 # Scenarios:
 #   range_100-200 : surrogate trained on 100-200 W (noise-injected, perturb 0.2)
 #   range_100-200_clean : NOISE-FREE surrogate trained on 100-200 W (perturb 0.0, bootstrap 1.0, matched settings)
+#   full_range    : NOISE-FREE surrogate trained on all of 100-400 W (the paper's full-range model)
 #   gap           : NOISE-FREE surrogate trained on 100-150 + 350-400 W (perturb 0.0)
 # Submits training (1 + n parallel PG runs) and the evaluation, chained.
 #   runs    : online_RL_ucpg_v3/runs/<scenario>/<field>/{pg_plain, pg_c<C>}/
@@ -17,7 +18,7 @@
 DRY=0
 if [ "${@: -1}" = "--dry-run" ]; then DRY=1; set -- "${@:1:$(($# - 1))}"; fi
 SCENARIO="$1"; FIELD="$2"
-USAGE="usage: bash $0 {range_100-200|range_100-200_clean|gap} {heat|cool} [c1 c2 ...] [--dry-run]"
+USAGE="usage: bash $0 {range_100-200|range_100-200_clean|gap|full_range} {heat|cool} [c1 c2 ...] [--dry-run]"
 case "$FIELD" in heat) DEF="25 100 400 800" ;; cool) DEF="200 400 800 1600" ;; *) echo "$USAGE"; exit 1 ;; esac
 shift 2
 PENALTIES="${*:-$DEF}"
@@ -26,6 +27,7 @@ case "$SCENARIO" in
     range_100-200) SURROGATE=$S/range_100-200_perturb0.2_bootstrap0.5/surrogate_best.pt; ID_RANGES="100-200" ;;
     gap)           SURROGATE=$S/gap_100-150_350-400_perturb0.0_bootstrap0.5/surrogate_best.pt; ID_RANGES="100-150,350-400" ;;
     range_100-200_clean) SURROGATE=$S/range_100-200_perturb0.0_bootstrap1.0/surrogate_best.pt; ID_RANGES="100-200" ;;
+    full_range)    SURROGATE=$S/full_range/surrogate_best.pt; ID_RANGES="100-400" ;;
     *) echo "$USAGE"; exit 1 ;;
 esac
 [ -f "$SURROGATE" ] || { echo "surrogate checkpoint not found: $SURROGATE"; exit 1; }

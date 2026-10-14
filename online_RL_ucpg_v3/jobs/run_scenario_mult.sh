@@ -15,7 +15,7 @@
 DRY=0
 if [ "${@: -1}" = "--dry-run" ]; then DRY=1; set -- "${@:1:$(($# - 1))}"; fi
 SCENARIO="$1"; FIELD="$2"
-USAGE="usage: bash $0 {range_100-200|range_100-200_clean|gap} {heat|cool} [k1 k2 ...] [--dry-run]"
+USAGE="usage: bash $0 {range_100-200|range_100-200_clean|gap|full_range} {heat|cool} [k1 k2 ...] [--dry-run]"
 case "$FIELD" in heat|cool) ;; *) echo "$USAGE"; exit 1 ;; esac
 shift 2
 TAU_KS="${*:-0.5 1 2 4}"
@@ -25,6 +25,7 @@ case "$SCENARIO" in
     range_100-200) SURROGATE=$S/range_100-200_perturb0.2_bootstrap0.5/surrogate_best.pt; ID_RANGES="100-200" ;;
     gap)           SURROGATE=$S/gap_100-150_350-400_perturb0.0_bootstrap0.5/surrogate_best.pt; ID_RANGES="100-150,350-400" ;;
     range_100-200_clean) SURROGATE=$S/range_100-200_perturb0.0_bootstrap1.0/surrogate_best.pt; ID_RANGES="100-200" ;;
+    full_range)    SURROGATE=$S/full_range/surrogate_best.pt; ID_RANGES="100-400" ;;
     *) echo "$USAGE"; exit 1 ;;
 esac
 [ -f "$SURROGATE" ] || { echo "surrogate checkpoint not found: $SURROGATE"; exit 1; }
