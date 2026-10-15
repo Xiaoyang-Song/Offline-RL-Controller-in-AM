@@ -1,0 +1,283 @@
+Started: Thu Oct 15 01:56:08 EDT 2026  Node: gl1004  narrow_n150_steps  field=heat  ID=200-300  tau_k: 0.5 1 2 4 8
+=== [1/2] surrogate evaluation ===
+[agent] Loaded checkpoint from online_RL_ucpg_v3/runs/narrow_n150_steps/heat_mult_total/pg_plain/pg_best.pt  (lambda=0.00000)
+  PG plain                           deviation   141.1 ±  14.8 K | sigma  81.34 K | OOD  86.8% | LP 162.3 W
+[agent] Loaded checkpoint from online_RL_ucpg_v3/runs/narrow_n150_steps/heat_mult_total/pg_mult_k0.5/pg_best.pt  (lambda=0.00000)
+  UCPG v3 mult (k=0.5)               deviation   204.4 ±  27.1 K | sigma  69.17 K | OOD  70.2% | LP 194.9 W
+[agent] Loaded checkpoint from online_RL_ucpg_v3/runs/narrow_n150_steps/heat_mult_total/pg_mult_k1/pg_best.pt  (lambda=0.00000)
+  UCPG v3 mult (k=1)                 deviation   168.4 ±  14.6 K | sigma  72.37 K | OOD  78.6% | LP 184.0 W
+[agent] Loaded checkpoint from online_RL_ucpg_v3/runs/narrow_n150_steps/heat_mult_total/pg_mult_k2/pg_best.pt  (lambda=0.00000)
+  UCPG v3 mult (k=2)                 deviation   151.6 ±  17.2 K | sigma  78.49 K | OOD  81.4% | LP 174.3 W
+[agent] Loaded checkpoint from online_RL_ucpg_v3/runs/narrow_n150_steps/heat_mult_total/pg_mult_k4/pg_best.pt  (lambda=0.00000)
+  UCPG v3 mult (k=4)                 deviation   148.3 ±  18.1 K | sigma  83.11 K | OOD  87.7% | LP 169.5 W
+[agent] Loaded checkpoint from online_RL_ucpg_v3/runs/narrow_n150_steps/heat_mult_total/pg_mult_k8/pg_best.pt  (lambda=0.00000)
+  UCPG v3 mult (k=8)                 deviation   151.5 ±  23.3 K | sigma  86.07 K | OOD  92.3% | LP 167.5 W
+Saved → online_RL_ucpg_v3/results/narrow_n150_steps/heat_mult_total/leaderboard_surrogate_v3.csv, per_episode_surrogate.json
+[plot_comparison] Saved → online_RL_ucpg_v3/results/narrow_n150_steps/heat_mult_total/comparison.{pdf,png}
+=== [2/2] real-physics evaluation ===
+=== PG plain ===
+[agent] Loaded checkpoint from online_RL_ucpg_v3/runs/narrow_n150_steps/heat_mult_total/pg_plain/pg_best.pt  (lambda=0.00000)
+    episode cool_time=0.060s
+[evaluate_real] Mesh consistency check passed (matches surrogate_model/mesh.mat).
+      layer  1  LP= 309.5W  dev_heat=  427.3K (py   427.3)  dev_cool=  837.8K  (25s)
+      layer  2  LP= 149.0W  dev_heat=  266.9K (py   266.9)  dev_cool=  816.6K  (17s)
+      layer  3  LP= 186.0W  dev_heat=  197.9K (py   197.9)  dev_cool=  619.0K  (17s)
+      layer  4  LP= 167.2W  dev_heat=  152.6K (py   152.6)  dev_cool=  533.1K  (20s)
+      layer  5  LP= 121.8W  dev_heat=  146.1K (py   146.1)  dev_cool=  589.6K  (17s)
+      layer  6  LP= 126.2W  dev_heat=   59.1K (py    59.1)  dev_cool=  510.5K  (17s)
+      layer  7  LP= 124.6W  dev_heat=   43.5K (py    43.5)  dev_cool=  454.3K  (17s)
+      layer  8  LP= 112.0W  dev_heat=   42.8K (py    42.8)  dev_cool=  451.9K  (17s)
+      layer  9  LP= 119.4W  dev_heat=   78.4K (py    78.4)  dev_cool=  433.1K  (17s)
+      layer 10  LP= 100.9W  dev_heat=   79.6K (py    79.6)  dev_cool=  419.9K  (17s)
+      layer 11  LP= 101.3W  dev_heat=   72.9K (py    72.9)  dev_cool=  397.8K  (17s)
+      layer 12  LP= 100.2W  dev_heat=   67.3K (py    67.3)  dev_cool=  381.2K  (17s)
+    episode cool_time=0.100s
+      layer  1  LP= 309.6W  dev_heat=  427.4K (py   427.4)  dev_cool= 1099.9K  (17s)
+      layer  2  LP= 227.7W  dev_heat=  259.0K (py   259.0)  dev_cool=  927.1K  (17s)
+      layer  3  LP= 229.4W  dev_heat=  242.8K (py   242.8)  dev_cool=  781.5K  (17s)
+      layer  4  LP= 193.9W  dev_heat=  173.1K (py   173.1)  dev_cool=  750.1K  (17s)
+      layer  5  LP= 161.3W  dev_heat=  148.6K (py   148.6)  dev_cool=  780.0K  (17s)
+      layer  6  LP= 171.2W  dev_heat=   70.1K (py    70.1)  dev_cool=  682.3K  (17s)
+      layer  7  LP= 158.5W  dev_heat=   57.1K (py    57.1)  dev_cool=  651.9K  (17s)
+      layer  8  LP= 140.2W  dev_heat=   43.9K (py    43.9)  dev_cool=  671.5K  (18s)
+      layer  9  LP= 145.0W  dev_heat=   90.7K (py    90.7)  dev_cool=  672.5K  (17s)
+      layer 10  LP= 135.3W  dev_heat=   86.2K (py    86.2)  dev_cool=  639.5K  (17s)
+      layer 11  LP= 129.0W  dev_heat=   84.7K (py    84.7)  dev_cool=  633.0K  (17s)
+      layer 12  LP= 122.7W  dev_heat=   90.0K (py    90.0)  dev_cool=  643.3K  (17s)
+    episode cool_time=0.140s
+      layer  1  LP= 309.7W  dev_heat=  427.6K (py   427.6)  dev_cool= 1252.4K  (18s)
+      layer  2  LP= 261.5W  dev_heat=  299.1K (py   299.1)  dev_cool= 1070.7K  (17s)
+      layer  3  LP= 241.8W  dev_heat=  254.6K (py   254.6)  dev_cool=  978.0K  (18s)
+      layer  4  LP= 210.7W  dev_heat=  200.9K (py   200.9)  dev_cool=  961.1K  (17s)
+      layer  5  LP= 189.8W  dev_heat=  189.6K (py   189.6)  dev_cool=  974.3K  (17s)
+      layer  6  LP= 187.6W  dev_heat=   83.6K (py    83.6)  dev_cool=  906.8K  (17s)
+      layer  7  LP= 176.5W  dev_heat=   71.6K (py    71.6)  dev_cool=  887.8K  (17s)
+      layer  8  LP= 165.4W  dev_heat=   61.9K (py    61.9)  dev_cool=  894.2K  (17s)
+      layer  9  LP= 169.8W  dev_heat=  119.7K (py   119.7)  dev_cool=  889.3K  (17s)
+      layer 10  LP= 161.0W  dev_heat=  113.1K (py   113.1)  dev_cool=  850.7K  (17s)
+      layer 11  LP= 153.8W  dev_heat=  107.3K (py   107.3)  dev_cool=  841.9K  (17s)
+      layer 12  LP= 146.1W  dev_heat=  112.3K (py   112.3)  dev_cool=  851.9K  (17s)
+    → PG plain: heat deviation 151.4 K
+=== UCPG v3 mult (k=0.5) ===
+[agent] Loaded checkpoint from online_RL_ucpg_v3/runs/narrow_n150_steps/heat_mult_total/pg_mult_k0.5/pg_best.pt  (lambda=0.00000)
+    episode cool_time=0.060s
+      layer  1  LP= 308.7W  dev_heat=  426.6K (py   426.6)  dev_cool=  840.0K  (18s)
+      layer  2  LP= 293.6W  dev_heat=  456.6K (py   456.6)  dev_cool=  376.2K  (17s)
+      layer  3  LP= 224.7W  dev_heat=  335.6K (py   335.6)  dev_cool=  257.5K  (17s)
+      layer  4  LP= 205.8W  dev_heat=  306.2K (py   306.2)  dev_cool=  186.0K  (17s)
+      layer  5  LP= 186.0W  dev_heat=  256.9K (py   256.9)  dev_cool=  158.9K  (17s)
+      layer  6  LP= 163.9W  dev_heat=  207.1K (py   207.1)  dev_cool=   99.9K  (17s)
+      layer  7  LP= 109.4W  dev_heat=   40.9K (py    40.9)  dev_cool=  201.3K  (17s)
+      layer  8  LP= 100.7W  dev_heat=   10.2K (py    10.2)  dev_cool=  281.4K  (17s)
+      layer  9  LP= 134.7W  dev_heat=   73.0K (py    73.0)  dev_cool=  225.3K  (18s)
+      layer 10  LP= 111.6W  dev_heat=   52.5K (py    52.5)  dev_cool=  212.1K  (18s)
+      layer 11  LP= 109.3W  dev_heat=   49.2K (py    49.2)  dev_cool=  202.1K  (17s)
+      layer 12  LP= 101.5W  dev_heat=   38.4K (py    38.4)  dev_cool=  220.2K  (17s)
+    episode cool_time=0.100s
+      layer  1  LP= 308.7W  dev_heat=  426.6K (py   426.6)  dev_cool= 1101.7K  (17s)
+      layer  2  LP= 297.9W  dev_heat=  403.8K (py   403.8)  dev_cool=  772.1K  (17s)
+      layer  3  LP= 262.2W  dev_heat=  353.5K (py   353.5)  dev_cool=  624.8K  (17s)
+      layer  4  LP= 237.0W  dev_heat=  299.5K (py   299.5)  dev_cool=  556.5K  (17s)
+      layer  5  LP= 204.2W  dev_heat=  210.0K (py   210.0)  dev_cool=  561.1K  (17s)
+      layer  6  LP= 190.5W  dev_heat=  155.7K (py   155.7)  dev_cool=  487.1K  (17s)
+      layer  7  LP= 181.1W  dev_heat=  148.1K (py   148.1)  dev_cool=  455.1K  (17s)
+      layer  8  LP= 159.5W  dev_heat=   84.6K (py    84.6)  dev_cool=  481.8K  (17s)
+      layer  9  LP= 177.9W  dev_heat=  142.7K (py   142.7)  dev_cool=  451.2K  (17s)
+      layer 10  LP= 162.5W  dev_heat=  134.2K (py   134.2)  dev_cool=  404.4K  (17s)
+      layer 11  LP= 159.4W  dev_heat=  136.8K (py   136.8)  dev_cool=  377.0K  (17s)
+      layer 12  LP= 144.1W  dev_heat=   89.7K (py    89.7)  dev_cool=  399.4K  (17s)
+    episode cool_time=0.140s
+      layer  1  LP= 308.8W  dev_heat=  426.7K (py   426.7)  dev_cool= 1253.9K  (18s)
+      layer  2  LP= 301.8W  dev_heat=  382.6K (py   382.6)  dev_cool= 1001.6K  (17s)
+      layer  3  LP= 283.5W  dev_heat=  370.1K (py   370.1)  dev_cool=  868.0K  (17s)
+      layer  4  LP= 239.7W  dev_heat=  261.4K (py   261.4)  dev_cool=  845.8K  (17s)
+      layer  5  LP= 219.9W  dev_heat=  214.0K (py   214.0)  dev_cool=  849.3K  (17s)
+      layer  6  LP= 211.3W  dev_heat=  140.5K (py   140.5)  dev_cool=  776.1K  (17s)
+      layer  7  LP= 206.8W  dev_heat=  144.9K (py   144.9)  dev_cool=  737.6K  (17s)
+      layer  8  LP= 192.9W  dev_heat=  113.3K (py   113.3)  dev_cool=  737.7K  (17s)
+      layer  9  LP= 200.5W  dev_heat=  152.6K (py   152.6)  dev_cool=  721.2K  (17s)
+      layer 10  LP= 190.7W  dev_heat=  157.4K (py   157.4)  dev_cool=  666.9K  (17s)
+      layer 11  LP= 187.9W  dev_heat=  163.0K (py   163.0)  dev_cool=  637.1K  (17s)
+      layer 12  LP= 178.2W  dev_heat=  135.9K (py   135.9)  dev_cool=  637.8K  (17s)
+    → UCPG v3 mult (k=0.5): heat deviation 208.4 K
+=== UCPG v3 mult (k=1) ===
+[agent] Loaded checkpoint from online_RL_ucpg_v3/runs/narrow_n150_steps/heat_mult_total/pg_mult_k1/pg_best.pt  (lambda=0.00000)
+    episode cool_time=0.060s
+      layer  1  LP= 308.0W  dev_heat=  425.9K (py   425.9)  dev_cool=  842.0K  (17s)
+      layer  2  LP= 217.2W  dev_heat=  248.5K (py   248.5)  dev_cool=  610.8K  (17s)
+      layer  3  LP= 180.0W  dev_heat=  174.2K (py   174.2)  dev_cool=  523.5K  (17s)
+      layer  4  LP= 186.1W  dev_heat=  187.3K (py   187.3)  dev_cool=  405.8K  (17s)
+      layer  5  LP= 179.9W  dev_heat=  180.7K (py   180.7)  dev_cool=  325.7K  (18s)
+      layer  6  LP= 159.7W  dev_heat=  121.1K (py   121.1)  dev_cool=  224.0K  (17s)
+      layer  7  LP= 131.6W  dev_heat=   61.4K (py    61.4)  dev_cool=  236.3K  (17s)
+      layer  8  LP= 101.8W  dev_heat=   14.4K (py    14.4)  dev_cool=  326.1K  (18s)
+      layer  9  LP= 123.8W  dev_heat=   59.4K (py    59.4)  dev_cool=  308.6K  (17s)
+      layer 10  LP= 111.6W  dev_heat=   51.0K (py    51.0)  dev_cool=  275.5K  (17s)
+      layer 11  LP= 108.7W  dev_heat=   47.0K (py    47.0)  dev_cool=  257.0K  (17s)
+      layer 12  LP= 103.1W  dev_heat=   40.1K (py    40.1)  dev_cool=  260.1K  (17s)
+    episode cool_time=0.100s
+      layer  1  LP= 308.2W  dev_heat=  426.1K (py   426.1)  dev_cool= 1102.8K  (17s)
+      layer  2  LP= 268.3W  dev_heat=  322.2K (py   322.2)  dev_cool=  838.6K  (17s)
+      layer  3  LP= 232.6W  dev_heat=  258.5K (py   258.5)  dev_cool=  726.5K  (17s)
+      layer  4  LP= 248.5W  dev_heat=  315.7K (py   315.7)  dev_cool=  591.9K  (17s)
+      layer  5  LP= 195.8W  dev_heat=  187.6K (py   187.6)  dev_cool=  609.9K  (17s)
+      layer  6  LP= 180.4W  dev_heat=  108.6K (py   108.6)  dev_cool=  548.5K  (17s)
+      layer  7  LP= 169.5W  dev_heat=   91.4K (py    91.4)  dev_cool=  527.7K  (17s)
+      layer  8  LP= 155.2W  dev_heat=   60.7K (py    60.7)  dev_cool=  542.2K  (17s)
+      layer  9  LP= 164.4W  dev_heat=  100.0K (py   100.0)  dev_cool=  530.3K  (17s)
+      layer 10  LP= 152.3W  dev_heat=   88.0K (py    88.0)  dev_cool=  489.1K  (17s)
+      layer 11  LP= 148.9W  dev_heat=   85.5K (py    85.5)  dev_cool=  467.4K  (17s)
+      layer 12  LP= 139.9W  dev_heat=   73.2K (py    73.2)  dev_cool=  475.5K  (17s)
+    episode cool_time=0.140s
+      layer  1  LP= 308.4W  dev_heat=  426.3K (py   426.3)  dev_cool= 1254.5K  (18s)
+      layer  2  LP= 301.3W  dev_heat=  381.1K (py   381.1)  dev_cool= 1002.8K  (17s)
+      layer  3  LP= 287.8W  dev_heat=  382.9K (py   382.9)  dev_cool=  861.2K  (17s)
+      layer  4  LP= 240.5W  dev_heat=  264.0K (py   264.0)  dev_cool=  840.8K  (17s)
+      layer  5  LP= 209.3W  dev_heat=  190.3K (py   190.3)  dev_cool=  864.6K  (17s)
+      layer  6  LP= 199.9W  dev_heat=  105.3K (py   105.3)  dev_cool=  808.2K  (17s)
+      layer  7  LP= 194.0W  dev_heat=  100.8K (py   100.8)  dev_cool=  783.2K  (17s)
+      layer  8  LP= 182.0W  dev_heat=   78.9K (py    78.9)  dev_cool=  788.7K  (17s)
+      layer  9  LP= 188.2W  dev_heat=  123.3K (py   123.3)  dev_cool=  779.4K  (17s)
+      layer 10  LP= 176.7W  dev_heat=  113.7K (py   113.7)  dev_cool=  738.4K  (18s)
+      layer 11  LP= 174.4W  dev_heat=  110.5K (py   110.5)  dev_cool=  715.9K  (17s)
+      layer 12  LP= 166.3W  dev_heat=  101.3K (py   101.3)  dev_cool=  718.3K  (18s)
+    → UCPG v3 mult (k=1): heat deviation 169.6 K
+=== UCPG v3 mult (k=2) ===
+[agent] Loaded checkpoint from online_RL_ucpg_v3/runs/narrow_n150_steps/heat_mult_total/pg_mult_k2/pg_best.pt  (lambda=0.00000)
+    episode cool_time=0.060s
+      layer  1  LP= 297.0W  dev_heat=  415.9K (py   415.9)  dev_cool=  873.6K  (17s)
+      layer  2  LP= 163.3W  dev_heat=  250.7K (py   250.7)  dev_cool=  792.5K  (17s)
+      layer  3  LP= 166.8W  dev_heat=  195.4K (py   195.4)  dev_cool=  666.9K  (17s)
+      layer  4  LP= 192.5W  dev_heat=  187.8K (py   187.8)  dev_cool=  481.8K  (18s)
+      layer  5  LP= 150.3W  dev_heat=  123.1K (py   123.1)  dev_cool=  478.0K  (17s)
+      layer  6  LP= 141.9W  dev_heat=   52.2K (py    52.2)  dev_cool=  389.8K  (17s)
+      layer  7  LP= 137.5W  dev_heat=   50.2K (py    50.2)  dev_cool=  329.7K  (17s)
+      layer  8  LP= 112.2W  dev_heat=   23.5K (py    23.5)  dev_cool=  366.2K  (17s)
+      layer  9  LP= 123.4W  dev_heat=   62.6K (py    62.6)  dev_cool=  353.6K  (17s)
+      layer 10  LP= 104.6W  dev_heat=   54.3K (py    54.3)  dev_cool=  343.7K  (17s)
+      layer 11  LP= 106.1W  dev_heat=   49.6K (py    49.6)  dev_cool=  319.5K  (17s)
+      layer 12  LP= 101.6W  dev_heat=   47.8K (py    47.8)  dev_cool=  315.3K  (17s)
+    episode cool_time=0.100s
+      layer  1  LP= 297.6W  dev_heat=  416.3K (py   416.3)  dev_cool= 1124.7K  (18s)
+      layer  2  LP= 267.4W  dev_heat=  318.7K (py   318.7)  dev_cool=  852.2K  (17s)
+      layer  3  LP= 273.3W  dev_heat=  372.0K (py   372.0)  dev_cool=  645.6K  (17s)
+      layer  4  LP= 201.7W  dev_heat=  200.1K (py   200.1)  dev_cool=  653.6K  (18s)
+      layer  5  LP= 175.0W  dev_heat=  139.1K (py   139.1)  dev_cool=  683.7K  (17s)
+      layer  6  LP= 174.7W  dev_heat=   77.9K (py    77.9)  dev_cool=  606.4K  (17s)
+      layer  7  LP= 161.0W  dev_heat=   62.8K (py    62.8)  dev_cool=  589.4K  (17s)
+      layer  8  LP= 147.6W  dev_heat=   43.7K (py    43.7)  dev_cool=  604.4K  (17s)
+      layer  9  LP= 153.2W  dev_heat=   86.1K (py    86.1)  dev_cool=  602.5K  (17s)
+      layer 10  LP= 142.5W  dev_heat=   79.8K (py    79.8)  dev_cool=  567.9K  (17s)
+      layer 11  LP= 141.0W  dev_heat=   77.0K (py    77.0)  dev_cool=  545.6K  (17s)
+      layer 12  LP= 133.0W  dev_heat=   68.4K (py    68.4)  dev_cool=  551.3K  (17s)
+    episode cool_time=0.140s
+      layer  1  LP= 298.1W  dev_heat=  416.7K (py   416.7)  dev_cool= 1271.0K  (17s)
+      layer  2  LP= 315.8W  dev_heat=  421.7K (py   421.7)  dev_cool=  986.3K  (18s)
+      layer  3  LP= 328.3W  dev_heat=  530.3K (py   530.3)  dev_cool=  783.1K  (17s)
+      layer  4  LP= 216.2W  dev_heat=  214.0K (py   214.0)  dev_cool=  839.9K  (17s)
+      layer  5  LP= 191.2W  dev_heat=  162.8K (py   162.8)  dev_cool=  889.4K  (17s)
+      layer  6  LP= 188.8W  dev_heat=   84.0K (py    84.0)  dev_cool=  843.0K  (17s)
+      layer  7  LP= 181.6W  dev_heat=   76.4K (py    76.4)  dev_cool=  829.4K  (17s)
+      layer  8  LP= 170.9W  dev_heat=   64.4K (py    64.4)  dev_cool=  840.4K  (17s)
+      layer  9  LP= 177.1W  dev_heat=  114.7K (py   114.7)  dev_cool=  835.5K  (17s)
+      layer 10  LP= 164.5W  dev_heat=  106.7K (py   106.7)  dev_cool=  804.4K  (17s)
+      layer 11  LP= 163.8W  dev_heat=  104.3K (py   104.3)  dev_cool=  784.7K  (17s)
+      layer 12  LP= 155.3W  dev_heat=   96.1K (py    96.1)  dev_cool=  790.8K  (17s)
+    → UCPG v3 mult (k=2): heat deviation 162.4 K
+=== UCPG v3 mult (k=4) ===
+[agent] Loaded checkpoint from online_RL_ucpg_v3/runs/narrow_n150_steps/heat_mult_total/pg_mult_k4/pg_best.pt  (lambda=0.00000)
+    episode cool_time=0.060s
+      layer  1  LP= 311.5W  dev_heat=  429.2K (py   429.2)  dev_cool=  832.0K  (17s)
+      layer  2  LP= 176.1W  dev_heat=  229.4K (py   229.4)  dev_cool=  730.8K  (18s)
+      layer  3  LP= 157.3W  dev_heat=  184.0K (py   184.0)  dev_cool=  658.5K  (17s)
+      layer  4  LP= 182.8W  dev_heat=  167.5K (py   167.5)  dev_cool=  500.2K  (17s)
+      layer  5  LP= 125.1W  dev_heat=  129.7K (py   129.7)  dev_cool=  560.9K  (17s)
+      layer  6  LP= 141.7W  dev_heat=   49.1K (py    49.1)  dev_cool=  435.5K  (17s)
+      layer  7  LP= 125.1W  dev_heat=   34.8K (py    34.8)  dev_cool=  406.0K  (17s)
+      layer  8  LP= 109.0W  dev_heat=   37.2K (py    37.2)  dev_cool=  427.4K  (17s)
+      layer  9  LP= 119.3W  dev_heat=   70.9K (py    70.9)  dev_cool=  411.6K  (17s)
+      layer 10  LP= 101.4W  dev_heat=   72.5K (py    72.5)  dev_cool=  399.2K  (17s)
+      layer 11  LP= 100.8W  dev_heat=   67.6K (py    67.6)  dev_cool=  382.6K  (17s)
+      layer 12  LP= 100.3W  dev_heat=   62.5K (py    62.5)  dev_cool=  367.2K  (17s)
+    episode cool_time=0.100s
+      layer  1  LP= 311.8W  dev_heat=  429.5K (py   429.5)  dev_cool= 1095.3K  (18s)
+      layer  2  LP= 256.6W  dev_heat=  297.8K (py   297.8)  dev_cool=  860.5K  (17s)
+      layer  3  LP= 267.3W  dev_heat=  352.1K (py   352.1)  dev_cool=  661.0K  (17s)
+      layer  4  LP= 211.2W  dev_heat=  221.0K (py   221.0)  dev_cool=  640.4K  (17s)
+      layer  5  LP= 162.6W  dev_heat=  125.9K (py   125.9)  dev_cool=  705.0K  (17s)
+      layer  6  LP= 172.5W  dev_heat=   72.6K (py    72.6)  dev_cool=  623.2K  (18s)
+      layer  7  LP= 150.9W  dev_heat=   48.4K (py    48.4)  dev_cool=  626.9K  (17s)
+      layer  8  LP= 140.7W  dev_heat=   38.8K (py    38.8)  dev_cool=  645.9K  (18s)
+      layer  9  LP= 148.1W  dev_heat=   85.8K (py    85.8)  dev_cool=  642.7K  (17s)
+      layer 10  LP= 138.5W  dev_heat=   79.0K (py    79.0)  dev_cool=  607.5K  (17s)
+      layer 11  LP= 132.4W  dev_heat=   73.4K (py    73.4)  dev_cool=  599.3K  (17s)
+      layer 12  LP= 125.6W  dev_heat=   76.8K (py    76.8)  dev_cool=  609.7K  (18s)
+    episode cool_time=0.140s
+      layer  1  LP= 312.2W  dev_heat=  429.9K (py   429.9)  dev_cool= 1248.4K  (18s)
+      layer  2  LP= 311.0W  dev_heat=  411.4K (py   411.4)  dev_cool=  982.6K  (17s)
+      layer  3  LP= 340.8W  dev_heat=  580.2K (py   580.2)  dev_cool=  757.7K  (17s)
+      layer  4  LP= 212.3W  dev_heat=  207.2K (py   207.2)  dev_cool=  831.9K  (17s)
+      layer  5  LP= 187.2W  dev_heat=  158.7K (py   158.7)  dev_cool=  889.7K  (17s)
+      layer  6  LP= 186.2W  dev_heat=   81.0K (py    81.0)  dev_cool=  847.0K  (17s)
+      layer  7  LP= 174.1W  dev_heat=   68.1K (py    68.1)  dev_cool=  847.1K  (17s)
+      layer  8  LP= 165.7W  dev_heat=   58.6K (py    58.6)  dev_cool=  861.2K  (17s)
+      layer  9  LP= 171.9W  dev_heat=  115.3K (py   115.3)  dev_cool=  859.0K  (17s)
+      layer 10  LP= 161.1W  dev_heat=  108.1K (py   108.1)  dev_cool=  827.4K  (18s)
+      layer 11  LP= 155.3W  dev_heat=  102.4K (py   102.4)  dev_cool=  820.3K  (17s)
+      layer 12  LP= 149.1W  dev_heat=  102.9K (py   102.9)  dev_cool=  828.3K  (17s)
+    → UCPG v3 mult (k=4): heat deviation 162.8 K
+=== UCPG v3 mult (k=8) ===
+[agent] Loaded checkpoint from online_RL_ucpg_v3/runs/narrow_n150_steps/heat_mult_total/pg_mult_k8/pg_best.pt  (lambda=0.00000)
+    episode cool_time=0.060s
+      layer  1  LP= 313.8W  dev_heat=  431.4K (py   431.4)  dev_cool=  825.2K  (18s)
+      layer  2  LP= 166.0W  dev_heat=  230.8K (py   230.8)  dev_cool=  758.0K  (17s)
+      layer  3  LP= 172.8W  dev_heat=  185.7K (py   185.7)  dev_cool=  626.0K  (17s)
+      layer  4  LP= 166.6W  dev_heat=  151.3K (py   151.3)  dev_cool=  533.6K  (17s)
+      layer  5  LP= 124.4W  dev_heat=  141.3K (py   141.3)  dev_cool=  580.0K  (17s)
+      layer  6  LP= 140.8W  dev_heat=   48.9K (py    48.9)  dev_cool=  451.2K  (17s)
+      layer  7  LP= 125.1W  dev_heat=   35.7K (py    35.7)  dev_cool=  417.3K  (17s)
+      layer  8  LP= 105.8W  dev_heat=   41.6K (py    41.6)  dev_cool=  447.9K  (17s)
+      layer  9  LP= 118.0W  dev_heat=   77.5K (py    77.5)  dev_cool=  430.1K  (17s)
+      layer 10  LP= 100.8W  dev_heat=   78.2K (py    78.2)  dev_cool=  415.4K  (17s)
+      layer 11  LP= 100.4W  dev_heat=   72.4K (py    72.4)  dev_cool=  396.4K  (17s)
+      layer 12  LP= 100.2W  dev_heat=   66.5K (py    66.5)  dev_cool=  378.5K  (17s)
+    episode cool_time=0.100s
+      layer  1  LP= 314.5W  dev_heat=  432.1K (py   432.1)  dev_cool= 1089.8K  (17s)
+      layer  2  LP= 231.1W  dev_heat=  258.7K (py   258.7)  dev_cool=  914.0K  (17s)
+      layer  3  LP= 301.7W  dev_heat=  455.7K (py   455.7)  dev_cool=  613.3K  (17s)
+      layer  4  LP= 184.7W  dev_heat=  164.1K (py   164.1)  dev_cool=  677.6K  (18s)
+      layer  5  LP= 165.2W  dev_heat=  131.3K (py   131.3)  dev_cool=  717.2K  (17s)
+      layer  6  LP= 170.8W  dev_heat=   69.4K (py    69.4)  dev_cool=  636.9K  (17s)
+      layer  7  LP= 148.1W  dev_heat=   45.2K (py    45.2)  dev_cool=  644.1K  (17s)
+      layer  8  LP= 138.1W  dev_heat=   43.0K (py    43.0)  dev_cool=  664.2K  (17s)
+      layer  9  LP= 144.4W  dev_heat=   88.5K (py    88.5)  dev_cool=  665.0K  (16s)
+      layer 10  LP= 137.2W  dev_heat=   82.2K (py    82.2)  dev_cool=  626.2K  (17s)
+      layer 11  LP= 129.7W  dev_heat=   80.1K (py    80.1)  dev_cool=  621.0K  (17s)
+      layer 12  LP= 124.0W  dev_heat=   84.8K (py    84.8)  dev_cool=  629.8K  (18s)
+    episode cool_time=0.140s
+      layer  1  LP= 315.1W  dev_heat=  432.8K (py   432.8)  dev_cool= 1243.8K  (17s)
+      layer  2  LP= 314.0W  dev_heat=  421.3K (py   421.3)  dev_cool=  974.8K  (17s)
+      layer  3  LP= 385.1W  dev_heat=  774.2K (py   774.2)  dev_cool=  676.2K  (17s)
+      layer  4  LP= 177.1W  dev_heat=  140.5K (py   140.5)  dev_cool=  848.1K  (17s)
+      layer  5  LP= 184.3W  dev_heat=  157.7K (py   157.7)  dev_cool=  897.3K  (18s)
+      layer  6  LP= 181.7W  dev_heat=   75.8K (py    75.8)  dev_cool=  859.6K  (19s)
+      layer  7  LP= 169.7W  dev_heat=   63.2K (py    63.2)  dev_cool=  863.3K  (17s)
+      layer  8  LP= 161.4W  dev_heat=   58.3K (py    58.3)  dev_cool=  879.9K  (17s)
+      layer  9  LP= 166.2W  dev_heat=  116.3K (py   116.3)  dev_cool=  882.7K  (18s)
+      layer 10  LP= 158.1W  dev_heat=  111.3K (py   111.3)  dev_cool=  849.6K  (17s)
+      layer 11  LP= 150.6W  dev_heat=  109.2K (py   109.2)  dev_cool=  846.4K  (18s)
+      layer 12  LP= 145.6W  dev_heat=  113.7K (py   113.7)  dev_cool=  853.8K  (18s)
+    → UCPG v3 mult (k=8): heat deviation 168.6 K
+
+REAL-physics leaderboard — end-of-heating ROI deviation per layer [K], lower is better
+method                                     deviation   mean LP [W]
+PG plain                               151.4 ± 14.1      172.7
+UCPG v3 mult (k=2)                     162.4 ± 29.9      183.8
+UCPG v3 mult (k=4)                     162.8 ± 30.4      180.4
+UCPG v3 mult (k=8)                     168.6 ± 34.9      178.7
+UCPG v3 mult (k=1)                     169.6 ± 26.5      191.8
+UCPG v3 mult (k=0.5)                   208.4 ± 14.8      201.6
+
+Saved → online_RL_ucpg_v3/results/narrow_n150_steps/heat_mult_total/leaderboard_real_v3.csv, per_layer_real.json
+[plot_comparison] Saved → online_RL_ucpg_v3/results/narrow_n150_steps/heat_mult_total/comparison.{pdf,png}
+Finished: Thu Oct 15 03:31:20 EDT 2026   Results: online_RL_ucpg_v3/results/narrow_n150_steps/heat_mult_total/

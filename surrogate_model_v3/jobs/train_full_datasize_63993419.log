@@ -1,0 +1,333 @@
+Job 63993419 on gl1023  Wed Oct 14 20:50:25 EDT 2026   NTRAJ=200  RANGE=full  epochs=3000  patience=50 -> surrogate_model_v3/runs/full_range_n200_steps
+/home/xysong/.conda/envs/RL/lib/python3.10/site-packages/torch/utils/data/dataloader.py:617: UserWarning: This DataLoader will create 2 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+/home/xysong/.conda/envs/RL/lib/python3.10/site-packages/torch/utils/data/dataloader.py:617: UserWarning: This DataLoader will create 2 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(
+[train] Output dir : surrogate_model_v3/runs/full_range_n200_steps
+[train] Device     : cuda
+[dataset] Loaded 5000 trajectories × 12 layers from DatasetV2_layer_12_samples_5000.pkl
+[dataset] Split → train 4000 | val 500 | test 500
+[train] max_train_traj: using 200 training trajectories (nested subset, seed 42)
+[dataset] State mean ∈ [162.7, 2709.3], std ∈ [32.5268, 1663.2]
+[dataset] Laser power mean = 247.65 W, std = 89.84 W
+[dataset] Cool time    mean = 0.1027 s, std = 0.0314 s
+[train] --no_roi_weights given — using uniform weights.
+[dataset] Bootstrap masks: (2400, 5), resample_frac=1.0, ~37.2% of (sample, member) pairs unseen (expected ≈ 36.8%)
+[TwoStageSurrogateDataset] 2,400 transitions, state_dim=1053, layers 0–11, bootstrap K=5 (transition-level resampling)
+[dataset] Bootstrap masks: (6000, 5), resample_frac=1.0, ~36.6% of (sample, member) pairs unseen (expected ≈ 36.8%)
+[TwoStageSurrogateDataset] 6,000 transitions, state_dim=1053, layers 0–11, bootstrap K=5 (transition-level resampling)
+[train] TwoStageSurrogate(state=1053, lp_dim=1, cool_dim=1, K=5, n_layers=12, embed=8, rank=0 | heat×5=2,554,020  cool×5=2,554,020 | total=5,108,040)
+
+[train] Starting training for up to 3000 epochs (patience=50)
+[train] Weights   → recon_heat=1.0  nll_heat=0.1  recon_cool=1.0  nll_cool=0.1
+[train] Ensemble  → K=5 members, bootstrap_seed=42, bootstrap_frac=1.0
+--------------------------------------------------------------------------------
+Epoch    1/3000 | train 0.16211 [rh=0.0597 nh=0.0880 rc=0.0727 nc=0.2093] | val -0.05931 | lr 1.00e-03 |    2.5s ✓ best
+Epoch    2/3000 | train -0.14128 [rh=0.0263 nh=-1.2705 rc=0.0255 nc=-0.6599] | val -0.18784 | lr 1.00e-03 |    3.8s ✓ best
+Epoch    3/3000 | train -0.22283 [rh=0.0206 nh=-1.7442 rc=0.0186 nc=-0.8765] | val -0.24690 | lr 1.00e-03 |    5.1s ✓ best
+Epoch    4/3000 | train -0.26013 [rh=0.0187 nh=-1.9733 rc=0.0158 nc=-0.9733] | val -0.27791 | lr 1.00e-03 |    6.5s ✓ best
+Epoch    5/3000 | train -0.29395 [rh=0.0175 nh=-2.1614 rc=0.0132 nc=-1.0844] | val -0.27688 | lr 1.00e-03 |    7.6s (no improvement 1/50)
+Epoch    6/3000 | train -0.29829 [rh=0.0175 nh=-2.0869 rc=0.0110 nc=-1.1806] | val -0.31360 | lr 1.00e-03 |    8.9s ✓ best
+Epoch    7/3000 | train -0.31797 [rh=0.0173 nh=-2.2124 rc=0.0097 nc=-1.2374] | val -0.31670 | lr 1.00e-03 |   10.2s ✓ best
+Epoch    8/3000 | train -0.32951 [rh=0.0170 nh=-2.2541 rc=0.0086 nc=-1.2961] | val -0.33832 | lr 1.00e-03 |   11.6s ✓ best
+Epoch    9/3000 | train -0.33833 [rh=0.0167 nh=-2.2724 rc=0.0078 nc=-1.3559] | val -0.33241 | lr 1.00e-03 |   12.7s (no improvement 1/50)
+Epoch   10/3000 | train -0.34963 [rh=0.0166 nh=-2.3631 rc=0.0072 nc=-1.3713] | val -0.33290 | lr 1.00e-03 |   13.8s (no improvement 2/50)
+Epoch   11/3000 | train -0.33639 [rh=0.0166 nh=-2.1722 rc=0.0067 nc=-1.4246] | val -0.33413 | lr 1.00e-03 |   15.0s (no improvement 3/50)
+Epoch   12/3000 | train -0.35539 [rh=0.0163 nh=-2.3617 rc=0.0069 nc=-1.4245] | val -0.36637 | lr 1.00e-03 |   16.3s ✓ best
+Epoch   13/3000 | train -0.38008 [rh=0.0160 nh=-2.5550 rc=0.0061 nc=-1.4667] | val -0.33185 | lr 1.00e-03 |   17.5s (no improvement 1/50)
+Epoch   14/3000 | train -0.32972 [rh=0.0159 nh=-2.0654 rc=0.0065 nc=-1.4560] | val -0.34876 | lr 1.00e-03 |   18.6s (no improvement 2/50)
+Epoch   15/3000 | train -0.36250 [rh=0.0153 nh=-2.3539 rc=0.0062 nc=-1.4866] | val -0.37628 | lr 1.00e-03 |   19.9s ✓ best
+Epoch   16/3000 | train -0.38477 [rh=0.0150 nh=-2.5643 rc=0.0058 nc=-1.4908] | val -0.37247 | lr 1.00e-03 |   21.1s (no improvement 1/50)
+Epoch   17/3000 | train -0.37250 [rh=0.0136 nh=-2.4186 rc=0.0055 nc=-1.4977] | val -0.39035 | lr 1.00e-03 |   22.4s ✓ best
+Epoch   18/3000 | train -0.39661 [rh=0.0123 nh=-2.5969 rc=0.0051 nc=-1.5429] | val -0.40497 | lr 1.00e-03 |   23.7s ✓ best
+Epoch   19/3000 | train -0.41963 [rh=0.0105 nh=-2.7887 rc=0.0047 nc=-1.5596] | val -0.40884 | lr 1.00e-03 |   25.0s ✓ best
+Epoch   20/3000 | train -0.36650 [rh=0.0107 nh=-2.1916 rc=0.0043 nc=-1.6231] | val -0.35801 | lr 1.00e-03 |   26.2s (no improvement 1/50)
+Epoch   21/3000 | train -0.38458 [rh=0.0096 nh=-2.3389 rc=0.0042 nc=-1.6447] | val -0.39119 | lr 1.00e-03 |   27.3s (no improvement 2/50)
+Epoch   22/3000 | train -0.39697 [rh=0.0085 nh=-2.5131 rc=0.0043 nc=-1.5840] | val -0.40095 | lr 1.00e-03 |   28.5s (no improvement 3/50)
+Epoch   23/3000 | train -0.41762 [rh=0.0071 nh=-2.6865 rc=0.0041 nc=-1.6015] | val -0.43947 | lr 1.00e-03 |   29.8s ✓ best
+Epoch   24/3000 | train -0.45006 [rh=0.0059 nh=-2.8933 rc=0.0038 nc=-1.7044] | val -0.39065 | lr 1.00e-03 |   31.0s (no improvement 1/50)
+Epoch   25/3000 | train -0.40670 [rh=0.0052 nh=-2.7801 rc=0.0059 nc=-1.3976] | val -0.44055 | lr 1.00e-03 |   32.3s ✓ best
+Epoch   26/3000 | train -0.43467 [rh=0.0047 nh=-2.9644 rc=0.0060 nc=-1.4893] | val -0.36656 | lr 1.00e-03 |   33.4s (no improvement 1/50)
+Epoch   27/3000 | train -0.41651 [rh=0.0042 nh=-2.9489 rc=0.0068 nc=-1.3266] | val -0.42638 | lr 1.00e-03 |   34.6s (no improvement 2/50)
+Epoch   28/3000 | train -0.41027 [rh=0.0036 nh=-2.6903 rc=0.0053 nc=-1.5015] | val -0.40270 | lr 1.00e-03 |   35.7s (no improvement 3/50)
+Epoch   29/3000 | train -0.44097 [rh=0.0036 nh=-2.7448 rc=0.0039 nc=-1.7400] | val -0.42534 | lr 1.00e-03 |   36.9s (no improvement 4/50)
+Epoch   30/3000 | train -0.44123 [rh=0.0036 nh=-2.8396 rc=0.0040 nc=-1.6486] | val -0.44579 | lr 1.00e-03 |   38.2s ✓ best
+Epoch   31/3000 | train -0.44957 [rh=0.0031 nh=-2.7857 rc=0.0033 nc=-1.7738] | val -0.47216 | lr 1.00e-03 |   39.5s ✓ best
+Epoch   32/3000 | train -0.47856 [rh=0.0026 nh=-2.9656 rc=0.0027 nc=-1.8729] | val -0.47435 | lr 1.00e-03 |   40.8s ✓ best
+Epoch   33/3000 | train -0.47820 [rh=0.0020 nh=-2.9265 rc=0.0027 nc=-1.9028] | val -0.43927 | lr 1.00e-03 |   42.0s (no improvement 1/50)
+Epoch   34/3000 | train -0.48691 [rh=0.0020 nh=-3.0930 rc=0.0032 nc=-1.8282] | val -0.42948 | lr 1.00e-03 |   43.1s (no improvement 2/50)
+Epoch   35/3000 | train -0.46891 [rh=0.0016 nh=-3.1604 rc=0.0042 nc=-1.5865] | val -0.47204 | lr 1.00e-03 |   44.3s (no improvement 3/50)
+Epoch   36/3000 | train -0.48459 [rh=0.0015 nh=-3.1290 rc=0.0032 nc=-1.7634] | val -0.49513 | lr 1.00e-03 |   45.6s ✓ best
+Epoch   37/3000 | train -0.50818 [rh=0.0014 nh=-3.0840 rc=0.0023 nc=-2.0347] | val -0.50312 | lr 1.00e-03 |   46.9s ✓ best
+Epoch   38/3000 | train -0.50957 [rh=0.0012 nh=-3.2265 rc=0.0023 nc=-1.9047] | val -0.50449 | lr 1.00e-03 |   48.3s ✓ best
+Epoch   39/3000 | train -0.50972 [rh=0.0022 nh=-3.1168 rc=0.0019 nc=-2.0209] | val -0.49960 | lr 1.00e-03 |   49.4s (no improvement 1/50)
+Epoch   40/3000 | train -0.52737 [rh=0.0023 nh=-3.1545 rc=0.0016 nc=-2.1582] | val -0.51993 | lr 1.00e-03 |   50.7s ✓ best
+Epoch   41/3000 | train -0.43256 [rh=0.0020 nh=-3.2083 rc=0.0047 nc=-1.1835] | val -0.45858 | lr 1.00e-03 |   51.9s (no improvement 1/50)
+Epoch   42/3000 | train -0.45000 [rh=0.0017 nh=-3.0325 rc=0.0055 nc=-1.5395] | val -0.43554 | lr 1.00e-03 |   53.0s (no improvement 2/50)
+Epoch   43/3000 | train -0.45252 [rh=0.0015 nh=-3.1480 rc=0.0051 nc=-1.4430] | val -0.46143 | lr 9.99e-04 |   54.2s (no improvement 3/50)
+Epoch   44/3000 | train -0.48902 [rh=0.0013 nh=-3.2150 rc=0.0039 nc=-1.7271] | val -0.49766 | lr 9.99e-04 |   55.3s (no improvement 4/50)
+Epoch   45/3000 | train -0.49122 [rh=0.0010 nh=-3.3028 rc=0.0034 nc=-1.6537] | val -0.49073 | lr 9.99e-04 |   56.4s (no improvement 5/50)
+Epoch   46/3000 | train -0.49554 [rh=0.0014 nh=-3.0973 rc=0.0026 nc=-1.8981] | val -0.43983 | lr 9.99e-04 |   57.6s (no improvement 6/50)
+Epoch   47/3000 | train -0.46090 [rh=0.0014 nh=-2.9357 rc=0.0025 nc=-1.7121] | val -0.48738 | lr 9.99e-04 |   58.7s (no improvement 7/50)
+Epoch   48/3000 | train -0.50771 [rh=0.0011 nh=-3.1897 rc=0.0024 nc=-1.9221] | val -0.51614 | lr 9.99e-04 |   59.9s (no improvement 8/50)
+Epoch   49/3000 | train -0.52928 [rh=0.0009 nh=-3.2986 rc=0.0020 nc=-2.0226] | val -0.52213 | lr 9.99e-04 |   61.2s ✓ best
+Epoch   50/3000 | train -0.53499 [rh=0.0008 nh=-3.3076 rc=0.0020 nc=-2.0703] | val -0.53616 | lr 9.99e-04 |   62.5s ✓ best
+Epoch   51/3000 | train -0.54298 [rh=0.0009 nh=-3.3035 rc=0.0018 nc=-2.1526] | val -0.53082 | lr 9.99e-04 |   63.7s (no improvement 1/50)
+Epoch   52/3000 | train -0.54328 [rh=0.0012 nh=-3.2419 rc=0.0015 nc=-2.2186] | val -0.54436 | lr 9.99e-04 |   65.0s ✓ best
+Epoch   53/3000 | train -0.55048 [rh=0.0014 nh=-3.2636 rc=0.0013 nc=-2.2683] | val -0.52546 | lr 9.99e-04 |   66.4s (no improvement 1/50)
+Epoch   54/3000 | train -0.55260 [rh=0.0012 nh=-3.2875 rc=0.0013 nc=-2.2630] | val -0.49541 | lr 9.99e-04 |   68.0s (no improvement 2/50)
+Epoch   55/3000 | train -0.55011 [rh=0.0010 nh=-3.2492 rc=0.0012 nc=-2.2741] | val -0.55939 | lr 9.99e-04 |   70.0s ✓ best
+Epoch   56/3000 | train -0.55792 [rh=0.0008 nh=-3.3016 rc=0.0011 nc=-2.2964] | val -0.52450 | lr 9.99e-04 |   71.6s (no improvement 1/50)
+Epoch   57/3000 | train -0.51337 [rh=0.0008 nh=-2.9953 rc=0.0014 nc=-2.1603] | val -0.50385 | lr 9.99e-04 |   73.5s (no improvement 2/50)
+Epoch   58/3000 | train -0.52113 [rh=0.0008 nh=-3.1702 rc=0.0017 nc=-2.0660] | val -0.53641 | lr 9.99e-04 |   75.3s (no improvement 3/50)
+Epoch   59/3000 | train -0.54763 [rh=0.0007 nh=-3.3079 rc=0.0014 nc=-2.1896] | val -0.53986 | lr 9.99e-04 |   76.4s (no improvement 4/50)
+Epoch   60/3000 | train -0.54789 [rh=0.0006 nh=-3.4136 rc=0.0014 nc=-2.0847] | val -0.56312 | lr 9.99e-04 |   77.7s ✓ best
+Epoch   61/3000 | train -0.55370 [rh=0.0009 nh=-3.3057 rc=0.0013 nc=-2.2537] | val -0.50169 | lr 9.99e-04 |   78.9s (no improvement 1/50)
+Epoch   62/3000 | train -0.48469 [rh=0.0010 nh=-3.2860 rc=0.0030 nc=-1.6005] | val -0.52859 | lr 9.99e-04 |   80.0s (no improvement 2/50)
+Epoch   63/3000 | train -0.51910 [rh=0.0008 nh=-3.4129 rc=0.0028 nc=-1.8144] | val -0.49491 | lr 9.99e-04 |   81.2s (no improvement 3/50)
+Epoch   64/3000 | train -0.51602 [rh=0.0006 nh=-3.3744 rc=0.0026 nc=-1.8178] | val -0.52024 | lr 9.99e-04 |   82.3s (no improvement 4/50)
+Epoch   65/3000 | train -0.54063 [rh=0.0006 nh=-3.4202 rc=0.0019 nc=-2.0115] | val -0.53821 | lr 9.99e-04 |   83.5s (no improvement 5/50)
+Epoch   66/3000 | train -0.56604 [rh=0.0005 nh=-3.4968 rc=0.0015 nc=-2.1836] | val -0.56891 | lr 9.99e-04 |   84.8s ✓ best
+Epoch   67/3000 | train -0.54838 [rh=0.0006 nh=-3.1795 rc=0.0011 nc=-2.3216] | val -0.55727 | lr 9.99e-04 |   85.9s (no improvement 1/50)
+Epoch   68/3000 | train -0.56965 [rh=0.0005 nh=-3.3549 rc=0.0010 nc=-2.3570] | val -0.57228 | lr 9.99e-04 |   87.2s ✓ best
+Epoch   69/3000 | train -0.58443 [rh=0.0005 nh=-3.3846 rc=0.0008 nc=-2.4723] | val -0.57325 | lr 9.99e-04 |   88.6s ✓ best
+Epoch   70/3000 | train -0.58017 [rh=0.0004 nh=-3.4384 rc=0.0009 nc=-2.3763] | val -0.48555 | lr 9.99e-04 |   89.7s (no improvement 1/50)
+Epoch   71/3000 | train -0.55563 [rh=0.0007 nh=-3.3320 rc=0.0012 nc=-2.2431] | val -0.54894 | lr 9.99e-04 |   90.9s (no improvement 2/50)
+Epoch   72/3000 | train -0.55862 [rh=0.0005 nh=-3.3644 rc=0.0013 nc=-2.2399] | val -0.56921 | lr 9.99e-04 |   92.0s (no improvement 3/50)
+Epoch   73/3000 | train -0.58922 [rh=0.0004 nh=-3.5308 rc=0.0010 nc=-2.3749] | val -0.60052 | lr 9.99e-04 |   93.3s ✓ best
+Epoch   74/3000 | train -0.61353 [rh=0.0004 nh=-3.5939 rc=0.0007 nc=-2.5520] | val -0.54824 | lr 9.99e-04 |   94.5s (no improvement 1/50)
+Epoch   75/3000 | train -0.51133 [rh=0.0024 nh=-3.2954 rc=0.0018 nc=-1.8603] | val -0.52636 | lr 9.98e-04 |   95.6s (no improvement 2/50)
+Epoch   76/3000 | train -0.51505 [rh=0.0032 nh=-3.3502 rc=0.0028 nc=-1.8611] | val -0.52213 | lr 9.98e-04 |   96.8s (no improvement 3/50)
+Epoch   77/3000 | train -0.53909 [rh=0.0024 nh=-3.4725 rc=0.0024 nc=-1.9669] | val -0.54422 | lr 9.98e-04 |   97.9s (no improvement 4/50)
+Epoch   78/3000 | train -0.55766 [rh=0.0021 nh=-3.5126 rc=0.0018 nc=-2.1029] | val -0.54717 | lr 9.98e-04 |   99.0s (no improvement 5/50)
+Epoch   79/3000 | train -0.56895 [rh=0.0019 nh=-3.4135 rc=0.0013 nc=-2.3085] | val -0.57316 | lr 9.98e-04 |  100.2s (no improvement 6/50)
+Epoch   80/3000 | train -0.58641 [rh=0.0017 nh=-3.4671 rc=0.0010 nc=-2.4240] | val -0.54807 | lr 9.98e-04 |  101.3s (no improvement 7/50)
+Epoch   81/3000 | train -0.58646 [rh=0.0017 nh=-3.3448 rc=0.0008 nc=-2.5445] | val -0.58211 | lr 9.98e-04 |  102.5s (no improvement 8/50)
+Epoch   82/3000 | train -0.60267 [rh=0.0013 nh=-3.4197 rc=0.0007 nc=-2.6268] | val -0.57341 | lr 9.98e-04 |  103.6s (no improvement 9/50)
+Epoch   83/3000 | train -0.58125 [rh=0.0010 nh=-3.5100 rc=0.0009 nc=-2.3219] | val -0.59281 | lr 9.98e-04 |  104.7s (no improvement 10/50)
+Epoch   84/3000 | train -0.59760 [rh=0.0008 nh=-3.5239 rc=0.0007 nc=-2.4673] | val -0.57989 | lr 9.98e-04 |  105.9s (no improvement 11/50)
+Epoch   85/3000 | train -0.60121 [rh=0.0006 nh=-3.5331 rc=0.0006 nc=-2.4919] | val -0.60205 | lr 9.98e-04 |  107.2s ✓ best
+Epoch   86/3000 | train -0.60918 [rh=0.0005 nh=-3.4427 rc=0.0005 nc=-2.6600] | val -0.60445 | lr 9.98e-04 |  108.6s ✓ best
+Epoch   87/3000 | train -0.57146 [rh=0.0005 nh=-3.5700 rc=0.0013 nc=-2.1633] | val -0.57038 | lr 9.98e-04 |  109.7s (no improvement 1/50)
+Epoch   88/3000 | train -0.59023 [rh=0.0005 nh=-3.5532 rc=0.0013 nc=-2.3671] | val -0.58225 | lr 9.98e-04 |  110.9s (no improvement 2/50)
+Epoch   89/3000 | train -0.59438 [rh=0.0004 nh=-3.5683 rc=0.0011 nc=-2.3906] | val -0.59226 | lr 9.98e-04 |  112.0s (no improvement 3/50)
+Epoch   90/3000 | train -0.60751 [rh=0.0003 nh=-3.5840 rc=0.0009 nc=-2.5037] | val -0.59273 | lr 9.98e-04 |  113.1s (no improvement 4/50)
+Epoch   91/3000 | train -0.59626 [rh=0.0004 nh=-3.3537 rc=0.0007 nc=-2.6196] | val -0.58329 | lr 9.98e-04 |  114.3s (no improvement 5/50)
+Epoch   92/3000 | train -0.58455 [rh=0.0005 nh=-3.4518 rc=0.0008 nc=-2.4063] | val -0.58969 | lr 9.98e-04 |  115.4s (no improvement 6/50)
+Epoch   93/3000 | train -0.61668 [rh=0.0003 nh=-3.5624 rc=0.0007 nc=-2.6149] | val -0.61442 | lr 9.98e-04 |  116.7s ✓ best
+Epoch   94/3000 | train -0.62985 [rh=0.0003 nh=-3.6792 rc=0.0006 nc=-2.6278] | val -0.61160 | lr 9.98e-04 |  117.9s (no improvement 1/50)
+Epoch   95/3000 | train -0.61759 [rh=0.0003 nh=-3.6167 rc=0.0006 nc=-2.5678] | val -0.53107 | lr 9.98e-04 |  119.0s (no improvement 2/50)
+Epoch   96/3000 | train -0.57345 [rh=0.0004 nh=-3.4520 rc=0.0009 nc=-2.2961] | val -0.60859 | lr 9.98e-04 |  120.2s (no improvement 3/50)
+Epoch   97/3000 | train -0.61749 [rh=0.0003 nh=-3.5913 rc=0.0008 nc=-2.5940] | val -0.62826 | lr 9.97e-04 |  121.5s ✓ best
+Epoch   98/3000 | train -0.63060 [rh=0.0002 nh=-3.6974 rc=0.0006 nc=-2.6169] | val -0.62493 | lr 9.97e-04 |  122.7s (no improvement 1/50)
+Epoch   99/3000 | train -0.61042 [rh=0.0005 nh=-3.5550 rc=0.0006 nc=-2.5596] | val -0.60303 | lr 9.97e-04 |  123.8s (no improvement 2/50)
+Epoch  100/3000 | train -0.59959 [rh=0.0008 nh=-3.4776 rc=0.0006 nc=-2.5322] | val -0.59624 | lr 9.97e-04 |  124.9s (no improvement 3/50)
+Epoch  101/3000 | train -0.60384 [rh=0.0006 nh=-3.5457 rc=0.0007 nc=-2.5051] | val -0.59759 | lr 9.97e-04 |  126.1s (no improvement 4/50)
+Epoch  102/3000 | train -0.61781 [rh=0.0004 nh=-3.6830 rc=0.0006 nc=-2.5054] | val -0.63262 | lr 9.97e-04 |  127.4s ✓ best
+Epoch  103/3000 | train -0.63100 [rh=0.0003 nh=-3.7203 rc=0.0005 nc=-2.5981] | val -0.59068 | lr 9.97e-04 |  128.5s (no improvement 1/50)
+Epoch  104/3000 | train -0.60099 [rh=0.0002 nh=-3.6678 rc=0.0008 nc=-2.3521] | val -0.58955 | lr 9.97e-04 |  129.7s (no improvement 2/50)
+Epoch  105/3000 | train -0.58689 [rh=0.0002 nh=-3.6374 rc=0.0011 nc=-2.2450] | val -0.53118 | lr 9.97e-04 |  130.8s (no improvement 3/50)
+Epoch  106/3000 | train -0.57519 [rh=0.0006 nh=-3.3571 rc=0.0009 nc=-2.4093] | val -0.57862 | lr 9.97e-04 |  132.0s (no improvement 4/50)
+Epoch  107/3000 | train -0.60002 [rh=0.0005 nh=-3.4821 rc=0.0007 nc=-2.5303] | val -0.59460 | lr 9.97e-04 |  133.1s (no improvement 5/50)
+Epoch  108/3000 | train -0.62946 [rh=0.0004 nh=-3.6190 rc=0.0006 nc=-2.6847] | val -0.63817 | lr 9.97e-04 |  134.4s ✓ best
+Epoch  109/3000 | train -0.65086 [rh=0.0002 nh=-3.7526 rc=0.0005 nc=-2.7630] | val -0.65051 | lr 9.97e-04 |  135.8s ✓ best
+Epoch  110/3000 | train -0.64224 [rh=0.0004 nh=-3.6374 rc=0.0004 nc=-2.7936] | val -0.61867 | lr 9.97e-04 |  136.9s (no improvement 1/50)
+Epoch  111/3000 | train -0.60564 [rh=0.0013 nh=-3.3067 rc=0.0004 nc=-2.7674] | val -0.50150 | lr 9.97e-04 |  138.1s (no improvement 2/50)
+Epoch  112/3000 | train -0.55831 [rh=0.0017 nh=-3.3169 rc=0.0008 nc=-2.2917] | val -0.61365 | lr 9.97e-04 |  139.2s (no improvement 3/50)
+Epoch  113/3000 | train -0.61351 [rh=0.0014 nh=-3.5157 rc=0.0006 nc=-2.6389] | val -0.60749 | lr 9.97e-04 |  140.3s (no improvement 4/50)
+Epoch  114/3000 | train -0.60868 [rh=0.0011 nh=-3.3889 rc=0.0005 nc=-2.7129] | val -0.62365 | lr 9.96e-04 |  141.5s (no improvement 5/50)
+Epoch  115/3000 | train -0.64441 [rh=0.0007 nh=-3.6265 rc=0.0004 nc=-2.8285] | val -0.63009 | lr 9.96e-04 |  142.6s (no improvement 6/50)
+Epoch  116/3000 | train -0.58900 [rh=0.0007 nh=-3.3630 rc=0.0006 nc=-2.5401] | val -0.61779 | lr 9.96e-04 |  143.8s (no improvement 7/50)
+Epoch  117/3000 | train -0.62672 [rh=0.0010 nh=-3.5561 rc=0.0004 nc=-2.7250] | val -0.60741 | lr 9.96e-04 |  144.9s (no improvement 8/50)
+Epoch  118/3000 | train -0.61598 [rh=0.0006 nh=-3.6371 rc=0.0005 nc=-2.5342] | val -0.62956 | lr 9.96e-04 |  146.1s (no improvement 9/50)
+Epoch  119/3000 | train -0.64123 [rh=0.0008 nh=-3.6030 rc=0.0004 nc=-2.8206] | val -0.64622 | lr 9.96e-04 |  147.2s (no improvement 10/50)
+Epoch  120/3000 | train -0.66555 [rh=0.0006 nh=-3.7447 rc=0.0003 nc=-2.9194] | val -0.66658 | lr 9.96e-04 |  148.5s ✓ best
+Epoch  121/3000 | train -0.68051 [rh=0.0004 nh=-3.8026 rc=0.0003 nc=-3.0089] | val -0.65654 | lr 9.96e-04 |  149.7s (no improvement 1/50)
+Epoch  122/3000 | train -0.64474 [rh=0.0003 nh=-3.7820 rc=0.0005 nc=-2.6733] | val -0.61187 | lr 9.96e-04 |  150.8s (no improvement 2/50)
+Epoch  123/3000 | train -0.62354 [rh=0.0003 nh=-3.6205 rc=0.0005 nc=-2.6226] | val -0.60707 | lr 9.96e-04 |  152.0s (no improvement 3/50)
+Epoch  124/3000 | train -0.61798 [rh=0.0003 nh=-3.4753 rc=0.0004 nc=-2.7119] | val -0.59569 | lr 9.96e-04 |  153.1s (no improvement 4/50)
+Epoch  125/3000 | train -0.63812 [rh=0.0003 nh=-3.5426 rc=0.0003 nc=-2.8450] | val -0.65009 | lr 9.96e-04 |  154.2s (no improvement 5/50)
+Epoch  126/3000 | train -0.66522 [rh=0.0002 nh=-3.6974 rc=0.0003 nc=-2.9596] | val -0.64296 | lr 9.96e-04 |  155.4s (no improvement 6/50)
+Epoch  127/3000 | train -0.66413 [rh=0.0002 nh=-3.7229 rc=0.0003 nc=-2.9232] | val -0.65230 | lr 9.96e-04 |  156.5s (no improvement 7/50)
+Epoch  128/3000 | train -0.66720 [rh=0.0002 nh=-3.8098 rc=0.0004 nc=-2.8675] | val -0.62065 | lr 9.96e-04 |  157.7s (no improvement 8/50)
+Epoch  129/3000 | train -0.64299 [rh=0.0002 nh=-3.8020 rc=0.0005 nc=-2.6348] | val -0.64199 | lr 9.95e-04 |  158.8s (no improvement 9/50)
+Epoch  130/3000 | train -0.66316 [rh=0.0002 nh=-3.7849 rc=0.0004 nc=-2.8523] | val -0.66029 | lr 9.95e-04 |  159.9s (no improvement 10/50)
+Epoch  131/3000 | train -0.65891 [rh=0.0002 nh=-3.8048 rc=0.0004 nc=-2.7895] | val -0.64203 | lr 9.95e-04 |  161.1s (no improvement 11/50)
+Epoch  132/3000 | train -0.66796 [rh=0.0002 nh=-3.8219 rc=0.0004 nc=-2.8634] | val -0.64842 | lr 9.95e-04 |  162.2s (no improvement 12/50)
+Epoch  133/3000 | train -0.67764 [rh=0.0002 nh=-3.8196 rc=0.0003 nc=-2.9615] | val -0.66299 | lr 9.95e-04 |  163.4s (no improvement 13/50)
+Epoch  134/3000 | train -0.64476 [rh=0.0002 nh=-3.7943 rc=0.0005 nc=-2.6595] | val -0.57449 | lr 9.95e-04 |  164.5s (no improvement 14/50)
+Epoch  135/3000 | train -0.57637 [rh=0.0002 nh=-3.6154 rc=0.0009 nc=-2.1591] | val -0.61883 | lr 9.95e-04 |  165.7s (no improvement 15/50)
+Epoch  136/3000 | train -0.63432 [rh=0.0002 nh=-3.7141 rc=0.0006 nc=-2.6373] | val -0.62866 | lr 9.95e-04 |  166.8s (no improvement 16/50)
+Epoch  137/3000 | train -0.63195 [rh=0.0002 nh=-3.7671 rc=0.0006 nc=-2.5597] | val -0.56843 | lr 9.95e-04 |  167.9s (no improvement 17/50)
+Epoch  138/3000 | train -0.62813 [rh=0.0002 nh=-3.8072 rc=0.0007 nc=-2.4823] | val -0.63978 | lr 9.95e-04 |  169.1s (no improvement 18/50)
+Epoch  139/3000 | train -0.65259 [rh=0.0002 nh=-3.8278 rc=0.0006 nc=-2.7055] | val -0.63810 | lr 9.95e-04 |  170.2s (no improvement 19/50)
+Epoch  140/3000 | train -0.63586 [rh=0.0003 nh=-3.7064 rc=0.0006 nc=-2.6609] | val -0.62748 | lr 9.95e-04 |  171.4s (no improvement 20/50)
+Epoch  141/3000 | train -0.65120 [rh=0.0002 nh=-3.7661 rc=0.0005 nc=-2.7526] | val -0.63999 | lr 9.95e-04 |  172.5s (no improvement 21/50)
+Epoch  142/3000 | train -0.64508 [rh=0.0002 nh=-3.7872 rc=0.0005 nc=-2.6701] | val -0.66601 | lr 9.95e-04 |  173.6s (no improvement 22/50)
+Epoch  143/3000 | train -0.67840 [rh=0.0002 nh=-3.8652 rc=0.0003 nc=-2.9236] | val -0.67006 | lr 9.94e-04 |  175.0s ✓ best
+Epoch  144/3000 | train -0.66869 [rh=0.0001 nh=-3.8746 rc=0.0004 nc=-2.8173] | val -0.64626 | lr 9.94e-04 |  176.1s (no improvement 1/50)
+Epoch  145/3000 | train -0.64002 [rh=0.0001 nh=-3.8707 rc=0.0005 nc=-2.5355] | val -0.61996 | lr 9.94e-04 |  177.3s (no improvement 2/50)
+Epoch  146/3000 | train -0.63853 [rh=0.0002 nh=-3.7400 rc=0.0005 nc=-2.6520] | val -0.61674 | lr 9.94e-04 |  178.4s (no improvement 3/50)
+Epoch  147/3000 | train -0.65727 [rh=0.0001 nh=-3.8113 rc=0.0004 nc=-2.7666] | val -0.63863 | lr 9.94e-04 |  179.5s (no improvement 4/50)
+Epoch  148/3000 | train -0.62493 [rh=0.0002 nh=-3.5410 rc=0.0004 nc=-2.7142] | val -0.48612 | lr 9.94e-04 |  180.7s (no improvement 5/50)
+Epoch  149/3000 | train -0.62596 [rh=0.0002 nh=-3.8227 rc=0.0007 nc=-2.4458] | val -0.65366 | lr 9.94e-04 |  181.8s (no improvement 6/50)
+Epoch  150/3000 | train -0.65270 [rh=0.0002 nh=-3.7999 rc=0.0006 nc=-2.7347] | val -0.63827 | lr 9.94e-04 |  183.0s (no improvement 7/50)
+Epoch  151/3000 | train -0.63837 [rh=0.0002 nh=-3.6543 rc=0.0005 nc=-2.7365] | val -0.64862 | lr 9.94e-04 |  184.1s (no improvement 8/50)
+Epoch  152/3000 | train -0.60994 [rh=0.0001 nh=-3.8207 rc=0.0007 nc=-2.2870] | val -0.61011 | lr 9.94e-04 |  185.3s (no improvement 9/50)
+Epoch  153/3000 | train -0.65066 [rh=0.0001 nh=-3.9343 rc=0.0006 nc=-2.5799] | val -0.66584 | lr 9.94e-04 |  186.4s (no improvement 10/50)
+Epoch  154/3000 | train -0.67221 [rh=0.0001 nh=-3.9651 rc=0.0005 nc=-2.7632] | val -0.66168 | lr 9.94e-04 |  187.5s (no improvement 11/50)
+Epoch  155/3000 | train -0.65262 [rh=0.0002 nh=-3.6374 rc=0.0004 nc=-2.8945] | val -0.61522 | lr 9.93e-04 |  188.7s (no improvement 12/50)
+Epoch  156/3000 | train -0.58833 [rh=0.0003 nh=-3.5363 rc=0.0007 nc=-2.3569] | val -0.60351 | lr 9.93e-04 |  189.8s (no improvement 13/50)
+Epoch  157/3000 | train -0.63559 [rh=0.0002 nh=-3.6251 rc=0.0007 nc=-2.7401] | val -0.61950 | lr 9.93e-04 |  191.0s (no improvement 14/50)
+Epoch  158/3000 | train -0.65026 [rh=0.0002 nh=-3.8346 rc=0.0007 nc=-2.6761] | val -0.64537 | lr 9.93e-04 |  192.1s (no improvement 15/50)
+Epoch  159/3000 | train -0.66937 [rh=0.0001 nh=-3.9238 rc=0.0006 nc=-2.7766] | val -0.66227 | lr 9.93e-04 |  193.3s (no improvement 16/50)
+Epoch  160/3000 | train -0.68796 [rh=0.0001 nh=-3.9889 rc=0.0004 nc=-2.8956] | val -0.68040 | lr 9.93e-04 |  194.6s ✓ best
+Epoch  161/3000 | train -0.67345 [rh=0.0002 nh=-3.7763 rc=0.0003 nc=-2.9636] | val -0.65256 | lr 9.93e-04 |  195.7s (no improvement 1/50)
+Epoch  162/3000 | train -0.62176 [rh=0.0002 nh=-3.8543 rc=0.0006 nc=-2.3718] | val -0.66275 | lr 9.93e-04 |  196.9s (no improvement 2/50)
+Epoch  163/3000 | train -0.66429 [rh=0.0003 nh=-3.7730 rc=0.0006 nc=-2.8789] | val -0.63953 | lr 9.93e-04 |  198.0s (no improvement 3/50)
+Epoch  164/3000 | train -0.65955 [rh=0.0002 nh=-3.7954 rc=0.0006 nc=-2.8077] | val -0.50605 | lr 9.93e-04 |  199.2s (no improvement 4/50)
+Epoch  165/3000 | train -0.61103 [rh=0.0001 nh=-3.8415 rc=0.0008 nc=-2.2783] | val -0.63048 | lr 9.93e-04 |  200.3s (no improvement 5/50)
+Epoch  166/3000 | train -0.65211 [rh=0.0001 nh=-3.8599 rc=0.0006 nc=-2.6685] | val -0.63848 | lr 9.93e-04 |  201.5s (no improvement 6/50)
+Epoch  167/3000 | train -0.64843 [rh=0.0001 nh=-3.8941 rc=0.0005 nc=-2.5967] | val -0.63463 | lr 9.92e-04 |  202.6s (no improvement 7/50)
+Epoch  168/3000 | train -0.67338 [rh=0.0001 nh=-3.9306 rc=0.0004 nc=-2.8079] | val -0.66435 | lr 9.92e-04 |  203.7s (no improvement 8/50)
+Epoch  169/3000 | train -0.67665 [rh=0.0001 nh=-3.8576 rc=0.0003 nc=-2.9128] | val -0.67858 | lr 9.92e-04 |  204.9s (no improvement 9/50)
+Epoch  170/3000 | train -0.68995 [rh=0.0002 nh=-3.8128 rc=0.0002 nc=-3.0912] | val -0.66755 | lr 9.92e-04 |  206.0s (no improvement 10/50)
+Epoch  171/3000 | train -0.69578 [rh=0.0003 nh=-3.8589 rc=0.0002 nc=-3.1039] | val -0.68428 | lr 9.92e-04 |  207.3s ✓ best
+Epoch  172/3000 | train -0.69091 [rh=0.0001 nh=-3.9805 rc=0.0003 nc=-2.9329] | val -0.69241 | lr 9.92e-04 |  208.7s ✓ best
+Epoch  173/3000 | train -0.70378 [rh=0.0001 nh=-4.0521 rc=0.0003 nc=-2.9892] | val -0.68481 | lr 9.92e-04 |  209.8s (no improvement 1/50)
+Epoch  174/3000 | train -0.68837 [rh=0.0002 nh=-3.9459 rc=0.0003 nc=-2.9426] | val -0.65300 | lr 9.92e-04 |  211.0s (no improvement 2/50)
+Epoch  175/3000 | train -0.67634 [rh=0.0004 nh=-3.7486 rc=0.0003 nc=-3.0212] | val -0.66295 | lr 9.92e-04 |  212.1s (no improvement 3/50)
+Epoch  176/3000 | train -0.69280 [rh=0.0002 nh=-3.8374 rc=0.0002 nc=-3.0950] | val -0.65234 | lr 9.92e-04 |  213.3s (no improvement 4/50)
+Epoch  177/3000 | train -0.67469 [rh=0.0002 nh=-3.7727 rc=0.0003 nc=-2.9788] | val -0.68279 | lr 9.92e-04 |  214.4s (no improvement 5/50)
+Epoch  178/3000 | train -0.69084 [rh=0.0001 nh=-3.9436 rc=0.0003 nc=-2.9690] | val -0.67822 | lr 9.91e-04 |  215.5s (no improvement 6/50)
+Epoch  179/3000 | train -0.69724 [rh=0.0001 nh=-3.9912 rc=0.0003 nc=-2.9853] | val -0.68937 | lr 9.91e-04 |  216.7s (no improvement 7/50)
+Epoch  180/3000 | train -0.68802 [rh=0.0001 nh=-3.9350 rc=0.0003 nc=-2.9494] | val -0.66484 | lr 9.91e-04 |  217.8s (no improvement 8/50)
+Epoch  181/3000 | train -0.68247 [rh=0.0001 nh=-3.8893 rc=0.0003 nc=-2.9393] | val -0.66375 | lr 9.91e-04 |  219.0s (no improvement 9/50)
+Epoch  182/3000 | train -0.70023 [rh=0.0001 nh=-3.8992 rc=0.0002 nc=-3.1064] | val -0.70995 | lr 9.91e-04 |  220.3s ✓ best
+Epoch  183/3000 | train -0.72011 [rh=0.0001 nh=-4.0353 rc=0.0002 nc=-3.1685] | val -0.70506 | lr 9.91e-04 |  221.4s (no improvement 1/50)
+Epoch  184/3000 | train -0.68815 [rh=0.0001 nh=-3.7511 rc=0.0002 nc=-3.1339] | val -0.63143 | lr 9.91e-04 |  222.6s (no improvement 2/50)
+Epoch  185/3000 | train -0.66554 [rh=0.0004 nh=-3.5565 rc=0.0002 nc=-3.1052] | val -0.68832 | lr 9.91e-04 |  223.7s (no improvement 3/50)
+Epoch  186/3000 | train -0.69751 [rh=0.0003 nh=-3.8714 rc=0.0002 nc=-3.1089] | val -0.69092 | lr 9.91e-04 |  224.9s (no improvement 4/50)
+Epoch  187/3000 | train -0.67557 [rh=0.0002 nh=-3.8655 rc=0.0003 nc=-2.8955] | val -0.66744 | lr 9.91e-04 |  226.0s (no improvement 5/50)
+Epoch  188/3000 | train -0.67131 [rh=0.0002 nh=-3.8028 rc=0.0003 nc=-2.9148] | val -0.68533 | lr 9.90e-04 |  227.2s (no improvement 6/50)
+Epoch  189/3000 | train -0.70582 [rh=0.0001 nh=-3.9674 rc=0.0002 nc=-3.0939] | val -0.70089 | lr 9.90e-04 |  228.3s (no improvement 7/50)
+Epoch  190/3000 | train -0.71274 [rh=0.0001 nh=-4.0768 rc=0.0002 nc=-3.0536] | val -0.69658 | lr 9.90e-04 |  229.4s (no improvement 8/50)
+Epoch  191/3000 | train -0.66253 [rh=0.0002 nh=-3.7413 rc=0.0003 nc=-2.8886] | val -0.63006 | lr 9.90e-04 |  230.6s (no improvement 9/50)
+Epoch  192/3000 | train -0.65713 [rh=0.0002 nh=-3.8577 rc=0.0004 nc=-2.7196] | val -0.65260 | lr 9.90e-04 |  231.7s (no improvement 10/50)
+Epoch  193/3000 | train -0.68075 [rh=0.0002 nh=-3.8172 rc=0.0003 nc=-2.9945] | val -0.66823 | lr 9.90e-04 |  233.1s (no improvement 11/50)
+Epoch  194/3000 | train -0.68439 [rh=0.0001 nh=-3.8421 rc=0.0002 nc=-3.0057] | val -0.63420 | lr 9.90e-04 |  234.7s (no improvement 12/50)
+Epoch  195/3000 | train -0.65908 [rh=0.0001 nh=-3.9654 rc=0.0004 nc=-2.6304] | val -0.68152 | lr 9.90e-04 |  236.3s (no improvement 13/50)
+Epoch  196/3000 | train -0.70258 [rh=0.0001 nh=-4.0907 rc=0.0003 nc=-2.9390] | val -0.71171 | lr 9.90e-04 |  238.6s ✓ best
+Epoch  197/3000 | train -0.72063 [rh=0.0001 nh=-4.1221 rc=0.0002 nc=-3.0872] | val -0.71698 | lr 9.90e-04 |  240.6s ✓ best
+Epoch  198/3000 | train -0.71051 [rh=0.0001 nh=-3.9298 rc=0.0002 nc=-3.1785] | val -0.67388 | lr 9.89e-04 |  241.7s (no improvement 1/50)
+Epoch  199/3000 | train -0.68475 [rh=0.0002 nh=-3.7863 rc=0.0002 nc=-3.0658] | val -0.66867 | lr 9.89e-04 |  242.9s (no improvement 2/50)
+Epoch  200/3000 | train -0.68232 [rh=0.0002 nh=-3.9118 rc=0.0003 nc=-2.9162] | val -0.67582 | lr 9.89e-04 |  244.0s (no improvement 3/50)
+Epoch  201/3000 | train -0.68857 [rh=0.0001 nh=-4.0055 rc=0.0003 nc=-2.8843] | val -0.69048 | lr 9.89e-04 |  245.1s (no improvement 4/50)
+Epoch  202/3000 | train -0.71288 [rh=0.0001 nh=-4.1027 rc=0.0002 nc=-3.0294] | val -0.70433 | lr 9.89e-04 |  246.3s (no improvement 5/50)
+Epoch  203/3000 | train -0.72503 [rh=0.0001 nh=-4.1460 rc=0.0002 nc=-3.1069] | val -0.72081 | lr 9.89e-04 |  247.6s ✓ best
+Epoch  204/3000 | train -0.73485 [rh=0.0001 nh=-4.1640 rc=0.0002 nc=-3.1869] | val -0.70453 | lr 9.89e-04 |  248.7s (no improvement 1/50)
+Epoch  205/3000 | train -0.72227 [rh=0.0002 nh=-3.9620 rc=0.0002 nc=-3.2642] | val -0.67127 | lr 9.89e-04 |  249.9s (no improvement 2/50)
+Epoch  206/3000 | train -0.69576 [rh=0.0002 nh=-3.6803 rc=0.0002 nc=-3.2806] | val -0.68018 | lr 9.89e-04 |  251.0s (no improvement 3/50)
+Epoch  207/3000 | train -0.69725 [rh=0.0002 nh=-3.8829 rc=0.0002 nc=-3.0934] | val -0.67394 | lr 9.88e-04 |  252.2s (no improvement 4/50)
+Epoch  208/3000 | train -0.62685 [rh=0.0001 nh=-3.9949 rc=0.0005 nc=-2.2795] | val -0.64752 | lr 9.88e-04 |  253.3s (no improvement 5/50)
+Epoch  209/3000 | train -0.65799 [rh=0.0001 nh=-4.0856 rc=0.0005 nc=-2.5001] | val -0.66841 | lr 9.88e-04 |  254.5s (no improvement 6/50)
+Epoch  210/3000 | train -0.68787 [rh=0.0001 nh=-4.0985 rc=0.0004 nc=-2.7844] | val -0.68337 | lr 9.88e-04 |  255.6s (no improvement 7/50)
+Epoch  211/3000 | train -0.69451 [rh=0.0001 nh=-4.0278 rc=0.0003 nc=-2.9211] | val -0.68675 | lr 9.88e-04 |  256.7s (no improvement 8/50)
+Epoch  212/3000 | train -0.70788 [rh=0.0001 nh=-4.0695 rc=0.0002 nc=-3.0126] | val -0.67647 | lr 9.88e-04 |  257.9s (no improvement 9/50)
+Epoch  213/3000 | train -0.69311 [rh=0.0001 nh=-4.0655 rc=0.0003 nc=-2.8691] | val -0.68452 | lr 9.88e-04 |  259.0s (no improvement 10/50)
+Epoch  214/3000 | train -0.70574 [rh=0.0001 nh=-3.9806 rc=0.0002 nc=-3.0797] | val -0.69553 | lr 9.88e-04 |  260.2s (no improvement 11/50)
+Epoch  215/3000 | train -0.71371 [rh=0.0001 nh=-4.0297 rc=0.0002 nc=-3.1104] | val -0.70387 | lr 9.88e-04 |  261.3s (no improvement 12/50)
+Epoch  216/3000 | train -0.71412 [rh=0.0001 nh=-4.1101 rc=0.0002 nc=-3.0342] | val -0.71104 | lr 9.87e-04 |  262.4s (no improvement 13/50)
+Epoch  217/3000 | train -0.67519 [rh=0.0001 nh=-3.7476 rc=0.0002 nc=-3.0074] | val -0.71302 | lr 9.87e-04 |  263.6s (no improvement 14/50)
+Epoch  218/3000 | train -0.71109 [rh=0.0001 nh=-3.9479 rc=0.0002 nc=-3.1657] | val -0.70076 | lr 9.87e-04 |  264.7s (no improvement 15/50)
+Epoch  219/3000 | train -0.71444 [rh=0.0001 nh=-3.9282 rc=0.0002 nc=-3.2190] | val -0.68660 | lr 9.87e-04 |  265.9s (no improvement 16/50)
+Epoch  220/3000 | train -0.70720 [rh=0.0001 nh=-3.9114 rc=0.0002 nc=-3.1638] | val -0.69209 | lr 9.87e-04 |  267.0s (no improvement 17/50)
+Epoch  221/3000 | train -0.70834 [rh=0.0001 nh=-3.9144 rc=0.0002 nc=-3.1724] | val -0.70975 | lr 9.87e-04 |  268.2s (no improvement 18/50)
+Epoch  222/3000 | train -0.72011 [rh=0.0001 nh=-3.9888 rc=0.0002 nc=-3.2152] | val -0.69855 | lr 9.87e-04 |  269.3s (no improvement 19/50)
+Epoch  223/3000 | train -0.66433 [rh=0.0001 nh=-4.0682 rc=0.0004 nc=-2.5798] | val -0.59133 | lr 9.87e-04 |  270.4s (no improvement 20/50)
+Epoch  224/3000 | train -0.66891 [rh=0.0001 nh=-3.9877 rc=0.0005 nc=-2.7073] | val -0.68694 | lr 9.86e-04 |  271.6s (no improvement 21/50)
+Epoch  225/3000 | train -0.70363 [rh=0.0001 nh=-4.1342 rc=0.0005 nc=-2.9076] | val -0.68686 | lr 9.86e-04 |  272.7s (no improvement 22/50)
+Epoch  226/3000 | train -0.70601 [rh=0.0001 nh=-4.0559 rc=0.0004 nc=-3.0088] | val -0.71136 | lr 9.86e-04 |  273.9s (no improvement 23/50)
+Epoch  227/3000 | train -0.72129 [rh=0.0001 nh=-4.1499 rc=0.0003 nc=-3.0669] | val -0.70810 | lr 9.86e-04 |  275.0s (no improvement 24/50)
+Epoch  228/3000 | train -0.72754 [rh=0.0001 nh=-4.1766 rc=0.0003 nc=-3.1021] | val -0.70369 | lr 9.86e-04 |  276.1s (no improvement 25/50)
+Epoch  229/3000 | train -0.66230 [rh=0.0001 nh=-4.0025 rc=0.0004 nc=-2.6256] | val -0.65141 | lr 9.86e-04 |  277.3s (no improvement 26/50)
+Epoch  230/3000 | train -0.66728 [rh=0.0002 nh=-3.9347 rc=0.0004 nc=-2.7441] | val -0.67567 | lr 9.86e-04 |  278.4s (no improvement 27/50)
+Epoch  231/3000 | train -0.68526 [rh=0.0003 nh=-3.8650 rc=0.0003 nc=-2.9929] | val -0.68726 | lr 9.86e-04 |  279.6s (no improvement 28/50)
+Epoch  232/3000 | train -0.70316 [rh=0.0002 nh=-3.9595 rc=0.0002 nc=-3.0763] | val -0.71424 | lr 9.85e-04 |  280.7s (no improvement 29/50)
+Epoch  233/3000 | train -0.72215 [rh=0.0001 nh=-4.0866 rc=0.0002 nc=-3.1380] | val -0.71700 | lr 9.85e-04 |  281.9s (no improvement 30/50)
+Epoch  234/3000 | train -0.73914 [rh=0.0001 nh=-4.1626 rc=0.0001 nc=-3.2313] | val -0.72018 | lr 9.85e-04 |  283.0s (no improvement 31/50)
+Epoch  235/3000 | train -0.74309 [rh=0.0001 nh=-4.1888 rc=0.0001 nc=-3.2443] | val -0.72792 | lr 9.85e-04 |  284.3s ✓ best
+Epoch  236/3000 | train -0.70737 [rh=0.0001 nh=-3.8958 rc=0.0002 nc=-3.1805] | val -0.65746 | lr 9.85e-04 |  285.5s (no improvement 1/50)
+Epoch  237/3000 | train -0.69743 [rh=0.0002 nh=-3.7698 rc=0.0002 nc=-3.2079] | val -0.69308 | lr 9.85e-04 |  286.6s (no improvement 2/50)
+Epoch  238/3000 | train -0.68805 [rh=0.0002 nh=-3.9880 rc=0.0003 nc=-2.8971] | val -0.68005 | lr 9.85e-04 |  287.7s (no improvement 3/50)
+Epoch  239/3000 | train -0.69874 [rh=0.0001 nh=-3.9117 rc=0.0002 nc=-3.0792] | val -0.70945 | lr 9.85e-04 |  288.9s (no improvement 4/50)
+Epoch  240/3000 | train -0.73160 [rh=0.0001 nh=-4.1082 rc=0.0002 nc=-3.2104] | val -0.72355 | lr 9.84e-04 |  290.0s (no improvement 5/50)
+Epoch  241/3000 | train -0.73915 [rh=0.0001 nh=-4.2071 rc=0.0002 nc=-3.1867] | val -0.73057 | lr 9.84e-04 |  291.3s ✓ best
+Epoch  242/3000 | train -0.73074 [rh=0.0001 nh=-4.1943 rc=0.0002 nc=-3.1156] | val -0.71919 | lr 9.84e-04 |  292.5s (no improvement 1/50)
+Epoch  243/3000 | train -0.73879 [rh=0.0001 nh=-4.1868 rc=0.0002 nc=-3.2035] | val -0.72118 | lr 9.84e-04 |  293.6s (no improvement 2/50)
+Epoch  244/3000 | train -0.72169 [rh=0.0001 nh=-3.9618 rc=0.0001 nc=-3.2574] | val -0.71674 | lr 9.84e-04 |  294.8s (no improvement 3/50)
+Epoch  245/3000 | train -0.70983 [rh=0.0001 nh=-3.9671 rc=0.0002 nc=-3.1341] | val -0.69123 | lr 9.84e-04 |  295.9s (no improvement 4/50)
+Epoch  246/3000 | train -0.71513 [rh=0.0001 nh=-4.1074 rc=0.0002 nc=-3.0471] | val -0.68480 | lr 9.84e-04 |  297.1s (no improvement 5/50)
+Epoch  247/3000 | train -0.67780 [rh=0.0001 nh=-3.9310 rc=0.0003 nc=-2.8509] | val -0.60509 | lr 9.84e-04 |  298.2s (no improvement 6/50)
+Epoch  248/3000 | train -0.67836 [rh=0.0001 nh=-3.7992 rc=0.0002 nc=-2.9882] | val -0.68810 | lr 9.83e-04 |  299.4s (no improvement 7/50)
+Epoch  249/3000 | train -0.70913 [rh=0.0001 nh=-3.9556 rc=0.0002 nc=-3.1389] | val -0.71747 | lr 9.83e-04 |  300.5s (no improvement 8/50)
+Epoch  250/3000 | train -0.73492 [rh=0.0001 nh=-4.1094 rc=0.0001 nc=-3.2424] | val -0.72522 | lr 9.83e-04 |  301.6s (no improvement 9/50)
+Epoch  251/3000 | train -0.75839 [rh=0.0001 nh=-4.2407 rc=0.0001 nc=-3.3449] | val -0.75338 | lr 9.83e-04 |  303.0s ✓ best
+Epoch  252/3000 | train -0.76120 [rh=0.0000 nh=-4.2694 rc=0.0001 nc=-3.3443] | val -0.72301 | lr 9.83e-04 |  304.1s (no improvement 1/50)
+Epoch  253/3000 | train -0.74951 [rh=0.0001 nh=-4.1703 rc=0.0001 nc=-3.3267] | val -0.72502 | lr 9.83e-04 |  305.3s (no improvement 2/50)
+Epoch  254/3000 | train -0.73230 [rh=0.0001 nh=-4.1092 rc=0.0002 nc=-3.2167] | val -0.71445 | lr 9.83e-04 |  306.4s (no improvement 3/50)
+Epoch  255/3000 | train -0.73389 [rh=0.0001 nh=-4.0779 rc=0.0002 nc=-3.2637] | val -0.71046 | lr 9.82e-04 |  307.5s (no improvement 4/50)
+Epoch  256/3000 | train -0.71959 [rh=0.0001 nh=-4.0132 rc=0.0002 nc=-3.1852] | val -0.70847 | lr 9.82e-04 |  308.7s (no improvement 5/50)
+Epoch  257/3000 | train -0.73149 [rh=0.0001 nh=-4.1555 rc=0.0002 nc=-3.1619] | val -0.72704 | lr 9.82e-04 |  309.8s (no improvement 6/50)
+Epoch  258/3000 | train -0.74662 [rh=0.0000 nh=-4.2296 rc=0.0002 nc=-3.2386] | val -0.74287 | lr 9.82e-04 |  311.0s (no improvement 7/50)
+Epoch  259/3000 | train -0.75181 [rh=0.0001 nh=-4.2302 rc=0.0001 nc=-3.2898] | val -0.67934 | lr 9.82e-04 |  312.1s (no improvement 8/50)
+Epoch  260/3000 | train -0.73263 [rh=0.0001 nh=-4.0490 rc=0.0001 nc=-3.2801] | val -0.69183 | lr 9.82e-04 |  313.2s (no improvement 9/50)
+Epoch  261/3000 | train -0.65395 [rh=0.0001 nh=-4.2168 rc=0.0004 nc=-2.3280] | val -0.67484 | lr 9.82e-04 |  314.4s (no improvement 10/50)
+Epoch  262/3000 | train -0.70811 [rh=0.0001 nh=-4.1898 rc=0.0004 nc=-2.8960] | val -0.70007 | lr 9.81e-04 |  315.5s (no improvement 11/50)
+Epoch  263/3000 | train -0.71434 [rh=0.0001 nh=-4.1267 rc=0.0003 nc=-3.0210] | val -0.69886 | lr 9.81e-04 |  316.7s (no improvement 12/50)
+Epoch  264/3000 | train -0.71305 [rh=0.0001 nh=-4.1605 rc=0.0003 nc=-2.9736] | val -0.70764 | lr 9.81e-04 |  317.8s (no improvement 13/50)
+Epoch  265/3000 | train -0.72247 [rh=0.0001 nh=-4.1509 rc=0.0002 nc=-3.0764] | val -0.70941 | lr 9.81e-04 |  319.0s (no improvement 14/50)
+Epoch  266/3000 | train -0.72952 [rh=0.0001 nh=-4.1674 rc=0.0002 nc=-3.1302] | val -0.69531 | lr 9.81e-04 |  320.1s (no improvement 15/50)
+Epoch  267/3000 | train -0.70463 [rh=0.0001 nh=-3.8367 rc=0.0002 nc=-3.2121] | val -0.57090 | lr 9.81e-04 |  321.2s (no improvement 16/50)
+Epoch  268/3000 | train -0.69491 [rh=0.0002 nh=-3.5926 rc=0.0001 nc=-3.3600] | val -0.72695 | lr 9.81e-04 |  322.4s (no improvement 17/50)
+Epoch  269/3000 | train -0.74214 [rh=0.0002 nh=-4.0089 rc=0.0001 nc=-3.4158] | val -0.71456 | lr 9.80e-04 |  323.5s (no improvement 18/50)
+Epoch  270/3000 | train -0.74223 [rh=0.0003 nh=-4.0123 rc=0.0001 nc=-3.4138] | val -0.74108 | lr 9.80e-04 |  324.7s (no improvement 19/50)
+Epoch  271/3000 | train -0.75036 [rh=0.0001 nh=-4.1714 rc=0.0001 nc=-3.3349] | val -0.71153 | lr 9.80e-04 |  325.8s (no improvement 20/50)
+Epoch  272/3000 | train -0.70262 [rh=0.0001 nh=-4.2359 rc=0.0003 nc=-2.7941] | val -0.71576 | lr 9.80e-04 |  327.0s (no improvement 21/50)
+Epoch  273/3000 | train -0.73020 [rh=0.0001 nh=-4.2100 rc=0.0002 nc=-3.0950] | val -0.68024 | lr 9.80e-04 |  328.1s (no improvement 22/50)
+Epoch  274/3000 | train -0.71386 [rh=0.0001 nh=-4.0074 rc=0.0002 nc=-3.1344] | val -0.70844 | lr 9.80e-04 |  329.3s (no improvement 23/50)
+Epoch  275/3000 | train -0.73652 [rh=0.0001 nh=-4.1190 rc=0.0001 nc=-3.2487] | val -0.73263 | lr 9.80e-04 |  330.4s (no improvement 24/50)
+Epoch  276/3000 | train -0.74726 [rh=0.0001 nh=-4.1884 rc=0.0001 nc=-3.2861] | val -0.73033 | lr 9.79e-04 |  331.6s (no improvement 25/50)
+Epoch  277/3000 | train -0.74105 [rh=0.0001 nh=-4.1788 rc=0.0001 nc=-3.2338] | val -0.71936 | lr 9.79e-04 |  332.7s (no improvement 26/50)
+Epoch  278/3000 | train -0.74150 [rh=0.0001 nh=-4.2879 rc=0.0002 nc=-3.1296] | val -0.74339 | lr 9.79e-04 |  333.9s (no improvement 27/50)
+Epoch  279/3000 | train -0.76148 [rh=0.0001 nh=-4.3280 rc=0.0001 nc=-3.2888] | val -0.73956 | lr 9.79e-04 |  335.0s (no improvement 28/50)
+Epoch  280/3000 | train -0.74196 [rh=0.0001 nh=-4.1432 rc=0.0001 nc=-3.2785] | val -0.71959 | lr 9.79e-04 |  336.1s (no improvement 29/50)
+Epoch  281/3000 | train -0.74734 [rh=0.0001 nh=-4.1916 rc=0.0001 nc=-3.2839] | val -0.71877 | lr 9.79e-04 |  337.3s (no improvement 30/50)
+Epoch  282/3000 | train -0.70087 [rh=0.0001 nh=-4.1064 rc=0.0002 nc=-2.9057] | val -0.63024 | lr 9.79e-04 |  338.4s (no improvement 31/50)
+Epoch  283/3000 | train -0.70270 [rh=0.0001 nh=-3.9599 rc=0.0002 nc=-3.0703] | val -0.71489 | lr 9.78e-04 |  339.6s (no improvement 32/50)
+Epoch  284/3000 | train -0.74051 [rh=0.0001 nh=-4.1637 rc=0.0001 nc=-3.2439] | val -0.73591 | lr 9.78e-04 |  340.7s (no improvement 33/50)
+Epoch  285/3000 | train -0.75869 [rh=0.0001 nh=-4.2587 rc=0.0001 nc=-3.3301] | val -0.74547 | lr 9.78e-04 |  341.9s (no improvement 34/50)
+Epoch  286/3000 | train -0.75334 [rh=0.0001 nh=-4.2328 rc=0.0001 nc=-3.3026] | val -0.72739 | lr 9.78e-04 |  343.0s (no improvement 35/50)
+Epoch  287/3000 | train -0.75936 [rh=0.0001 nh=-4.2396 rc=0.0001 nc=-3.3558] | val -0.74032 | lr 9.78e-04 |  344.1s (no improvement 36/50)
+Epoch  288/3000 | train -0.76372 [rh=0.0001 nh=-4.2487 rc=0.0001 nc=-3.3901] | val -0.73791 | lr 9.78e-04 |  345.3s (no improvement 37/50)
+Epoch  289/3000 | train -0.75125 [rh=0.0001 nh=-4.1949 rc=0.0001 nc=-3.3196] | val -0.72033 | lr 9.78e-04 |  346.4s (no improvement 38/50)
+Epoch  290/3000 | train -0.72389 [rh=0.0001 nh=-4.2396 rc=0.0002 nc=-3.0021] | val -0.57110 | lr 9.77e-04 |  347.6s (no improvement 39/50)
+Epoch  291/3000 | train -0.67132 [rh=0.0001 nh=-4.1263 rc=0.0003 nc=-2.5915] | val -0.70872 | lr 9.77e-04 |  348.7s (no improvement 40/50)
+Epoch  292/3000 | train -0.72880 [rh=0.0001 nh=-4.2343 rc=0.0002 nc=-3.0570] | val -0.73015 | lr 9.77e-04 |  349.9s (no improvement 41/50)
+Epoch  293/3000 | train -0.75423 [rh=0.0000 nh=-4.3596 rc=0.0002 nc=-3.1849] | val -0.74242 | lr 9.77e-04 |  351.0s (no improvement 42/50)
+Epoch  294/3000 | train -0.76465 [rh=0.0000 nh=-4.4183 rc=0.0001 nc=-3.2299] | val -0.74982 | lr 9.77e-04 |  352.1s (no improvement 43/50)
+Epoch  295/3000 | train -0.75386 [rh=0.0001 nh=-4.3202 rc=0.0001 nc=-3.2204] | val -0.73252 | lr 9.77e-04 |  353.3s (no improvement 44/50)
+Epoch  296/3000 | train -0.73211 [rh=0.0001 nh=-4.0890 rc=0.0001 nc=-3.2341] | val -0.73489 | lr 9.76e-04 |  354.4s (no improvement 45/50)
+Epoch  297/3000 | train -0.73427 [rh=0.0001 nh=-4.1009 rc=0.0001 nc=-3.2440] | val -0.73398 | lr 9.76e-04 |  355.6s (no improvement 46/50)
+Epoch  298/3000 | train -0.74804 [rh=0.0001 nh=-4.2165 rc=0.0001 nc=-3.2658] | val -0.74661 | lr 9.76e-04 |  356.7s (no improvement 47/50)
+Epoch  299/3000 | train -0.74546 [rh=0.0001 nh=-4.1727 rc=0.0001 nc=-3.2838] | val -0.73240 | lr 9.76e-04 |  357.9s (no improvement 48/50)
+Epoch  300/3000 | train -0.76381 [rh=0.0000 nh=-4.3257 rc=0.0001 nc=-3.3141] | val -0.72675 | lr 9.76e-04 |  359.0s (no improvement 49/50)
+Epoch  301/3000 | train -0.76028 [rh=0.0001 nh=-4.2578 rc=0.0001 nc=-3.3469] | val -0.73324 | lr 9.76e-04 |  360.1s (no improvement 50/50)
+[train] Early stopping at epoch 301.
+[train] Loss plot → surrogate_model_v3/runs/full_range_n200_steps/loss_curves.png
+[train] Component loss plot → surrogate_model_v3/runs/full_range_n200_steps/loss_components.png
+
+[train] Done.  Best val loss : -0.753376
+[train] Best checkpoint  : surrogate_model_v3/runs/full_range_n200_steps/surrogate_best.pt
+[train] Final checkpoint : surrogate_model_v3/runs/full_range_n200_steps/surrogate_final.pt
+Finished: Wed Oct 14 20:56:37 EDT 2026   Checkpoint: surrogate_model_v3/runs/full_range_n200_steps/surrogate_best.pt
