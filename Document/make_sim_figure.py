@@ -24,7 +24,7 @@ layers = [0, 3, 7, 11]
 fig, axes = plt.subplots(2, len(layers), figsize=(13, 2.5), sharex=True, sharey=True, gridspec_kw=dict(hspace=0.02, wspace=0.08))
 vmax = max(np.max(traj[l].u_heat_final) for l in layers)
 for j, l in enumerate(layers):
-    for i, (fld, name) in enumerate(((traj[l].u_heat_final, "$u_l$ (heating)"), (traj[l].u_final, "$s_{l+1}$ (cooling)"))):
+    for i, (fld, name) in enumerate(((traj[l].u_heat_final, "$u_l$ (heating)"), (traj[l].u_final, "$s_l$ (cooling)"))):
         ax = axes[i, j]
         cs = ax.tricontourf(tri, np.clip(np.asarray(fld).ravel(), 300, vmax), levels=np.linspace(300, vmax, 41), cmap="inferno")
         side = min(W, H) * fracs[l]
@@ -37,6 +37,6 @@ for j, l in enumerate(layers):
         if i == 1:
             ax.set_xlabel("$x$ [mm]")
 fig.colorbar(cs, ax=axes, label="Temperature [K]", shrink=0.9, pad=0.015)
-out = "Document/figures/sim_evolution.png"
+out = "Document/figures/fig_sim_evolution.png"
 fig.savefig(out, dpi=250, bbox_inches="tight")
 print("saved", out, "cool_time", traj[0].cool_time, "actions", [round(s.lp_action) for s in traj])
