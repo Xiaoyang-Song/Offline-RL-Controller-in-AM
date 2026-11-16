@@ -1,0 +1,56 @@
+task 6  node gl1016  Sun Nov 15 20:59:08 EST 2026
+[dataset] Loaded 5000 trajectories × 12 layers from DatasetV2_layer_12_samples_5000.pkl
+[dataset] Split → train 4000 | val 500 | test 500
+[offline_rl:iql] train 17094 | val 2168 transitions, LP 200-300 W, reward 0.577 ± 0.196
+ep   1 | train_v 0.2469 | train_bellman 0.6419 | train_pi 13.4917 | val_v 0.0203 | val_bellman 0.0501 | val_pi 1.7638 | greedy_in_data 1.0000 | greedy_mean_W 250.6152 | 2s
+ep   2 | train_v 0.0115 | train_bellman 0.0389 | train_pi 2.2070 | val_v 0.0069 | val_bellman 0.0322 | val_pi 2.1595 | greedy_in_data 1.0000 | greedy_mean_W 226.9141 | 3s
+ep   3 | train_v 0.0058 | train_bellman 0.0315 | train_pi 2.2324 | val_v 0.0044 | val_bellman 0.0337 | val_pi 2.3185 | greedy_in_data 1.0000 | greedy_mean_W 220.3369 | 4s
+ep   4 | train_v 0.0046 | train_bellman 0.0154 | train_pi 2.2378 | val_v 0.0048 | val_bellman 0.0145 | val_pi 2.5560 | greedy_in_data 1.0000 | greedy_mean_W 220.4468 | 5s
+ep   5 | train_v 0.0049 | train_bellman 0.0127 | train_pi 2.2444 | val_v 0.0049 | val_bellman 0.0200 | val_pi 2.5001 | greedy_in_data 1.0000 | greedy_mean_W 215.2026 | 6s
+ep   6 | train_v 0.0053 | train_bellman 0.0115 | train_pi 2.2486 | val_v 0.0109 | val_bellman 0.0403 | val_pi 1.5486 | greedy_in_data 1.0000 | greedy_mean_W 206.7358 | 7s
+ep   7 | train_v 0.0062 | train_bellman 0.0170 | train_pi 2.2365 | val_v 0.0065 | val_bellman 0.0180 | val_pi 1.8864 | greedy_in_data 1.0000 | greedy_mean_W 211.7261 | 8s
+ep   8 | train_v 0.0062 | train_bellman 0.0170 | train_pi 2.2326 | val_v 0.0056 | val_bellman 0.0090 | val_pi 2.1879 | greedy_in_data 1.0000 | greedy_mean_W 222.6831 | 9s
+ep   9 | train_v 0.0072 | train_bellman 0.0206 | train_pi 2.2343 | val_v 0.0068 | val_bellman 0.0211 | val_pi 2.2141 | greedy_in_data 1.0000 | greedy_mean_W 209.1870 | 10s
+ep  10 | train_v 0.0071 | train_bellman 0.0159 | train_pi 2.2287 | val_v 0.0079 | val_bellman 0.0110 | val_pi 2.4410 | greedy_in_data 1.0000 | greedy_mean_W 211.8555 | 12s
+ep  11 | train_v 0.0085 | train_bellman 0.0205 | train_pi 2.2318 | val_v 0.0085 | val_bellman 0.0295 | val_pi 1.8744 | greedy_in_data 1.0000 | greedy_mean_W 214.9072 | 13s
+ep  12 | train_v 0.0097 | train_bellman 0.0298 | train_pi 2.2323 | val_v 0.0092 | val_bellman 0.0195 | val_pi 2.3039 | greedy_in_data 1.0000 | greedy_mean_W 209.0552 | 14s
+ep  13 | train_v 0.0088 | train_bellman 0.0185 | train_pi 2.2237 | val_v 0.0088 | val_bellman 0.0212 | val_pi 2.1111 | greedy_in_data 1.0000 | greedy_mean_W 214.6313 | 15s
+ep  14 | train_v 0.0091 | train_bellman 0.0193 | train_pi 2.2183 | val_v 0.0091 | val_bellman 0.0144 | val_pi 2.1000 | greedy_in_data 1.0000 | greedy_mean_W 219.2651 | 16s
+ep  15 | train_v 0.0100 | train_bellman 0.0262 | train_pi 2.2238 | val_v 0.0095 | val_bellman 0.0347 | val_pi 2.1593 | greedy_in_data 1.0000 | greedy_mean_W 218.0371 | 17s
+ep  16 | train_v 0.0103 | train_bellman 0.0220 | train_pi 2.2266 | val_v 0.0093 | val_bellman 0.0278 | val_pi 2.0888 | greedy_in_data 1.0000 | greedy_mean_W 209.1699 | 19s
+ep  17 | train_v 0.0104 | train_bellman 0.0246 | train_pi 2.2139 | val_v 0.0105 | val_bellman 0.0291 | val_pi 2.5724 | greedy_in_data 1.0000 | greedy_mean_W 207.5830 | 20s
+ep  18 | train_v 0.0105 | train_bellman 0.0266 | train_pi 2.2271 | val_v 0.0095 | val_bellman 0.0198 | val_pi 2.0547 | greedy_in_data 1.0000 | greedy_mean_W 204.6997 | 21s
+ep  19 | train_v 0.0114 | train_bellman 0.0341 | train_pi 2.2244 | val_v 0.0117 | val_bellman 0.0185 | val_pi 2.4001 | greedy_in_data 1.0000 | greedy_mean_W 200.1318 | 22s
+ep  20 | train_v 0.0111 | train_bellman 0.0285 | train_pi 2.2218 | val_v 0.0112 | val_bellman 0.0205 | val_pi 2.2789 | greedy_in_data 1.0000 | greedy_mean_W 203.6743 | 23s
+ep  21 | train_v 0.0133 | train_bellman 0.0339 | train_pi 2.2406 | val_v 0.0142 | val_bellman 0.0418 | val_pi 1.6642 | greedy_in_data 1.0000 | greedy_mean_W 205.4517 | 24s
+ep  22 | train_v 0.0121 | train_bellman 0.0360 | train_pi 2.2185 | val_v 0.0119 | val_bellman 0.0241 | val_pi 2.2478 | greedy_in_data 1.0000 | greedy_mean_W 201.3208 | 25s
+ep  23 | train_v 0.0124 | train_bellman 0.0266 | train_pi 2.2275 | val_v 0.0147 | val_bellman 0.0755 | val_pi 1.9429 | greedy_in_data 1.0000 | greedy_mean_W 207.6904 | 27s
+ep  24 | train_v 0.0124 | train_bellman 0.0309 | train_pi 2.2189 | val_v 0.0140 | val_bellman 0.0344 | val_pi 2.1202 | greedy_in_data 1.0000 | greedy_mean_W 209.0674 | 28s
+ep  25 | train_v 0.0141 | train_bellman 0.0358 | train_pi 2.2334 | val_v 0.0114 | val_bellman 0.0206 | val_pi 2.1295 | greedy_in_data 1.0000 | greedy_mean_W 202.9517 | 29s
+ep  26 | train_v 0.0122 | train_bellman 0.0312 | train_pi 2.2260 | val_v 0.0125 | val_bellman 0.0189 | val_pi 2.4386 | greedy_in_data 1.0000 | greedy_mean_W 205.6226 | 30s
+ep  27 | train_v 0.0115 | train_bellman 0.0220 | train_pi 2.2262 | val_v 0.0124 | val_bellman 0.0279 | val_pi 1.9406 | greedy_in_data 1.0000 | greedy_mean_W 202.9736 | 31s
+ep  28 | train_v 0.0135 | train_bellman 0.0338 | train_pi 2.2175 | val_v 0.0117 | val_bellman 0.0227 | val_pi 2.5102 | greedy_in_data 1.0000 | greedy_mean_W 208.5425 | 32s
+ep  29 | train_v 0.0103 | train_bellman 0.0162 | train_pi 2.2071 | val_v 0.0098 | val_bellman 0.0152 | val_pi 2.0950 | greedy_in_data 1.0000 | greedy_mean_W 208.7451 | 34s
+ep  30 | train_v 0.0149 | train_bellman 0.0381 | train_pi 2.2499 | val_v 0.0098 | val_bellman 0.0131 | val_pi 2.1569 | greedy_in_data 1.0000 | greedy_mean_W 202.2412 | 35s
+ep  31 | train_v 0.0100 | train_bellman 0.0193 | train_pi 2.2025 | val_v 0.0087 | val_bellman 0.0149 | val_pi 2.3531 | greedy_in_data 1.0000 | greedy_mean_W 200.2808 | 36s
+ep  32 | train_v 0.0106 | train_bellman 0.0185 | train_pi 2.2123 | val_v 0.0091 | val_bellman 0.0143 | val_pi 2.4638 | greedy_in_data 1.0000 | greedy_mean_W 205.0000 | 37s
+ep  33 | train_v 0.0093 | train_bellman 0.0159 | train_pi 2.2126 | val_v 0.0095 | val_bellman 0.0102 | val_pi 2.0152 | greedy_in_data 1.0000 | greedy_mean_W 201.0986 | 38s
+ep  34 | train_v 0.0102 | train_bellman 0.0201 | train_pi 2.2093 | val_v 0.0100 | val_bellman 0.0347 | val_pi 2.5758 | greedy_in_data 1.0000 | greedy_mean_W 211.2256 | 39s
+ep  35 | train_v 0.0098 | train_bellman 0.0179 | train_pi 2.2155 | val_v 0.0093 | val_bellman 0.0062 | val_pi 2.4009 | greedy_in_data 1.0000 | greedy_mean_W 208.2788 | 41s
+ep  36 | train_v 0.0089 | train_bellman 0.0145 | train_pi 2.2091 | val_v 0.0101 | val_bellman 0.0137 | val_pi 2.2242 | greedy_in_data 1.0000 | greedy_mean_W 206.8384 | 42s
+ep  37 | train_v 0.0112 | train_bellman 0.0295 | train_pi 2.2206 | val_v 0.0101 | val_bellman 0.0252 | val_pi 2.3254 | greedy_in_data 1.0000 | greedy_mean_W 205.8081 | 43s
+ep  38 | train_v 0.0092 | train_bellman 0.0190 | train_pi 2.2072 | val_v 0.0100 | val_bellman 0.0078 | val_pi 2.6442 | greedy_in_data 1.0000 | greedy_mean_W 206.9678 | 44s
+ep  39 | train_v 0.0086 | train_bellman 0.0134 | train_pi 2.2162 | val_v 0.0097 | val_bellman 0.0205 | val_pi 1.8699 | greedy_in_data 1.0000 | greedy_mean_W 209.2432 | 45s
+ep  40 | train_v 0.0079 | train_bellman 0.0101 | train_pi 2.1994 | val_v 0.0079 | val_bellman 0.0096 | val_pi 2.2445 | greedy_in_data 1.0000 | greedy_mean_W 206.5161 | 46s
+ep  41 | train_v 0.0086 | train_bellman 0.0145 | train_pi 2.2104 | val_v 0.0075 | val_bellman 0.0137 | val_pi 2.1972 | greedy_in_data 1.0000 | greedy_mean_W 207.0630 | 48s
+ep  42 | train_v 0.0120 | train_bellman 0.0304 | train_pi 2.2411 | val_v 0.0074 | val_bellman 0.0205 | val_pi 2.1356 | greedy_in_data 1.0000 | greedy_mean_W 206.0229 | 49s
+ep  43 | train_v 0.0080 | train_bellman 0.0139 | train_pi 2.2123 | val_v 0.0077 | val_bellman 0.0081 | val_pi 2.0356 | greedy_in_data 1.0000 | greedy_mean_W 205.2002 | 50s
+ep  44 | train_v 0.0070 | train_bellman 0.0073 | train_pi 2.2026 | val_v 0.0068 | val_bellman 0.0046 | val_pi 2.1623 | greedy_in_data 1.0000 | greedy_mean_W 209.9780 | 51s
+ep  45 | train_v 0.0072 | train_bellman 0.0094 | train_pi 2.2085 | val_v 0.0068 | val_bellman 0.0069 | val_pi 2.2143 | greedy_in_data 1.0000 | greedy_mean_W 210.3760 | 52s
+ep  46 | train_v 0.0082 | train_bellman 0.0168 | train_pi 2.2112 | val_v 0.0065 | val_bellman 0.0050 | val_pi 2.1582 | greedy_in_data 1.0000 | greedy_mean_W 208.1787 | 53s
+ep  47 | train_v 0.0070 | train_bellman 0.0083 | train_pi 2.2101 | val_v 0.0071 | val_bellman 0.0083 | val_pi 2.2164 | greedy_in_data 1.0000 | greedy_mean_W 206.1865 | 55s
+ep  48 | train_v 0.0072 | train_bellman 0.0099 | train_pi 2.2101 | val_v 0.0074 | val_bellman 0.0086 | val_pi 2.1190 | greedy_in_data 1.0000 | greedy_mean_W 206.2744 | 56s
+ep  49 | train_v 0.0073 | train_bellman 0.0147 | train_pi 2.2060 | val_v 0.0070 | val_bellman 0.0288 | val_pi 2.3268 | greedy_in_data 1.0000 | greedy_mean_W 207.5122 | 57s
+ep  50 | train_v 0.0074 | train_bellman 0.0128 | train_pi 2.2133 | val_v 0.0071 | val_bellman 0.0115 | val_pi 2.0830 | greedy_in_data 1.0000 | greedy_mean_W 207.2485 | 58s
+[offline_rl:iql] saved rl_narrow/runs/offline_iql_s1/offline_final.pt
+done Sun Nov 15 21:00:13 EST 2026

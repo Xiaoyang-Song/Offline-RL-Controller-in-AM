@@ -1,0 +1,15 @@
+
+REAL-physics leaderboard (narrow, EoH field; 48 runs)
+method                             seeds       score (w=1)     deviation [K]  mean LP  outside
+Online Q shaped                        3     0.8584 ± 0.0008     149.2 ± 1.2      174.6      69%
+PG shaped (ours)                       3     0.8571 ± 0.0012     148.4 ± 1.4      179.3      73%
+Kalman filter                          1     0.8505 ± 0.0255     158.3 ± 28.9     189.2      75%
+Constant (best, 170 W)                 1     0.7703 ± 0.0306     271.2 ± 45.8     170.0     100%
+Offline FQI                            3     0.7351 ± 0.0017     333.0 ± 3.2      208.7       0%
+Offline IQL                            3     0.7244 ± 0.0078     352.8 ± 14.3     205.6       0%
+Offline CQL                            3     0.6975 ± 0.0012     404.4 ± 8.9      222.0       0%
+Proportional                           1     0.5762 ± 0.1053     667.9 ± 267.9    249.8       0%
+Saved → rl_narrow/results_real/leaderboard_real.csv, per_layer_real.csv, constant_sweep.csv
+saved rl_narrow/results_real/figures/fig_rl_comparison (+ _data.json) | Online PG (ours) 0.857±0.001, Online Q-learning 0.858±0.001, Offline Q-learning 0.735±0.002, Offline CQL 0.697±0.001, Offline IQL 0.724±0.008, Kalman filter 0.850±0.025, Proportional 0.576±0.105, Constant (170 W, best) 0.770±0.031
+saved rl_narrow/results_real/figures/fig_rl_maps (+ _data.npz) | rows: ['Constant (170 W)', 'Kalman filter', 'Offline Q-learning', 'Offline CQL', 'Offline IQL', 'Online Q-learning', 'Online PG (ours)']
+done Mon Nov 16 02:36:59 EST 2026

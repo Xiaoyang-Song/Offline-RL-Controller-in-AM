@@ -1,0 +1,14 @@
+task 9  node gl1002  Sun Nov 15 20:59:39 EST 2026
+[proportional] LP filter active: [200.0, 300.0] W
+[dataset] Loaded 5000 trajectories × 12 layers from DatasetV2_layer_12_samples_5000.pkl
+[dataset] Split → train 4000 | val 500 | test 500
+[data_utils] lp_filter kept 17,094/48,000 transitions
+[proportional] Fit on 4000 trajectories: K_p=0.0004  bias=249.56  T_mid=2400.0  residual_std=31.54
+[proportional] Saved → rl_narrow/runs/proportional_fitted.pt
+[kalman_particle] LP filter active: [200.0, 300.0] W
+[dataset] Loaded 5000 trajectories × 12 layers from DatasetV2_layer_12_samples_5000.pkl
+[dataset] Split → train 4000 | val 500 | test 500
+[data_utils] lp_filter kept 17,094/48,000 transitions
+[kalman_particle] Fit on 4000 trajectories: alpha=0.9879  beta=6.7837  gamma_c=-122.74  Q=36492.67  T_mid=2400.0
+[kalman_particle] Saved → rl_narrow/runs/kalman_fitted.pt
+done Sun Nov 15 20:59:48 EST 2026
