@@ -75,7 +75,7 @@ def main():
     p_best = fams.pop("_const_power", None)
 
     plt.rcParams.update(PAPER_RC)
-    fig, (axa, axb) = plt.subplots(1, 2, figsize=(7.2, 2.9), gridspec_kw=dict(width_ratios=[1, 1.35], wspace=0.50))
+    fig, (axa, axb) = plt.subplots(1, 2, figsize=(7.2, 2.9), gridspec_kw=dict(width_ratios=[1.25, 1.2], wspace=0.42))
     rows = []
     for key, label, col, mk, lw, grp in STYLE:
         if key not in fams:
@@ -132,7 +132,7 @@ def main():
     axa.set_xlabel("Average per-layer reward")
     axa.grid(axis="x", color=GRID, lw=0.6); axa.set_axisbelow(True)
     axa.tick_params(axis="y", length=0)
-    _panel_label(axa, "a", x=-0.62)
+    _panel_label(axa, "a", x=-0.10)
     axa.set_title("Average reward over all layers", pad=11, fontsize=9.5, fontweight="bold")
 
     # (b) per-layer reward: online solid / offline dashed; bands = std across seeds
